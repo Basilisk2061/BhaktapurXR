@@ -14,7 +14,8 @@ test("architectural registry stays empty, geographic origin unresolved and synth
   assert.equal(developmentReference.accuracy, "PLACEHOLDER");
   assert.equal(developmentReference.developmentOnly, true);
   assert.equal(resolveWorldMode("bhaktapur"), "BHAKTAPUR");
-  assert.equal(resolveWorldMode("invalid"), "ENGINEERING");
+  assert.equal(resolveWorldMode("invalid"), "BHAKTAPUR");
+  assert.equal(resolveWorldMode("engineering"), "ENGINEERING");
   assert.notDeepEqual(worldSpawns.BHAKTAPUR, worldSpawns.ENGINEERING);
 });
 

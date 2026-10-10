@@ -10,6 +10,8 @@ export interface MapCalibration {
   pageIndex: number;
   image: { width: number; height: number; sha256: string };
   origin: MapPoint;
+  originStrategy?: "page-centre" | "source-anchor";
+  originRationale?: string;
   scaleBar: { start: MapPoint; end: MapPoint; metres: number };
   northArrow: { base: MapPoint; tip: MapPoint };
   measurementMethod: string;
@@ -25,6 +27,8 @@ export interface MapFeature {
   calibrationId: string;
   sourceIds: string[];
   vertices: MapPoint[];
+  holes?: MapPoint[][];
+  footprintClass?: "monument" | "ordinary-building";
   accuracy: "APPROXIMATE";
   measurementMethod: string;
   uncertaintyNote: string;
@@ -35,6 +39,8 @@ export interface SpatialFeature {
   kind: SpatialKind;
   name: string;
   vertices: LocalPoint[];
+  holes?: LocalPoint[][];
+  footprintClass?: "monument" | "ordinary-building";
   accuracy: Accuracy;
   sourceIds: string[];
   calibrationId: string;

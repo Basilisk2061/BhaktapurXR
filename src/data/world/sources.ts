@@ -6,8 +6,8 @@ export const unescoSources: SourceReference[] = [
     title: "Bhaktapur monument-zone boundary map (2006)",
     type: "publication", reference: "https://whc.unesco.org/en/documents/103370",
     accessedDate: "2026-10-10",
-    supportedClaims: ["Official document 103370 title, date 2006-02-01, and association with Kathmandu Valley; designated primary reference for future map measurements"],
-    notes: "UNESCO identifies the source as ICOMOS Evaluation. PDF: https://whc.unesco.org/document/103370. Metadata inspected; local download returned HTTP 403 and screenshot pixels were unavailable. Boundary geometry, footprints, scale-bar endpoints and north-arrow endpoints have NOT been measured. No exact 3D architecture supported.",
+    supportedClaims: ["Published proposed core and buffer outlines, mapped 2D footprint context, dark monuments versus light-gray buildings, Durbar Square label, printed N orientation and 0-200 m scale bar"],
+    notes: "Phase 4B inspected supplied local originals: reference/bhaktapur/unesco/NP-121bis-bhaktapur.pdf and bhaktapur_map-1.png. Hashes and measurements recorded in map-measurements.ts. Manual raster traces remain APPROXIMATE. Proposed 2006 boundary, not a current survey; no exact 3D architecture/height or named monument identities supported.",
   },
   {
     id: "unesco-kathmandu-valley-property",

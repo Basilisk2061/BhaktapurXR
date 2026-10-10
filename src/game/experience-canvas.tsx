@@ -53,7 +53,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       camera={{ fov: camera.fov, near: camera.near, far: camera.far }}
       gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: renderingConfig.exposure, outputColorSpace: SRGBColorSpace }}
       fallback={<p>This experience requires a browser with WebGL support.</p>}
-      aria-label="Third-person player engineering scene. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
+      aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>

@@ -1,6 +1,6 @@
 # BhaktapurXR
 
-Phase 4 source-backed spatial foundation. `/explore` retains the **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**. `/explore?world=bhaktapur` loads the Bhaktapur development foundation; official UNESCO component metadata is recorded, while map calibration and geometry remain pending inspectable source pixels.
+Phase 4B source-derived spatial prototype. Home Explore and `/explore` open Bhaktapur with 17 APPROXIMATE UNESCO-map traces. `/explore?world=engineering` retains the controller course. Heights and identities remain unresolved; human visual approval is required before detailed architecture.
 
 ## Development
 
@@ -15,7 +15,7 @@ Copy `.env.example` to `.env.local` to enable optional development FPS, physics,
 - Three.js +Y is up; one world unit is one metre.
 - App routes and website content live in `src/app`; the client-only Canvas lives in `src/game`, with engineering fixtures in `src/game/world`.
 - `src/game/world/world-config.ts` centralizes units, ground, gravity, and the retained world inspection camera configuration. Gameplay now uses the camera in `src/game/player/player-config.ts`; OrbitControls are removed. `spawn-config.ts` defines the default ground-level foot position `[0, 0.05, 7]` with zero rotation (forward is local -Z).
-- The synthetic course includes a 0.15 m step, five 0.18 m stairs with 0.3 m treads, a 1 m rise / 4 m run ramp, a 1 m × 2.1 m doorway, walls, obstacles, and an open upper floor at 2.7 m. The upper floor is a collision/camera fixture; no player or access controller exists yet.
+- The synthetic course includes a 0.15 m step, five 0.18 m stairs with 0.3 m treads, a 1 m rise / 4 m run ramp, a 1 m Ã— 2.1 m doorway, walls, obstacles, and an open upper floor at 2.7 m. The upper floor is a collision/camera fixture for the existing player controller.
 - `src/lib` holds small configurations; `src/types` holds shared types. LOW/MEDIUM/HIGH remain a type foundation; `renderingConfig` is a single neutral baseline with capped DPR and a 1024 px shadow map.
 - `World` separates environment lighting, ground, static test fixtures, and development spawn/grid markers. Visible boxes and explicit cuboid colliders share the same fixture data.
 - Loading UI stays outside Canvas through code/physics/asset initialization. Asset request counts come from Drei; they are not byte progress. Catastrophic errors and context loss show a reload/home fallback and preserve error logging.
@@ -28,7 +28,7 @@ Copy `.env.example` to `.env.local` to enable optional development FPS, physics,
 
 Click the scene, use WASD to move relative to camera yaw, hold Shift to run, press Space to jump, move the mouse to look, and press Escape to release. Click again to resume. If capture is unavailable, focus the scene and drag to look. Inputs clear on blur, release, hidden tabs, or form focus; browser shortcuts are preserved.
 
-The 1.75 m kinematic capsule uses Rapier's character controller at the world's fixed 60 Hz timestep, 2.3 / 5 m/s walk/run targets, 0.25 m autosteps, a 45° climb limit, and gravity from world config. A 1.5 cm collision skin is intentional. The proxy/model attachment, movement helpers, physics, input, and sphere-sweep follow camera are separate modules. Space jumps to a configured 1 m height; grounded rising-edge presses only, without air jumps or held-key repeats.
+The 1.75 m kinematic capsule uses Rapier's character controller at the world's fixed 60 Hz timestep, 2.3 / 5 m/s walk/run targets, 0.25 m autosteps, a 45Â° climb limit, and gravity from world config. A 1.5 cm collision skin is intentional. The proxy/model attachment, movement helpers, physics, input, and sphere-sweep follow camera are separate modules. Space jumps to a configured 1 m height; grounded rising-edge presses only, without air jumps or held-key repeats.
 
 **Human manual testing is required.** Check cardinal/diagonal movement and stopping; Shift running; stationary camera orbit and pitch limits; the low step/stairs on the left, ramp/platform on the right, doorway ahead, and walls/obstacles; stepping off the accessible landings; camera retraction/recovery near walls; Escape/re-entry, form focus, and tab switching. Run backward off the ground to test automatic reset below Y = -8 m. Use player/physics debug flags to inspect position, grounding, speed, and camera distance. Headless tests do not validate subjective feel.
 
@@ -40,4 +40,4 @@ TypeScript 6 and ESLint 9 are pinned for compatibility with the current Next.js 
 
 Development may log upstream Three.js Clock and Rapier initialization deprecation warnings. They do not prevent rendering or physics initialization; no warnings are suppressed.
 
-See [world data conventions](docs/world-data.md) for sources, calibration, accuracy, origins, measurement entry, and world modes. Run `npm run spatial:check` to validate/report the spatial pipeline. No detailed architecture or traced map geometry is included yet.
+See [world data conventions](docs/world-data.md) for sources, calibration, accuracy, origins, measurement entry, and world modes. Run `npm run spatial:check` to validate/report the spatial pipeline. Source-pixel traces and development-only `/reconstruction` comparison are included. No detailed architecture is included. Supplied originals remain under `reference/bhaktapur/unesco/`; production exploration does not load them.

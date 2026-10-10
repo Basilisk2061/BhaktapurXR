@@ -17,7 +17,11 @@ export function validateCalibration(c: MapCalibration, sources: SourceReference[
     requirePoint(p, "Calibration point");
     if (p[0] < 0 || p[0] > c.image.width || p[1] < 0 || p[1] > c.image.height) throw new Error("Calibration point outside raster");
   }
-  if (c.origin[0] !== c.image.width / 2 || c.origin[1] !== c.image.height / 2) throw new Error("Origin must follow the full-page-centre strategy");
+  if (c.originStrategy === "source-anchor") requireText(c.originRationale, "Source-anchor rationale");
+  else {
+    if (c.originStrategy !== undefined && c.originStrategy !== "page-centre") throw new Error("Invalid origin strategy");
+    if (c.origin[0] !== c.image.width / 2 || c.origin[1] !== c.image.height / 2) throw new Error("Origin must follow the full-page-centre strategy");
+  }
   if (!(c.scaleBar.metres > 0) || !Number.isFinite(c.scaleBar.metres) || distance(c.scaleBar.start, c.scaleBar.end) === 0 || distance(c.northArrow.base, c.northArrow.tip) === 0) throw new Error("Invalid scale/north calibration");
   if (c.accuracy !== "APPROXIMATE") throw new Error("Raster calibration must remain APPROXIMATE");
   requireText(c.measurementMethod, "Calibration method"); requireText(c.uncertaintyNote, "Calibration uncertainty");
@@ -37,6 +41,26 @@ export function mapPointToLocal(p: MapPoint, c: MapCalibration): LocalPoint {
   const result: LocalPoint = [(-ny * dx + nx * dy) * metresPerPixel, -(nx * dx + ny * dy) * metresPerPixel];
   requirePoint(result, "Converted coordinate");
   return result;
+}
+
+/** Inverse projection for comparing runtime metre geometry against original pixels. */
+export function localPointToMap(p: LocalPoint, c: MapCalibration): MapPoint {
+  requirePoint(p, "Local point");
+  const length = distance(c.northArrow.base, c.northArrow.tip);
+  const m = c.scaleBar.metres / distance(c.scaleBar.start, c.scaleBar.end);
+  if (!(length > 0) || !(m > 0) || !Number.isFinite(m)) throw new Error("Unusable calibration");
+  const nx = (c.northArrow.tip[0] - c.northArrow.base[0]) / length;
+  const ny = (c.northArrow.tip[1] - c.northArrow.base[1]) / length;
+  return [c.origin[0] + (-ny * p[0] - nx * p[1]) / m, c.origin[1] + (nx * p[0] - ny * p[1]) / m];
+}
+
+export function pointInsidePolygon(p: LocalPoint, ring: LocalPoint[]): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const a = ring[i], b = ring[j];
+    if ((a[1] > p[1]) !== (b[1] > p[1]) && p[0] < (b[0] - a[0]) * (p[1] - a[1]) / (b[1] - a[1]) + a[0]) inside = !inside;
+  }
+  return inside;
 }
 
 export function polygonArea(points: LocalPoint[]): number {
@@ -80,6 +104,23 @@ export function validateSpatialFeatures(features: SpatialFeature[], sources: Sou
     for (const p of f.vertices) requirePoint(p, "Local vertex");
     if (new Set(f.vertices.map(p => p.join(","))).size !== f.vertices.length) throw new Error("Duplicate vertices; polygons close implicitly");
     if (count === 3) requireSimplePolygon(f.vertices);
+    if (f.footprintClass !== undefined && (f.kind !== "building-footprint" || !["monument", "ordinary-building"].includes(f.footprintClass))) throw new Error("Invalid footprint class");
+    if (f.holes !== undefined) {
+      if (count !== 3 || !Array.isArray(f.holes)) throw new Error("Holes require a polygon");
+      const rings: LocalPoint[][] = [f.vertices];
+      for (const hole of f.holes) {
+        if (!Array.isArray(hole) || hole.length < 3) throw new Error("Invalid polygon hole");
+        hole.forEach(p => requirePoint(p, "Hole vertex")); requireSimplePolygon(hole);
+        if (!hole.every(p => pointInsidePolygon(p, f.vertices))) throw new Error("Hole outside polygon");
+        for (const ring of rings) {
+          for (let i = 0; i < ring.length; i++) for (let j = 0; j < hole.length; j++) {
+            if (intersects(ring[i], ring[(i + 1) % ring.length], hole[j], hole[(j + 1) % hole.length])) throw new Error("Polygon rings intersect");
+          }
+          if (ring !== f.vertices && (pointInsidePolygon(hole[0], ring) || pointInsidePolygon(ring[0], hole))) throw new Error("Overlapping/nested holes");
+        }
+        rings.push(hole);
+      }
+    }
     requireText(f.measurementMethod, "Measurement method"); requireText(f.uncertaintyNote, "Uncertainty");
     if (f.heightMetres !== null) throw new Error("Architectural height is unresolved");
   }
@@ -95,11 +136,11 @@ export function buildSpatialRegistry(raw: MapFeature[], calibrations: MapCalibra
   const features = raw.map(f => {
     const c = calibrations.find(c => c.id === f.calibrationId);
     if (!c) throw new Error(`Missing calibration for ${f.id}`);
-    for (const p of f.vertices) {
+    for (const p of [...f.vertices, ...(f.holes ?? []).flat()]) {
       requirePoint(p, "Source vertex");
       if (p[0] < 0 || p[0] > c.image.width || p[1] < 0 || p[1] > c.image.height) throw new Error("Source vertex outside raster");
     }
-    return { ...f, vertices: f.vertices.map(p => mapPointToLocal(p, c)), heightMetres: null };
+    return { ...f, vertices: f.vertices.map(p => mapPointToLocal(p, c)), holes: f.holes?.map(r => r.map(p => mapPointToLocal(p, c))), heightMetres: null };
   });
   validateSpatialFeatures(features, sources, calibrations);
   return features;

@@ -1,13 +1,15 @@
 import type { Landmark, SourceReference } from "@/types/landmark";
 import { unescoSources } from "./sources.ts";
+import { mapCalibrations } from "./map-measurements.ts";
 
 // Detailed landmark geometry remains empty until defensible map measurements exist.
 export const landmarks: Landmark[] = [];
 export const sources: SourceReference[] = unescoSources;
 export const localOrigin = {
   units: "metres", upAxis: "+Y", eastAxis: "+X", northAxis: "-Z", geographicOrigin: null,
-  strategy: "Full source-page raster centre; actual pixel anchor awaits measured raster dimensions",
-  description: "Engineering origin [0,0,0]; map anchor strategy = full-page raster centre. Geographic origin UNRESOLVED.",
+  sourcePixel: mapCalibrations[0].origin,
+  strategy: "Fixed source pixel [1030,1330] in the supplied UNESCO PNG",
+  description: "Engineering origin [0,0,0] = source pixel [1030,1330] in the principal square. Geographic tie UNRESOLVED; +X east / -Z north from printed N indicator.",
 } as const;
 
 /** Synthetic renderer fixture, never a Bhaktapur landmark. */

@@ -28,9 +28,10 @@ test("official source metadata does not masquerade as calibrated geometry", () =
   assert.equal(bhaktapurComponent.propertyAreaHa, 3.61); assert.equal(bhaktapurComponent.bufferAreaHa, 10.71);
   assert.equal(bhaktapurComponent.accuracy, "VERIFIED");
   for (const id of bhaktapurComponent.sourceIds) assert.ok(sources.some(s => s.id === id));
-  assert.equal(calibrationStatus.state, "PENDING_SOURCE_MEASUREMENTS");
-  assert.equal(calibrationStatus.imageDimensions, null);
-  assert.deepEqual(mapCalibrations, []); assert.deepEqual(mapFeatures, []); assert.deepEqual(spatialFeatures, []);
+  assert.equal(calibrationStatus.state, "CALIBRATED_APPROXIMATE");
+  assert.deepEqual(calibrationStatus.imageDimensions, [3300, 2550]);
+  assert.equal(mapCalibrations.length, 1); assert.equal(mapFeatures.length, 17); assert.equal(spatialFeatures.length, 17);
+  assert.ok(spatialFeatures.every(f => f.accuracy === "APPROXIMATE" && f.heightMetres === null));
   assert.equal(localOrigin.geographicOrigin, null);
   assert.equal(localOrigin.northAxis, "-Z"); assert.equal(localOrigin.eastAxis, "+X");
   assert.equal(bhaktapurGround.accuracy, "PLACEHOLDER");

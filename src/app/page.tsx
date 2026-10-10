@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { PUBLIC_EXPLORE_HREF } from "@/game/world/world-mode";
 
 export default function HomePage() {
   return (
@@ -11,8 +12,8 @@ export default function HomePage() {
         <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">A place. A living heritage.</p>
         <h1 className="max-w-3xl font-serif text-5xl leading-tight sm:text-7xl">Experience Bhaktapur<br />in a new dimension.</h1>
         <p className="mt-7 max-w-xl text-lg leading-relaxed text-stone-600">An interactive 3D digital heritage experience of Bhaktapur Durbar Square, Nepal.</p>
-        <div className="mt-10"><Link href="/explore" className="inline-flex items-center gap-6 rounded-sm bg-[#34473c] px-6 py-4 font-medium text-white transition-colors hover:bg-[#25372e]">Explore Bhaktapur <span aria-hidden="true">↗</span></Link></div>
-        <p className="mt-5 max-w-lg text-sm leading-relaxed text-stone-600">Early development · The current experience is an engineering test scene. Reconstruction of the square has not begun.</p>
+        <div className="mt-10"><Link href={PUBLIC_EXPLORE_HREF} className="inline-flex items-center gap-6 rounded-sm bg-[#34473c] px-6 py-4 font-medium text-white transition-colors hover:bg-[#25372e]">Explore Bhaktapur <span aria-hidden="true">↗</span></Link></div>
+        <p className="mt-5 max-w-lg text-sm leading-relaxed text-stone-600">Early development · Source-backed reconstruction in progress.</p>
       </section>
       <footer className="border-t border-stone-300 py-6 text-sm text-stone-600">Built with respect for place, people, and historical accuracy.</footer>
     </main>
