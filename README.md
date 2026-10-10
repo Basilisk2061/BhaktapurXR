@@ -1,6 +1,6 @@
 # BhaktapurXR
 
-Phase 2 third-person player foundation. The `/explore` scene contains a **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**, not a reconstruction of Bhaktapur Durbar Square.
+Phase 3 jump and Bhaktapur world data foundation. The `/explore` scene contains a **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**, not a reconstruction of Bhaktapur Durbar Square.
 
 ## Development
 
@@ -26,9 +26,9 @@ Copy `.env.example` to `.env.local` to enable optional development FPS, physics,
 
 ## Player and manual checks
 
-Click the scene, use WASD to move relative to camera yaw, hold Shift to run, move the mouse to look, and press Escape to release. Click again to resume. If capture is unavailable, focus the scene and drag to look. Inputs clear on blur, release, hidden tabs, or form focus; browser shortcuts are preserved.
+Click the scene, use WASD to move relative to camera yaw, hold Shift to run, press Space to jump, move the mouse to look, and press Escape to release. Click again to resume. If capture is unavailable, focus the scene and drag to look. Inputs clear on blur, release, hidden tabs, or form focus; browser shortcuts are preserved.
 
-The 1.75 m kinematic capsule uses Rapier's character controller at the world's fixed 60 Hz timestep, 2.3 / 5 m/s walk/run targets, 0.25 m autosteps, a 45° climb limit, and gravity from world config. A 1.5 cm collision skin is intentional. The proxy/model attachment, movement helpers, physics, input, and sphere-sweep follow camera are separate modules. No jumping is implemented.
+The 1.75 m kinematic capsule uses Rapier's character controller at the world's fixed 60 Hz timestep, 2.3 / 5 m/s walk/run targets, 0.25 m autosteps, a 45° climb limit, and gravity from world config. A 1.5 cm collision skin is intentional. The proxy/model attachment, movement helpers, physics, input, and sphere-sweep follow camera are separate modules. Space jumps to a configured 1 m height; grounded rising-edge presses only, without air jumps or held-key repeats.
 
 **Human manual testing is required.** Check cardinal/diagonal movement and stopping; Shift running; stationary camera orbit and pitch limits; the low step/stairs on the left, ramp/platform on the right, doorway ahead, and walls/obstacles; stepping off the accessible landings; camera retraction/recovery near walls; Escape/re-entry, form focus, and tab switching. Run backward off the ground to test automatic reset below Y = -8 m. Use player/physics debug flags to inspect position, grounding, speed, and camera distance. Headless tests do not validate subjective feel.
 
@@ -39,3 +39,5 @@ Final human assets, animation, real heritage assets, NPCs, heritage data, and ba
 TypeScript 6 and ESLint 9 are pinned for compatibility with the current Next.js lint plugins. npm audit reports five high-severity findings in the development-only lint dependency chain (`braces` via `micromatch`/`fast-glob`); the latest published `braces` version is still affected. Revisit when upstream tooling releases compatible fixes.
 
 Development may log upstream Three.js Clock and Rapier initialization deprecation warnings. They do not prevent rendering or physics initialization; no warnings are suppressed.
+
+See [world data conventions](docs/world-data.md) for accuracy, evidence, origins, registry authoring, and world modes.

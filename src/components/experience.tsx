@@ -7,7 +7,8 @@ import { ExperienceErrorBoundary, ExperienceFailure } from "./experience-error-b
 import { createPlayerInput, type PointerStatus } from "@/game/input/player-input";
 import { createPlayerRuntime } from "@/game/player/player-runtime";
 import { playerConfig } from "@/game/player/player-config";
-import { defaultSpawn } from "@/game/world/spawn-config";
+import { worldSpawns, type WorldMode } from "@/game/world/world-mode";
+import { WorldDataDiagnostics } from "./world-data-diagnostics";
 import { developmentConfig } from "@/lib/development-config";
 import { PlayerDiagnostics } from "./player-diagnostics";
 
@@ -16,11 +17,11 @@ const ExperienceCanvas = dynamic(() => import("@/game/experience-canvas"), {
   loading: () => null,
 });
 
-function ExperienceContent() {
+function ExperienceContent({ mode }: { mode: WorldMode }) {
   const [ready, setReady] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [pointerStatus, setPointerStatus] = useState<PointerStatus>("inactive");
-  const input = useRef(createPlayerInput(defaultSpawn.rotation[1], playerConfig.camera.initialPitch));
+  const input = useRef(createPlayerInput(worldSpawns[mode].rotation[1], playerConfig.camera.initialPitch));
   const runtime = useRef(createPlayerRuntime());
   const onReady = useCallback(() => setReady(true), []);
   const onUnavailable = useCallback(() => setUnavailable(true), []);
@@ -30,16 +31,17 @@ function ExperienceContent() {
 
   return (
     <>
-      <ExperienceCanvas onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+      <ExperienceCanvas mode={mode} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
       <ExperienceLoading ready={ready} />
       {ready && <p className="pointer-events-none absolute bottom-4 left-4 rounded-sm bg-stone-100/90 px-4 py-2 text-xs text-stone-600" aria-live="polite">
-        {pointerStatus === "locked" ? "WASD move · Shift run · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Esc release" : "Click to control camera · WASD move · Shift run · Esc release mouse"}
+        {pointerStatus === "locked" ? "WASD move · Shift run · Space jump · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump · Esc release" : "Click to control camera · WASD move · Shift run · Space jump · Esc release mouse"}
       </p>}
+      {developmentConfig.worldData && <WorldDataDiagnostics mode={mode} />}
       {developmentConfig.playerDebug && <PlayerDiagnostics input={input} runtime={runtime} />}
     </>
   );
 }
 
-export function Experience() {
-  return <ExperienceErrorBoundary><ExperienceContent /></ExperienceErrorBoundary>;
+export function Experience({ mode }: { mode: WorldMode }) {
+  return <ExperienceErrorBoundary><ExperienceContent key={mode} mode={mode} /></ExperienceErrorBoundary>;
 }

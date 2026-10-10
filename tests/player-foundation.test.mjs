@@ -87,9 +87,9 @@ function createTestPlayer(footPosition) {
   const runtime = createPlayerRuntime();
   world.timestep = worldConfig.physicsTimeStep;
   world.step();
-  const step = (x = 0, z = 0) => {
+  const step = (x = 0, z = 0, jump = false) => {
     runtime.velocity.x = x; runtime.velocity.z = z;
-    stepCharacter(body, collider, controller, runtime, worldConfig.physicsTimeStep, playerConfig, worldConfig.gravity[1], RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);
+    stepCharacter(body, collider, controller, runtime, worldConfig.physicsTimeStep, playerConfig, worldConfig.gravity[1], RAPIER.QueryFilterFlags.EXCLUDE_SENSORS, jump);
     world.step();
     return body.translation();
   };
@@ -178,4 +178,42 @@ test("camera sphere sweep excludes the player and detects a wall before crossing
     const clear = player.world.castShape({ x: 0, y: 1.5, z: -4 }, { x: 0, y: 0, z: 0, w: 1 }, { x: 0, y: 0, z: 1 }, sphere, 0, playerConfig.camera.distance, true, RAPIER.QueryFilterFlags.EXCLUDE_SENSORS, undefined, undefined, player.body);
     assert.equal(clear, null, "Player capsule does not obstruct its own camera");
   } finally { player.free(); }
+});
+
+test("grounded jump reaches human-scale apex, retains air steering, rejects double jump and lands", () => {
+  const p = createTestPlayer([0, 0.05, 7]);
+  try {
+    for (let i = 0; i < 60; i++) p.step();
+    const base = p.body.translation().y;
+    assert.equal(p.runtime.grounded, true);
+    p.step(1, 0, true);
+    assert.equal(p.runtime.grounded, false);
+    const takeoff = p.runtime.velocity.y;
+    p.step(1, 0, true);
+    assert.ok(p.runtime.velocity.y < takeoff, "Airborne request must not reset vertical velocity");
+    let apex = base;
+    for (let i = 0; i < 100; i++) { p.step(1, 0); apex = Math.max(apex, p.body.translation().y); }
+    assert.ok(apex - base >= 0.8 && apex - base <= 1.1);
+    assert.ok(p.body.translation().x > 1, "Horizontal control remains available in air");
+    assert.equal(p.runtime.grounded, true);
+    closeTo(p.body.translation().y, base, 0.003);
+    p.step(0, 0, true);
+    assert.equal(p.runtime.grounded, false, "Fresh grounded press jumps again");
+  } finally { p.free(); }
+});
+
+test("jump landing works on stair and ramp platforms and ceilings stop ascent", () => {
+  for (const position of [[-5, 0.95, -1], [3, 1.05, 0], [6, 0.05, -6]]) {
+    const p = createTestPlayer(position);
+    try {
+      for (let i = 0; i < 60; i++) p.step();
+      const base = p.body.translation().y;
+      p.step(0, 0, true);
+      let apex = base;
+      for (let i = 0; i < 120; i++) { p.step(); apex = Math.max(apex, p.body.translation().y); }
+      assert.equal(p.runtime.grounded, true);
+      closeTo(p.body.translation().y, base, 0.004);
+      if (position[0] === 6) assert.ok(apex - base < 1, "Upper floor blocks ascent");
+    } finally { p.free(); }
+  }
 });

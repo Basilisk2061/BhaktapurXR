@@ -14,7 +14,10 @@ import { playerConfig } from "@/game/player/player-config";
 import type { PlayerInput, PointerStatus } from "@/game/input/player-input";
 import type { PlayerRuntime } from "@/game/player/player-runtime";
 
+import { worldSpawns, type WorldMode } from "./world/world-mode";
+
 interface ExperienceCanvasProps {
+  mode: WorldMode;
   onReady: () => void;
   onUnavailable: () => void;
   input: RefObject<PlayerInput>;
@@ -41,7 +44,7 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   return (
     <Canvas
@@ -50,13 +53,13 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       camera={{ fov: camera.fov, near: camera.near, far: camera.far }}
       gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: renderingConfig.exposure, outputColorSpace: SRGBColorSpace }}
       fallback={<p>This experience requires a browser with WebGL support.</p>}
-      aria-label="Third-person player engineering scene. Click to control camera; WASD move, Shift run, Escape releases mouse."
+      aria-label="Third-person player engineering scene. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
-          <World />
-          <Player input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+          <World mode={mode} />
+          <Player spawn={worldSpawns[mode]} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <SceneReady onReady={onReady} />
         </Physics>
       </Suspense>

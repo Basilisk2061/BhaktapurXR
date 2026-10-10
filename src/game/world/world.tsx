@@ -5,13 +5,16 @@ import { TestEnvironment } from "./test-environment";
 import { SpawnMarker } from "./spawn-marker";
 import { worldConfig } from "./world-config";
 
-export function World() {
+import { BhaktapurWorld } from "./bhaktapur-world";
+import { worldSpawns, type WorldMode } from "./world-mode";
+
+export function World({ mode }: { mode: WorldMode }) {
   return (
     <>
       <Environment />
       <Ground />
-      <TestEnvironment />
-      {developmentConfig.spawnMarker && <SpawnMarker />}
+      {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld />}
+      {developmentConfig.spawnMarker && <SpawnMarker spawn={worldSpawns[mode]} />}
       {developmentConfig.worldDebug && (
         <group position={[0, 0.01, 0]}>
           <gridHelper args={[worldConfig.ground.size, worldConfig.ground.size, "#727c78", "#a1aaa4"]} />

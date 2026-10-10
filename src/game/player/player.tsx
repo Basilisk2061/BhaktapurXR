@@ -5,7 +5,8 @@ import type { KinematicCharacterController } from "@dimforge/rapier3d-compat";
 import type { Group } from "three";
 import type { PlayerInput, PointerStatus } from "@/game/input/player-input";
 import { usePlayerInput } from "@/game/input/use-player-input";
-import { defaultSpawn } from "@/game/world/spawn-config";
+import type { SpawnPoint } from "@/types/world";
+import { consumeJump } from "@/game/input/player-input";
 import { worldConfig } from "@/game/world/world-config";
 import { bodySpawnPosition, playerConfig } from "./player-config";
 import { cameraRelativeDirection, approachVelocity, dampAngle, movementState, safeDelta } from "./movement";
@@ -14,21 +15,21 @@ import { PlayerProxy } from "./player-proxy";
 import { ThirdPersonCamera } from "./third-person-camera";
 import type { PlayerRuntime } from "./player-runtime";
 
-export function Player({ input: inputRef, runtime: runtimeRef, onPointerStatus }: { input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
+export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerStatus }: { spawn: SpawnPoint; input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
   const body = useRef<RapierRigidBody>(null);
   const visual = useRef<Group>(null);
   const controller = useRef<KinematicCharacterController>(null);
   const { world, rapier } = useRapier();
-  const spawnPosition = useMemo(() => bodySpawnPosition(defaultSpawn), []);
+  const spawnPosition = useMemo(() => bodySpawnPosition(spawn), [spawn]);
   const direction = useMemo(() => ({ x: 0, z: 0 }), []);
   usePlayerInput(inputRef, onPointerStatus);
 
   useEffect(() => {
     const character = createCharacterController(world, playerConfig);
     controller.current = character;
-    runtimeRef.current.facingYaw = defaultSpawn.rotation[1];
+    runtimeRef.current.facingYaw = spawn.rotation[1];
     return () => { controller.current = null; world.removeCharacterController(character); };
-  }, [world, runtimeRef]);
+  }, [world, runtimeRef, spawn]);
 
   useBeforePhysicsStep(() => {
     const motion = runtimeRef.current, controls = inputRef.current;
@@ -42,8 +43,9 @@ export function Player({ input: inputRef, runtime: runtimeRef, onPointerStatus }
       motion.nextPosition.x = spawnPosition.x; motion.nextPosition.y = spawnPosition.y; motion.nextPosition.z = spawnPosition.z;
       motion.velocity.x = 0; motion.velocity.y = 0; motion.velocity.z = 0;
       motion.grounded = false; motion.horizontalSpeed = 0; motion.movement = "FALL";
-      motion.facingYaw = defaultSpawn.rotation[1]; motion.resetSequence++;
-      controls.yaw = defaultSpawn.rotation[1]; controls.pitch = playerConfig.camera.initialPitch;
+      motion.facingYaw = spawn.rotation[1]; motion.resetSequence++;
+      controls.jumpRequested = false;
+      controls.yaw = spawn.rotation[1]; controls.pitch = playerConfig.camera.initialPitch;
       return;
     }
     const delta = safeDelta(worldConfig.physicsTimeStep, playerConfig.maxDelta);
@@ -55,7 +57,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, onPointerStatus }
     cameraRelativeDirection(forward, right, controls.yaw, direction);
     const slowing = (forward === 0 && right === 0) || Math.hypot(motion.velocity.x, motion.velocity.z) > speed;
     approachVelocity(motion.velocity, direction, speed, slowing ? playerConfig.deceleration : playerConfig.acceleration, delta);
-    stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS);
+    stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS, consumeJump(controls, motion.grounded));
     motion.movement = movementState(motion.grounded, motion.horizontalSpeed, running, playerConfig.movementThreshold);
     if (motion.horizontalSpeed > playerConfig.movementThreshold) {
       const corrected = character.computedMovement();

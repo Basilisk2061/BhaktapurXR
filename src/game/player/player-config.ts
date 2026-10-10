@@ -7,6 +7,7 @@ export const playerConfig = {
   height,
   radius,
   capsuleHalfSegment: height / 2 - radius,
+  jumpHeight: 1, // metres; takeoff speed derives from gravity
   walkSpeed: 2.3, // metres / second
   runSpeed: 5,
   acceleration: 14, // metres / second squared

@@ -1,7 +1,7 @@
 import { useEffect, type RefObject } from "react";
 import { useThree } from "@react-three/fiber";
 import { playerConfig } from "@/game/player/player-config";
-import { gameplayCodes, isEditableTarget, type PlayerInput, type PointerStatus } from "./player-input";
+import { gameplayCodes, isEditableTarget, pressGameplayKey, type PlayerInput, type PointerStatus } from "./player-input";
 
 export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (status: PointerStatus) => void): void {
   const canvas = useThree((state) => state.gl.domElement);
@@ -11,7 +11,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
     let disposed = false, lockFailed = false, dragging = false, requesting = false;
     const previousTabIndex = canvas.tabIndex;
     canvas.setAttribute("tabindex", "0");
-    const clear = () => { input.keys.clear(); input.active = false; dragging = false; };
+    const clear = () => { input.keys.clear(); input.jumpRequested = false; input.active = false; dragging = false; };
     const resetFocus = () => {
       clear(); onStatus("inactive");
       if (document.pointerLockElement === canvas) document.exitPointerLock();
@@ -60,9 +60,9 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
         resetFocus();
         return;
       }
-      if (event.ctrlKey || event.metaKey || event.altKey) { input.keys.clear(); return; }
+      if (event.ctrlKey || event.metaKey || event.altKey) { input.keys.clear(); input.jumpRequested = false; return; }
       if (!input.active || isEditableTarget(event.target) || (!input.locked && document.activeElement !== canvas)) return;
-      if (gameplayCodes.has(event.code)) { event.preventDefault(); input.keys.add(event.code); }
+      if (gameplayCodes.has(event.code)) { event.preventDefault(); pressGameplayKey(input, event.code, event.repeat); }
     };
     const keyUp = (event: KeyboardEvent) => { input.keys.delete(event.code); };
     const visibilityChanged = () => { if (document.hidden) resetFocus(); };
