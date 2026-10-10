@@ -1,6 +1,6 @@
 # BhaktapurXR
 
-Phase 3 jump and Bhaktapur world data foundation. The `/explore` scene contains a **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**, not a reconstruction of Bhaktapur Durbar Square.
+Phase 4 source-backed spatial foundation. `/explore` retains the **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**. `/explore?world=bhaktapur` loads the Bhaktapur development foundation; official UNESCO component metadata is recorded, while map calibration and geometry remain pending inspectable source pixels.
 
 ## Development
 
@@ -40,4 +40,4 @@ TypeScript 6 and ESLint 9 are pinned for compatibility with the current Next.js 
 
 Development may log upstream Three.js Clock and Rapier initialization deprecation warnings. They do not prevent rendering or physics initialization; no warnings are suppressed.
 
-See [world data conventions](docs/world-data.md) for accuracy, evidence, origins, registry authoring, and world modes.
+See [world data conventions](docs/world-data.md) for sources, calibration, accuracy, origins, measurement entry, and world modes. Run `npm run spatial:check` to validate/report the spatial pipeline. No detailed architecture or traced map geometry is included yet.

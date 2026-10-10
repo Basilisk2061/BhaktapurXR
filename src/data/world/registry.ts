@@ -1,11 +1,13 @@
 import type { Landmark, SourceReference } from "@/types/landmark";
+import { unescoSources } from "./sources.ts";
 
-// Intentionally empty. No researched Bhaktapur data has been supplied.
+// Detailed landmark geometry remains empty until defensible map measurements exist.
 export const landmarks: Landmark[] = [];
-export const sources: SourceReference[] = [];
+export const sources: SourceReference[] = unescoSources;
 export const localOrigin = {
-  units: "metres", upAxis: "+Y", geographicOrigin: null,
-  description: "Local Cartesian origin [0,0,0]; geographic anchor UNSET pending research.",
+  units: "metres", upAxis: "+Y", eastAxis: "+X", northAxis: "-Z", geographicOrigin: null,
+  strategy: "Full source-page raster centre; actual pixel anchor awaits measured raster dimensions",
+  description: "Engineering origin [0,0,0]; map anchor strategy = full-page raster centre. Geographic origin UNRESOLVED.",
 } as const;
 
 /** Synthetic renderer fixture, never a Bhaktapur landmark. */

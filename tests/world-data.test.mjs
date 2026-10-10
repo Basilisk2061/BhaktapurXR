@@ -5,8 +5,10 @@ import { landmarks, sources, developmentReference, localOrigin } from "../src/da
 import { resolveWorldMode, worldSpawns } from "../src/game/world/world-mode.ts";
 import { createPlayerInput, pressGameplayKey, consumeJump } from "../src/game/input/player-input.ts";
 
-test("real registry is empty, origin unset and synthetic fixture is explicit", () => {
-  assert.deepEqual(landmarks, []); assert.deepEqual(sources, []);
+test("architectural registry stays empty, geographic origin unresolved and synthetic fixture explicit", () => {
+  assert.deepEqual(landmarks, []);
+  assert.equal(new Set(sources.map(s => s.id)).size, sources.length);
+  validateWorldData(landmarks, sources);
   assert.equal(localOrigin.geographicOrigin, null);
   validateWorldData([developmentReference], sources);
   assert.equal(developmentReference.accuracy, "PLACEHOLDER");

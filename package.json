@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
-    "test": "node --experimental-strip-types --test tests/*.test.mjs"
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "spatial:check": "node --experimental-strip-types scripts/check-spatial.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",

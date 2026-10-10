@@ -7,12 +7,13 @@ import { worldConfig } from "./world-config";
 
 import { BhaktapurWorld } from "./bhaktapur-world";
 import { worldSpawns, type WorldMode } from "./world-mode";
+import { bhaktapurGround } from "@/data/world/map-measurements";
 
 export function World({ mode }: { mode: WorldMode }) {
   return (
     <>
       <Environment />
-      <Ground />
+      <Ground config={mode === "BHAKTAPUR" ? bhaktapurGround : worldConfig.ground} name={mode === "BHAKTAPUR" ? "bhaktapur-development-ground" : "engineering-ground"} />
       {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld />}
       {developmentConfig.spawnMarker && <SpawnMarker spawn={worldSpawns[mode]} />}
       {developmentConfig.worldDebug && (

@@ -11,7 +11,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
     <main className="flex h-svh min-h-[480px] flex-col">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-stone-300 px-6 py-4">
         <Link href="/" className="font-semibold tracking-tight">BhaktapurXR</Link>
-        <span className="text-xs uppercase tracking-wider text-stone-600">Phase 3 · {mode === "ENGINEERING" ? "Engineering course" : "Bhaktapur foundation · no real landmarks"}</span>
+        <span className="text-xs uppercase tracking-wider text-stone-600">Phase 4 · {mode === "ENGINEERING" ? "Engineering course" : "Bhaktapur spatial foundation · calibration pending"}</span>
         <nav aria-label="Development worlds" className="flex gap-3 text-xs"><Link href="/explore?world=engineering">Engineering</Link><Link href="/explore?world=bhaktapur">Bhaktapur foundation</Link></nav>
       </header>
       <div className="relative min-h-0 flex-1"><Experience mode={mode} /></div>
