@@ -39,7 +39,7 @@ export const playerConfig = {
     collisionRadius: 0.18,
     collisionPadding: 0.04,
     near: 0.08,
-    far: 100,
+    far: 260, // Architectural context extends beyond the old engineering-course range.
     fov: 50,
   },
   diagnosticsInterval: 200, // milliseconds; DOM text only, development-only

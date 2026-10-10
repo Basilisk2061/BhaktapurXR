@@ -1,6 +1,8 @@
 # BhaktapurXR
 
-Phase 4B source-derived spatial prototype. Home Explore and `/explore` open Bhaktapur with 17 APPROXIMATE UNESCO-map traces. `/explore?world=engineering` retains the controller course. Heights and identities remain unresolved; human visual approval is required before detailed architecture.
+Phase 5 early 3D heritage environment. Home Explore and `/explore` open a walkable procedural square: 14 UNESCO-anchored architectural interpretations, eight separate placeholder context buildings, generated masonry/paving, roofs, timber facades and simple collision. Architectural dimensions are APPROXIMATE; source traces remain unchanged. Human visual approval is required.
+
+See [architecture conventions](docs/architecture.md) for assumptions, materials, collision, quality settings and limitations.
 
 ## Development
 

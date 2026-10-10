@@ -1,4 +1,4 @@
-﻿# Bhaktapur source-derived spatial prototype
+# Bhaktapur source-derived spatial foundation
 
 Home Explore and plain `/explore` open Bhaktapur. Explicit `/explore?world=engineering` retains the controller course. Engineering selectors and reconstruction tools appear only in development.
 
@@ -27,9 +27,9 @@ Visible white voids remain polygon holes, with functions unresolved. Validation 
 
 ## Rendering and development review
 
-Flat neutral footprints use shared materials; heritage heights remain UNKNOWN. `spatial-visual-config.ts` centralizes zero extrusion and small drawing offsets to avoid z-fighting. Offsets are development representation, not factual elevations. Footprints are walkable with ground-only collision. Administrative boundaries never collide. No guessed roofs, facades, named identities or detailed architecture are included.
+Phase 5 now renders approximate 3D architecture from these unchanged footprints; see [architecture conventions](architecture.md). Factual heritage heights remain UNKNOWN. The original Phase 4B diagnostic renderer remains available: flat neutral footprints use shared materials. `spatial-visual-config.ts` centralizes zero extrusion and small drawing offsets to avoid z-fighting. Offsets are development representation, not factual elevations. The Phase 4B footprint-only renderer uses ground-only collision; Phase 5 architecture adds separate simple compounds for volumes and stairs. Administrative boundaries never collide. Phase 5 roofs/facades are explicitly approximate procedural interpretations; no unverified named identities are assigned.
 
-The 1800 m square ground is PLACEHOLDER support for the long mapped corridor, not the real square. Spawn [0,0.05,4] is development-only, not an official entrance. Engineering retains 32 m ground and [0,0.05,7] spawn. Existing 1.75 m player, movement, jump, camera and respawn remain unchanged.
+The 1800 m square ground is PLACEHOLDER support for the long mapped corridor, not the real square. Phase 5 spawn [30,0.05,35] is development-only, not an official entrance. Engineering retains 32 m ground and [0,0.05,7] spawn. Existing 1.75 m player, movement, jump, camera and respawn remain unchanged.
 
 Development `/reconstruction` projects runtime rings over the original raster with opacity, outline and detail controls. `/api/dev/reference-map` serves only the fixed PNG in development. Both return 404 in production. Originals stay outside `public/` and are absent from production route file tracing; normal exploration never requests the raster.
 
@@ -39,4 +39,4 @@ Default-off `NEXT_PUBLIC_DEBUG_SPATIAL` draws category outlines, origin/north an
 
 MANUAL TEST REQUIRED: YES. Open Home, click Explore, walk/run/jump, judge player scale and arrangement, compare `/reconstruction` against the map, confirm no invented architecture, then check engineering. Automated checks do not establish visual/historical approval.
 
-Exact heights, elevations, facade/roof geometry, ornament, monument identities, geographic tie, ambiguous plinth extents, additional footprints and the separated eastern core remain unresolved. Await human visual approval before detailed reconstruction.
+Exact heights, elevations, facade/roof geometry, ornament, monument identities, geographic tie, ambiguous plinth extents, additional footprints and the separated eastern core remain unresolved. Phase 4B was manually approved. Phase 5 requires separate human visual approval before further reconstruction.
