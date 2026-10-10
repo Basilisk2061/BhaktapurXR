@@ -5,4 +5,5 @@ export const developmentConfig = {
   physicsDebug: isDevelopment && process.env.NEXT_PUBLIC_DEBUG_PHYSICS === "true",
   worldDebug: isDevelopment && process.env.NEXT_PUBLIC_DEBUG_WORLD === "true",
   spawnMarker: isDevelopment && process.env.NEXT_PUBLIC_DEBUG_SPAWN === "true",
+  playerDebug: isDevelopment && process.env.NEXT_PUBLIC_DEBUG_PLAYER === "true",
 } as const;

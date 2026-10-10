@@ -1,18 +1,25 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { Stats } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import { developmentConfig } from "@/lib/development-config";
 import { renderingConfig } from "@/lib/quality-config";
 import { World } from "@/game/world/world";
 import { worldConfig } from "@/game/world/world-config";
 import { ACESFilmicToneMapping, PCFShadowMap, SRGBColorSpace } from "three";
+import { Player } from "@/game/player/player";
+import { playerConfig } from "@/game/player/player-config";
+import type { PlayerInput, PointerStatus } from "@/game/input/player-input";
+import type { PlayerRuntime } from "@/game/player/player-runtime";
 
 interface ExperienceCanvasProps {
   onReady: () => void;
   onUnavailable: () => void;
+  input: RefObject<PlayerInput>;
+  runtime: RefObject<PlayerRuntime>;
+  onPointerStatus: (status: PointerStatus) => void;
 }
 
 function SceneReady({ onReady }: Pick<ExperienceCanvasProps, "onReady">) {
@@ -34,25 +41,25 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable }: ExperienceCanvasProps) {
-  const camera = worldConfig.camera;
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus }: ExperienceCanvasProps) {
+  const camera = playerConfig.camera;
   return (
     <Canvas
       shadows={{ type: PCFShadowMap }}
       dpr={renderingConfig.dpr}
-      camera={{ position: camera.position, fov: camera.fov, near: camera.near, far: camera.far }}
+      camera={{ fov: camera.fov, near: camera.near, far: camera.far }}
       gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: renderingConfig.exposure, outputColorSpace: SRGBColorSpace }}
       fallback={<p>This experience requires a browser with WebGL support.</p>}
-      aria-label="Engineering scale test scene with steps, ramp, doorway, walls, obstacles and raised floor"
+      aria-label="Third-person player engineering scene. Click to control camera; WASD move, Shift run, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>
-        <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} colliders={false} debug={developmentConfig.physicsDebug}>
+        <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <World />
+          <Player input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <SceneReady onReady={onReady} />
         </Physics>
       </Suspense>
-      <OrbitControls makeDefault target={camera.target} minDistance={camera.minDistance} maxDistance={camera.maxDistance} maxPolarAngle={camera.maxPolarAngle} />
       {developmentConfig.performance && <Stats />}
     </Canvas>
   );

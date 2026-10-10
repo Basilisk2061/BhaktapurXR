@@ -49,7 +49,7 @@ test("local model paths support GLB/glTF and reject traversal or external URLs",
 });
 
 test("diagnostics default off and cannot be enabled in production", async () => {
-  const names = ["NODE_ENV", "NEXT_PUBLIC_DEBUG_PERFORMANCE", "NEXT_PUBLIC_DEBUG_PHYSICS", "NEXT_PUBLIC_DEBUG_WORLD", "NEXT_PUBLIC_DEBUG_SPAWN"];
+  const names = ["NODE_ENV", "NEXT_PUBLIC_DEBUG_PERFORMANCE", "NEXT_PUBLIC_DEBUG_PHYSICS", "NEXT_PUBLIC_DEBUG_WORLD", "NEXT_PUBLIC_DEBUG_SPAWN", "NEXT_PUBLIC_DEBUG_PLAYER"];
   const previous = Object.fromEntries(names.map(name => [name, process.env[name]]));
   try {
     process.env.NODE_ENV = "development";

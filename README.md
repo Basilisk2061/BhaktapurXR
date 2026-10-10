@@ -1,6 +1,6 @@
 # BhaktapurXR
 
-Phase 1 world framework. The `/explore` scene contains **PLACEHOLDER engineering fixtures**, not a reconstruction of Bhaktapur Durbar Square.
+Phase 2 third-person player foundation. The `/explore` scene contains a **temporary capsule player proxy** and **PLACEHOLDER engineering fixtures**, not a reconstruction of Bhaktapur Durbar Square.
 
 ## Development
 
@@ -8,13 +8,13 @@ Use Node.js 22 LTS or newer. Run `npm ci`, then `npm run dev`.
 
 Checks: `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`. Tests use Node's built-in runner and type stripping (Node 22.6+). Serve the production build with `npm start`.
 
-Copy `.env.example` to `.env.local` to enable optional development FPS, physics, metre grid, or spawn diagnostics. Restart the dev server after changing flags. All diagnostics are gated off in production.
+Copy `.env.example` to `.env.local` to enable optional development FPS, physics, metre grid, spawn, or player diagnostics. Restart the dev server after changing flags. All diagnostics are gated off in production. Player telemetry updates DOM text at 5 Hz, without React transform updates.
 
 ## Conventions
 
 - Three.js +Y is up; one world unit is one metre.
 - App routes and website content live in `src/app`; the client-only Canvas lives in `src/game`, with engineering fixtures in `src/game/world`.
-- `src/game/world/world-config.ts` centralizes units, ground, gravity, and the temporary camera. `spawn-config.ts` defines the default ground-level foot position `[0, 0.05, 7]` with zero rotation (forward is local -Z).
+- `src/game/world/world-config.ts` centralizes units, ground, gravity, and the retained world inspection camera configuration. Gameplay now uses the camera in `src/game/player/player-config.ts`; OrbitControls are removed. `spawn-config.ts` defines the default ground-level foot position `[0, 0.05, 7]` with zero rotation (forward is local -Z).
 - The synthetic course includes a 0.15 m step, five 0.18 m stairs with 0.3 m treads, a 1 m rise / 4 m run ramp, a 1 m × 2.1 m doorway, walls, obstacles, and an open upper floor at 2.7 m. The upper floor is a collision/camera fixture; no player or access controller exists yet.
 - `src/lib` holds small configurations; `src/types` holds shared types. LOW/MEDIUM/HIGH remain a type foundation; `renderingConfig` is a single neutral baseline with capped DPR and a 1024 px shadow map.
 - `World` separates environment lighting, ground, static test fixtures, and development spawn/grid markers. Visible boxes and explicit cuboid colliders share the same fixture data.
@@ -24,7 +24,15 @@ Copy `.env.example` to `.env.local` to enable optional development FPS, physics,
 - `public/assets` reserves model, animation, texture, and audio locations. No real assets are included.
 - Future real-world assets must distinguish VERIFIED, APPROXIMATE, and PLACEHOLDER evidence status.
 
-Third-person controls, real heritage assets, NPCs, heritage data, and backend/AI systems are outside this phase.
+## Player and manual checks
+
+Click the scene, use WASD to move relative to camera yaw, hold Shift to run, move the mouse to look, and press Escape to release. Click again to resume. If capture is unavailable, focus the scene and drag to look. Inputs clear on blur, release, hidden tabs, or form focus; browser shortcuts are preserved.
+
+The 1.75 m kinematic capsule uses Rapier's character controller at the world's fixed 60 Hz timestep, 2.3 / 5 m/s walk/run targets, 0.25 m autosteps, a 45° climb limit, and gravity from world config. A 1.5 cm collision skin is intentional. The proxy/model attachment, movement helpers, physics, input, and sphere-sweep follow camera are separate modules. No jumping is implemented.
+
+**Human manual testing is required.** Check cardinal/diagonal movement and stopping; Shift running; stationary camera orbit and pitch limits; the low step/stairs on the left, ramp/platform on the right, doorway ahead, and walls/obstacles; stepping off the accessible landings; camera retraction/recovery near walls; Escape/re-entry, form focus, and tab switching. Run backward off the ground to test automatic reset below Y = -8 m. Use player/physics debug flags to inspect position, grounding, speed, and camera distance. Headless tests do not validate subjective feel.
+
+Final human assets, animation, real heritage assets, NPCs, heritage data, and backend/AI systems remain outside this phase.
 
 ## Tooling limitation
 
