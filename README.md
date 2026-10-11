@@ -1,6 +1,6 @@
 # BhaktapurXR
 
-Phase 5 early 3D heritage environment. Home Explore and `/explore` open a walkable procedural square: 14 UNESCO-anchored architectural interpretations, eight separate placeholder context buildings, generated masonry/paving, roofs, timber facades and simple collision. Architectural dimensions are APPROXIMATE; source traces remain unchanged. Human visual approval is required.
+Phase 5B landmark reconstruction. Home Explore and `/explore` open the preserved UNESCO layout with provisional palace, stone shikhara, pagoda, octagonal pavilion and column families. Unresolved structures remain neutral; dimensions and bindings remain APPROXIMATE. Ten separate PLACEHOLDER context buildings frame the perimeter. Human visual approval is required.
 
 See [architecture conventions](docs/architecture.md) for assumptions, materials, collision, quality settings and limitations.
 
@@ -42,4 +42,4 @@ TypeScript 6 and ESLint 9 are pinned for compatibility with the current Next.js 
 
 Development may log upstream Three.js Clock and Rapier initialization deprecation warnings. They do not prevent rendering or physics initialization; no warnings are suppressed.
 
-See [world data conventions](docs/world-data.md) for sources, calibration, accuracy, origins, measurement entry, and world modes. Run `npm run spatial:check` to validate/report the spatial pipeline. Source-pixel traces and development-only `/reconstruction` comparison are included. No detailed architecture is included. Supplied originals remain under `reference/bhaktapur/unesco/`; production exploration does not load them.
+See [world data conventions](docs/world-data.md) for sources, calibration, accuracy, origins, measurement entry, and world modes. Run `npm run spatial:check` to validate/report the spatial pipeline. Source-pixel traces and development-only `/reconstruction` comparison are included. Landmark architecture is approximate; see the identity registry and architecture conventions. Supplied originals remain under `reference/bhaktapur/unesco/`; production exploration does not load them.

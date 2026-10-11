@@ -6,6 +6,7 @@ import { localMapSource, mapCalibrations } from "@/data/world/map-measurements";
 import { spatialFeatures } from "@/data/world/spatial-registry";
 import { localPointToMap } from "@/lib/map-calibration";
 import type { SpatialFeature } from "@/types/spatial";
+import { monumentIdentities, supplementalSpatialFeatures } from "@/data/architecture/monuments";
 
 function projectedPath(f: SpatialFeature): string {
   const calibration = mapCalibrations.find(c => c.id === f.calibrationId)!;
@@ -18,6 +19,7 @@ export function TraceReview() {
   const [opacity, setOpacity] = useState(0.8);
   const [outlines, setOutlines] = useState(true);
   const [focus, setFocus] = useState(true);
+  const [supplements,setSupplements]=useState(false);
   return <main className="min-h-svh bg-stone-100 p-4 text-stone-800">
     <header className="flex flex-wrap items-center gap-5 pb-4 text-sm">
       <Link href="/explore?world=bhaktapur">Back to Bhaktapur</Link>
@@ -25,6 +27,7 @@ export function TraceReview() {
       <label>Source opacity <input aria-label="Source opacity" type="range" min="0" max="1" step="0.05" value={opacity} onChange={e => setOpacity(Number(e.target.value))} /></label>
       <label><input type="checkbox" checked={outlines} onChange={e => setOutlines(e.target.checked)} /> Runtime outlines</label>
       <label><input type="checkbox" checked={focus} onChange={e => setFocus(e.target.checked)} /> Principal square detail</label>
+      <label><input type="checkbox" checked={supplements} onChange={e=>setSupplements(e.target.checked)} /> Provisional supplementary anchors</label>
     </header>
     <p className="mb-3 text-xs">Runtime local-metre geometry projected back into full source pixels. Brown core (main sector only), blue buffer, green open space, dark monument footprints, gray ordinary buildings. No heights or named identities inferred.</p>
     <svg data-trace-review viewBox={focus ? "740 1090 750 650" : `0 0 ${localMapSource.width} ${localMapSource.height}`} className="h-[78svh] w-full border border-stone-300 bg-white" aria-label="UNESCO raster and projected runtime traces">
@@ -32,7 +35,11 @@ export function TraceReview() {
       {outlines && projected.map(({ feature: f, path }) => <path key={f.id} data-feature-id={f.id} d={path} fill="none" fillRule="evenodd" stroke={f.kind === "core-boundary" ? "#af6234" : f.kind === "buffer-boundary" ? "#3379a0" : f.kind === "open-square" ? "#438463" : f.footprintClass === "monument" ? "#a24352" : "#5f6687"} strokeWidth={focus ? 1.5 : 3}>
         <title>{`${f.id} · ${f.footprintClass ?? f.kind} · ${f.accuracy}\n${f.uncertaintyNote}`}</title>
       </path>)}
+      {supplements&&supplementalSpatialFeatures.map(f=><path key={f.id} data-supplement-id={f.id} d={projectedPath(f)} fill="none" stroke="#a45d09" strokeDasharray="3 2" strokeWidth="1.5"><title>{`${f.id} · APPROXIMATE · PROVISIONALLY_IDENTIFIED\n${f.uncertaintyNote}`}</title></path>)}
       <circle cx={mapCalibrations[0].origin[0]} cy={mapCalibrations[0].origin[1]} r="4" fill="#267d61"><title>Engineering origin; geographic tie unresolved</title></circle>
     </svg>
+    <details className="mt-4 text-xs"><summary>Phase 5B identity audit — provisional bindings, no verified dimensions</summary>
+      <ul>{monumentIdentities.map(m=><li key={m.id} className="py-1">{m.canonicalName??"Unnamed footprint"} · {m.sourceFootprintId??"No spatial binding"} · {m.architectureType} · {m.reconstructionState} · {m.confidence}<br />{m.mappingRationale}</li>)}</ul>
+    </details>
   </main>;
 }

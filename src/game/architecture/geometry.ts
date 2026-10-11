@@ -1,4 +1,12 @@
-import { BufferGeometry, Float32BufferAttribute, Shape, Path, ExtrudeGeometry } from "three";
+import { BufferGeometry, Float32BufferAttribute, Shape, Path, ExtrudeGeometry, LatheGeometry, Vector2 } from "three";
+import type { ProfilePiece } from "./landmark-families.ts";
+
+export function profileGeometry(piece:ProfilePiece) {
+  const indexed=new LatheGeometry(piece.profile.map(([r,y])=>new Vector2(r,y)),piece.segments);
+  const geometry=indexed.toNonIndexed();indexed.dispose();
+  if(piece.role==="octagonal-roof")geometry.rotateY(Math.PI/8);
+  geometry.translate(...piece.position);return geometry;
+}
 import type { LocalPoint, SpatialFeature } from "../../types/spatial.ts";
 import { pointInsidePolygon } from "../../lib/map-calibration.ts";
 import { architectureParameters as p } from "../../data/architecture/config.ts";

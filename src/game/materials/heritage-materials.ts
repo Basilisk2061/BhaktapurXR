@@ -4,6 +4,7 @@ export const materialDefinitions = {
   brick: { color:"#d8c7b7", roughness:.94 }, timber: { color:"#4c3628", roughness:.87 },
   stone: { color:"#a8a090", roughness:.97 }, roof: { color:"#c1b3a3", roughness:.93 },
   paving: { color:"#cabbaa", roughness:.98 }, recess: { color:"#30271e", roughness:1 },
+  gold: { color:"#bb9144", roughness:.8, metalness:.65 },
 } as const;
 export type HeritageMaterial = keyof typeof materialDefinitions;
 export type HeritageMaterials = Record<HeritageMaterial,MeshStandardMaterial>;
@@ -18,7 +19,7 @@ export function generatedTexture(kind:"brick"|"roof"|"paving") {
     const col=Math.floor((x+offset)/brickWidth),line=(x+offset)%brickWidth<1 || y%rowHeight<1;
     const noise=((Math.imul(x+1,374761393)^Math.imul(y+1,668265263))>>>0)%17-8;
     const variation=((row*31+col*17)%13)-6;
-    const base=kind==="paving"?[163,140,121]:kind==="roof"?[133,102,82]:[180,124,98];
+    const base=kind==="paving"?[150,96,74]:kind==="roof"?[133,102,82]:[180,124,98];
     const i=(y*size+x)*4;
     for(let c=0;c<3;c++) data[i+c]=line?(kind==="roof"?62:110):base[c]+noise+variation;
     data[i+3]=255;
