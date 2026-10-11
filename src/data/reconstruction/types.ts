@@ -1,6 +1,7 @@
 export const accuracyClasses=["VERIFIED","SOURCE_DERIVED","PHOTO_INFERRED","APPROXIMATE","PLACEHOLDER","UNRESOLVED"] as const;
 export type AccuracyClass=typeof accuracyClasses[number];
 export type Point=[number,number];
+export type PlanRepresentation="FOOTPRINT"|"POINT_SYMBOL"|"ICON"|"LEADER_LABEL"|"TEXT_ONLY"|"NONE";
 export type GeographicPosition={latitude:number;longitude:number};
 export type GeospatialStatus="UNASSESSED"|"CONSISTENT"|"LOW_PRECISION"|"OUTLIER"|"CAMERA_POSITION_ONLY"|"DUPLICATED_SUSPECT"|"UNRESOLVED";
 export interface GeographicEvidence {role:"OBJECT_LOCATION"|"CAMERA_LOCATION"|"UNVERIFIED_CANDIDATE";usage:"GEOSPATIAL_SANITY_CHECK"|"APPROXIMATE_GEOREFERENCE";sourceReferences:string[];provenance:string;uncertaintyMetres:number|null;independenceGroup:string}
@@ -16,5 +17,6 @@ export interface ReconstructionObject {
   sourcePixels:Point[]|null;positionEvidence:Evidence;footprintEvidence:Evidence;heightEvidence:Evidence;
   presence:{state:"INVENTORY_SUPPORTED"|"RESTORATION_DOCUMENTED"|"UNRESOLVED";sourceReferences:string[];asOf:string};
   footprintRole:"PUBLIC_EDGE"|"PLAN_OUTLINE"|"SYMBOL_EXTENT"|"NONE";
+  planRepresentation?:PlanRepresentation;positionUncertaintyMeters?:number;
   geographicPosition?:GeographicPosition|null;geographicEvidence?:GeographicEvidence|null;geospatialResidual?:number|null;geospatialStatus?:GeospatialStatus;
 }

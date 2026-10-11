@@ -1,4 +1,5 @@
 import type {ReconstructionSource} from "./types.ts";
+import {forecourtSources} from "./forecourt-sources.ts";
 import {presentDaySources} from "./present-day-sources.ts";
 export const reconstructionSources:ReconstructionSource[]=[
  {id:"municipality-ward3",title:"Ward No. 3 heritage inventory",author:"Bhaktapur Municipality",publisher:"Bhaktapur Municipality",year:2022,url:"https://bhaktapurmun.gov.np/en/content/ward-no-3",sourceType:"OFFICIAL_INVENTORY",license:null,period:"Published 25 May 2022",access:"Official page text inspected",notes:"Lists Krishna, Kedarnath, Jagannath, Badrinath and Rameshwar separately. Ward-wide inventory does not resolve exact Krishna/Gopinath footprint correspondence or orientations."},
@@ -14,5 +15,5 @@ export const reconstructionSources:ReconstructionSource[]=[
  {id:"unesco-restoration",title:"Kathmandu Valley state of conservation 2022",author:"Government of Nepal",publisher:"UNESCO World Heritage Centre",year:2022,url:"https://whc.unesco.org/document/191662",sourceType:"HERITAGE_DOCUMENTATION",license:null,period:"2022 restoration reporting",access:"Indexed inventory inspected",notes:"Silu/Shilu Mahadev reconstruction documentation; not a certified 2026 as-built map."},
  {id:"palace-local",title:"User-supplied palace front-01 / oblique-01",author:"Unknown; supplied by repository owner",publisher:"Local reference collection",year:null,url:"reference/landmarks/55-window-palace/photos/",sourceType:"PHOTOGRAPH",license:null,period:"Date unresolved",access:"Visually inspected in Phase 5B, retained unchanged",notes:"Supports public-facing sections and window-frontage character only. No measured dimensions, no current-date claim; not packaged as production assets."},
 ];
-reconstructionSources.push(...presentDaySources);
+reconstructionSources.push(...presentDaySources,...forecourtSources);
 export const sourceById=Object.fromEntries(reconstructionSources.map(s=>[s.id,s]));
