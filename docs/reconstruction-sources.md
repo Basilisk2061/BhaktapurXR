@@ -40,3 +40,9 @@ Published existence of accurate recording is confirmed. No reusable raw square p
 ## Accuracy policy
 
 VERIFIED requires direct reliable dimensional/geospatial evidence. SOURCE_DERIVED describes explicit identified plan tracing; it does not verify metre scale or contemporary condition. PHOTO_INFERRED requires multiple inspected photographs supporting the inference: none is asserted here. APPROXIMATE includes constraint-based metre positions, analyst plaza envelope and estimated octagon. PLACEHOLDER is reserved for development context: none is added. UNRESOLVED uses null values, explicit direction state and notes, not convenient defaults. Per-field evidence overrides a broad record class when interpreting dimensions.
+
+## Phase 6B update (supersedes Phase 6A open research status)
+
+The original Phase 6A evidence and source geometry are retained. Phase 6B adds inspected dated 2021 central/western photographs, a 2022 restored Silu photograph, a 2024 Chyasilin close-up, separate object/camera coordinate records and a held-out OSM contributor point. External photograph authors/licences and every anchor's provenance are in `src/data/reconstruction/present-day-sources.ts`; photographs are not packaged. Gopinath correspondence is now provisional/APPROXIMATE, two bell placements are PHOTO_INFERRED, and Kedarnath/eastern Vatsala/Golden Spout remain unresolved. Prior claims that no photo inference or geographic origin exists apply only to the immutable Phase 6A layer.
+
+See [present-day spatial verification](present-day-spatial-verification.md) for the full fit/residual ledger, rejected/duplicate/camera points, source conflicts, restoration drawing-access findings and manual protocol. No ordinary GPS or provisional identity has been promoted to VERIFIED; source-derived linework is not measured present-day geometry. Rigid scale preserves the archaeological constraint; similarity is sensitivity comparison only.
