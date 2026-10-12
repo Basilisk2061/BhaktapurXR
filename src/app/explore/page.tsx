@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveWorldMode } from "@/game/world/world-mode";
-import {resolvePlazaReview as resolveArchitectureReview} from "@/game/world/plaza-review";
+import {resolveWestReview as resolveArchitectureReview} from "@/game/world/west-review";
 import { Experience } from "@/components/experience";
 
 export const metadata: Metadata = { title: "Explore" };
