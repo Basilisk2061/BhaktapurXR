@@ -22,6 +22,7 @@ interface ExperienceCanvasProps {
   spawn:SpawnPoint;
   reviewCamera:boolean;
   architecturalDebug:boolean;
+  silhouette:boolean;
   mode: WorldMode;
   onReady: () => void;
   onUnavailable: () => void;
@@ -49,7 +50,7 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, reviewCamera }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   return (
     <Canvas
@@ -63,7 +64,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
-          <World mode={mode} architecturalDebug={architecturalDebug} />
+          <World mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <SceneReady onReady={onReady} />
         </Physics>

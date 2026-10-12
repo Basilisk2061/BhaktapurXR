@@ -9,11 +9,11 @@ import { BhaktapurWorld } from "./bhaktapur-world";
 import { worldSpawns, type WorldMode } from "./world-mode";
 import { HeritageDaylight } from "@/game/architecture/daylight";
 
-export function World({ mode, architecturalDebug=false }: { mode: WorldMode; architecturalDebug?:boolean }) {
+export function World({ mode, architecturalDebug=false, silhouette=false }: { mode: WorldMode; architecturalDebug?:boolean;silhouette?:boolean }) {
   return (
     <>
       {mode === "BHAKTAPUR" ? <HeritageDaylight /> : <><Environment /><Ground config={worldConfig.ground} name="engineering-ground" /></>}
-      {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld architecturalDebug={architecturalDebug} />}
+      {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld architecturalDebug={architecturalDebug} silhouette={silhouette} />}
       {developmentConfig.spawnMarker && <SpawnMarker spawn={worldSpawns[mode]} />}
       {developmentConfig.worldDebug && (
         <group position={[0, 0.01, 0]}>
