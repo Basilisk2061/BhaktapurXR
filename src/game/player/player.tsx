@@ -49,6 +49,11 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       return;
     }
     const delta = safeDelta(worldConfig.physicsTimeStep, playerConfig.maxDelta);
+    if (motion.flying !== controls.flying) {
+      motion.flying = controls.flying;
+      motion.velocity.y = 0;
+      motion.grounded = false;
+    }
     const keys = controls.keys;
     const forward = controls.active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0;
     const right = controls.active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0;
@@ -57,6 +62,13 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     cameraRelativeDirection(forward, right, controls.yaw, direction);
     const slowing = (forward === 0 && right === 0) || Math.hypot(motion.velocity.x, motion.velocity.z) > speed;
     approachVelocity(motion.velocity, direction, speed, slowing ? playerConfig.deceleration : playerConfig.acceleration, delta);
+    if (motion.flying) {
+      const vertical = controls.active ? Number(keys.has("Space")) - Number(keys.has("ControlLeft") || keys.has("ControlRight")) : 0;
+      const target = vertical * speed;
+      const rate = vertical === 0 ? playerConfig.deceleration : playerConfig.acceleration;
+      motion.velocity.y += Math.sign(target - motion.velocity.y) * Math.min(Math.abs(target - motion.velocity.y), rate * delta);
+      controls.jumpRequested = false;
+    }
     stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS, consumeJump(controls, motion.grounded));
     motion.movement = movementState(motion.grounded, motion.horizontalSpeed, running, playerConfig.movementThreshold);
     if (motion.horizontalSpeed > playerConfig.movementThreshold) {

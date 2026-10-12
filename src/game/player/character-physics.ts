@@ -20,18 +20,20 @@ export function stepCharacter(
   runtime: PlayerRuntime, delta: number, config: PlayerConfig, gravityY: number,
   filterFlags: QueryFilterFlags, jump = false,
 ): void {
-  if (jump && runtime.grounded) {
+  if (!runtime.flying && jump && runtime.grounded) {
     runtime.velocity.y = Math.sqrt(-2 * gravityY * config.jumpHeight);
     runtime.grounded = false;
   }
-  runtime.velocity.y = runtime.grounded
+  if (!runtime.flying) runtime.velocity.y = runtime.grounded
     ? -config.physics.groundStickSpeed
     : Math.max(runtime.velocity.y + gravityY * delta, -config.physics.terminalFallSpeed);
   const desired = runtime.desiredTranslation;
   desired.x = runtime.velocity.x * delta;
   desired.y = runtime.velocity.y * delta;
   desired.z = runtime.velocity.z * delta;
-  if (runtime.velocity.y > 0) controller.disableSnapToGround();
+  if (runtime.flying) controller.disableAutostep();
+  else controller.enableAutostep(config.physics.stepHeight, config.physics.stepMinWidth, false);
+  if (runtime.flying || runtime.velocity.y > 0) controller.disableSnapToGround();
   else controller.enableSnapToGround(config.physics.snapDistance);
   controller.computeColliderMovement(collider, desired, filterFlags);
   const corrected = controller.computedMovement();
@@ -39,7 +41,7 @@ export function stepCharacter(
   runtime.nextPosition.x = position.x + corrected.x;
   runtime.nextPosition.y = position.y + corrected.y;
   runtime.nextPosition.z = position.z + corrected.z;
-  runtime.grounded = runtime.velocity.y <= 0 && controller.computedGrounded();
+  runtime.grounded = !runtime.flying && runtime.velocity.y <= 0 && controller.computedGrounded();
   // Stop upward velocity when a ceiling blocks the requested ascent.
   if (desired.y > 0 && corrected.y < desired.y * 0.5) runtime.velocity.y = 0;
   runtime.horizontalSpeed = delta > 0 ? Math.hypot(corrected.x, corrected.z) / delta : 0;

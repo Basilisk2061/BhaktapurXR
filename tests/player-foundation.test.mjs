@@ -5,6 +5,7 @@ import { Euler, Quaternion } from "three";
 import { playerConfig, bodySpawnPosition } from "../src/game/player/player-config.ts";
 import { cameraRelativeDirection, approachVelocity, dampAngle, movementState, safeDelta } from "../src/game/player/movement.ts";
 import { createCharacterController, stepCharacter } from "../src/game/player/character-physics.ts";
+import { createPlayerInput, pressGameplayKey, consumeJump } from "../src/game/input/player-input.ts";
 import { createPlayerRuntime } from "../src/game/player/player-runtime.ts";
 import { defaultSpawn } from "../src/game/world/spawn-config.ts";
 import { worldConfig } from "../src/game/world/world-config.ts";
@@ -216,4 +217,67 @@ test("jump landing works on stair and ramp platforms and ceilings stop ascent", 
       if (position[0] === 6) assert.ok(apex - base < 1, "Upper floor blocks ascent");
     } finally { p.free(); }
   }
+});
+
+test("single Space jumps immediately; only fresh double presses toggle flight within 350ms", () => {
+  const input = createPlayerInput(0, 0);
+  input.active = true;
+  pressGameplayKey(input, "Space", false, 1000);
+  assert.equal(consumeJump(input, true), true);
+  pressGameplayKey(input, "Space", true, 1100);
+  assert.equal(input.flying, false);
+  input.keys.delete("Space");
+  pressGameplayKey(input, "Space", false, 1300);
+  assert.equal(input.flying, true);
+  assert.equal(consumeJump(input, true), false);
+  input.keys.delete("Space");
+  pressGameplayKey(input, "Space", false, 2000);
+  input.keys.delete("Space");
+  pressGameplayKey(input, "Space", false, 2300);
+  assert.equal(input.flying, false);
+  assert.equal(consumeJump(input, true), false);
+  input.keys.delete("Space");
+  pressGameplayKey(input, "Space", false, 3000);
+  assert.equal(consumeJump(input, true), true);
+  input.keys.delete("Space");
+  pressGameplayKey(input, "Space", false, 3400);
+  assert.equal(input.flying, false);
+  assert.equal(consumeJump(input, true), true);
+});
+
+test("flight hovers, ascends, descends and restores gravity, grounding and jump", () => {
+  const p = createTestPlayer([0, 4, 7]);
+  try {
+    p.runtime.flying = true;
+    const initial = p.body.translation().y;
+    for (let i = 0; i < 60; i++) p.step();
+    closeTo(p.body.translation().y, initial);
+    p.runtime.velocity.y = playerConfig.walkSpeed;
+    for (let i = 0; i < 30; i++) p.step();
+    assert.ok(p.body.translation().y > initial + 1);
+    p.runtime.velocity.y = -playerConfig.walkSpeed;
+    for (let i = 0; i < 30; i++) p.step();
+    closeTo(p.body.translation().y, initial, 0.001);
+    assert.equal(p.runtime.grounded, false);
+    p.runtime.flying = false;
+    p.runtime.velocity.y = 0;
+    p.step();
+    assert.ok(p.runtime.velocity.y < 0);
+    for (let i = 0; i < 120; i++) p.step();
+    assert.equal(p.runtime.grounded, true);
+    p.step(0, 0, true);
+    assert.ok(p.runtime.velocity.y > 0);
+  } finally { p.free(); }
+});
+
+test("flight retains wall and ground collisions", () => {
+  const p = createTestPlayer([-7, 0.05, -3]);
+  try {
+    p.runtime.flying = true;
+    p.runtime.velocity.y = -playerConfig.walkSpeed;
+    for (let i = 0; i < 120; i++) p.step(-playerConfig.runSpeed, 0);
+    assert.ok(p.body.translation().x > -8.58);
+    assert.ok(p.body.translation().y >= playerConfig.height / 2);
+    assert.equal(p.runtime.grounded, false);
+  } finally { p.free(); }
 });

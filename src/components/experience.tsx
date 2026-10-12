@@ -11,7 +11,7 @@ import { type WorldMode } from "@/game/world/world-mode";
 import { plazaExperienceSpawn } from "@/game/world/plaza-review";
 import { WorldDataDiagnostics } from "./world-data-diagnostics";
 import { developmentConfig } from "@/lib/development-config";
-import { PlayerDiagnostics } from "./player-diagnostics";
+import { FlyModeIndicator, PlayerDiagnostics } from "./player-diagnostics";
 
 const ExperienceCanvas = dynamic(() => import("@/game/experience-canvas"), {
   ssr: false,
@@ -38,6 +38,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette }: { m
         {pointerStatus === "locked" ? "WASD move · Shift run · Space jump · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump · Esc release" : "Click to control camera · WASD move · Shift run · Space jump · Esc release mouse"}
       </p>}
       {developmentConfig.worldData && <WorldDataDiagnostics mode={mode} />}
+      {process.env.NODE_ENV === "development" && <FlyModeIndicator input={input} />}
       {developmentConfig.playerDebug && <PlayerDiagnostics input={input} runtime={runtime} />}
     </>
   );

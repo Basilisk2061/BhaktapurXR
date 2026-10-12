@@ -17,3 +17,14 @@ export function PlayerDiagnostics({ input, runtime }: { input: RefObject<PlayerI
   }, [input, runtime]);
   return <pre ref={output} className="pointer-events-none absolute right-3 top-3 z-10 rounded-sm bg-stone-100/90 p-3 text-[11px] leading-relaxed text-stone-700" aria-label="Development player diagnostics" />;
 }
+
+export function FlyModeIndicator({ input }: { input: RefObject<PlayerInput> }) {
+  const output = useRef<HTMLParagraphElement>(null);
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      if (output.current) output.current.hidden = !input.current.flying;
+    }, playerConfig.diagnosticsInterval);
+    return () => window.clearInterval(timer);
+  }, [input]);
+  return <p ref={output} hidden className="pointer-events-none absolute bottom-16 left-4 rounded-sm bg-stone-100/90 px-3 py-2 text-xs text-stone-700">FLY MODE</p>;
+}
