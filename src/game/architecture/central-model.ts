@@ -2,6 +2,7 @@ import {landmarkSpecifications,frozenArchitectureAnchors,specificationById,vatsa
 import {applyFit} from "../../data/reconstruction/geographic-frame.ts";
 import {adoptedFit} from "../../data/reconstruction/present-day.ts";
 import {openSpaces} from "../../data/reconstruction/open-spaces.ts";
+import {proportionParameters as proportions} from "../../data/reconstruction/architecture/proportions.ts";
 import type {SolidBox} from "./geometry.ts";
 export type CentralMaterial="brick"|"timber"|"stone"|"roof"|"paving"|"recess"|"gold"|"bronze"|"plaster"|"neutral"|"shutter";
 export interface CentralBox extends SolidBox {material:CentralMaterial;role:string;tilt?:number}
@@ -19,7 +20,7 @@ function shape(m:CentralModel,x:number,y:number,z:number,p:[number,number][],dep
 function roof(m:CentralModel,x:number,y:number,z:number,w:number,d:number,rise:number,role:string,material:CentralMaterial="roof"){m.roofs.push({position:point(m,x,y,z),width:w,depth:d,rise,yaw:m.yaw,material,role});}
 function steppedBase(m:CentralModel,w:number,d:number,height:number,levels:number,material:CentralMaterial="stone"){for(let i=0;i<levels;i++){const h=height/levels;box(m,0,(i+.5)*h,0,w-i*(levels>5?.09:.23),h,d-i*(levels>5?.09:.23),material,"stepped-base",true);}}
 function latticeWindow(m:CentralModel,x:number,y:number,z:number,w:number,h:number,peaked=false,open=false){
- box(m,x,y,z,w+.18,h+.2,.2,"timber","window-frame");if(!open)box(m,x,y,z+.12,w-.1,h-.08,.07,"recess","window-recess");
+ if(!open)box(m,x,y,z,w+.18,h+.2,.2,"timber","window-frame");if(!open)box(m,x,y,z+.12,w-.1,h-.08,.07,"recess","window-recess");
  for(const side of [-1,1])box(m,x+side*w/2,y,z+.19,.09,h+.3,.18,"timber","carved-jamb");
  for(const band of [-1,1])box(m,x,y+band*h/2,z+.19,w+.35,.14,.25,"timber","window-cornice");
  for(let i=1;i<7;i++)box(m,x-w/2+i*w/7,y,z+.2,.024,h,.03,"timber","window-lattice");
@@ -27,28 +28,39 @@ function latticeWindow(m:CentralModel,x:number,y:number,z:number,w:number,h:numb
  if(peaked){shape(m,x,y+h/2+.12,z+.18,[[-w*.7,0],[-w*.5,.18],[-w*.2,.26],[0,.55],[w*.2,.26],[w*.5,.18],[w*.7,0]],.16,"timber","window-torana");box(m,x,y-h/2-.15,z+.15,w+.45,.13,.4,"timber","projecting-sill");}
 }
 function palaceBand(m:CentralModel,w:number,z:number,bays:number){
- box(m,0,6.24,z+.15,w,.3,.65,"timber","gallery-projected-sill");box(m,0,8.37,z+.22,w+.2,.26,.62,"timber","gallery-header");
- const pitch=w/bays;
- for(let i=0;i<bays;i++){const x=-w/2+(i+.5)*pitch;latticeWindow(m,x,7.3,z+.29,pitch*.78,1.82,false);
- box(m,x,6.62,z+.47,pitch*.81,.14,.14,"timber","carved-gallery-panel");
- shape(m,x,8.08,z+.32,[[-pitch*.45,0],[0,.31],[pitch*.45,0]],.15,"timber","gallery-peaked-crest");
- box(m,x,5.99,z+.2,.16,.42,.58,"timber","gallery-bracket");
+ const projection=proportions.palace.upperProjection;
+ box(m,0,7.25,z+.32,w,proportions.palace.bandHeight,.28,"timber","continuous-carved-gallery");
+ box(m,0,6.24,z+.25,w,.25,.9,"timber","gallery-projected-sill");box(m,0,8.37,z+.35,w+.2,.22,.82,"timber","gallery-header");
+ const pitch=w/bays,groupEnds=new Set(proportions.palace.groupModules.reduce<number[]>((ends,n)=>[...ends,(ends.at(-1)??0)+n],[]));
+ for(let i=0;i<bays;i++){const x=-w/2+(i+.5)*pitch;
+ latticeWindow(m,x,7.3,z+projection,pitch*.8,1.9,false);
+ box(m,x,6.62,z+projection+.18,pitch*.81,.14,.18,"timber","carved-gallery-panel");
+ shape(m,x,8.08,z+projection+.08,[[-pitch*.45,0],[0,.31],[pitch*.45,0]],.18,"timber","gallery-peaked-crest");
+ box(m,x,5.99,z+.3,.13,.4,.85,"timber","gallery-bracket");
+ if(groupEnds.has(i+1)&&i<bays-1)box(m,x+pitch/2,7.3,z+projection+.23,.13,2.15,.2,"timber","gallery-group-mullion");
  }
 }
 function palace(m:CentralModel,gallery:boolean){const s=specificationById[m.id],w=s.baseDimensions[0].value!,depth=5;
  box(m,0,.22,-depth/2,w,.44,depth+.35,"stone","palace-foundation",true);
  box(m,0,4.45,-depth/2,w,8.05,depth,"brick","palace-masonry",true);
  if(gallery){
-  for(const y of [3.02,6.05])box(m,0,y,.08,w,.17,.28,"stone","gallery-pale-band");
-  const redWidth=w*.65,whiteWidth=w-redWidth;
-  for(let row=0;row<3;row++)for(let i=0;i<7;i++){const x=-w/2+(i+.5)*redWidth/7;if(row===2&&i%2===1)continue;latticeWindow(m,x,1.6+row*2.75,.1,i%2? .65:1.5,row===0?1.7:1.5,false);}
-  const start=w/2-whiteWidth;
-  box(m,start+whiteWidth/2,3.75,.07,whiteWidth,6.65,.18,"plaster","gallery-pale-eastern-arcade");
-  for(let i=0;i<5;i++){const x=start+(i+.5)*whiteWidth/5;for(const y of [1.7,4.65]){
-   shape(m,x,y-1,.2,([[-.64,0],...Array.from({length:9},(_,i)=>{const angle=Math.PI-i*Math.PI/8;return [.64*Math.cos(angle),1.65+.64*Math.sin(angle)] as [number,number]}),[.64,0]] as [number,number][]),.1,"recess","gallery-arched-opening");
-   box(m,x,y,.32,1.1,1.85,.08,"shutter","gallery-red-shutters");
-   for(const side of [-1,1])box(m,x+side*.78,y+.12,.3,.13,2.5,.2,"stone","arcade-pilaster");
-  }}
+  for(const y of [3.02,6.05])box(m,0,y,.08,w,.14,.3,"stone","gallery-pale-band");
+  const whiteWidth=w*proportions.gallery.paleFraction,redWidth=w-whiteWidth,start=w/2-whiteWidth;
+  // Reference grouping: sparse upper rooms, alternating middle openings and doors/slits below.
+  const rows=[{y:1.6,centres:[.08,.26,.45,.65,.87],widths:[1.25,.7,1.35,.7,1.25],heights:[2.15,.65,2.15,.65,2.15]},
+   {y:4.45,centres:[.07,.29,.46,.63,.88],widths:[1.65,.65,1.35,.65,1.5],heights:[1.6,.7,1.5,.7,1.6]},
+   {y:7.2,centres:[.12,.49,.87],widths:[1.75,1.75,1.55],heights:[1.45,1.55,1.4]}];
+  for(const row of rows)row.centres.forEach((fraction,i)=>latticeWindow(m,-w/2+fraction*redWidth,row.y,.13,row.widths[i],row.heights[i],false));
+  box(m,start+whiteWidth/2,4.43,.09,whiteWidth,8,.2,"plaster","gallery-pale-eastern-arcade");
+  for(const y of [3.28,3.51,7.97])box(m,start+whiteWidth/2,y,.25,whiteWidth+.18,.14,.44,"plaster","gallery-arcade-cornice");
+  const arch=(x:number,y:number,width:number,height:number,role:string)=>shape(m,x,y,.32,([[-width/2,0],...Array.from({length:13},(_,i)=>{const angle=Math.PI-i*Math.PI/12;return [width/2*Math.cos(angle),height-width/2+width/2*Math.sin(angle)] as [number,number]}),[width/2,0]] as [number,number][]),.16,"recess",role);
+  // Lower level is an open arcade: no duplicate shutters from the upper rooms.
+  for(const fraction of proportions.gallery.groundArcadeFractions){const x=start+fraction*whiteWidth;arch(x,.52,1.12,2.05,"gallery-arched-opening");
+   for(const side of [-1,1]){box(m,x+side*.64,1.7,.47,.11,2.36,.26,"plaster","arcade-pilaster");box(m,x+side*.64,2.7,.52,.22,.16,.32,"plaster","arcade-capital");}}
+  for(const fraction of proportions.gallery.upperRoomFractions){const x=start+fraction*whiteWidth;arch(x,4.26,1.32,2.65,"gallery-upper-arched-room");
+   for(const side of [-1,1])box(m,x+side*.53,5.35,.55,.38,2.1,.12,"shutter","gallery-upper-paired-shutter",false,side*.22);
+   box(m,x,4.18,.47,1.6,.12,.38,"plaster","gallery-upper-window-sill");
+   for(const side of [-1,1])box(m,x+side*.84,5.65,.44,.11,3.4,.2,"plaster","upper-arcade-pilaster");}
   // Simplified guardians mark gallery entrance; sculptural likeness remains approximate.
   for(const side of [-1,1]){const x=start+side*1.2;box(m,x,.45,1.2,.8,.45,1,"stone","guardian-base",true);profile(m,x,.67,1.2,[[.32,0],[.34,.6],[.23,1.25],[.3,1.6],[0,1.7]],"stone","gallery-guardian",10);}
  }else{
@@ -64,69 +76,74 @@ function palace(m:CentralModel,gallery:boolean){const s=specificationById[m.id],
   m.boxes.push(...r.boxes);m.roofs.push(...r.roofs);m.shapes.push(...r.shapes);m.colliders.push(...r.colliders);
  }
  roof(m,0,8.55,-2.5,w+1.8,7, gallery?1.05:1.75,"palace-main-roof");
- box(m,0,8.48,.46,w+1.5,.23,.75,"timber","palace-eaves");
+ box(m,0,8.48,.56,w+1.5,.16,.95,"timber","palace-eaves");
  for(let i=0;i<Math.ceil(w/.85);i++)box(m,-w/2+(i+.5)*w/Math.ceil(w/.85),8.12,.6,.1,.75,1.0,"timber","roof-strut",false,0,-.4);
  for(const side of [-1,1])shape(m,side*(w/2+.8),8.56,-2.5,[[0,0],[side*.24,.55],[side*.4,.65],[side*.27,.06]],.18,"timber","roof-end-finial");
 }
 function gate(m:CentralModel){m.yaw=model("gate-frontage").yaw;
- for(const side of [-1,1]){box(m,side*2.75,2.65,-1.6,2.55,5.3,3.2,"brick","gate-side-masonry",true);box(m,side*.94,1.62,.13,.32,3.25,.38,"gold","gate-relief-jamb",true);for(let i=0;i<8;i++)profile(m,side*.94,.2+i*.36,.37,[[.13,0],[.16,.1],[.11,.22],[0,.28]],"gold","jamb-relief-boss",8);}
+ for(const side of [-1,1]){box(m,side*2.75,2.65,-1.6,2.55,5.3,3.2,"brick","gate-side-masonry",true);box(m,side*.94,1.62,.31,.32,3.25,.6,"gold","gate-relief-jamb",true);for(let i=0;i<8;i++)profile(m,side*.94,.2+i*.36,.68,[[.13,0],[.16,.1],[.11,.22],[0,.28]],"gold","jamb-relief-boss",8);}
  box(m,0,4.78,-1.6,8.05,1.3,3.2,"brick","gate-brick-upper",true);
  box(m,0,3.07,.2,2.35,.23,.48,"gold","gate-lintel");
+ for(const side of [-1,1])for(const inset of [0,.13])box(m,side*(1.1+inset),1.65,.8,.085,3.3,.1,"gold","gate-nested-relief-frame");
  // Lobed peaked torana, carved recess and layered metallic relief silhouette.
  const outer:[number,number][]=[[-1.42,0],[-1.5,.45],[-1.18,.95],[-.92,1.14],[-.76,1.5],[-.35,1.64],[0,1.93],[.35,1.64],[.76,1.5],[.92,1.14],[1.18,.95],[1.5,.45],[1.42,0]];
- shape(m,0,3.22,.09,outer,.32,"gold","gate-lobed-torana");
- shape(m,0,3.35,.43,outer.map(([x,y])=>[x*.77,y*.73]),.05,"bronze","gate-torana-recess");
- for(let i=0;i<11;i++){const theta=Math.PI*i/10;profile(m,1.19*Math.cos(theta),3.52+1.15*Math.sin(theta),.5,[[.12,0],[.15,.12],[.1,.25],[0,.3]],"gold","torana-relief",8);}
- profile(m,0,3.68,.51,[[.28,0],[.2,.32],[.16,.52],[.18,.7],[0,.83]],"gold","central-deity-silhouette",10);
- shape(m,0,4.92,.28,[[-.8,0],[-.62,.35],[-.25,.18],[0,.65],[.25,.18],[.62,.35],[.8,0]],.17,"gold","winged-garuda-crown");
- roof(m,0,5.55,-.9,7.2,2.4,.65,"golden-gate-swept-canopy","gold");
- for(const side of [-1,1])shape(m,side*3.4,5.57,-.9,[[0,0],[side*.32,.65],[side*.12,.75],[-side*.22,.2]],.15,"gold","gate-canopy-upturn");
- for(const x of [-2,-1,0,1,2])profile(m,x,6.15,-.9,[[.16,0],[.2,.2],[.09,.36],[0,.5]],"bronze","canopy-ridge-figure",8);
- roof(m,0,5.42,-2.3,8.5,5,1.05,"gateway-rear-tile-roof");
+ shape(m,0,3.22,.28,outer.map(([x,y])=>[x*proportions.gate.toranaScaleX,y*proportions.gate.toranaScaleY]),proportions.gate.reliefDepth,"gold","gate-lobed-torana");
+ shape(m,0,3.35,.84,outer.map(([x,y])=>[x*.77,y*.73]),.05,"bronze","gate-torana-recess");
+ for(let i=0;i<11;i++){const theta=Math.PI*i/10;profile(m,1.19*Math.cos(theta),3.52+1.15*Math.sin(theta),.92,[[.12,0],[.15,.12],[.1,.25],[0,.3]],"gold","torana-relief",8);}
+ profile(m,0,3.68,.98,[[.28,0],[.2,.32],[.16,.52],[.18,.7],[0,.83]],"gold","central-deity-silhouette",10);
+ // Medium-scale raised relief fan: keeps the torana readable instead of an empty arch.
+ shape(m,0,3.78,1.04,[[-.43,0],[-.6,.15],[-.78,.3],[-.69,.38],[-.37,.2],[-.32,.45],[-.62,.64],[-.56,.74],[-.2,.6],[0,.82],[.2,.6],[.56,.74],[.62,.64],[.32,.45],[.37,.2],[.69,.38],[.78,.3],[.6,.15],[.43,0]],.13,"gold","gate-raised-deity-relief");
+ shape(m,0,4.92,.76,[[-.8,0],[-.62,.35],[-.25,.18],[0,.65],[.25,.18],[.62,.35],[.8,0]],.17,"gold","winged-garuda-crown");
+ roof(m,0,5.55,proportions.gate.canopyCentreZ,6.6,2.4,.65,"golden-gate-swept-canopy","gold");
+ for(const side of [-1,1])shape(m,side*3.1,5.57,proportions.gate.canopyCentreZ,[[0,0],[side*.32,.65],[side*.12,.75],[-side*.22,.2]],.15,"gold","gate-canopy-upturn");
+ for(const x of [-2,-1,0,1,2])profile(m,x,6.15,proportions.gate.canopyCentreZ,[[.16,0],[.2,.2],[.09,.36],[0,.5]],"bronze","canopy-ridge-figure",8);
+ roof(m,0,5.42,proportions.gate.rearRoofCentreZ,8.5,3.5,1.05,"gateway-rear-tile-roof");
 }
 function octagon(m:CentralModel,y:number,r:number,h:number,material:CentralMaterial,role:string){profile(m,0,y,0,[[0,0],[r,0],[r,h],[0,h]],material,role,8);}
 function chya(m:CentralModel){octagon(m,0,2.7,.3,"stone","pavilion-platform");octagon(m,.3,2.53,.48,"brick","pavilion-platform");octagon(m,.78,2.65,.12,"stone","pavilion-landing");
  // Conservative compound octagonal platform, corners outside actual octagon stay open.
  for(let i=0;i<8;i++){const t=i*Math.PI/4;box(m,Math.cos(t)*1.35,.45,Math.sin(t)*1.35,1.8,.9,1.8,"stone","platform-collision-fill",true);}
  for(let i=0;i<5;i++)box(m,0,(i+1)*.18/2,3.35-i*.28,1.4,(i+1)*.18,.3,"stone","pavilion-stair",true);
- for(const tier of [0,1]){const base=tier===0?.9:5.7,h=tier===0?3:1.75,r=tier===0?2.18:1.03;
+ for(const tier of [0,1]){const base=tier===0?.9:proportions.chyasilin.upperBaseY,h=tier===0?proportions.chyasilin.lowerPostHeight:proportions.chyasilin.upperPostHeight,r=tier===0?2.18:1.03;
   for(let i=0;i<8;i++){const t=Math.PI/8+i*Math.PI/4,next=t+Math.PI/4,x=Math.cos(t)*r,z=Math.sin(t)*r;
-   box(m,x,base+h/2,z,.17,h,.17,"timber","pavilion-post",true);
+   box(m,x,base+h/2,z,.15,h,.15,"timber","pavilion-post",true);
    const cx=(Math.cos(t)+Math.cos(next))*r/2,cz=(Math.sin(t)+Math.sin(next))*r/2,len=2*r*Math.sin(Math.PI/8),yaw=-t-Math.PI/8-Math.PI/2;
-   box(m,cx,base+h-.1,cz,len,.25,.25,"timber","pavilion-ring-beam",false,yaw);
-   box(m,cx,base+.68,cz,len,.18,.18,"timber","pavilion-railing",false,yaw);
+   box(m,cx,base+h-.1,cz,len,.18,.2,"timber","pavilion-ring-beam",false,yaw);
+   box(m,cx,base+.68,cz,len,.13,.14,"timber","pavilion-railing",false,yaw);
    const savedOrigin=m.origin,savedYaw=m.yaw;m.origin=[...point(m,cx,0,cz)].filter((_,i)=>i!==1) as [number,number];m.yaw+=yaw;
-   if(tier===0){for(const dx of [-.43,.43])latticeWindow(m,dx,base+1.95,.04,.65,1.35,true,true);}else latticeWindow(m,0,base+.95,.04,len*.7,1.3,false);
+   if(tier===0){for(const dx of [-.43,.43])latticeWindow(m,dx,base+1.95,.04,.65,1.35,true,true);}else latticeWindow(m,0,base+.95,.04,len*.7,1.6,false,true);
    m.origin=savedOrigin;m.yaw=savedYaw;
    box(m,x,base+h-.4,z+.1,.12,.9,.65,"timber","pavilion-eave-strut",false,t,-.5);
   }
-  const roofRadius=tier===0?3.85:1.95,rise=tier===0?1.4:1.2;
-  profile(m,0,base+h,0,[[0,0],[roofRadius,.02],[roofRadius,.14],[roofRadius*.93,.25],[roofRadius*.66,rise*.65],[roofRadius*.2,rise],[0,rise+.08]],"roof","octagonal-pavilion-roof",8);
-  octagon(m,base+h-.08,roofRadius,.15,"timber","pavilion-eaves");
+  const roofRadius=tier===0?proportions.chyasilin.lowerRoofRadius:proportions.chyasilin.upperRoofRadius,rise=tier===0?proportions.chyasilin.lowerRoofRise:proportions.chyasilin.upperRoofRise;
+  profile(m,0,base+h,0,[[0,0],[roofRadius,.02],[roofRadius,.1],[roofRadius*.93,.18],[roofRadius*.66,rise*.65],[roofRadius*.2,rise],[0,rise+.08]],"roof","octagonal-pavilion-roof",8);
+  octagon(m,base+h-.08,roofRadius,.095,"timber","pavilion-eaves");
   for(let side=0;side<8;side++){const angle=side*Math.PI/4;box(m,Math.cos(angle)*roofRadius*.48,base+h+.07,Math.sin(angle)*roofRadius*.48,roofRadius*.85,.14,roofRadius*.85,"timber","pavilion-roof-collision",true,angle);}
 
  }
- octagon(m,5.55,1.35,.18,"timber","pavilion-upper-floor");profile(m,0,8.72,0,[[.12,0],[.18,.18],[.07,.35],[0,.55]],"gold","pavilion-finial",12);
+ octagon(m,proportions.chyasilin.upperFloorY,1.35,.18,"timber","pavilion-upper-floor");profile(m,0,proportions.chyasilin.finialBaseY,0,[[.12,0],[.18,.18],[.07,.35],[0,.55]],"gold","pavilion-finial",12);
 }
-function vatsala(m:CentralModel){const plinth=vatsalaWorkingDimensions.workingPlinth.value!,platform=.6,base=plinth+platform;steppedBase(m,6.34,6.59,plinth,9);box(m,0,plinth+.3,0,5.5,.6,5.7,"stone","vatsala-platform",true);
+function vatsala(m:CentralModel){const plinth=vatsalaWorkingDimensions.workingPlinth.value!,platform=.6,base=plinth+platform,p=proportions.vatsala;
+ for(let i=0;i<9;i++){const h=plinth/9,w=p.baseWidth-i*(p.baseWidth-p.upperPlinthWidth)/8,d=p.baseDepth-i*(p.baseDepth-p.upperPlinthDepth)/8;box(m,0,(i+.5)*h,0,w,h,d,"stone","stepped-base",true);}
+ box(m,0,plinth+.3,0,p.platformWidth,.6,p.platformDepth,"stone","vatsala-platform",true);
  // West-descending access is distinct from the south-facing sanctum.
- for(let i=0;i<17;i++){const h=(i+1)*base/17;box(m,-6.35+i*.19,h/2,0,.21,h,1.65,"stone","vatsala-west-access-stair",true);}
- box(m,-2.8,base-.09,0,.8,.18,1.65,"stone","vatsala-west-stair-landing",true);
- box(m,0,base+1.82,0,2.95,3.64,2.95,"stone","vatsala-sanctum",true);
- for(let i=0;i<12;i++){const side=Math.floor(i/3),t=(i%3-1)*1.75;const x=side===0?t:side===1?2.3:side===2?t:-2.3,z=side===0?2.3:side===1?t:side===2?-2.3:t;
+ for(let i=0;i<17;i++){const h=(i+1)*base/17;box(m,-6.35+i*.19,h/2,0,.21,h,p.stairWidth,"stone","vatsala-west-access-stair",true);}
+ box(m,-2.65,base-.09,0,1.1,.18,p.stairWidth,"stone","vatsala-west-stair-landing",true);
+ box(m,0,base+1.82,0,p.sanctumWidth,3.64,p.sanctumWidth,"stone","vatsala-sanctum",true);
+ for(let i=0;i<12;i++){const side=Math.floor(i/3),t=(i%3-1)*p.postSpacing;const x=side===0?t:side===1?p.postRadius:side===2?t:-p.postRadius,z=side===0?p.postRadius:side===1?t:side===2?-p.postRadius:t;
  profile(m,x,base,z,[[.24,0],[.29,.24],[.19,.4],[.17,2.85],[.3,3.02],[.34,3.2],[0,3.25]],"stone","vatsala-twelve-column",12);
  box(m,x,base+1.6,z,.42,3.2,.42,"stone","column-collision",true);
  }
- shape(m,0,base+.12,1.51,[[-.54,0],[-.54,1.9],[-.36,2.15],[0,2.4],[.36,2.15],[.54,1.9],[.54,0]],.06,"recess","vatsala-south-sanctum-door");
- for(const [y,w] of [[base+3.22,5.35],[base+3.48,5.6],[base+3.7,5.24],[base+3.9,4.8]])box(m,0,y,0,w,.18,w,"stone","vatsala-colonnade-entablature");
+ shape(m,0,base+.12,p.sanctumWidth/2+.04,[[-.54,0],[-.54,1.9],[-.36,2.15],[0,2.4],[.36,2.15],[.54,1.9],[.54,0]],.06,"recess","vatsala-south-sanctum-door");
+ for(const [y,w] of [[base+3.22,4.2],[base+3.48,p.corniceWidth],[base+3.7,4.1],[base+3.9,3.85]])box(m,0,y,0,w,.18,w,"stone","vatsala-colonnade-entablature");
  const spireBase=base+4.05,spireHeight=7.0;
  // Four-sided shouldered shikhara: stepped convex taper, not conical pagoda.
- profile(m,0,spireBase,0,([[0,0],[2.65,0],[2.65,.25],[2.46,.35],[2.33,1.1],[2.15,2.1],[1.88,3.1],[1.48,4.3],[1.12,5.25],[.87,5.75],[1.02,5.86],[1.02,6.05],[.66,6.35],[0,6.35]] as [number,number][]).map(([r,y])=>[r,y*spireHeight/6.35]),"stone","vatsala-square-shikhara",4);
- for(let i=0;i<12;i++){const y=spireBase+.7+i*.43,r=2.35-i*.12;for(const side of [-1,1])box(m,side*r*.65,y,0,.09,.12,r*1.7,"stone","shikhara-masonry-ribs");}
- for(let level=0;level<10;level++){const y=spireBase+.6+level*.59,r=2.4-level*.15;for(const side of [-1,1])for(const off of [-.4,0,.4])box(m,side*r*.7,y,off*r,.1,.66,.14,"stone","shikhara-vertical-segmentation");}
- for(const side of [-1,1]){shape(m,0,spireBase+.3,side*2.06,[[-.38,0],[-.38,1.12],[0,1.48],[.38,1.12],[.38,0]],.04,"recess","shikhara-niche-shadow");profile(m,0,spireBase+.43,side*2.12,[[.16,0],[.13,.25],[.12,.45],[0,.61]],"stone","niche-figure",8);}
- for(const sx of [-1,1])for(const sz of [-1,1]){profile(m,sx*1.85,spireBase,sz*1.85,[[.52,0],[.6,.12],[.48,.3],[.4,.8],[.42,.95],[.25,1.15],[.3,1.35],[.15,1.65],[0,1.8]],"stone","subsidiary-spire",16);}
- for(const side of [-1,1])shape(m,0,spireBase+.05,side*2.01,[[-.52,0],[-.52,1.3],[0,1.9],[.52,1.3],[.52,0]],.15,"stone","spire-projecting-niche");
+ profile(m,0,spireBase,0,([[0,0],[2.65,0],[2.65,.25],[2.46,.35],[2.33,1.1],[2.15,2.1],[1.88,3.1],[1.48,4.3],[1.12,5.25],[.87,5.75],[1.02,5.86],[1.02,6.05],[.66,6.35],[0,6.35]] as [number,number][]).map(([r,y])=>[r*p.towerRadius/2.65,y*spireHeight/6.35]),"stone","vatsala-square-shikhara",4);
+ for(let i=0;i<12;i++){const y=spireBase+.7+i*.43,r=(2.35-i*.12)*p.towerRadius/2.65;for(const side of [-1,1])box(m,side*r*.65,y,0,.09,.12,r*1.7,"stone","shikhara-masonry-ribs");}
+ for(let level=0;level<10;level++){const y=spireBase+.6+level*.59,r=(2.4-level*.15)*p.towerRadius/2.65;for(const side of [-1,1])for(const off of [-.4,0,.4])box(m,side*r*.7,y,off*r,.1,.66,.14,"stone","shikhara-vertical-segmentation");}
+ for(const side of [-1,1]){shape(m,0,spireBase+.3,side*1.7,[[-.38,0],[-.38,1.12],[0,1.48],[.38,1.12],[.38,0]],.04,"recess","shikhara-niche-shadow");profile(m,0,spireBase+.43,side*1.76,[[.16,0],[.13,.25],[.12,.45],[0,.61]],"stone","niche-figure",8);}
+ for(const sx of [-1,1])for(const sz of [-1,1]){profile(m,sx*1.36,spireBase,sz*1.36,([[.52,0],[.6,.12],[.48,.3],[.4,.8],[.42,.95],[.25,1.15],[.3,1.35],[.15,1.65],[0,1.8]] as [number,number][]).map(([r,y])=>[r*p.subsidiaryScale,y*p.subsidiaryScale]),"stone","subsidiary-spire",16);}
+ for(const side of [-1,1])shape(m,0,spireBase+.05,side*1.66,[[-.52,0],[-.52,1.3],[0,1.9],[.52,1.3],[.52,0]],.15,"stone","spire-projecting-niche");
  profile(m,0,spireBase+spireHeight,0,[[.64,0],[.72,.15],[.5,.26],[.57,.4],[.35,.55],[.46,.7],[.25,.9],[.33,1.02],[.12,1.21],[0,1.4]],"stone","vatsala-ringed-pinnacle",20);
  profile(m,0,15.55,0,[[.1,0],[.16,.16],[.06,.28],[0,.4]],"gold","vatsala-metal-finial",12);
 }
