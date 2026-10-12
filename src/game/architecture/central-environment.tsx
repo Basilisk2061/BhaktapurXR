@@ -1,5 +1,5 @@
 import {useEffect,useLayoutEffect,useMemo,useRef} from "react";
-import {BoxGeometry,BufferGeometry,DataTexture,DoubleSide,ExtrudeGeometry,Float32BufferAttribute,InstancedMesh,LatheGeometry,Matrix4,MeshStandardMaterial,PlaneGeometry,Quaternion,RepeatWrapping,RGBAFormat,Shape,SRGBColorSpace,Vector2,Vector3} from "three";
+import {BoxGeometry,BufferGeometry,DoubleSide,ExtrudeGeometry,Float32BufferAttribute,InstancedMesh,LatheGeometry,Matrix4,MeshStandardMaterial,PlaneGeometry,Quaternion,Shape,Vector2,Vector3} from "three";
 import {mergeGeometries} from "three/addons/utils/BufferGeometryUtils.js";
 import {CuboidCollider,RigidBody} from "@react-three/rapier";
 import {Html} from "@react-three/drei";
@@ -7,16 +7,19 @@ import {centralGround,type CentralBox,type CentralMaterial,type CentralProfile,t
 import {buildPlazaEnclosure} from "./plaza-enclosure";
 import {buildPhase7Models} from "./remaining-models";
 import {remainingSpecificationById} from "../../data/reconstruction/architecture/remaining-specifications";
-import {generatedTexture} from "../materials/heritage-materials";
-export const centralMaterialDefinitions={brick:{color:"#c8aaa0",roughness:.94},timber:{color:"#674c37",roughness:.86},stone:{color:"#b5b3a6",roughness:.97,flatShading:true},roof:{color:"#b3a699",roughness:.93,flatShading:true},paving:{color:"#bea99c",roughness:.97},recess:{color:"#29271f",roughness:1},gold:{color:"#b29a60",roughness:.65,metalness:.72},bronze:{color:"#66604a",roughness:.76,metalness:.62},plaster:{color:"#d6cfbb",roughness:.98},neutral:{color:"#a09f97",roughness:1},shutter:{color:"#724438",roughness:.92}} as const;
-function variationTexture(kind:"stone"|"timber"){const n=128,data=new Uint8Array(n*n*4);for(let y=0;y<n;y++)for(let x=0;x<n;x++){const i=(y*n+x)*4,noise=((Math.imul(x+3,374761393)^Math.imul(y+9,668265263))>>>0)%13-6;const line=kind==="stone"&&(y%18===0||(x+(Math.floor(y/18)%2)*23)%46===0);const grain=kind==="timber"?Math.sin(x*.4+Math.sin(y*.07))*6:0;for(let c=0;c<3;c++)data[i+c]=(line?173:218)+noise+grain;data[i+3]=255;}const t=new DataTexture(data,n,n,RGBAFormat);t.colorSpace=SRGBColorSpace;t.wrapS=t.wrapT=RepeatWrapping;t.generateMipmaps=true;t.needsUpdate=true;return t;}
-export function createCentralMaterials(){return Object.fromEntries(Object.entries(centralMaterialDefinitions).map(([id,p])=>{const map=id==="brick"||id==="roof"||id==="paving"?generatedTexture(id):id==="stone"||id==="timber"?variationTexture(id):null;const mat=new MeshStandardMaterial({...p,map,side:DoubleSide});
+import {applySurfaceFinish,generatedTexture} from "../materials/heritage-materials";
+export const centralMaterialDefinitions={brick:{color:"#e0cfbc",roughness:.94},timber:{color:"#977452",roughness:.86},stone:{color:"#c3b9a4",roughness:.97,flatShading:true},roof:{color:"#b3a699",roughness:.93,flatShading:true},paving:{color:"#d2c6b4",roughness:.97},recess:{color:"#3a3025",roughness:1},gold:{color:"#b29a60",roughness:.65,metalness:.72},bronze:{color:"#66604a",roughness:.76,metalness:.62},plaster:{color:"#d6cfbb",roughness:.98},neutral:{color:"#a09f97",roughness:1},shutter:{color:"#724438",roughness:.92}} as const;
+export function createCentralMaterials(){return Object.fromEntries(Object.entries(centralMaterialDefinitions).map(([id,p])=>{const map=id==="brick"||id==="roof"||id==="paving"?generatedTexture(id):id==="stone"||id==="timber"?generatedTexture(id):null;const mat=new MeshStandardMaterial({...p,map,side:DoubleSide});
  // Box instances receive metre-scaled tiling; large facades never stretch one brick tile.
  mat.onBeforeCompile=shader=>{shader.vertexShader=shader.vertexShader.replace('#include <uv_vertex>',`#include <uv_vertex>
  #if defined(USE_MAP) && defined(USE_INSTANCING)
  vec3 extent=vec3(length(instanceMatrix[0].xyz),length(instanceMatrix[1].xyz),length(instanceMatrix[2].xyz));
- vMapUv *= abs(normal.y)>0.5 ? extent.xz/2.0 : abs(normal.x)>0.5 ? extent.zy/2.0 : extent.xy/2.0;
- #endif`);};mat.customProgramCacheKey=()=>"central-metre-uv-v1";return [id,mat]})) as Record<CentralMaterial,MeshStandardMaterial>;}
+ vec2 metreScale=abs(normal.y)>0.5 ? extent.xz/2.0 : abs(normal.x)>0.5 ? extent.zy/2.0 : extent.xy/2.0;
+ vMapUv *= metreScale;
+ #ifdef USE_BUMPMAP
+ vBumpMapUv *= metreScale;
+ #endif
+ #endif`);};mat.customProgramCacheKey=()=>"central-metre-uv-v1";applySurfaceFinish(mat,id);return [id,mat]})) as Record<CentralMaterial,MeshStandardMaterial>;}
 function profileGeometry(p:CentralProfile){const g=new LatheGeometry(p.profile.map(([r,y])=>new Vector2(r,y)),p.segments);const v=g.toNonIndexed();g.dispose();
  // Metre tiling for the new large brick towers; accepted central UVs stay unchanged.
  if(p.material==="brick"&&/^(silu|badri)-/.test(p.role)){const uv=v.getAttribute("uv"),position=v.getAttribute("position"),radius=Math.max(...p.profile.map(([r])=>r)),perimeter=radius*(p.segments===4?4*Math.SQRT2:2*Math.PI);for(let i=0;i<uv.count;i++)uv.setXY(i,uv.getX(i)*perimeter/2,position.getY(i)/2);}

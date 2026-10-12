@@ -45,13 +45,14 @@ test("VERIFIED and APPROXIMATE require real source entries with supported claims
 
 test("held Space cannot repeat; airborne and unfocused requests do not buffer", () => {
   const input = createPlayerInput(0, 0); input.active = true;
-  pressGameplayKey(input, "Space"); assert.equal(consumeJump(input, true), true);
+  let now = 0; // Separate jumps, outside the double-Space flight window.
+  pressGameplayKey(input, "Space", false, now += 500); assert.equal(consumeJump(input, true), true);
   pressGameplayKey(input, "Space", true); assert.equal(consumeJump(input, true), false);
-  pressGameplayKey(input, "Space"); assert.equal(consumeJump(input, true), false);
-  input.keys.delete("Space"); pressGameplayKey(input, "Space");
+  pressGameplayKey(input, "Space", false, now += 500); assert.equal(consumeJump(input, true), false);
+  input.keys.delete("Space"); pressGameplayKey(input, "Space", false, now += 500);
   assert.equal(consumeJump(input, false), false); assert.equal(consumeJump(input, true), false);
-  input.keys.delete("Space"); pressGameplayKey(input, "Space");
+  input.keys.delete("Space"); pressGameplayKey(input, "Space", false, now += 500);
   assert.equal(consumeJump(input, true), true);
-  input.keys.delete("Space"); pressGameplayKey(input, "Space"); input.active = false;
+  input.keys.delete("Space"); pressGameplayKey(input, "Space", false, now += 500); input.active = false;
   assert.equal(consumeJump(input, true), false);
 });
