@@ -15,7 +15,7 @@ import { PlayerProxy } from "./player-proxy";
 import { ThirdPersonCamera } from "./third-person-camera";
 import type { PlayerRuntime } from "./player-runtime";
 
-export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerStatus }: { spawn: SpawnPoint; input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
+export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerStatus, reviewCamera=false }: { spawn: SpawnPoint; reviewCamera?:boolean; input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
   const body = useRef<RapierRigidBody>(null);
   const visual = useRef<Group>(null);
   const controller = useRef<KinematicCharacterController>(null);
@@ -73,7 +73,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
         <CapsuleCollider args={[playerConfig.capsuleHalfSegment, playerConfig.radius]} />
         <PlayerProxy visualRef={visual} />
       </RigidBody>
-      <ThirdPersonCamera bodyRef={body} visualRef={visual} input={inputRef} runtime={runtimeRef} />
+      <ThirdPersonCamera reviewCamera={reviewCamera} bodyRef={body} visualRef={visual} input={inputRef} runtime={runtimeRef} />
     </>
   );
 }

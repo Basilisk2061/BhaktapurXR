@@ -9,9 +9,9 @@ import type { PlayerRuntime } from "./player-runtime";
 
 const identityRotation = { x: 0, y: 0, z: 0, w: 1 };
 
-export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime: runtimeRef }: {
+export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime: runtimeRef, reviewCamera=false }: {
   bodyRef: RefObject<RapierRigidBody | null>; visualRef: RefObject<Group | null>;
-  input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>;
+  input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; reviewCamera?:boolean;
 }) {
   const { world, rapier } = useRapier();
   const state = useMemo(() => ({
@@ -28,14 +28,14 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
     const config = playerConfig.camera;
     const delta = safeDelta(frameDelta, playerConfig.maxDelta);
     visual.getWorldPosition(state.actualTarget);
-    state.actualTarget.setY(state.actualTarget.y + config.targetHeight - playerConfig.height / 2);
+    state.actualTarget.setY(state.actualTarget.y + (reviewCamera ? 2.5 : config.targetHeight) - playerConfig.height / 2);
     const reset = !initialized.current || lastReset.current !== motion.resetSequence;
     if (reset) state.focus.copy(state.actualTarget);
     else state.focus.lerp(state.actualTarget, 1 - Math.exp(-config.targetResponsiveness * delta));
-    const horizontalDistance = config.distance * Math.cos(controls.pitch);
+    const horizontalDistance = (reviewCamera ? 6 : config.distance) * Math.cos(controls.pitch);
     state.ideal.set(
       state.focus.x + Math.sin(controls.yaw) * horizontalDistance,
-      state.focus.y + Math.sin(controls.pitch) * config.distance,
+      state.focus.y + Math.sin(controls.pitch) * (reviewCamera ? 6 : config.distance),
       state.focus.z + Math.cos(controls.yaw) * horizontalDistance,
     );
     if (reset) state.candidate.copy(state.ideal);
