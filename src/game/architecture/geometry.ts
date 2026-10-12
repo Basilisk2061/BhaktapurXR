@@ -12,13 +12,13 @@ import { pointInsidePolygon } from "../../lib/map-calibration.ts";
 import { architectureParameters as p } from "../../data/architecture/config.ts";
 import { footprintBounds } from "../../data/architecture/registry.ts";
 
-export function footprintShape(f: SpatialFeature) {
+export function footprintShape(f: Pick<SpatialFeature,"vertices"|"holes">) {
   const s = new Shape();
   f.vertices.forEach(([x,z],i)=> i ? s.lineTo(x,-z) : s.moveTo(x,-z)); s.closePath();
   for(const ring of f.holes ?? []) { const hole=new Path();ring.forEach(([x,z],i)=>i?hole.lineTo(x,-z):hole.moveTo(x,-z));hole.closePath();s.holes.push(hole); }
   return s;
 }
-export function volumeGeometry(f: SpatialFeature, height: number) {
+export function volumeGeometry(f: Pick<SpatialFeature,"vertices"|"holes">, height: number) {
   const g=new ExtrudeGeometry(footprintShape(f),{depth:height,bevelEnabled:false,steps:1,curveSegments:1});
   g.rotateX(-Math.PI/2);
   // World-sized UVs; generated brick texture repeats every 2 metres.
@@ -36,13 +36,13 @@ export function hipRoofGeometry(width: number, depth: number, rise: number) {
   for(const face of triangles) for(const i of face){const pt=points[i];v.push(...pt);uv.push(pt[0]/2,(pt[2]+pt[1])/2);}
   const g=new BufferGeometry();g.setAttribute("position",new Float32BufferAttribute(v,3));g.setAttribute("uv",new Float32BufferAttribute(uv,2));g.computeVertexNormals();return g;
 }
-export function insideFootprint(point: LocalPoint,f:SpatialFeature) {
+export function insideFootprint(point: LocalPoint,f:Pick<SpatialFeature,"vertices"|"holes">) {
   return pointInsidePolygon(point,f.vertices) && !(f.holes??[]).some(h=>pointInsidePolygon(point,h));
 }
 export interface SolidBox { position:[number,number,number]; size:[number,number,number]; yaw:number }
 
 /** Thin compound boundary walls plus coalesced interior cuboids; white voids stay open. */
-export function footprintColliders(f: SpatialFeature,height:number): SolidBox[] {
+export function footprintColliders(f: Pick<SpatialFeature,"vertices"|"holes">,height:number): SolidBox[] {
   const boxes:SolidBox[]=[];
   for(const ring of [f.vertices,...(f.holes??[])]) ring.forEach((a,i)=>{const b=ring[(i+1)%ring.length],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz);boxes.push({position:[(a[0]+b[0])/2,height/2,(a[1]+b[1])/2],size:[length,height,p.wallCollisionThickness],yaw:-Math.atan2(dz,dx)});});
   const b=footprintBounds(f.vertices),step=p.collisionCell;

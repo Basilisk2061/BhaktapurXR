@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveWorldMode } from "@/game/world/world-mode";
-import {resolveWestReview as resolveArchitectureReview} from "@/game/world/west-review";
+import {resolveUrbanCompleteReview as resolveArchitectureReview} from "@/game/world/urban-complete-review";
 import { Experience } from "@/components/experience";
 
 export const metadata: Metadata = { title: "Explore" };
@@ -23,6 +23,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       <footer className="flex flex-wrap justify-between gap-2 px-6 py-4 text-xs leading-relaxed text-stone-600">
         <p>Click to look · WASD move · Shift run · Space jump · Esc release mouse</p>
         <p>{mode === "ENGINEERING" ? "PLACEHOLDER engineering course" : "APPROXIMATE architecture · Source-derived layout"} · 1 unit = 1 metre · +Y up</p>
+        {mode==="BHAKTAPUR"&&<a href="https://www.openstreetmap.org/copyright" className="underline">Building map data: OpenStreetMap contributors (ODbL)</a>}
       </footer>
     </main>
   );
