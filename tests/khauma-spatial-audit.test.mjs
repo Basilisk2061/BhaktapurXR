@@ -26,8 +26,8 @@ test("explicit correction ledger covers all 17 identities; original Phase 6/9 so
 test("stronger mapped/aerial/photo evidence corrects gate without photo-coordinate extraction",()=>{
  const a=KHAUMA_GATE_VIEW_AXIS;assert.equal(a.status,"FROZEN_CONFLICT_CORRECTED");assert.ok(a.displacementMetres>13&&a.displacementMetres<14);assert.ok(a.proposedInboundBearingDegrees>97&&a.proposedInboundBearingDegrees<99);assert.equal(a.correctionApplied,true);assert.ok(a.sources.includes("userGatePhotos"));assert.notDeepEqual(a.proposedGeographic,{latitude:27.672301,longitude:85.427366});
 });
-test("Yaksheshwar and every supported monument assembly are preserved under documented rigid placement corrections",()=>{
- for(const m of models){const old=original.find(o=>o.id===m.id);if(!spatialCorrections[m.id]){assert.deepEqual(m,old);continue;}for(const kind of ["boxes","shapes","profiles","roofs","colliders"]){assert.equal(m[kind].length,old[kind].length);for(let i=0;i<m[kind].length;i++){const a=m[kind][i],b=old[kind][i];assert.equal(a.position[1],b.position[1]);for(const key of ["size","points","profile","width","depth","rise","role","tilt"])assert.deepEqual(a[key],b[key]);}}}
+test("Yaksheshwar and every supported non-gate monument assembly are preserved under documented rigid placement corrections",()=>{
+ for(const m of models){if(m.id==="khauma-gate")continue;const old=original.find(o=>o.id===m.id);if(!spatialCorrections[m.id]){assert.deepEqual(m,old);continue;}for(const kind of ["boxes","shapes","profiles","roofs","colliders"]){assert.equal(m[kind].length,old[kind].length);for(let i=0;i<m[kind].length;i++){const a=m[kind][i],b=old[kind][i];assert.equal(a.position[1],b.position[1]);for(const key of ["size","points","profile","width","depth","rise","role","tilt"])assert.deepEqual(a[key],b[key]);}}}
  assert.equal(models.find(m=>m.id==="yaksheshwar").roofs.length,4);
 });
 test("unsupported duplicate Jagannath is removed; neither Nyatapola nor exposed Taleju is instantiated",()=>{

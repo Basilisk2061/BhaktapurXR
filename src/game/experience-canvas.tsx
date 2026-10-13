@@ -1,4 +1,5 @@
 "use client";
+import {KhaumaPhotoCamera} from "./world/khauma-photo-camera";
 
 import { Suspense, useEffect, useRef, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
@@ -21,6 +22,7 @@ import type { SpawnPoint } from "@/types/world";
 interface ExperienceCanvasProps {
   spawn:SpawnPoint;
   reviewCamera:boolean;
+  review:string|null;
   architecturalDebug:boolean;
   silhouette:boolean;
   mode: WorldMode;
@@ -50,7 +52,7 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   return (
     <Canvas
@@ -66,6 +68,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <World mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+          <KhaumaPhotoCamera review={review} input={input} />
           <SceneReady onReady={onReady} />
         </Physics>
       </Suspense>

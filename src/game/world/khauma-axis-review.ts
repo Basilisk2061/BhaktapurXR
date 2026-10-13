@@ -7,9 +7,22 @@ const target=[-10.012564711790674,7.277097845494605],length=Math.hypot(target[0]
 export const gateViewDirection:[number,number]=[(target[0]-centre[0])/length,(target[1]-centre[1])/length];
 const yaw=Math.atan2(-gateViewDirection[0],-gateViewDirection[1]);
 const spawn=(distance:number):SpawnPoint=>({position:[centre[0]+gateViewDirection[0]*distance,.05,centre[1]+gateViewDirection[1]*distance],rotation:[0,yaw,0]});
+/** Approximate comparison poses. Vertical FOV in degrees; no EXIF/photogrammetric solution. */
+export const khaumaPhotoCameras={
+ "khauma-photo-outside":{height:1.65,distance:19,yawOffset:KHAUMA_GATE_VIEW_AXIS.proposedYaw-yaw,pitch:.12,fov:40,referenceAspect:650/432},
+ "khauma-photo-through":{height:1.65,distance:7.5,yawOffset:-.09,pitch:.12,fov:56,referenceAspect:650/432},
+} as const;
+export function khaumaPhotoCamera(review:string|null){
+ if(!review||!Object.hasOwn(khaumaPhotoCameras,review))return null;
+ const settings=khaumaPhotoCameras[review as keyof typeof khaumaPhotoCameras],cameraYaw=yaw+settings.yawOffset;
+ return {...settings,yaw:cameraYaw,position:[centre[0]+Math.sin(cameraYaw)*settings.distance,settings.height,centre[1]+Math.cos(cameraYaw)*settings.distance] as [number,number,number]};
+}
+const photoSpawn=(review:string):SpawnPoint=>{const p=khaumaPhotoCamera(review)!;return {position:[p.position[0]+Math.sin(p.yaw)*2,.05,p.position[2]+Math.cos(p.yaw)*2],rotation:[0,p.yaw,0]};};
 // Diagnostic source-axis views: show the corrected gate and still expose surrounding registration limits.
 // Kept separate from context's protected spawn list so adding cameras changes no building geometry.
 export const khaumaAxisReviewSpawns:Record<string,SpawnPoint>={
+ "khauma-photo-outside":photoSpawn("khauma-photo-outside"),
+ "khauma-photo-through":photoSpawn("khauma-photo-through"),
  "khauma-real-axis-outside":spawn(-3),
  "khauma-real-axis-inside":spawn(9),
  "square-edge-west":{position:[-75,.05,-18],rotation:[0,1.53,0]},

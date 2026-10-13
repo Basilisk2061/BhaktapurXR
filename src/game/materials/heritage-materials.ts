@@ -10,7 +10,7 @@ export type HeritageMaterial = keyof typeof materialDefinitions;
 export type HeritageMaterials = Record<HeritageMaterial,MeshStandardMaterial>;
 
 /** Generated visual surfaces, not source photography. One deterministic 256px tile per material. */
-export function generatedTexture(kind:"brick"|"roof"|"paving"|"stone"|"timber") {
+export function generatedTexture(kind:"gateBrick"|"brick"|"roof"|"paving"|"stone"|"timber") {
   const size=256,data=new Uint8Array(size*size*4);
   const hash=(x:number,y:number)=>((Math.imul(x+17,374761393)^Math.imul(y+31,668265263))>>>0)/4294967295;
   for(let y=0;y<size;y++)for(let x=0;x<size;x++){
@@ -23,12 +23,12 @@ export function generatedTexture(kind:"brick"|"roof"|"paving"|"stone"|"timber") 
     const cell=(hash(col,row)-.5)*20;
     const grain=(hash(x,y)-.5)*5;
     const weather=Math.sin(x*Math.PI/128)*Math.sin(y*Math.PI/128)*3;
-    const base=kind==="paving"?[153,113,89]:kind==="roof"?[127,102,83]:kind==="brick"?[168,119,94]:[231,226,215];
+    const base=kind==="paving"?[153,113,89]:kind==="roof"?[127,102,83]:kind==="brick"?[168,119,94]:kind==="gateBrick"?[194,157,137]:[231,226,215];
     const i=(y*size+x)*4;
     for(let c=0;c<3;c++) {
       const value=kind==="timber"?220+Math.sin(x*.55+Math.sin(y*Math.PI/128)*.6)*5+weather+grain
         :kind==="stone"?base[c]+weather+grain+(hash(Math.floor(x/32),Math.floor(y/32))-.5)*7
-        :joint?[104,95,82][c]:base[c]+cell+grain+weather;
+        :joint?(kind==="gateBrick"?[166,153,134]:[104,95,82])[c]:base[c]+cell+grain+weather;
       data[i+c]=Math.round(value);
     }
     data[i+3]=255;

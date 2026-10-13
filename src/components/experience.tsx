@@ -38,7 +38,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette }: { m
 
   return (
     <>
-      <ExperienceCanvas mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+      <ExperienceCanvas review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
       <ExperienceLoading ready={ready} />
       {ready && <p className="pointer-events-none absolute bottom-4 left-4 rounded-sm bg-stone-100/90 px-4 py-2 text-xs text-stone-600" aria-live="polite">
         {pointerStatus === "locked" ? "WASD move · Shift run · Space jump · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump · Esc release" : "Click to control camera · WASD move · Shift run · Space jump · Esc release mouse"}
