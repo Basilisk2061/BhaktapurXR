@@ -1,3 +1,6 @@
+import {EditorExperience} from "../../features/world-editor/editor-experience";
+import {resolveEditor} from "../../features/world-editor/transforms";
+import {readManualOverrides} from "../../features/world-editor/server";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveWorldMode } from "@/game/world/world-mode";
@@ -9,6 +12,8 @@ export const metadata: Metadata = { title: "Explore" };
 export default async function ExplorePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const query=await searchParams;
   const mode = resolveWorldMode(query.world);
+  const editor=resolveEditor(query.editor,process.env.NODE_ENV==="development",mode);
+  const manualOverrides=mode==="BHAKTAPUR"?await readManualOverrides():{};
   const review=mode==="BHAKTAPUR"?resolveArchitectureReview(query.review,process.env.NODE_ENV==="development"):null;
   const architecturalDebug=process.env.NODE_ENV==="development"&&query.architectureDebug==="1";
   const silhouette=process.env.NODE_ENV==="development"&&query.silhouette==="1";
@@ -19,9 +24,9 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
         <span className="text-xs uppercase tracking-wider text-stone-600">{mode === "ENGINEERING" ? "Development · Engineering course" : "Early 3D heritage reconstruction"}</span>
         {process.env.NODE_ENV === "development" && <nav aria-label="Development worlds" className="flex gap-3 text-xs"><Link href="/explore?world=engineering">Engineering</Link><Link href="/explore?world=bhaktapur">Bhaktapur</Link><Link href="/reconstruction">Trace review</Link>{["central","palace","composition","close","wide","east","west","7b-wide","urban-central","urban-west","urban-east","urban-wide","plaza","arcade","plaza-wide"].map(view=><Link key={view} href={`/explore?world=bhaktapur&review=${view}`}>{view}</Link>)}</nav>}
       </header>
-      <div className="relative min-h-0 flex-1"><Experience mode={mode} review={review} architecturalDebug={architecturalDebug} silhouette={silhouette} /></div>
+      <div className="relative min-h-0 flex-1">{editor?<EditorExperience overrides={manualOverrides}/>:<Experience manualOverrides={manualOverrides} mode={mode} review={review} architecturalDebug={architecturalDebug} silhouette={silhouette} />}</div>
       <footer className="flex flex-wrap justify-between gap-2 px-6 py-4 text-xs leading-relaxed text-stone-600">
-        <p>Click to look · WASD move · Shift run · Space jump · Esc release mouse</p>
+        <p>{editor?"W/E/R transform / L local-world / F focus / drag orbit / scroll zoom":"Click to look · WASD move · Shift run · Space jump · Esc release mouse"}</p>
         <p>{mode === "ENGINEERING" ? "PLACEHOLDER engineering course" : "APPROXIMATE architecture · Source-derived layout"} · 1 unit = 1 metre · +Y up</p>
         {mode==="BHAKTAPUR"&&<a href="https://www.openstreetmap.org/copyright" className="underline">Building map data: OpenStreetMap contributors (ODbL)</a>}
       </footer>

@@ -1,4 +1,7 @@
 "use client";
+import {EditorScene} from "../features/world-editor/editor-scene";
+import type {EditorSession} from "../features/world-editor/session";
+import type {TransformOverrides} from "../features/world-editor/transforms";
 import {KhaumaPhotoCamera} from "./world/khauma-photo-camera";
 
 import { Suspense, useEffect, useRef, type RefObject } from "react";
@@ -20,6 +23,8 @@ import { type WorldMode } from "./world/world-mode";
 import type { SpawnPoint } from "@/types/world";
 
 interface ExperienceCanvasProps {
+  editorSession?:EditorSession;
+  manualOverrides?:TransformOverrides;
   spawn:SpawnPoint;
   reviewCamera:boolean;
   review:string|null;
@@ -52,10 +57,11 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   return (
     <Canvas
+      onPointerMissed={editorSession?()=>{if(!editorSession.state.dragging&&!editorSession.state.walk)editorSession.select(null);}:undefined}
       shadows={{ type: PCFShadowMap }}
       dpr={renderingConfig.dpr}
       camera={{ fov: reviewCamera ? 55 : camera.fov, near: camera.near, far: camera.far }}
@@ -66,9 +72,11 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
-          <World mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
+          {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
+          <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <KhaumaPhotoCamera review={review} input={input} />
+          </>}
           <SceneReady onReady={onReady} />
         </Physics>
       </Suspense>
