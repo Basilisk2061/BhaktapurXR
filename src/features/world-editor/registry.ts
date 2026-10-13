@@ -1,10 +1,11 @@
+import {partitionArchitecturalParts} from "./parts.ts";
 import {buildSpatiallyAuditedModels} from "../../game/architecture/spatially-audited-models.ts";
 import {buildSquareEdge} from "../../game/architecture/square-edge-models.ts";
 import {westSpecificationById} from "../../data/reconstruction/architecture/west-specifications.ts";
 import {remainingSpecificationById} from "../../data/reconstruction/architecture/remaining-specifications.ts";
 import {specificationById} from "../../data/reconstruction/architecture/specifications.ts";
 import type {ManualTransform} from "./transforms.ts";
-export interface EditableAssembly {id:string;name:string;category:string;classification:string;source:ManualTransform;defaultLocked:boolean}
+export interface EditableAssembly {id:string;name:string;category:string;classification:string;source:ManualTransform;defaultLocked:boolean;parentId?:string;colliderCount?:number}
 export const editorCategories=["GATES","PALACE","TEMPLES","SHRINES","COLUMNS/BELLS","SQUARE EDGES","CONTEXT"];
 let cached:EditableAssembly[]|null=null;
 export function getEditableRegistry():EditableAssembly[]{if(cached)return cached;const monuments=buildSpatiallyAuditedModels(),urban=buildSquareEdge(monuments);cached=[...monuments,...urban.models].filter(m=>!m.id.startsWith("distant:")&&m.id!=="entrance:khauma-road"&&(m.boxes.some(b=>!b.role.includes("collision"))||m.shapes.length||m.profiles.length||m.roofs.length||(m.volumes?.length??0))).map(m=>{
@@ -14,3 +15,7 @@ export function getEditableRegistry():EditableAssembly[]{if(cached)return cached
  const classification=west?.state==="PROVISIONALLY_IDENTIFIED"||m.id.startsWith("edge:yetachapari:")?"PROVISIONALLY_IDENTIFIED":edge?.classification==="PHOTO_DERIVED_CONTEXT"||m.id.startsWith("entrance:")?"PHOTO_INFERRED":m.accuracy;
  return {id:m.id,name,category,classification,source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]},defaultLocked:true};
  });return cached;}
+
+let partsCache:EditableAssembly[]|null=null;
+export function getEditableParts():EditableAssembly[]{if(partsCache)return partsCache;const models=buildSpatiallyAuditedModels(),all=[...models,...buildSquareEdge(models).models];partsCache=getEditableRegistry().flatMap(parent=>partitionArchitecturalParts(all.find(m=>m.id===parent.id)!).map(p=>({id:p.id,name:p.name,category:parent.category,classification:parent.classification,source:p.source,defaultLocked:true,parentId:parent.id,colliderCount:p.colliderCount})));return partsCache;}
+export const getEditableEntries=()=>[...getEditableRegistry(),...getEditableParts()];

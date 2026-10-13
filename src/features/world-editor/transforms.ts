@@ -16,9 +16,14 @@ export const overrideMatrix=(source:ManualTransform,current:ManualTransform)=>tr
 /** Exact affine collider, including shear from nonuniform scaling of rotated compound pieces.
  * Hull vertices are relative to a transformed centre, avoiding distant-world hull precision loss. */
 export function transformedCollider(box:SolidBox,source:ManualTransform,current:ManualTransform){
- const delta=overrideMatrix(source,current),centre=new Vector3(...box.position).applyMatrix4(delta),piece=new Matrix4().compose(new Vector3(...box.position),new Quaternion().setFromAxisAngle(new Vector3(0,1,0),box.yaw),new Vector3(...box.size));const vertices:number[]=[];
+ return affineCollider(box,overrideMatrix(source,current));
+}
+export function affineCollider(box:SolidBox,delta:Matrix4){
+ const centre=new Vector3(...box.position).applyMatrix4(delta),piece=new Matrix4().compose(new Vector3(...box.position),new Quaternion().setFromAxisAngle(new Vector3(0,1,0),box.yaw),new Vector3(...box.size));const vertices:number[]=[];
  for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5])vertices.push(...new Vector3(x,y,z).applyMatrix4(piece).applyMatrix4(delta).sub(centre).toArray());
  return {position:centre.toArray() as Triple,vertices};
 }
 export function resolveEditableParent(object:{userData?:Record<string,unknown>;parent?:unknown}|null,ids:ReadonlySet<string>):string|null {let cursor=object;while(cursor){const id=cursor.userData?.editableId;if(typeof id==="string"&&ids.has(id))return id;cursor=cursor.parent as typeof cursor;}return null;}
 export function resolveEditor(value:unknown,development:boolean,world:string){return development&&world==="BHAKTAPUR"&&value==="1";}
+
+export function partWorldDelta(assemblySource:ManualTransform,assembly:ManualTransform,partSource:ManualTransform,part:ManualTransform){return transformMatrix(assembly).multiply(transformMatrix(part)).multiply(transformMatrix(partSource).invert()).multiply(transformMatrix(assemblySource).invert());}

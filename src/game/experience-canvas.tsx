@@ -61,7 +61,6 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
   const camera = playerConfig.camera;
   return (
     <Canvas
-      onPointerMissed={editorSession?()=>{if(!editorSession.state.dragging&&!editorSession.state.walk)editorSession.select(null);}:undefined}
       shadows={{ type: PCFShadowMap }}
       dpr={renderingConfig.dpr}
       camera={{ fov: reviewCamera ? 55 : camera.fov, near: camera.near, far: camera.far }}

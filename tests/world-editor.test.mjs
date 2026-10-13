@@ -6,8 +6,9 @@ import RAPIER from "@dimforge/rapier3d-compat";
 import {getEditableRegistry} from "../src/features/world-editor/registry.ts";
 import {EditorSession} from "../src/features/world-editor/session.ts";
 import {validateTransform,copyTransform,resolveEditor,resolveEditableParent,transformedCollider,overrideMatrix,transformMatrix} from "../src/features/world-editor/transforms.ts";
-import {readManualOverrides,saveManualTransform,overrideFilePath,editorRequestAllowed} from "../src/features/world-editor/server.ts";
-import {GET,POST} from "../src/app/api/dev/world-editor/transforms/route.ts";
+import {overrideFilePath} from "../src/features/world-editor/server.ts";
+import {runEditorApiFixture} from "./editor-api-fixture.mjs";
+
 const registry=getEditableRegistry(),gold=registry.find(r=>r.id==="golden-gate"),make=()=>{const s=new EditorSession(registry);s.select(gold.id);return s;};
 test("dev entry, assembly registry, provenance and child selection exclude player/ground/distant context",()=>{
  assert.equal(resolveEditor("1",true,"BHAKTAPUR"),true);for(const args of [[undefined,true,"BHAKTAPUR"],["1",false,"BHAKTAPUR"],["1",true,"ENGINEERING"]])assert.equal(resolveEditor(...args),false);
@@ -38,14 +39,4 @@ test("exact affine hull and visual matrices agree for XYZ rotation/nonuniform sc
  for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5]){const world=new Vector3(x,y,z).applyMatrix4(piece).applyMatrix4(matrix),local=new Vector3(x,y,z).applyMatrix4(piece).applyMatrix4(transformMatrix(source).invert()).applyMatrix4(transformMatrix(current));assert.ok(world.distanceTo(local)<1e-9);assert.ok(world.distanceTo(new Vector3(...h.vertices.slice(i,i+3)).add(centre))<1e-9);i+=3;}
  const physics=new RAPIER.World({x:0,y:0,z:0});const desc=RAPIER.ColliderDesc.convexHull(new Float32Array(h.vertices));assert.ok(desc);physics.createCollider(desc.setTranslation(...h.position));physics.step();assert.ok(physics.castRay(new RAPIER.Ray({x:centre.x,y:centre.y+10,z:centre.z},{x:0,y:-1,z:0}),20,true));assert.equal(physics.castRay(new RAPIER.Ray({x:4,y:20,z:1},{x:0,y:-1,z:0}),25,true),null);physics.free();
 });
-test("local API validates registration/numbers/paths/origin, saves/reloads/reset without source changes",async()=>{
- const env=process.env.NODE_ENV,original=await readFile(overrideFilePath,"utf8");assert.deepEqual(JSON.parse(original),{});process.env.NODE_ENV="development";
- const request=(body,headers={})=>new Request("http://localhost:3000/api/dev/world-editor/transforms",{method:"POST",headers:{"content-type":"application/json","x-world-editor":"1",...headers},body:JSON.stringify(body)});
- try{
-  for(const payload of [{id:"player",transform:gold.source},{id:"../../bad",transform:gold.source},{id:gold.id,transform:{...gold.source,position:[null,0,0]}},{id:gold.id,transform:gold.source,path:"../../bad"}])assert.equal((await POST(request(payload))).status,400);
-  assert.equal((await POST(request({id:gold.id,transform:gold.source},{origin:"https://other.test"}))).status,403);assert.equal(editorRequestAllowed(new Request("http://public.test/api/dev/world-editor/transforms"),true),403);
-  const transform=copyTransform(gold.source);transform.position[1]=.2;transform.rotation=[.1,.2,.3];transform.scale=[1.1,.9,1.2];assert.equal((await POST(request({id:gold.id,transform}))).status,200);assert.deepEqual((await readManualOverrides())[gold.id],transform);assert.deepEqual((await (await GET(new Request("http://localhost:3000/api/dev/world-editor/transforms"))).json()).overrides[gold.id],transform);const reloaded=new EditorSession(registry,await readManualOverrides());assert.deepEqual(reloaded.state.transforms[gold.id],transform);
-  process.env.NODE_ENV="production";assert.equal((await POST(request({id:gold.id,transform}))).status,404);assert.equal((await GET(new Request("http://localhost:3000/api/dev/world-editor/transforms"))).status,404);
- }finally{await saveManualTransform({id:gold.id,transform:gold.source});process.env.NODE_ENV=env;}
- assert.deepEqual(JSON.parse(await readFile(overrideFilePath,"utf8")),JSON.parse(original));
-});
+test("local API validates ids/numbers/paths/origin, assembly+part persistence and production rejection in isolated fixture",async()=>{const original=await readFile(overrideFilePath,"utf8");await runEditorApiFixture();assert.equal(await readFile(overrideFilePath,"utf8"),original);});

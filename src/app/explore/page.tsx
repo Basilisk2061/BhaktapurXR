@@ -26,7 +26,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
       </header>
       <div className="relative min-h-0 flex-1">{editor?<EditorExperience overrides={manualOverrides}/>:<Experience manualOverrides={manualOverrides} mode={mode} review={review} architecturalDebug={architecturalDebug} silhouette={silhouette} />}</div>
       <footer className="flex flex-wrap justify-between gap-2 px-6 py-4 text-xs leading-relaxed text-stone-600">
-        <p>{editor?"W/E/R transform / L local-world / F focus / drag orbit / scroll zoom":"Click to look · WASD move · Shift run · Space jump · Esc release mouse"}</p>
+        <p>{editor?"RMB + WASD/Q/E fly / 1 assembly / 2 part / W/E/R transform / F focus / P parent":"Click to look · WASD move · Shift run · Space jump · Esc release mouse"}</p>
         <p>{mode === "ENGINEERING" ? "PLACEHOLDER engineering course" : "APPROXIMATE architecture · Source-derived layout"} · 1 unit = 1 metre · +Y up</p>
         {mode==="BHAKTAPUR"&&<a href="https://www.openstreetmap.org/copyright" className="underline">Building map data: OpenStreetMap contributors (ODbL)</a>}
       </footer>

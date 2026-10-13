@@ -1,0 +1,38 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import {PerspectiveCamera,Group,Mesh,Vector3} from "three";
+import RAPIER from "@dimforge/rapier3d-compat";
+import {getEditableRegistry,getEditableParts} from "../src/features/world-editor/registry.ts";
+import {partitionArchitecturalParts} from "../src/features/world-editor/parts.ts";
+import {buildSpatiallyAuditedModels} from "../src/game/architecture/spatially-audited-models.ts";
+import {buildSquareEdge} from "../src/game/architecture/square-edge-models.ts";
+import {EditorSession,isEditorEntryVisible} from "../src/features/world-editor/session.ts";
+import {EditorNavigation,nextCameraSpeed} from "../src/features/world-editor/navigation.ts";
+import {selectionCandidates} from "../src/features/world-editor/selection.ts";
+import {copyTransform,partWorldDelta,affineCollider,transformMatrix} from "../src/features/world-editor/transforms.ts";
+const registry=getEditableRegistry(),parts=getEditableParts(),frame=parts.find(p=>p.id==="golden-gate/gate-frame"),gold=registry.find(p=>p.id==="golden-gate");
+test("RMB navigation follows camera, WASD, Q/E, smooth speed, Shift and clean stop",()=>{
+ const camera=new PerspectiveCamera(),nav=new EditorNavigation();nav.keys.add("KeyW");nav.step(camera,.05,1);assert.deepEqual(camera.position.toArray(),[0,0,0]);nav.start(camera);nav.look(camera,-100,30);assert.notEqual(camera.quaternion.y,0);nav.keys.add("KeyW");for(let i=0;i<20;i++)nav.step(camera,.05,1);assert.ok(camera.position.z<-4);nav.stop();const stopped=camera.position.clone();nav.step(camera,1,4);assert.deepEqual(camera.position.toArray(),stopped.toArray());
+ const distance=(key,boost=false)=>{const c=new PerspectiveCamera(),n=new EditorNavigation();n.start(c);n.keys.add(key);if(boost)n.keys.add("ShiftLeft");for(let i=0;i<20;i++)n.step(c,.05,1);return c.position;};assert.ok(distance("KeyW").z<0);assert.ok(distance("KeyS").z>0);assert.ok(distance("KeyA").x<0);assert.ok(distance("KeyD").x>0);assert.ok(distance("KeyE").y>0);assert.ok(distance("KeyQ").y<0);assert.ok(distance("KeyW",true).length()>distance("KeyW").length()*3.9);assert.equal(nextCameraSpeed(1,-100),2);assert.equal(nextCameraSpeed(.5,100),.5);assert.equal(nextCameraSpeed(4,-100),4);
+});
+test("part roles partition every source piece and collider once; source remains byte-identical",()=>{
+ const monuments=buildSpatiallyAuditedModels(),models=[...monuments,...buildSquareEdge(monuments).models].filter(m=>registry.some(r=>r.id===m.id));const frozen=JSON.stringify(models);
+ assert.equal(parts.length,124);assert.ok(parts.every(p=>p.parentId&&p.defaultLocked&&!/Mesh_|Geometry_|strut-\d|brick-\d/.test(p.name)));
+ for(const m of models){const groups=partitionArchitecturalParts(m);for(const kind of ["boxes","shapes","profiles","roofs","volumes","polygonRoofs","colliders"]){const original=m[kind]??[],flattened=groups.flatMap(p=>p.model[kind]??[]);assert.equal(flattened.length,original.length,m.id+kind);for(const piece of original)assert.equal(flattened.filter(p=>p===piece).length,1,m.id+kind+" owned once");}}
+ assert.equal(JSON.stringify(models),frozen);assert.equal(frame.colliderCount,2);assert.equal(parts.find(p=>p.id==="golden-gate/masonry").colliderCount,3);assert.equal(parts.find(p=>p.id==="golden-gate/canopy").colliderCount,0);
+});
+test("assembly/part hit selection uses architectural metadata, excludes hidden geometry and cycles overlaps",()=>{
+ const g=new Group(),mesh=new Mesh();g.userData.editableId=gold.id;mesh.userData.partIds=[frame.id];g.add(mesh);const hit={object:mesh,instanceId:0,distance:1,point:new Vector3()};const entries=[...registry,...parts];assert.deepEqual(selectionCandidates([hit],entries,"assembly"),[gold.id]);assert.deepEqual(selectionCandidates([hit],entries,"part"),[frame.id]);g.visible=false;assert.deepEqual(selectionCandidates([hit],entries,"part"),[]);g.visible=true;
+ const s=new EditorSession(registry);s.update({navigating:true});s.pick([frame.id]);assert.equal(s.state.selectedId,null);s.update({navigating:false});s.pick([frame.id,"golden-gate/masonry"]);assert.equal(s.state.selectedId,frame.id);s.pick([frame.id,"golden-gate/masonry"],true);assert.equal(s.state.selectedId,"golden-gate/masonry");s.selectParent();assert.equal(s.state.selectedId,gold.id);assert.equal(s.state.selectionMode,"assembly");s.setSelectionMode("part");assert.equal(s.state.space,"local");
+});
+test("part can unlock under locked parent, local numeric edits undo/redo/reset and persistence hydration",()=>{
+ const s=new EditorSession(registry);s.select(frame.id);assert.equal(s.state.locked[gold.id],true);const t=copyTransform(frame.source);t.position[0]+=.2;assert.equal(s.change(frame.id,t),false);s.setLocked(frame.id,false);assert.equal(s.change(frame.id,t),true);assert.deepEqual(s.state.transforms[gold.id],gold.source);s.selectParent();s.undo();assert.equal(s.state.selectionMode,"part");assert.equal(s.state.selectedId,frame.id);assert.deepEqual(s.state.transforms[frame.id],frame.source);s.redo();assert.deepEqual(s.state.transforms[frame.id],t);s.markSaved(frame.id,t);const reload=new EditorSession(registry,s.state.saved);assert.deepEqual(reload.state.transforms[frame.id],t);assert.equal(reload.state.locked[frame.id],true);s.reset();assert.deepEqual(s.state.transforms[frame.id],frame.source);
+});
+test("isolation and hide are editor-only and restore assemblies/parts",()=>{
+ const s=new EditorSession(registry);s.select(frame.id);s.isolate();assert.equal(isEditorEntryVisible(frame.id,gold.id,s.state),true);assert.equal(isEditorEntryVisible(gold.id,undefined,s.state),true);assert.equal(isEditorEntryVisible("golden-gate/masonry",gold.id,s.state),false);assert.equal(isEditorEntryVisible("vatsala-durga",undefined,s.state),false);s.showAll();assert.equal(isEditorEntryVisible("golden-gate/masonry",gold.id,s.state),true);s.hide();assert.equal(isEditorEntryVisible(frame.id,gold.id,s.state),false);s.showAll();assert.equal(isEditorEntryVisible(frame.id,gold.id,s.state),true);assert.deepEqual(s.state.saved,{});
+});
+test("assembly + local part composition is single inheritance; exact affine colliders follow and originals are absent",async()=>{
+ const parent=copyTransform(gold.source),local=copyTransform(frame.source);parent.position[0]+=1;local.position[0]+=.2;const delta=partWorldDelta(gold.source,parent,frame.source,local),point=new Vector3(...gold.source.position).applyMatrix4(delta);assert.ok(Math.abs(point.x-gold.source.position[0]-1-Math.cos(gold.source.rotation[1])*.2)<1e-9);
+ const parentChanged=copyTransform(parent);parentChanged.position=[85,8,70];parentChanged.rotation=[.2,.5,.1];parentChanged.scale=[1.3,.8,1.1];local.rotation=[.1,.2,-.1];local.scale=[.9,1.2,.7];const matrix=partWorldDelta(gold.source,parentChanged,frame.source,local),assembled=transformMatrix(parentChanged).multiply(transformMatrix(local)).multiply(transformMatrix(frame.source).invert()).multiply(transformMatrix(gold.source).invert());assert.deepEqual(matrix.elements,assembled.elements);
+ const model=partitionArchitecturalParts(buildSpatiallyAuditedModels().find(m=>m.id===gold.id)).find(p=>p.id===frame.id).model;await RAPIER.init();const world=new RAPIER.World({x:0,y:0,z:0});for(const c of model.colliders){const h=affineCollider(c,matrix),desc=RAPIER.ColliderDesc.convexHull(new Float32Array(h.vertices));assert.ok(desc);world.createCollider(desc.setTranslation(...h.position));}world.step();const centre=new Vector3(...model.colliders[0].position).applyMatrix4(matrix);assert.ok(world.castRay(new RAPIER.Ray({x:centre.x,y:centre.y+10,z:centre.z},{x:0,y:-1,z:0}),20,true));const old=model.colliders[0].position;assert.equal(world.castRay(new RAPIER.Ray({x:old[0],y:20,z:old[2]},{x:0,y:-1,z:0}),30,true),null);world.free();
+});
