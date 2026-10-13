@@ -9,8 +9,8 @@ import {entranceZone,entranceStructureEvidence,entranceRoad} from "../src/data/r
 import {KHAUMA_GATE_VIEW_AXIS} from "../src/data/reconstruction/khauma-spatial-audit.ts";
 import {khaumaPhotoCamera,resolveKhaumaAxisReview} from "../src/game/world/khauma-axis-review.ts";
 const models=buildSpatiallyAuditedModels(),urban=buildSquareEdge(models);
-test("Phase 9A.2 non-gate corrected assemblies are byte-identical, including approved Yaksheshwar",()=>{
- const hash=createHash("sha256").update(JSON.stringify(models.filter(m=>m.id!=="khauma-gate"))).digest("hex");
+test("Phase 9A.2 non-gate base assemblies are byte-identical; Phase 9A.4 gallery return is additive only",()=>{
+ const hash=createHash("sha256").update(JSON.stringify(models.filter(m=>m.id!=="khauma-gate").map(m=>m.id==="gallery-frontage"?({...m,boxes:m.boxes.filter(p=>!p.role.startsWith("gallery-west-return-photo-")),shapes:m.shapes.filter(p=>!p.role.startsWith("gallery-west-return-photo-"))}):m))).digest("hex");
  assert.equal(hash,"cdc03bebf32de68d8623ecca4546dd4554963efa0811a702b85509ecd42ecc1b");
 });
 test("photo gate retains audited placement, deep opening, brick relief and three finials deterministically",()=>{
