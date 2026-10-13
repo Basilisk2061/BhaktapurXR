@@ -1,5 +1,7 @@
 # Phase 9A.1: west-to-central built environment
 
+Historical implementation record. Superseded by Phase 9A.2: the 444 contributor footprints below did not establish reconstructed buildings. See [the square-edge correction](phase9a2-square-edge.md).
+
 Baseline: `33e5f95d93d5d313dea7c1efe7da73f86c73b98e`. Manual visual approval remains required.
 
 ## Evidence and occupancy

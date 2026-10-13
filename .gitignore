@@ -9,3 +9,7 @@ next-env.d.ts
 *.log
 .DS_Store
 Thumbs.db
+
+# Local visual research: redistribution licence not established.
+/reference/khauma-gate/khauma-gate-outside.png
+/reference/khauma-gate/khauma-gate-through.png

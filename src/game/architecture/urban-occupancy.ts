@@ -21,7 +21,7 @@ const area=(ring:Point[])=>Math.abs(ring.reduce((s,a,i)=>{const b=ring[(i+1)%rin
 const netArea=(polys:MultiPolygon)=>polys.reduce((s,r)=>s+area(r[0])-r.slice(1).reduce((s,h)=>s+area(h),0),0);
 const bounds=(rings:Point[][])=>{const p=rings.flat(),x=p.map(p=>p[0]),z=p.map(p=>p[1]);return {minX:Math.min(...x),maxX:Math.max(...x),minZ:Math.min(...z),maxZ:Math.max(...z)};};
 const empty=(id:string,origin:Point):CentralModel=>({id,anchorId:id,origin,yaw:0,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],accuracy:"SOURCE_DERIVED",neutral:false,volumes:[],polygonRoofs:[]});
-function contextColliders(rings:Polygon,height:number){
+export function contextColliders(rings:Polygon,height:number){
  const ring=rings[0],f={vertices:ring,holes:rings.slice(1)};
  if(rings.length===1&&ring.length===5){
   const edge=ring.slice(0,-1).map((a,i)=>({a,b:ring[i+1],length:Math.hypot(a[0]-ring[i+1][0],a[1]-ring[i+1][1])})).sort((a,b)=>b.length-a.length)[0],yaw=-Math.atan2(edge.b[1]-edge.a[1],edge.b[0]-edge.a[0]),c=Math.cos(yaw),sn=Math.sin(yaw),points=ring.map(([x,z])=>[x*c-z*sn,x*sn+z*c] as Point),b=bounds([points]),w=b.maxX-b.minX-.18,d=b.maxZ-b.minZ-.18,x=(b.minX+b.maxX)/2,z=(b.minZ+b.maxZ)/2,centre:Point=[x*c+z*sn,-x*sn+z*c];
@@ -55,7 +55,7 @@ function facades(m:CentralModel,rings:Polygon,levels:number,height:number,near:b
   }
  }
 }
-function restHouse(m:CentralModel,rings:Polygon){
+export function restHouse(m:CentralModel,rings:Polygon){
  const b=bounds(rings),cz=(b.minZ+b.maxZ)/2;
  m.volumes!.push({rings,height:.48,baseY:0,material:"brick",role:"yetachapari-source-platform"},{rings,height:3.0,baseY:3.35,material:"brick",role:"yetachapari-upper-gallery"});
  // Mapped north/public facade opens onto the museum; exact source boundary defines the rear/returns.
