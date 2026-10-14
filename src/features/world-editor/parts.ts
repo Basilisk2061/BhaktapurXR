@@ -8,6 +8,10 @@ const labels:Record<string,string>={"museum-entrance-door":"Museum entrance / ca
 /** Existing procedural roles are grouped, never split into individual mesh primitives. */
 export function architecturalPartKey(m:CentralModel,p:Piece):string{
  const r=p.role;
+ if(r.startsWith("school-"))return /left-guardian/.test(r)?"left-guardian":/right-guardian/.test(r)?"right-guardian":/left-relief/.test(r)?"left-relief":/right-relief/.test(r)?"right-relief":/pedestal/.test(r)?"pedestals":/central-gate|sign-board/.test(r)?"central-gate":/roof/.test(r)?"roof":"wall";
+ if(m.id==="entrance:khauma-raised-veranda")return /platform/.test(r)?"plinth":/posts/.test(r)?"columns":/roof|trim/.test(r)?"roof":/beam|door/.test(r)?"veranda":"body";
+ if(m.id==="silu-mahadev"&&/^silu-(platform|stairs|entrance|subsidiary|main-shikhara|cornices|finial|lower-sanctuary)/.test(r))return /platform/.test(r)?"plinth":/stairs/.test(r)?"stairs":/entrance/.test(r)?"entrance":/subsidiary/.test(r)?"subsidiary-towers":/main-shikhara/.test(r)?"main-shikhara":/cornice/.test(r)?"cornices":/finial/.test(r)?"ornament":"body";
+ if(m.id==="context:9c:1159393578"&&r.startsWith("sattal-"))return /plinth/.test(r)?"plinth":/columns/.test(r)?"columns":/rear-wall/.test(r)?"rear-wall":/eaves/.test(r)?"eaves":/roof/.test(r)?"roof":/lower-bay/.test(r)?"lower-bays":"body";
  if(m.id==="golden-gate")return /gate-side-masonry|gate-brick-upper|gateway-rear-tile-roof/.test(r)?"masonry":/canopy/.test(r)?"canopy":/garuda/.test(r)?"ornament":"gate-frame";
  if(m.id==="fifty-five-frontage"||m.id==="gallery-frontage"){
   const museum=r.match(/^museum-entrance-(door|sign|lions|figures)/);if(museum)return "museum-entrance-"+museum[1];

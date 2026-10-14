@@ -1,10 +1,13 @@
+import {correctPavilion,correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
+import editorFrames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
+import {correctEasternShikhara} from "./eastern-correction.ts";
 import polygonClipping from "polygon-clipping";
 import type {Polygon,MultiPolygon} from "polygon-clipping";
 import snapshot from "../../data/reconstruction/urban-footprints.json" with {type:"json"};
 import {phase9cBoundary,phase9cEvidence,phase9cZone} from "../../data/reconstruction/square-completion.ts";
-import {geographicToLocal,applyFit} from "../../data/reconstruction/geographic-frame.ts";
-import {adoptedFit} from "../../data/reconstruction/present-day.ts";
-import {openSpaces} from "../../data/reconstruction/open-spaces.ts";
+import {geographicToLocal} from "../../data/reconstruction/geographic-frame.ts";
+import {entranceRoadEnds} from "../../data/reconstruction/khauma-entrance.ts";
+
 import {urbanStreetExits} from "../../data/reconstruction/urban-enclosure.ts";
 import {buildPalaceFrontageModels} from "./palace-frontage-models.ts";
 import {buildInsideSquareEdge} from "./inside-square-models.ts";
@@ -71,21 +74,42 @@ function occupiedArchitecture(id:string,polygons:MultiPolygon,sourceId:string){
 }
 function coveredRange(id:string,polygons:MultiPolygon){
  const b=bounds(polygons[0]),m=fresh(id,[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
- for(const rings of polygons){
-  m.volumes!.push({rings,baseY:0,height:.45,material:"stone",role:"9c-covered-range-platform"},{rings,baseY:3.3,height:2.8,material:"agedBrick",role:"9c-covered-range-upper-gallery"});
-  m.colliders.push(...contextColliders(rings,.45),...contextColliders(rings,2.8).map(c=>({...c,position:[c.position[0],c.position[1]+3.3,c.position[2]] as [number,number,number]})));m.polygonRoofs!.push({rings,baseY:6.15,rise:1.25,maxEdge:2.6,material:"roof",role:"9c-covered-range-tiled-roof"});
-  const all=edges(rings);for(const e of all){const x=e.mid[0]-m.origin[0],z=e.mid[1]-m.origin[1],publicFace=e.nx<-.3||e.nz>.3;
-   box(m,x,3.19,z,e.length,.24,.42,"carvedTimber","9c-covered-range-gallery-beam",false,e.yaw);
-   box(m,x,6.05,z,e.length,.22,.65,"carvedTimber","9c-covered-range-deep-eave",false,e.yaw);
-   if(!publicFace){box(m,x,1.85,z,e.length,2.8,.22,"agedBrick","9c-covered-range-rear-wall",true,e.yaw);continue;}
-   const bays=Math.max(1,Math.round(e.length/2.65));for(let i=0;i<=bays;i++){const t=(i+.1)/(bays+.2),px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1];box(m,px,1.81,pz,.25,2.72,.25,"carvedTimber","9c-open-arcade-post",true);box(m,px,.53,pz,.45,.16,.45,"stone","9c-arcade-post-foot");}
-   for(let i=0;i<bays;i++){const t=(i+.5)/bays,px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1],w=Math.min(1.55,e.length/bays*.65);box(m,px,4.72,pz,w+ .2,1.85,.18,"carvedTimber","9c-covered-range-upper-frame",false,e.yaw);box(m,px+e.nx*.12,4.72,pz+e.nz*.12,w,1.6,.07,"timber","9c-covered-range-upper-timber-screen",false,e.yaw);}
+  // Direct photograph supersedes the provisional short-front L extrusion. Keep its mapped anchor
+ // and raw source trace; reconstructed exterior extent is an approximate photographic interpretation.
+ const frontage:Polygon=[[[-11,-44],[18.1,-44],[18.1,-36.5],[-11,-36.5],[-11,-44]]];
+ for(const rings of [frontage]){
+  m.volumes!.push({rings,baseY:0,height:.45,material:"brick",role:"sattal-plinth"},{rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
+  m.colliders.push(...contextColliders(rings,.45),...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
+  const all=edges(rings);
+  // Two joined hip ranges over the mapped L-shaped arms, with deep working overhangs.
+  // The previous distance-field roof under-sampled the narrow arms and flattened their silhouette.
+  if(!m.roofs.length)m.roofs.push({position:[3.55,4.64,-40.25],width:30,depth:9.4,rise:1.8,yaw:0,material:"roof",role:"sattal-broad-tiled-roof"},{position:[15.65,4.655,-46.05],width:24,depth:8.5,rise:1.7,yaw:Math.PI/2,material:"roof",role:"sattal-broad-tiled-roof-return"});
+  for(const e of all){const x=e.mid[0]-m.origin[0],z=e.mid[1]-m.origin[1],publicFace=e.nx>.3||e.nz>.3;
+   box(m,x,3.04,z,e.length,.22,.4,"carvedTimber","sattal-lower-bay-lintel",false,e.yaw);
+   box(m,x+e.nx*.65,4.57,z+e.nz*.65,e.length+.7,.24,.36,"carvedTimber","sattal-deep-eaves",false,e.yaw);
+   box(m,x+e.nx*.81,4.53,z+e.nz*.81,e.length+.75,.13,.045,"shutter","sattal-photo-red-roof-border",false,e.yaw);
+   if(!publicFace){box(m,x,1.75,z,e.length,2.6,.22,"agedBrick","sattal-rear-wall",true,e.yaw);continue;}
+   const bays=Math.max(1,Math.round(e.length/1.75));
+   // Set rear plane behind the posts; ground-level bays remain open and colliders follow walls/posts.
+   box(m,x-e.nx*1.7,1.75,z-e.nz*1.7,e.length,2.6,.18,"brick","sattal-recessed-rear-wall",true,e.yaw);
+   for(let i=0;i<=bays;i++){const t=(i+.05)/(bays+.1),px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1];box(m,px,1.73,pz,.22,2.56,.22,"carvedTimber","sattal-columns",true);box(m,px,.53,pz,.38,.16,.38,"stone","sattal-plinth-post-foot");box(m,px,2.93,pz,.52,.16,.38,"carvedTimber","sattal-columns-capital");}
+   for(let i=0;i<bays;i++){const t=(i+.5)/bays,px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1],w=e.length/bays-.24;
+    shape(m,px,2.64,pz,[[-w/2,0],[-w/2,.38],[w/2,.38],[w/2,0],[w*.3,.16],[0,.29],[-w*.3,.16]],.16,"carvedTimber","sattal-lower-bay-bracket",e.yaw);
+    box(m,px+e.nx*.12,3.83,pz+e.nz*.12,w,.9,.1,"carvedTimber","sattal-upper-gallery-frame",false,e.yaw);
+    box(m,px+e.nx*.18,3.83,pz+e.nz*.18,w-.14,.7,.04,"recess","sattal-upper-gallery-recess",false,e.yaw);
+    for(const q of [-.35,0,.35])box(m,px+q*w*Math.cos(e.yaw)+e.nx*.22,3.83,pz-q*w*Math.sin(e.yaw)+e.nz*.22,.035,.7,.035,"timber","sattal-upper-gallery-screen",false,e.yaw);
+   }
+   // Two shallow access treads below the raised sitting edge, aligned to each public face.
+   for(let j=0;j<2;j++)box(m,x+e.nx*(.55-j*.28),.075*(j+1),z+e.nz*(.55-j*.28),e.length,.15*(j+1),.3,"brick","sattal-plinth-access",true,e.yaw);
   }
  }
+  // Retain a modest rear return within the mapped north arm, classified with the same uncertainty.
+ const rear=polygons.flatMap(r=>r[0]).filter(([x,z])=>z< -44&&x>10);if(rear.length){const x0=Math.min(...rear.map(p=>p[0])),x1=Math.max(...rear.map(p=>p[0])),z0=Math.min(...rear.map(p=>p[1]));box(m,(x0+x1)/2-m.origin[0],.225,(z0-44)/2-m.origin[1],x1-x0,.45,-44-z0,"brick","sattal-plinth-rear-return",true);box(m,(x0+x1)/2-m.origin[0],2.52,(z0-44)/2-m.origin[1],x1-x0,4.14,-44-z0,"timber","sattal-inferred-rear-return",true);}
+ Object.assign(m,{editorPartSources:editorFrames["context:9c:1159393578"]});
  return m;
 }
 export function buildCompletedSquareModels(){
- const models=buildPalaceFrontageModels(),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
+ const models=buildPalaceFrontageModels().map(m=>m.id==="silu-mahadev"?correctEasternShikhara(m):m.id==="rameshwar"?correctPavilion(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
  const w=Math.min(4.3,b.maxX-b.minX),d=Math.min(4.5,b.maxZ-b.minZ);for(let i=0;i<3;i++)box(m,0,(i+.5)*.16,0,w-i*.15,.16,d-i*.15,"stone","9c-small-shrine-stepped-base",true);
  box(m,0,1.84,0,2.2,2.72,2.5,"agedBrick","9c-small-shrine-brick-sanctum",true);
@@ -115,11 +139,11 @@ export function buildCompletedSquareEdge(){
  }
  // Every removed legacy in-scope mass must have an explicit inventory disposition.
  for(const old of oldRaw)if(!inventory.some(r=>old.id.endsWith(":"+r.sourceId)))throw new Error("Unprocessed Phase 9C placeholder: "+old.id);
- for(const m of models.filter(m=>!m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))))completeExposedReturns(m);
- const ground=fresh("ground:9c-lane-transitions",[-40,0],"PLAN_INFERRED"),publicMasks:Polygon[]=openSpaces.filter(s=>s.category!=="MONUMENT_PLATFORM").map(s=>[s.polygon.map(p=>applyFit(p,adoptedFit))]);
- const publicPlaza=polygonClipping.union(publicMasks[0],...publicMasks.slice(1));
- for(const s of snapshot.streets){const p=s.coordinates.map(local);for(let i=0;i<p.length-1;i++){const raw:[Point[]]=[streetRectangle(p[i],p[i+1],Number(s.tags.width)||3.2)],patch=polygonClipping.difference(polygonClipping.intersection(raw,[phase9cBoundary]),publicPlaza);for(const rings of patch)if(netArea([rings])>.1){const b=bounds(rings),x=(b.minX+b.maxX)/2,z=(b.minZ+b.maxZ)/2;ground.volumes!.push({rings,baseY:.016,height:.012,material:x< -123||z>30||x>63?"road":"brick",role:"9c-street-paving-transition"});}}}
- models.push(ground);
+ for(const m of models.filter(m=>!m.neutral&&m.id!=="context:9c:1159393578"&&(m.volumes??[]).some(v=>inRegion(v.rings))))completeExposedReturns(m);
+ // No contrasting route overlay inside the square: the continuous heritage paving is sufficient.
+ // Retain only the pale exterior approach, terminating exactly on the frozen gate centreline.
+ const approach=models.find(m=>m.id==="entrance:khauma-road")!,outside=entranceRoadEnds[0];
+ for(const b of approach.boxes){b.position=[(outside[0]+approach.origin[0])/2,b.position[1],(outside[1]+approach.origin[1])/2];b.size[2]=Math.hypot(outside[0]-approach.origin[0],outside[1]-approach.origin[1]);}
  const rawAfter=models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))).length;
- return {...baseline,models,buildings,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
+ return {...baseline,models:correctKhaumaContext(models),buildings,khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
 }

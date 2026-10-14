@@ -1,6 +1,20 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "9c1-through-khauma":pose([-118,1.65,-33.8],[-95,3,-27],70),
+ "9c1-khauma-left":pose([-113,1.65,-30],[-113.4,2.5,-39],72),
+ "9c1-khauma-left-close":pose([-117,1.65,-34],[-116,2.5,-38],66),
+ "9c1-khauma-right":pose([-116,1.65,-34],[-113,3,-23],84),
+ "9c1-khauma-interior-aerial":pose([-132,22,-16],[-106,0,-28],76),
+ "9c1-shikhara-close":pose([41,3,-27],[36,7,-40],70),
+ "9c1-plaza-aerial":pose([-80,23,4],[-70,0,-20],78),
+ "9c1-shikhara-reference":pose([27,1.65,-18],[23,8,-42],78),
+ "9c1-shikhara-front":pose([39,1.65,-13],[36.38,10,-39.59],68),
+ "9c1-shikhara-platform":pose([54,4,-19],[36.38,2,-39.59],68),
+ "9c1-sattal":pose([24,1.65,-31],[5,3,-40],80),
+ "9c1-shikhara-sattal":pose([22,1.65,-17],[26,7,-42],82),
+ "9c1-path-threshold":pose([-132,1.65,-35.7],[-115,1,-33.3],64),
+ "9c1-eastern-aerial":pose([51,24,-8],[25,3,-42],76),
  "9c-khauma-entry":pose([-132,1.65,-35.7],[-96,3,-30.7],64),
  "9c-western-cluster":pose([-110,1.65,-18],[-92,4,-12],72),
  "9c-museum-approach":pose([-65,1.65,-9],[-38,4,-18]),

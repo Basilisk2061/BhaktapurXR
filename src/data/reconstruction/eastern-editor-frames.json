@@ -1,0 +1,282 @@
+{
+  "silu-mahadev": {
+    "silu-mahadev/plinth": {
+      "position": [
+        -5.329070518200751e-15,
+        3.2199999999999998,
+        2.7250000000000068
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "silu-mahadev/stairs": {
+      "position": [
+        -3.552713678800501e-15,
+        3.005,
+        6.33
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "silu-mahadev/facade": {
+      "position": [
+        0,
+        3.195,
+        6.060000000000006
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "silu-mahadev/body": {
+      "position": [
+        0,
+        13.335,
+        3.552713678800501e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "silu-mahadev/ornament": {
+      "position": [
+        -7.105427357601002e-15,
+        18.475,
+        3.552713678800501e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "context:9c:1159393578": {
+    "context:9c:1159393578/body": {
+      "position": [
+        0,
+        2.4724999999999997,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "context:9c:1159393578/roof": {
+      "position": [
+        0,
+        6.4125,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "context:9c:1159393578/plinth": {
+      "position": [
+        0,
+        0.225,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "rameshwar": {
+    "rameshwar/plinth": {
+      "position": [
+        0,
+        0.37,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "rameshwar/stairs": {
+      "position": [
+        0,
+        0.19999999999999998,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "rameshwar/body": {
+      "position": [
+        0,
+        2.385,
+        1.7763568394002505e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "rameshwar/roof": {
+      "position": [
+        0,
+        3.7800000000000002,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "rameshwar/facade": {
+      "position": [
+        0,
+        1.4,
+        1.7763568394002505e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  },
+  "edge:khauma-north-flank:1158762014": {
+    "edge:khauma-north-flank:1158762014/facade": {
+      "position": [
+        -1.2448573648813905,
+        1.9100000000000001,
+        1.0204734278110834
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "edge:khauma-north-flank:1158762014/body": {
+      "position": [
+        0.017080589428566384,
+        1.0350000000000001,
+        3.552713678800501e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "edge:khauma-north-flank:1158762014/roof": {
+      "position": [
+        0.017080589428566384,
+        3.845,
+        3.552713678800501e-15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

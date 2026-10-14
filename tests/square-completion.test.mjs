@@ -18,8 +18,8 @@ import {createCharacterController,stepCharacter} from "../src/game/player/charac
 import {createPlayerRuntime} from "../src/game/player/player-runtime.ts";
 import {playerConfig} from "../src/game/player/player-config.ts";
 const heritage=buildCompletedSquareModels(),urban=buildCompletedSquareEdge(),all=[...heritage,...urban.models],saved=readFileSync("src/features/bhaktapur/data/manual-transform-overrides.json","utf8");
-test("all approved Phase 9B.2 monument geometry/transforms, detailed museum and exclusions are preserved",()=>{
- for(const old of buildPalaceFrontageModels())assert.deepEqual(heritage.find(m=>m.id===old.id),old,old.id);
+test("all frozen Phase 9B.2 monument geometry/transforms except authorized Silu/Rameshwar correction, detailed museum and exclusions are preserved",()=>{
+ for(const old of buildPalaceFrontageModels().filter(m=>!["silu-mahadev","rameshwar"].includes(m.id)))assert.deepEqual(heritage.find(m=>m.id===old.id),old,old.id);
  const gate=heritage.find(m=>m.id==="khauma-gate");assert.ok(Math.abs(gate.origin[0]+121.5368476)<1e-6);assert.ok(Math.abs(gate.origin[1]+34.2859082)<1e-6);assert.ok(Math.abs(gate.yaw+1.70917042)<1e-6);
  assert.ok(!all.some(m=>/nyatapola|jagannath|taleju-temple/i.test(m.id)));assert.ok(heritage.find(m=>m.id==="rameshwar").profiles.some(p=>p.role==="rameshwar-four-stone-post"));
  assert.ok(heritage.find(m=>m.id==="golden-gate").boxes.some(b=>b.role==="gate-side-masonry-east-palace-junction"));assert.ok(heritage.find(m=>m.id==="fifty-five-frontage"));
@@ -39,7 +39,7 @@ test("east/south/palace assemblies registered, old editor frames and saved overr
  assert.equal(readFileSync("src/features/bhaktapur/data/manual-transform-overrides.json","utf8"),saved);
  for(const m of all.filter(m=>entries.some(e=>e.id===m.id))){const p=partitionArchitecturalParts(m);for(const kind of ["boxes","profiles","shapes","roofs","volumes","polygonRoofs","colliders"])assert.equal(p.flatMap(p=>p.model[kind]??[]).length,(m[kind]??[]).length,m.id+kind);}
 });
-test("all seventeen useful completion reviews resolve only in development",()=>{assert.equal(Object.keys(squareCompletionReviews).length,17);for(const [id,p]of Object.entries(squareCompletionReviews)){assert.equal(resolveKhaumaAxisReview(id,true),id);assert.equal(resolveKhaumaAxisReview(id,false),null);assert.ok(p.position.every(Number.isFinite));}});
+test("all existing and seven focused completion reviews resolve only in development",()=>{assert.equal(Object.keys(squareCompletionReviews).length,31);for(const [id,p]of Object.entries(squareCompletionReviews)){assert.equal(resolveKhaumaAxisReview(id,true),id);assert.equal(resolveKhaumaAxisReview(id,false),null);assert.ok(p.position.every(Number.isFinite));}});
 await RAPIER.init();
 test("five exits and mapped Khauma/central/east/south routes stay clear in completed physical scene",()=>{
  const w=new RAPIER.World({x:0,y:-9.81,z:0});w.createCollider(RAPIER.ColliderDesc.cuboid(170,.25,170).setTranslation(-40,-.25,0));for(const c of all.flatMap(m=>m.colliders))w.createCollider(RAPIER.ColliderDesc.cuboid(...c.size.map(v=>v/2)).setTranslation(...c.position).setRotation({x:0,y:Math.sin(c.yaw/2),z:0,w:Math.cos(c.yaw/2)}));
