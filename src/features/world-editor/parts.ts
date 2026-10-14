@@ -12,7 +12,7 @@ export function architecturalPartKey(m:CentralModel,p:Piece):string{
  if(m.id==="fifty-five-frontage"||m.id==="gallery-frontage"){
   if(/west-return|palace-return/.test(r)||(m.id==="fifty-five-frontage"&&p.yaw!==undefined&&Math.abs(Math.sin(p.yaw-m.yaw))>.5))return "return";
   if(/roof|eave/.test(r))return "roof";
-  if(/gallery-pale|arcade|upper-paired-shutter|upper-window-sill|upper-arched-room/.test(r))return "arcade";
+  if(/gallery-pale|arcade|upper-paired-shutter|upper-window-sill|upper-arched-room|upper-blind-arched-panel|upper-shutter-slats/.test(r))return "arcade";
   if(/window|jamb|gallery|carved|projecting-sill|cornice/.test(r))return "windows";
   return "body";
  }

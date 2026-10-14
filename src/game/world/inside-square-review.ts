@@ -16,7 +16,13 @@ export const insideSquareReviews={
  "9b-aerial":pose([-65,35,58],[-47,0,-6],66),
  "9b-back-to-khauma":pose([-62,1.65,-12],[-121.5,3,-34.3]),
 } as const;
-export function insideSquareReviewCamera(review:string|null){return review&&Object.hasOwn(insideSquareReviews,review)?insideSquareReviews[review as keyof typeof insideSquareReviews]:null;}
+export const palaceCorrectionReviews={
+ "9b1-map-west":pose([-110,25,24],[-80,0,-19],66),
+ "9b1-palace-photo":pose([-13.5,7,6.5],[-22,6,-17],84),
+ "9b1-golden-gate-close":pose([-21,1.65,-5],[-16,3.5,-17],68),
+ "9b1-plan-aerial":pose([-43,75,8],[-43,0,-2],70),
+} as const;
+export function insideSquareReviewCamera(review:string|null){if(review&&Object.hasOwn(palaceCorrectionReviews,review))return palaceCorrectionReviews[review as keyof typeof palaceCorrectionReviews];return review&&Object.hasOwn(insideSquareReviews,review)?insideSquareReviews[review as keyof typeof insideSquareReviews]:null;}
 export function insideSquareReviewSpawn(review:string|null):SpawnPoint|null{
- const p=insideSquareReviewCamera(review);return p?{position:[p.position[0]+Math.sin(p.yaw)*2,review==="9b-aerial"?35:.05,p.position[2]+Math.cos(p.yaw)*2],rotation:[0,p.yaw,0]}:null;
+ const p=insideSquareReviewCamera(review);if(p&&review==="9b1-palace-photo")return {position:[-8.9,6.4,10.1],rotation:[0,p.yaw,0]};return p?{position:[p.position[0]+Math.sin(p.yaw)*2,review==="9b-aerial"?35:review?.startsWith("9b1-")&&p.height>5?p.height:.05,p.position[2]+Math.cos(p.yaw)*2],rotation:[0,p.yaw,0]}:null;
 }

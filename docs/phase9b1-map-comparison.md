@@ -1,0 +1,47 @@
+# Phase 9B.1 map comparison
+
+Primary: `reference/bhaktapur/digital-himalaya/map.jpg`, inspected directly. North is up; scene north is -Z and east is +X. Temporary scene plan generated before changes. No metric registration to tourist map; qualitative matches are not survey verification.
+
+| Map identity | Scene identity | Relative position match | Orientation match | Adjacency match | Action / confidence |
+|---|---|---|---|---|---|
+| Old Town Entrance Gate / Khauma-area west gate | `khauma-gate` | Yes: NW of Rameshwor; west of Krishna and Gallery | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; HIGH naming/topology; approximate metric |
+| Rameshwor Temple | `rameshwar` | Yes: Just inside entrance, north of Badri, west of Krishna | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Documented pavilion; provisional binding |
+| Badri Temple | `badrinath` | Yes: SW of Krishna; south of entrance | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Approximate/provisional position |
+| Krishna Temple / Gopinath-Dwarika | `gopinath-krishna` | Yes: East of Badri; north-west of Shiva | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; HIGH equivalence; provisional footprint |
+| Shiva Temple (western central plan symbol) | `kedarnath` | Yes: SE of Krishna; west of central forecourt | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; PROVISIONAL name binding; not every Shiva label |
+| National Art Gallery / adjoining Rana palace wing | `gallery-frontage` | Yes: North edge, west of Golden Gate | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL; PHOTO_INFERRED form; map topology agrees |
+| Golden Gate / Lu Dhwaka | `golden-gate` | Yes: Royal frontage, between Gallery wing and 55 Palace | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL; HIGH identity/topology; approximate geometry |
+| 55 Windows Palace | `fifty-five-frontage` | Yes: East of Golden Gate; north of Chyasilin | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL; HIGH identity; photo-inferred proportion |
+| King Bhupatindra Malla's Column | `malla-column` | Yes: South of palace Gate; NW of Vatsala Durga | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL (anchor kept); Map + calibrated prior evidence; approximate |
+| Chyasalin Mandap | `chyasilin` | Yes: South of 55 Palace; NE of Vatsala Durga | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Map topology agrees |
+| Vatsala Durga Temple | `vatsala-durga` | Yes: SE of column; SW of Mandap; north of Pashupati | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Map topology agrees; approximate dimensions |
+| Pashupatinath Temple | `yaksheshwar` | Yes: South of Vatsala Durga | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Documented equivalence; approximate |
+| Siddhi Laxmi Temple | `siddhi-lakshmi` | Yes: East of Chyasilin | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Map topology agrees; approximate |
+| Fasidega Temple / Phasi Dega | `silu-mahadev` | Yes: NE of palace public frontage; west of eastward exits | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Documented equivalence; schematic plan bearing not survey |
+| Vatsala-associated bell | `vatsala-bell` | Yes: Near west side of Vatsala Durga | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Not independently drawn/labelled in tourist plan |
+| Large/Taleju bell | `large-bell` | Yes: Between column and Vatsala temple | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL (anchor kept); Separate prior evidence; map does not resolve exact fixture |
+| Small red shrine next to Golden Gate | `palace-corner-shrine-unresolved` | Yes: Immediately east of Gate, against palace frontage | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | REFINE MODEL; PHOTO_INFERRED / IDENTITY_UNRESOLVED |
+| Southern inn / Yetachapari (provisional) | `edge:yetachapari:1160027594` | Yes: Southern edge west of Pashupati, above Potters exit | Approximate; schematic symbols do not prove exact bearings | Qualitatively consistent | KEEP; Provisional footprint correspondence |
+| House of Malla | No separately verified model / existing route-context | West of Old Town entrance, not the Royal Palace frontage | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Sundari Chowk | No separately verified model / existing route-context | Behind gallery; inside Royal Palace | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Taleju Chowk | No separately verified model / existing route-context | Behind public frontage, north of central open square | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Bhairab Chowk | No separately verified model / existing route-context | Inner palace east of Taleju Chowk | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Royal Palace | No separately verified model / existing route-context | Existing public frontage only; no invented complete interior | Unresolved | Unresolved individual binding | KEEP; no invented replacement |
+| Vatsala Temple (eastern) | No separately verified model / existing route-context | East of 55 Palace / north of Siddhi; distinct from Vatsala Durga | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Taduchhen Bahal | No separately verified model / existing route-context | SE edge; existing context is not a detailed Bahal reconstruction | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Khwopa Gate | No separately verified model / existing route-context | Eastern exit; not Old Town entrance or Golden Gate | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Shiva Temple near Minibus Stop | No separately verified model / existing route-context | Outside west core; not automatically Kedarnath | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Shiva Parbati / Erotic Elephant temples | No separately verified model / existing route-context | NW outside current core scope | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Ugrachandi/Bhairab guardians | No separately verified model / existing route-context | Western palace/galleries; existing abstract guardians not likenesses | Unresolved | Unresolved individual binding | UNRESOLVED; no invented replacement |
+| Potters / Taumadhi / Tachupal exits | No separately verified model / existing route-context | South/southeast/east circulation remains distinct | Unresolved | Unresolved individual binding | KEEP; no invented replacement |
+
+## Contradictions / changes
+
+No existing major monument centre is demonstrably contradicted by the plan's qualitative order. Model junction/proportion errors at the palace are real even when anchor order is correct. No object is moved just to force correspondence with a schematic symbol. Keep Rameshwar's documented pavilion despite a generic pagoda map icon. Different generic Shiva labels are not duplicate authority. Central open plaza and royal courts remain open. House of Malla, eastern Vatsala and Khwopa Gate are not falsely claimed complete. No six-placeholder or distant mass was shown to occupy conclusively proved modern empty space from this schematic plan alone.
+
+
+### Additional pre-correction model conflict: bell and column
+
+Directly re-inspected cached attributable `bell-2018.jpg`, `column-2024.jpg` and `gate-column.jpg` from the Phase 6C research cache, alongside the supplied palace photo. The big bell's earlier 6.25m total was an unsupported rendering assumption; its 4.04m clear piers/roof dominate the view disproportionately against photographed human scale and the column. Refine geometry above the retained 1.15m platform by a 0.75 vertical factor, resulting in approximately 4.975m total, without moving/rescaling the assembly transform. This is PHOTO_INFERRED, not a surveyed new height. Exact bell footprint/separation remains unresolved; no nominal anchor is changed to force a photograph.
+
+The Malla lotus capital is visibly metal in both the local palace photograph and independent 2024 close view. Split it from the stone shaft as bronze, retaining the original envelope. Refine the flat parasol into a shallow tiered metal silhouette (approximately 9.05m model top instead of 8.88m). Action becomes REFINE MODEL for `large-bell` and `malla-column`; original KEEP position/yaw/scale decisions remain. Joined hands, seated figure, base and palace association are supported; fine likeness is not claimed. Evidence: [2018 Big Bell](https://commons.wikimedia.org/wiki/File:Big_Bell,_Bhaktapur_Durbar_Square.jpg), existing `malla-gate-2024` and `gate-column-2013` source records. This addition precedes these specific geometry changes.
