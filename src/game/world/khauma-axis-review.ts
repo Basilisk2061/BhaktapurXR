@@ -1,3 +1,4 @@
+import {insideSquareReviewCamera,insideSquareReviewSpawn} from "./inside-square-review.ts";
 import type {SpawnPoint} from "../../types/world.ts";
 import type {WorldMode} from "./world-mode.ts";
 import {KHAUMA_GATE_VIEW_AXIS} from "../../data/reconstruction/khauma-spatial-audit.ts";
@@ -14,6 +15,7 @@ export const khaumaPhotoCameras={
 } as const;
 const photoAliases:Record<string,string>={"khauma-sightline-outside":"khauma-photo-outside","khauma-sightline-through":"khauma-photo-through"};
 export function khaumaPhotoCamera(review:string|null){
+ const inside=insideSquareReviewCamera(review);if(inside)return inside;
  review=review?photoAliases[review]??review:null;
  if(!review||!Object.hasOwn(khaumaPhotoCameras,review))return null;
  const settings=khaumaPhotoCameras[review as keyof typeof khaumaPhotoCameras],cameraYaw=yaw+settings.yawOffset;
@@ -36,6 +38,6 @@ export const khaumaAxisReviewSpawns:Record<string,SpawnPoint>={
  "square-edge-aerial":{position:[-76,34,68],rotation:[0,-.38,0]},
  "context-transition":{position:[-106,16,52],rotation:[0,.08,0]},
 };
-export function isSpatialAerialReview(review:string|null){return isUrbanAerialReview(review)||review==="square-edge-aerial"||review==="context-transition"||review==="khauma-west-aerial";}
-export function resolveKhaumaAxisReview(value:unknown,development:boolean){return resolveUrbanCompleteReview(value,development)??(development&&typeof value==="string"&&Object.hasOwn(khaumaAxisReviewSpawns,value)?value:null);}
-export function khaumaAxisExperienceSpawn(mode:WorldMode,review:string|null):SpawnPoint{return mode==="BHAKTAPUR"&&review?(review==="west-gate-outside"?khaumaAxisReviewSpawns["khauma-real-axis-outside"]:review==="west-gate-inside"?khaumaAxisReviewSpawns["khauma-real-axis-inside"]:khaumaAxisReviewSpawns[review])??urbanCompleteExperienceSpawn(mode,review):urbanCompleteExperienceSpawn(mode,review);}
+export function isSpatialAerialReview(review:string|null){return review==="9b-aerial"||isUrbanAerialReview(review)||review==="square-edge-aerial"||review==="context-transition"||review==="khauma-west-aerial";}
+export function resolveKhaumaAxisReview(value:unknown,development:boolean){return (development&&typeof value==="string"&&insideSquareReviewCamera(value)?value:null)??resolveUrbanCompleteReview(value,development)??(development&&typeof value==="string"&&Object.hasOwn(khaumaAxisReviewSpawns,value)?value:null);}
+export function khaumaAxisExperienceSpawn(mode:WorldMode,review:string|null):SpawnPoint{return mode==="BHAKTAPUR"&&review?insideSquareReviewSpawn(review)??(review==="west-gate-outside"?khaumaAxisReviewSpawns["khauma-real-axis-outside"]:review==="west-gate-inside"?khaumaAxisReviewSpawns["khauma-real-axis-inside"]:khaumaAxisReviewSpawns[review])??urbanCompleteExperienceSpawn(mode,review):urbanCompleteExperienceSpawn(mode,review);}

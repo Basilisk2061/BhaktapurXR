@@ -17,9 +17,9 @@ test("RMB navigation follows camera, WASD, Q/E, smooth speed, Shift and clean st
 });
 test("part roles partition every source piece and collider once; source remains byte-identical",()=>{
  const monuments=buildSpatiallyAuditedModels(),models=[...monuments,...buildSquareEdge(monuments).models].filter(m=>registry.some(r=>r.id===m.id));const frozen=JSON.stringify(models);
- assert.equal(parts.length,124);assert.ok(parts.every(p=>p.parentId&&p.defaultLocked&&!/Mesh_|Geometry_|strut-\d|brick-\d/.test(p.name)));
+ assert.equal(parts.length,129);assert.ok(parts.every(p=>p.parentId&&p.defaultLocked&&!/Mesh_|Geometry_|strut-\d|brick-\d/.test(p.name)));
  for(const m of models){const groups=partitionArchitecturalParts(m);for(const kind of ["boxes","shapes","profiles","roofs","volumes","polygonRoofs","colliders"]){const original=m[kind]??[],flattened=groups.flatMap(p=>p.model[kind]??[]);assert.equal(flattened.length,original.length,m.id+kind);for(const piece of original)assert.equal(flattened.filter(p=>p===piece).length,1,m.id+kind+" owned once");}}
- assert.equal(JSON.stringify(models),frozen);assert.equal(frame.colliderCount,2);assert.equal(parts.find(p=>p.id==="golden-gate/masonry").colliderCount,3);assert.equal(parts.find(p=>p.id==="golden-gate/canopy").colliderCount,0);
+ assert.equal(JSON.stringify(models),frozen);assert.equal(frame.colliderCount,2);assert.equal(parts.find(p=>p.id==="golden-gate/masonry").colliderCount,6);assert.equal(parts.find(p=>p.id==="golden-gate/canopy").colliderCount,0);
 });
 test("assembly/part hit selection uses architectural metadata, excludes hidden geometry and cycles overlaps",()=>{
  const g=new Group(),mesh=new Mesh();g.userData.editableId=gold.id;mesh.userData.partIds=[frame.id];g.add(mesh);const hit={object:mesh,instanceId:0,distance:1,point:new Vector3()};const entries=[...registry,...parts];assert.deepEqual(selectionCandidates([hit],entries,"assembly"),[gold.id]);assert.deepEqual(selectionCandidates([hit],entries,"part"),[frame.id]);g.visible=false;assert.deepEqual(selectionCandidates([hit],entries,"part"),[]);g.visible=true;
