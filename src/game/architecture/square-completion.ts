@@ -119,7 +119,7 @@ function replaceIdentifiedRameshwar(source:CentralModel):CentralModel{
  pinnacle(m,0,5.67,0,.48,"rameshwar-pavilion-finial");return m;
 }
 export function buildCompletedSquareModels(reconstructLeftTemple=true){
- const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
+ const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>!reconstructLeftTemple&&m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
  const w=Math.min(4.3,b.maxX-b.minX),d=Math.min(4.5,b.maxZ-b.minZ);for(let i=0;i<3;i++)box(m,0,(i+.5)*.16,0,w-i*.15,.16,d-i*.15,"stone","9c-small-shrine-stepped-base",true);
  box(m,0,1.84,0,2.2,2.72,2.5,"agedBrick","9c-small-shrine-brick-sanctum",true);
