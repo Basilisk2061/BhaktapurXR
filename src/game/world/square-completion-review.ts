@@ -1,6 +1,9 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "temple-clearance":pose([-55,20,23],[-73.085881,4,1.230037],76),
+ "art-museum-sitting":pose([-49,1.65,1],[-44,4,14],84),
+ "old-sitting-location":pose([4,12,-22],[8.86,1,-44.42],78),
  "behind-pavilion-correction":pose([-99,1.65,-34],[-112,4,-17],80),
  "placement-recovery-final":pose([-50,60,67],[-44,0,-13],82),
  "rameshwar-final":pose([-59,1.65,8],[-73.08588091683511,2.5,1.2300374321516927],72),

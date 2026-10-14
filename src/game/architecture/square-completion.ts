@@ -131,6 +131,23 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  const historicalPavilion=buildPalaceFrontageModels().find(model=>model.id==="rameshwar")!;
  return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)];
 }
+function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
+ const m=structuredClone(source),band=m.boxes.find(b=>b.role==="yetachapari-continuous-gallery-band")!;
+ const yaw=band.yaw,width=36.6,depth=6.8;
+ m.polygonRoofs=[];
+ m.roofs=[{position:[m.origin[0],6.42,m.origin[1]],width,depth,rise:1.3,yaw,material:"roof",role:"museum-sitting-broad-tiled-roof"}];
+ for(const b of m.boxes)if(/yetachapari-open-bay-post|yetachapari-continuous-gallery-band|yetachapari-upper-timber-frame|yetachapari-post-capital/.test(b.role))b.material="carvedTimber";
+ const x=band.position[0]-m.origin[0],z=band.position[2]-m.origin[1];
+ box(m,x,.31,z,band.size[0],.34,.7,"brick","museum-sitting-plinth-edge",true,yaw);
+ box(m,x,.52,z,band.size[0],.08,.74,"stone","museum-sitting-plinth-coping");
+ for(const side of [-1,1]){
+  const offset=side*depth/2,ex=Math.sin(yaw)*offset,ez=Math.cos(yaw)*offset;
+  box(m,ex,6.3,ez,width,.24,.4,"carvedTimber","museum-sitting-deep-eave",false,yaw);
+  box(m,ex,6.37,ez,width,.13,.045,"shutter","museum-sitting-red-eave-trim",false,yaw);
+ }
+ return m;
+}
+const templeConflictingContextIds=new Set(["edge:western-cluster-east-link:1159633452","context:9c:1159633453","edge:western-cluster-east-link:1159633454","edge:western-cluster-east-link:211076664"]);
 export function buildCompletedSquareEdge(){
  const baseline=buildInsideSquareEdge(),heritage=buildCompletedSquareModels(false),oldRaw=baseline.models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))),rawIds=new Set(oldRaw.map(m=>m.id));
  const models=baseline.models.filter(m=>!rawIds.has(m.id)),buildings=baseline.buildings.filter(b=>!rawIds.has(b.id)),existingSources=new Set(buildings.map(b=>b.sourceId));
@@ -156,6 +173,10 @@ export function buildCompletedSquareEdge(){
  // Retain only the pale exterior approach, terminating exactly on the frozen gate centreline.
  const approach=models.find(m=>m.id==="entrance:khauma-road")!,outside=entranceRoadEnds[0];
  for(const b of approach.boxes){b.position=[(outside[0]+approach.origin[0])/2,b.position[1],(outside[1]+approach.origin[1])/2];b.size[2]=Math.hypot(outside[0]-approach.origin[0],outside[1]-approach.origin[1]);}
+ // Suppress only the four assemblies whose masonry/roof bounds intersect the relocated platform.
+ const removedIds=new Set([...templeConflictingContextIds,"context:9c:1159393578"]);
+ const correctedModels=correctKhaumaContext(models).filter(m=>!removedIds.has(m.id)).map(m=>m.id==="edge:yetachapari:1160027594"?finishMuseumSittingFrontage(m):m);
+ for(const row of inventory)if(removedIds.has(row.id)){row.action=row.id==="context:9c:1159393578"?"restore pre-Phase-9C open/unmodeled footprint":"suppress intersecting temple-context instance";row.area=0;}
  const rawAfter=models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))).length;
- return {...baseline,models:correctKhaumaContext(models),buildings,khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
+ return {...baseline,models:correctedModels,buildings:buildings.filter(b=>!removedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
 }
