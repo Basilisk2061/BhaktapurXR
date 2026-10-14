@@ -11,7 +11,7 @@ import {entranceRoadEnds} from "../../data/reconstruction/khauma-entrance.ts";
 import {urbanStreetExits} from "../../data/reconstruction/urban-enclosure.ts";
 import {buildPalaceFrontageModels} from "./palace-frontage-models.ts";
 import {buildInsideSquareEdge} from "./inside-square-models.ts";
-import {monumentEnvelopes,streetRectangle} from "./urban-model.ts";
+import {monumentEnvelopes,rectangle,streetRectangle} from "./urban-model.ts";
 import {contextColliders} from "./urban-occupancy.ts";
 import {insideFootprint} from "./geometry.ts";
 import {buildRameshwar,box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
@@ -139,7 +139,12 @@ function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
  for(const b of m.boxes)if(/yetachapari-open-bay-post|yetachapari-continuous-gallery-band|yetachapari-upper-timber-frame|yetachapari-post-capital/.test(b.role))b.material="carvedTimber";
  const x=band.position[0]-m.origin[0],z=band.position[2]-m.origin[1];
  box(m,x,.31,z,band.size[0],.34,.7,"brick","museum-sitting-plinth-edge",true,yaw);
- box(m,x,.52,z,band.size[0],.08,.74,"stone","museum-sitting-plinth-coping");
+ // The sitting edge replaces this portion of the old floor, rather than covering a second coplanar top.
+ const edge=m.boxes.find(b=>b.role==="museum-sitting-plinth-edge")!;
+ const edgeFootprint=[rectangle([edge.position[0],edge.position[2]],edge.size[0],edge.size[2],edge.yaw)];
+ m.volumes=(m.volumes??[]).flatMap(v=>v.role==="yetachapari-source-platform"?polygonClipping.difference(v.rings,edgeFootprint).map(rings=>({...v,rings})):v);
+ // Existing floor colliders already support the retained edge; omit its redundant embedded collider.
+ m.colliders=m.colliders.filter(c=>JSON.stringify([c.position,c.size,c.yaw])!==JSON.stringify([edge.position,edge.size,edge.yaw]));
  for(const side of [-1,1]){
   const offset=side*depth/2,ex=Math.sin(yaw)*offset,ez=Math.cos(yaw)*offset;
   box(m,ex,6.3,ez,width,.24,.4,"carvedTimber","museum-sitting-deep-eave",false,yaw);
