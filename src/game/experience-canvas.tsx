@@ -1,4 +1,5 @@
 "use client";
+import {SquareCompletionBoundary} from "./world/square-completion-boundary";
 import {EditorScene} from "../features/world-editor/editor-scene";
 import type {EditorSession} from "../features/world-editor/session";
 import type {TransformOverrides} from "../features/world-editor/transforms";
@@ -72,6 +73,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
+          <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <KhaumaPhotoCamera review={review} input={input} />

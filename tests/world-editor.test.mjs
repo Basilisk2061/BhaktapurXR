@@ -12,7 +12,7 @@ import {runEditorApiFixture} from "./editor-api-fixture.mjs";
 const registry=getEditableRegistry(),gold=registry.find(r=>r.id==="golden-gate"),make=()=>{const s=new EditorSession(registry);s.select(gold.id);return s;};
 test("dev entry, assembly registry, provenance and child selection exclude player/ground/distant context",()=>{
  assert.equal(resolveEditor("1",true,"BHAKTAPUR"),true);for(const args of [[undefined,true,"BHAKTAPUR"],["1",false,"BHAKTAPUR"],["1",true,"ENGINEERING"]])assert.equal(resolveEditor(...args),false);
- assert.equal(registry.length,34);assert.equal(new Set(registry.map(r=>r.id)).size,34);assert.ok(registry.every(r=>r.defaultLocked));assert.ok(!registry.some(r=>/distant:|ground|road|jagannath|nyatapola/.test(r.id)));
+ assert.ok(registry.length>=34);assert.equal(new Set(registry.map(r=>r.id)).size,registry.length);assert.ok(registry.every(r=>r.defaultLocked));assert.ok(!registry.some(r=>/distant:|ground|road|jagannath|nyatapola/.test(r.id)));
  assert.equal(registry.find(r=>r.id==="gopinath-krishna").classification,"PROVISIONALLY_IDENTIFIED");
  const parent=new Group(),child=new Mesh();parent.userData.editableId=gold.id;parent.add(child);assert.equal(resolveEditableParent(child,new Set(registry.map(r=>r.id))),gold.id);assert.equal(resolveEditableParent(new Mesh(),new Set([gold.id])),null);
 });

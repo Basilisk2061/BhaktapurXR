@@ -1,3 +1,4 @@
+import {squareCompletionReviewCamera,squareCompletionReviewSpawn} from "./square-completion-review.ts";
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=58)=>{
  const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];
@@ -24,7 +25,7 @@ export const palaceCorrectionReviews={
 } as const;
 export const museumEntranceReview=pose([-39.7,2.2,-11.2],[-40,2.75,-18.75],58);
 export const museumSculpturesCloseReview=pose([-40.8,2.35,-13.7],[-38.45,2.25,-17.75],52);
-export function insideSquareReviewCamera(review:string|null){if(review==="9b2-museum-sculptures-close")return museumSculpturesCloseReview;if(review==="9b2-museum-entrance")return museumEntranceReview;if(review&&Object.hasOwn(palaceCorrectionReviews,review))return palaceCorrectionReviews[review as keyof typeof palaceCorrectionReviews];return review&&Object.hasOwn(insideSquareReviews,review)?insideSquareReviews[review as keyof typeof insideSquareReviews]:null;}
+export function insideSquareReviewCamera(review:string|null){const complete=squareCompletionReviewCamera(review);if(complete)return complete;if(review==="9b2-museum-sculptures-close")return museumSculpturesCloseReview;if(review==="9b2-museum-entrance")return museumEntranceReview;if(review&&Object.hasOwn(palaceCorrectionReviews,review))return palaceCorrectionReviews[review as keyof typeof palaceCorrectionReviews];return review&&Object.hasOwn(insideSquareReviews,review)?insideSquareReviews[review as keyof typeof insideSquareReviews]:null;}
 export function insideSquareReviewSpawn(review:string|null):SpawnPoint|null{
- const p=insideSquareReviewCamera(review);if(p&&review==="9b1-palace-photo")return {position:[-8.9,6.4,10.1],rotation:[0,p.yaw,0]};return p?{position:[p.position[0]+Math.sin(p.yaw)*2,review==="9b-aerial"?35:review?.startsWith("9b1-")&&p.height>5?p.height:.05,p.position[2]+Math.cos(p.yaw)*2],rotation:[0,p.yaw,0]}:null;
+ const complete=squareCompletionReviewSpawn(review);if(complete)return complete;const p=insideSquareReviewCamera(review);if(p&&review==="9b1-palace-photo")return {position:[-8.9,6.4,10.1],rotation:[0,p.yaw,0]};return p?{position:[p.position[0]+Math.sin(p.yaw)*2,review==="9b-aerial"?35:review?.startsWith("9b1-")&&p.height>5?p.height:.05,p.position[2]+Math.cos(p.yaw)*2],rotation:[0,p.yaw,0]}:null;
 }

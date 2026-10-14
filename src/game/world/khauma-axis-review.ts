@@ -4,6 +4,9 @@ import type {WorldMode} from "./world-mode.ts";
 import {KHAUMA_GATE_VIEW_AXIS} from "../../data/reconstruction/khauma-spatial-audit.ts";
 import {resolveUrbanCompleteReview,urbanCompleteExperienceSpawn,isUrbanAerialReview} from "./urban-complete-review.ts";
 const centre=KHAUMA_GATE_VIEW_AXIS.proposedCentre;
+// The former temporary gameplay start (30,35) is inside an occupied southern source lot.
+// Start on the already traversed approach; this is an operational spawn, never a monument correction.
+export const completedSquareGameplaySpawn:SpawnPoint={position:[centre[0]+Math.sin(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6,.05,centre[1]+Math.cos(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6],rotation:[0,KHAUMA_GATE_VIEW_AXIS.proposedYaw,0]};
 const target=[-10.012564711790674,7.277097845494605],length=Math.hypot(target[0]-centre[0],target[1]-centre[1]);
 export const gateViewDirection:[number,number]=[(target[0]-centre[0])/length,(target[1]-centre[1])/length];
 const yaw=Math.atan2(-gateViewDirection[0],-gateViewDirection[1]);
@@ -38,6 +41,6 @@ export const khaumaAxisReviewSpawns:Record<string,SpawnPoint>={
  "square-edge-aerial":{position:[-76,34,68],rotation:[0,-.38,0]},
  "context-transition":{position:[-106,16,52],rotation:[0,.08,0]},
 };
-export function isSpatialAerialReview(review:string|null){return review==="9b1-map-west"||review==="9b1-plan-aerial"||review==="9b1-palace-photo"||review==="9b-aerial"||isUrbanAerialReview(review)||review==="square-edge-aerial"||review==="context-transition"||review==="khauma-west-aerial";}
+export function isSpatialAerialReview(review:string|null){return !!review?.startsWith("9c-")&&/aerial|palace-depth/.test(review)||review==="9b1-map-west"||review==="9b1-plan-aerial"||review==="9b1-palace-photo"||review==="9b-aerial"||isUrbanAerialReview(review)||review==="square-edge-aerial"||review==="context-transition"||review==="khauma-west-aerial";}
 export function resolveKhaumaAxisReview(value:unknown,development:boolean){return (development&&typeof value==="string"&&insideSquareReviewCamera(value)?value:null)??resolveUrbanCompleteReview(value,development)??(development&&typeof value==="string"&&Object.hasOwn(khaumaAxisReviewSpawns,value)?value:null);}
-export function khaumaAxisExperienceSpawn(mode:WorldMode,review:string|null):SpawnPoint{return mode==="BHAKTAPUR"&&review?insideSquareReviewSpawn(review)??(review==="west-gate-outside"?khaumaAxisReviewSpawns["khauma-real-axis-outside"]:review==="west-gate-inside"?khaumaAxisReviewSpawns["khauma-real-axis-inside"]:khaumaAxisReviewSpawns[review])??urbanCompleteExperienceSpawn(mode,review):urbanCompleteExperienceSpawn(mode,review);}
+export function khaumaAxisExperienceSpawn(mode:WorldMode,review:string|null):SpawnPoint{if(mode==="BHAKTAPUR"&&!review)return completedSquareGameplaySpawn;return mode==="BHAKTAPUR"&&review?insideSquareReviewSpawn(review)??(review==="west-gate-outside"?khaumaAxisReviewSpawns["khauma-real-axis-outside"]:review==="west-gate-inside"?khaumaAxisReviewSpawns["khauma-real-axis-inside"]:khaumaAxisReviewSpawns[review])??urbanCompleteExperienceSpawn(mode,review):urbanCompleteExperienceSpawn(mode,review);}

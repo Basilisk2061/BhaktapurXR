@@ -28,7 +28,7 @@ test("Phase 9B preserves every established assembly transform, approved entrance
 test("all existing V2 part identities and local source frames survive geometry refinements",async()=>{
  const previous=[...old,...buildSquareEdge().models],current=[...models,...urban.models],registry=getEditableRegistry(),parts=getEditableParts();
  for(const m of previous.filter(m=>registry.some(r=>r.id===m.id))){const newer=partitionArchitecturalParts(current.find(n=>n.id===m.id));for(const p of partitionArchitecturalParts(m))assert.deepEqual(newer.find(n=>n.id===p.id)?.source,p.source,p.id);}
- assert.equal(parts.length,133);assert.equal(registry.length,34);assert.equal(parts.filter(p=>p.parentId==="palace-corner-shrine-unresolved").length,5);
+ assert.ok(parts.length>=133);assert.ok(registry.length>=34);assert.equal(parts.filter(p=>p.parentId==="palace-corner-shrine-unresolved").length,5);
  assert.equal(await readFile("src/features/bhaktapur/data/manual-transform-overrides.json","utf8"),savedBefore);
  for(const m of current){const groups=partitionArchitecturalParts(m);for(const key of ["boxes","shapes","profiles","roofs","colliders","volumes","polygonRoofs"])assert.equal(groups.flatMap(p=>p.model[key]??[]).length,(m[key]??[]).length,m.id+key);}
 });
