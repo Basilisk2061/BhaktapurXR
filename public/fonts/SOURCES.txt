@@ -1,0 +1,5 @@
+Gambarino and General Sans by Indian Type Foundry / Fontshare.
+Downloaded from the official Fontshare webfont API.
+Source: https://www.fontshare.com/fonts/gambarino
+Source: https://www.fontshare.com/fonts/general-sans
+Terms: https://www.fontshare.com/terms

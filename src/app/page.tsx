@@ -1,21 +1,16 @@
+import Image from "next/image";
 import Link from "next/link";
-import { PUBLIC_EXPLORE_HREF } from "@/game/world/world-mode";
+import {HomePreview} from "@/components/home-preview";
+import {HomeMotion} from "@/components/home-motion";
+import {PUBLIC_EXPLORE_HREF} from "@/game/world/world-mode";
+import "./home.css";
 
-export default function HomePage() {
-  return (
-    <main className="mx-auto flex min-h-svh max-w-6xl flex-col px-6 sm:px-12">
-      <header className="flex items-center justify-between border-b border-stone-300 py-7">
-        <span className="text-lg font-semibold tracking-tight">BhaktapurXR</span>
-        <span className="text-xs uppercase tracking-widest text-stone-600">Digital heritage · Nepal</span>
-      </header>
-      <section className="flex flex-1 flex-col justify-center py-20">
-        <p className="mb-6 text-xs font-semibold uppercase tracking-[0.2em] text-stone-600">A place. A living heritage.</p>
-        <h1 className="max-w-3xl font-serif text-5xl leading-tight sm:text-7xl">Experience Bhaktapur<br />in a new dimension.</h1>
-        <p className="mt-7 max-w-xl text-lg leading-relaxed text-stone-600">An interactive 3D digital heritage experience of Bhaktapur Durbar Square, Nepal.</p>
-        <div className="mt-10"><Link href={PUBLIC_EXPLORE_HREF} className="inline-flex items-center gap-6 rounded-sm bg-[#34473c] px-6 py-4 font-medium text-white transition-colors hover:bg-[#25372e]">Explore Bhaktapur <span aria-hidden="true">↗</span></Link></div>
-        <p className="mt-5 max-w-lg text-sm leading-relaxed text-stone-600">Early development · Source-backed reconstruction in progress.</p>
-      </section>
-      <footer className="border-t border-stone-300 py-6 text-sm text-stone-600">Built with respect for place, people, and historical accuracy.</footer>
-    </main>
-  );
-}
+export default function HomePage(){return <main className="home" id="top">
+ <HomeMotion/><a className="home-skip" href="#introduction">Skip to introduction</a>
+ <header className="home-nav"><Link href="/" className="home-brand" aria-label="BhaktapurXR home" data-reveal>BhaktapurXR</Link><nav aria-label="Main navigation" data-reveal><a href="#reconstruction">The reconstruction</a><Link href={PUBLIC_EXPLORE_HREF} prefetch={false}>Explore <span aria-hidden="true">&#8599;</span></Link></nav></header>
+ <section className="home-hero" aria-labelledby="home-title"><HomePreview/><div className="hero-copy"><p className="hero-place" data-reveal>Bhaktapur Durbar Square<br/>Nepal, in a new dimension.</p><div><h1 id="home-title" data-reveal>Explore Bhaktapur<br/>Durbar Square in 3D.</h1><p className="home-lead" data-reveal>Walk through an evolving digital reconstruction of Nepal&apos;s historic square, directly in your browser.</p><Link className="home-button" href={PUBLIC_EXPLORE_HREF} prefetch={false} data-reveal>Explore Bhaktapur <span aria-hidden="true">&#8599;</span></Link></div></div></section>
+ <section className="home-intro" id="introduction" aria-labelledby="intro-title"><div className="intro-heading"><h2 id="intro-title" data-reveal>A square,<br/>at your pace.</h2><p data-reveal>Walk the brick-paved courtyards. Look up at timber galleries. See how temples and terraces shape the space between them.</p><p className="home-note" data-reveal>Best explored with a keyboard and mouse. No installation needed.</p></div><div className="intro-images"><figure data-reveal><Image src="/experience/palace.jpg" alt="Carved timber and brick along the reconstructed royal palace" width={1600} height={892} sizes="(max-width: 700px) 100vw, 60vw"/><figcaption>Brick, timber, and the palace edge.</figcaption></figure><figure data-reveal><Image src="/experience/terraces.jpg" alt="The domed pavilion and pagoda in the reconstructed western square" width={1600} height={892} sizes="(max-width: 700px) 100vw, 30vw"/><figcaption>Architecture seen from the plaza.</figcaption></figure></div></section>
+ <section className="home-about" id="reconstruction" aria-labelledby="about-title"><figure data-reveal><Image src="/experience/sitting.jpg" alt="The open timber sitting arcade in the current digital reconstruction" width={1600} height={892} sizes="(max-width: 700px) 100vw, 60vw"/><figcaption>Space to gather. A reconstructed sitting frontage.</figcaption></figure><div className="about-copy"><h2 id="about-title" data-reveal>Rebuilt with care.</h2><p data-reveal>Maps, architectural records, and photographs guide this reconstruction. Where the evidence is incomplete, proportions and details remain approximate.</p><p data-reveal>This is a work in progress: a way to explore the square&apos;s architecture and spatial relationships, rather than a perfect record of the real site.</p><a className="home-text-link" href="#top" data-reveal>Take another look <span aria-hidden="true">&#8599;</span></a></div></section>
+ <section className="home-invitation" aria-labelledby="invitation-title"><h2 id="invitation-title" data-reveal>Step into the square.</h2><div data-reveal><p>A place to explore, at your own pace.</p><Link className="home-button home-button-light" href={PUBLIC_EXPLORE_HREF} prefetch={false}>Explore Bhaktapur <span aria-hidden="true">&#8599;</span></Link></div></section>
+ <footer className="home-footer"><div><p>Views from an evolving digital reconstruction.</p><a href="https://www.openstreetmap.org/copyright">Map data &copy; OpenStreetMap contributors</a></div><p className="footer-brand" data-reveal>BhaktapurXR</p></footer>
+ </main>;}

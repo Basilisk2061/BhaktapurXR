@@ -5,3 +5,7 @@ body { margin: 0; background: #f5f2eb; color: #262d29; font-family: Arial, Helve
 a, button { -webkit-tap-highlight-color: transparent; }
 a:focus-visible, button:focus-visible { outline: 3px solid #96734e; outline-offset: 5px; }
 ::selection { background: #d8c6aa; }
+
+.explore-shell{display:flex;height:100svh;min-height:0;flex-direction:column;background:#25231f;overflow:hidden}.game-hud{position:absolute;inset:0;pointer-events:none;font-family:Arial,Helvetica,sans-serif}.game-menu{position:absolute;top:18px;right:18px;pointer-events:auto;color:#f5f2eb;font-size:14px}.game-menu summary{cursor:pointer;padding:12px 18px;background:#292520;min-height:44px;list-style:none}.game-menu summary::-webkit-details-marker{display:none}.game-menu nav{background:#292520;padding:20px;width:260px;max-width:calc(100vw - 36px)}.game-menu nav p{margin:18px 0;line-height:1.7}.game-menu a{display:block;padding:10px 0;text-underline-offset:4px}.game-menu a:last-child{font-size:13px}.game-control-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);width:max-content;max-width:calc(100% - 40px);padding:12px 18px;background:#292520;color:#f5f2eb;font-size:14px;text-align:center}.game-control-hint span{display:block;margin-top:6px;font-size:13px}.game-menu :focus-visible{outline:3px solid #f5f2eb;outline-offset:3px}@media(max-width:600px){.game-control-hint{bottom:18px;width:calc(100% - 36px)}.game-control-hint span{line-height:1.6}}
+
+.explore-development{background:#f5f2eb}

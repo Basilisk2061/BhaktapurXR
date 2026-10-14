@@ -1,0 +1,5 @@
+"use client";
+import Image from "next/image";
+import {useState} from "react";
+const views=[{name:"The square",src:"/experience/square.jpg",alt:"A view of the reconstructed Durbar Square, with pale stone monuments and timber-roofed temples"},{name:"The palace",src:"/experience/palace.jpg",alt:"The reconstructed palace frontage and carved timber windows"},{name:"The terraces",src:"/experience/terraces.jpg",alt:"The reconstructed western temples, pavilion and independent raised platforms"}];
+export function HomePreview(){const [selected,setSelected]=useState(0);return <figure className="home-preview" data-reveal><div className="preview-image"><Image src={views[selected].src} alt={views[selected].alt} width={1600} height={892} sizes="100vw" loading="eager" /></div><figcaption><div className="preview-choices" role="group" aria-label="Preview the reconstruction">{views.map((v,i)=><button key={v.name} type="button" aria-pressed={selected===i} onClick={()=>setSelected(i)}>{v.name}</button>)}</div></figcaption></figure>;}
