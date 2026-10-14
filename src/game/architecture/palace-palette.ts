@@ -1,10 +1,11 @@
 import type {MeshStandardMaterial} from "three";
 import type {CentralMaterial} from "./central-model.ts";
 /** Photo-inferred palette. Reuses existing maps; no downloaded texture/PBR dependency. */
-type FoundationMaterial=Exclude<CentralMaterial,"agedBrick"|"redMasonry"|"carvedTimber">;
+type PalaceMaterial=Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief">;
+type FoundationMaterial=Exclude<PalaceMaterial,"agedBrick"|"redMasonry"|"carvedTimber">;
 export function finishPalacePalette(materials:Record<FoundationMaterial,MeshStandardMaterial>){
- const palette=materials as Record<CentralMaterial,MeshStandardMaterial>;
- const shared=(source:FoundationMaterial,id:CentralMaterial,color:string)=>{const base=materials[source],m=base.clone();m.onBeforeCompile=base.onBeforeCompile;m.customProgramCacheKey=()=>base.customProgramCacheKey()+":palace:"+id;m.color.set(color);palette[id]=m;};
+ const palette=materials as Record<PalaceMaterial,MeshStandardMaterial>;
+ const shared=(source:FoundationMaterial,id:PalaceMaterial,color:string)=>{const base=materials[source],m=base.clone();m.onBeforeCompile=base.onBeforeCompile;m.customProgramCacheKey=()=>base.customProgramCacheKey()+":palace:"+id;m.color.set(color);palette[id]=m;};
  shared("brick","agedBrick","#b59983");
  shared("plaster","redMasonry","#a44936");
  shared("timber","carvedTimber","#443024");

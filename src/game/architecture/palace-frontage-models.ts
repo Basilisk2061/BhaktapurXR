@@ -3,6 +3,7 @@ import {buildInsideSquareModels} from "./inside-square-models.ts";
 import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 import {transformMatrix,type ManualTransform} from "../../features/world-editor/transforms.ts";
 import {Vector3} from "three";
+import {refineMuseumEntrance} from "./museum-entrance.ts";
 import {box,shape,profile,pinnacle} from "./remaining-models.ts";
 
 export const palaceTruthEvidence={
@@ -115,7 +116,7 @@ export function buildPalaceFrontageModels(){return buildInsideSquareModels().map
  if(!["gallery-frontage","golden-gate","fifty-five-frontage","palace-corner-shrine-unresolved","large-bell","malla-column"].includes(source.id))return source;
  const m=structuredClone(source) as CentralModel & {editorPartSources:Record<string,ManualTransform>};
  m.editorPartSources=Object.fromEntries(partitionArchitecturalParts(source).map(p=>[p.id,p.source]));
- if(m.id==="gallery-frontage")gallery(m);
+ if(m.id==="gallery-frontage"){gallery(m);refineMuseumEntrance(m);}
  if(m.id==="large-bell")bellProportion(m);
  if(m.id==="malla-column")columnMaterial(m);
  if(m.id==="golden-gate")golden(m);

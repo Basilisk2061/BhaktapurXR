@@ -4,12 +4,13 @@ import type {SolidBox} from "../../game/architecture/geometry.ts";
 import {transformMatrix,type ManualTransform} from "./transforms.ts";
 export interface ArchitecturalPart {id:string;parentId:string;name:string;source:ManualTransform;model:CentralModel;colliderCount:number}
 type Piece={role:string;position?:[number,number,number];yaw?:number};
-const labels:Record<string,string>={"gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
+const labels:Record<string,string>={"museum-entrance-door":"Museum entrance / carved doorway and nearby windows","museum-entrance-sign":"National Art Museum sign","museum-entrance-lions":"Museum guardian lions / plinths","museum-entrance-figures":"Museum carved side figures / bases","gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
 /** Existing procedural roles are grouped, never split into individual mesh primitives. */
 export function architecturalPartKey(m:CentralModel,p:Piece):string{
  const r=p.role;
  if(m.id==="golden-gate")return /gate-side-masonry|gate-brick-upper|gateway-rear-tile-roof/.test(r)?"masonry":/canopy/.test(r)?"canopy":/garuda/.test(r)?"ornament":"gate-frame";
  if(m.id==="fifty-five-frontage"||m.id==="gallery-frontage"){
+  const museum=r.match(/^museum-entrance-(door|sign|lions|figures)/);if(museum)return "museum-entrance-"+museum[1];
   if(/west-return|palace-return/.test(r)||(m.id==="fifty-five-frontage"&&p.yaw!==undefined&&Math.abs(Math.sin(p.yaw-m.yaw))>.5))return "return";
   if(/roof|eave/.test(r))return "roof";
   if(/gallery-pale|arcade|upper-paired-shutter|upper-window-sill|upper-arched-room|upper-blind-arched-panel|upper-shutter-slats/.test(r))return "arcade";
