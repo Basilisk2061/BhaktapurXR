@@ -1,6 +1,8 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "separate-pavilion-platforms":pose([-110,25,-45],[-109,1,-20],86),
+ "pavilion-platform-reference":pose([-108,1.65,-35],[-109,4,-22],90),
  "raised-pavilion-reference":pose([-108,1.65,-35],[-109,4,-22],90),
  "raised-pavilion-wide":pose([-110,25,-45],[-109,1,-20],86),
  "museum-sattal-final":pose([-49,1.65,1],[-44,4,14],84),
