@@ -1,4 +1,4 @@
-import {correctPavilion,correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
+import {correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
 import editorFrames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
 import {correctEasternShikhara} from "./eastern-correction.ts";
 import polygonClipping from "polygon-clipping";
@@ -109,7 +109,7 @@ function coveredRange(id:string,polygons:MultiPolygon){
  return m;
 }
 export function buildCompletedSquareModels(){
- const models=buildPalaceFrontageModels().map(m=>m.id==="silu-mahadev"?correctEasternShikhara(m):m.id==="rameshwar"?correctPavilion(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
+ const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
  const w=Math.min(4.3,b.maxX-b.minX),d=Math.min(4.5,b.maxZ-b.minZ);for(let i=0;i<3;i++)box(m,0,(i+.5)*.16,0,w-i*.15,.16,d-i*.15,"stone","9c-small-shrine-stepped-base",true);
  box(m,0,1.84,0,2.2,2.72,2.5,"agedBrick","9c-small-shrine-brick-sanctum",true);

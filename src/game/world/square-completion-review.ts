@@ -1,6 +1,10 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "9c2-through-khauma":pose([-118,1.65,-33.8],[-100,3,-27],78),
+ "9c2-rameshwar":pose([-102,1.65,-24],[-116.25,8,-8.81],84),
+ "9c2-left":pose([-102,1.65,-31],[-102,2.5,-39],82),
+ "9c2-right":pose([-112,1.65,-30],[-121.7,2,-23.6],78),
  "9c1-through-khauma":pose([-118,1.65,-33.8],[-95,3,-27],70),
  "9c1-khauma-left":pose([-113,1.65,-30],[-113.4,2.5,-39],72),
  "9c1-khauma-left-close":pose([-117,1.65,-34],[-116,2.5,-38],66),

@@ -1,11 +1,11 @@
-import editorFrames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
+import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 import type {CentralModel} from "./central-model.ts";
 import {box,profile,pinnacle,shape,stairs,stonePost} from "./remaining-models.ts";
 
-export const easternCorrection={identity:"Silu Mahadev / Phasi Dega",classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",oldYaw:-Math.PI/2+.074,newYaw:-.105,platform:{width:24,depth:20,height:2.1},reference:"reference/eastern-square/shikhara-sattal-reference.webp",uncertain:["Exact entrance azimuth and terrace dimensions unmeasured","Rear access and subsidiary details partly inferred","Covered-range Layku identity/source binding provisional"]} as const;
+export const easternCorrection={identity:"Unresolved shikhara: requested old Rameshwar visual target",classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",oldYaw:-Math.PI/2+.074,newYaw:-.105,platform:{width:24,depth:20,height:2.1},reference:"reference/eastern-square/shikhara-sattal-reference.webp",uncertain:["Exact entrance azimuth and terrace dimensions unmeasured","Rear access and subsidiary details partly inferred","Covered-range Layku identity/source binding provisional"]} as const;
 export function correctEasternShikhara(source:CentralModel):CentralModel{
- const m:CentralModel={...source,yaw:easternCorrection.newYaw,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};
- Object.assign(m,{editorPartSources:editorFrames["silu-mahadev"]});
+ const m:CentralModel={...source,yaw:source.yaw,accuracy:"PROVISIONALLY_IDENTIFIED",boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};
+ Object.assign(m,{editorPartSources:Object.fromEntries(partitionArchitecturalParts(source).map(p=>[p.id,p.source]))});
  // Three major terraces, not six continuous stair tiers. Central access slots stop at the landing.
  for(const [w,d,base,h]of [[24,20,0,.35],[21.8,17.8,.35,.8],[19.6,15.6,1.15,.95]]){
   const slot=3.2,flank=(w-slot)/2;for(const side of [-1,1])box(m,side*(slot+flank)/2,base+h/2,0,flank,h,d,"brick","silu-platform",true);

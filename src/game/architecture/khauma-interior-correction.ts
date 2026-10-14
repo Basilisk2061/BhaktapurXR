@@ -8,8 +8,8 @@ const fresh=(id:string,origin:[number,number],yaw=0):CentralModel=>({id,anchorId
 export const khaumaInteriorAudit=[
  {id:"context:9c:1159393579",classification:"REMOVE_AS_OPEN_SPACE",action:"withdraw guessed house; retain low terrace/threshold at recorded footprint",binding:"Photo-supported open sattal apron; individual source-object correspondence unresolved"},
  {id:"context:9c:1159393576",classification:"PLAN/PHOTO_INFERRED",action:"withdraw generic east-apron extrusion; approved palace facade untouched",binding:"Photo-supported open foreground of continuous arcade; render interpretation only, no source trace changed"},
- {id:"edge:khauma-north-flank:1158762014",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"replace generic frontage with wall/gate/guardians",binding:"Mapped northern frontage; photographic gate-to-school adjacency, working dimensions approximate"},
- {id:"entrance:khauma-raised-veranda",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"add raised plastered veranda at photographic opposite-side edge",binding:"PHOTO_RELATIVE_KHAUMA; not a surveyed individual footprint"},
+ {id:"edge:khauma-north-flank:1158762014",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"retain wall/gate/guardians beyond restored entrance shed",binding:"Mapped northern frontage; photographic gate-to-school adjacency, working dimensions approximate"},
+ {id:"entrance:khauma-raised-veranda",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"retain plastered frontage on low plinth without stair flight",binding:"PHOTO_RELATIVE_KHAUMA; not a surveyed individual footprint"},
  ...["context:9c:1158762012","context:9c:1158762013","context:9c:1158762016","context:9c:1159393574","context:9c:1159393575","edge:western-cluster-south:1159633450","edge:western-cluster-south:1159633451","edge:western-cluster-east-link:211076664"].map(id=>({id,classification:"FOOTPRINT_ONLY_CONTEXT",action:"withdraw unsupported residential facade; retain modest occupied footprint/roof",binding:"Occupancy source-derived; individual architecture UNRESOLVED"})),
  ...["edge:khauma-south-flank:1159661606","edge:western-approach-low-roofs:1159672142","edge:western-approach-low-roofs:1159672143"].map(id=>({id,classification:"PLAN/PHOTO_INFERRED",action:"retain exterior approach roofs",binding:"Outside/through gate photographs; rear details approximate"})),
 ] as const;
@@ -53,7 +53,8 @@ export function schoolEntrance(source:CentralModel){
  for(const side of [-1,1])box(m,side*5.2,1.15,-.8,.35,2.3,5.4,"brick","school-wall-return",true);
  m.roofs.push({position:[m.origin[0],2.64,m.origin[1]-1],width:10.6,depth:4.8,rise:.9,yaw:0,material:"roof",role:"school-roof-rear-context"});
   // Slide only this reconstructed wall composition east to clear the frozen Khauma masonry.
- for(const p of [...m.boxes,...m.profiles,...m.shapes,...m.roofs,...m.colliders])p.position[0]+=2;
+ for(const p of [...m.boxes,...m.profiles,...m.shapes,...m.roofs,...m.colliders])p.position[0]+=14;
+ m.origin[0]+=12;
  return m;
 }
 export function raisedVeranda(){
@@ -66,7 +67,13 @@ export function raisedVeranda(){
  box(m,0,3.89,-2.5,8.3,.27,.42,"carvedTimber","veranda-beam");
  roof(m,4.04,10,9.1,1.45,"veranda-roof");box(m,0,3.91,-4.45,10,.22,.07,"shutter","veranda-photo-red-eave-trim");
  for(let i=0;i<6;i++)box(m,0,(i+1)*.16/2,-5.15+i*.29,2.15,(i+1)*.16,.31,"stone","veranda-platform-stairs",true);
- box(m,0,2.38,-.51,1.2,2.25,.03,"recess","veranda-recessed-door");return m;
+ box(m,0,2.38,-.51,1.2,2.25,.03,"recess","veranda-recessed-door");
+ const signature=(p:{position:number[],size:number[],yaw:number})=>JSON.stringify([p.position,p.size,p.yaw]);
+ const collisionKeys=new Set(m.colliders.map(signature)),solids=m.boxes.filter(b=>collisionKeys.has(signature(b))&&b.role!=="veranda-platform-stairs");
+ m.boxes=m.boxes.filter(b=>b.role!=="veranda-platform-stairs");
+ for(const p of [...m.boxes,...m.profiles,...m.shapes,...m.roofs])p.position[1]-=.85;
+ for(const b of m.boxes){if(b.role==="veranda-platform"){b.position[1]=.075;b.size[1]=.15;}if(b.role==="veranda-platform-coping"){b.position[1]=.19;b.size[1]=.08;}}
+ m.colliders=solids.map(b=>({position:[...b.position],size:[...b.size],yaw:b.yaw}));return m;
 }
 export function correctPavilion(source:CentralModel){
  const m=structuredClone(source);Object.assign(m,{editorPartSources:frames.rameshwar});
@@ -74,6 +81,7 @@ export function correctPavilion(source:CentralModel){
  pinnacle(m,0,5.67,0,.48,"rameshwar-photo-dome-crown");return m;
 }
 export function correctKhaumaContext(models:CentralModel[]){
+ const shed=structuredClone(models.find(m=>m.id==="edge:khauma-north-flank:1158762014")!);shed.id="entrance:khauma-near-shed";
  const auditIds=new Set(khaumaInteriorAudit.filter(a=>a.classification==="FOOTPRINT_ONLY_CONTEXT").map(a=>a.id));
   return [...models.map(m=>{
  if(m.id==="context:9c:1159393579"){
@@ -92,5 +100,5 @@ export function correctKhaumaContext(models:CentralModel[]){
  for(const v of r.volumes??[])if(v.baseY+v.height>3.2)v.height=3.2-v.baseY;
  for(const c of r.colliders){c.position[1]*=3.2/oldTop;c.size[1]*=3.2/oldTop;}
  for(const roof of r.roofs)roof.position[1]=3.2;for(const roof of r.polygonRoofs??[])roof.baseY=3.2;
- r.boxes=r.boxes.filter(b=>b.position[1]+b.size[1]/2<=3.2);return r;}),raisedVeranda()];
+ r.boxes=r.boxes.filter(b=>b.position[1]+b.size[1]/2<=3.2);return r;}),shed,raisedVeranda()];
 }
