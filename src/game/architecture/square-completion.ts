@@ -108,7 +108,7 @@ function coveredRange(id:string,polygons:MultiPolygon){
  Object.assign(m,{editorPartSources:editorFrames["context:9c:1159393578"]});
  return m;
 }
-export function buildCompletedSquareModels(){
+export function buildCompletedSquareModels(reconstructLeftTemple=true){
  const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
  const w=Math.min(4.3,b.maxX-b.minX),d=Math.min(4.5,b.maxZ-b.minZ);for(let i=0;i<3;i++)box(m,0,(i+.5)*.16,0,w-i*.15,.16,d-i*.15,"stone","9c-small-shrine-stepped-base",true);
@@ -117,10 +117,10 @@ export function buildCompletedSquareModels(){
  profile(m,0,3.25,0,[[0,0],[1.6,0],[1.49,.18],[1.34,.45],[1.17,1.35],[.89,2.5],[.62,3.33],[.25,3.65],[0,3.7]],"agedBrick","9c-observed-small-brick-shikhara",4);
  profile(m,0,6.95,0,[[0,0],[.52,0],[.49,.13],[.37,.3],[0,.5]],"roof","9c-small-shrine-capping-form",12);pinnacle(m,0,7.45,0,.47,"9c-small-shrine-summit");
  shape(m,0,.48,1.26,[[-.4,0],[-.4,1.55],[0,1.96],[.4,1.55],[.4,0]],.055,"recess","9c-small-shrine-closed-portal");stairs(m,1.3,.48,3,2.9,.3,"stone","9c-small-shrine-steps");
- return [...models,m];
+ return [...models,reconstructLeftTemple?correctEasternShikhara(m):m];
 }
 export function buildCompletedSquareEdge(){
- const baseline=buildInsideSquareEdge(),heritage=buildCompletedSquareModels(),oldRaw=baseline.models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))),rawIds=new Set(oldRaw.map(m=>m.id));
+ const baseline=buildInsideSquareEdge(),heritage=buildCompletedSquareModels(false),oldRaw=baseline.models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))),rawIds=new Set(oldRaw.map(m=>m.id));
  const models=baseline.models.filter(m=>!rawIds.has(m.id)),buildings=baseline.buildings.filter(b=>!rawIds.has(b.id)),existingSources=new Set(buildings.map(b=>b.sourceId));
  const masks:Polygon[]=monumentEnvelopes(heritage).map(r=>[r]);
  for(const e of urbanStreetExits)masks.push([streetRectangle(e.from,e.to,e.width+.8,10)]);
