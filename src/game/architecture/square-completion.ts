@@ -1,3 +1,4 @@
+import {integrateRaisedPavilion,buildRaisedPavilionTerraces} from "./raised-pavilion-terraces.ts";
 import {correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
 import editorFrames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
 import {correctEasternShikhara} from "./eastern-correction.ts";
@@ -131,7 +132,7 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  shape(m,0,.48,1.26,[[-.4,0],[-.4,1.55],[0,1.96],[.4,1.55],[.4,0]],.055,"recess","9c-small-shrine-closed-portal");stairs(m,1.3,.48,3,2.9,.3,"stone","9c-small-shrine-steps");
  if(!reconstructLeftTemple)return [...models,m];
  const historicalPavilion=buildPalaceFrontageModels().find(model=>model.id==="rameshwar")!;
- return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)];
+ return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)].map(integrateRaisedPavilion);
 }
 function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
  const floorPieces=(source.volumes??[]).filter(v=>v.role==="yetachapari-source-platform").map(v=>v.rings);
@@ -168,6 +169,8 @@ export function buildCompletedSquareEdge(){
  const removedIds=new Set([...templeConflictingContextIds,"context:9c:1159393578"]);
  const correctedModels=correctKhaumaContext(models).filter(m=>!removedIds.has(m.id)).map(m=>m.id==="edge:yetachapari:1160027594"?finishMuseumSittingFrontage(m):m);
  for(const row of inventory)if(removedIds.has(row.id)){row.action=row.id==="context:9c:1159393578"?"restore pre-Phase-9C open/unmodeled footprint":"suppress intersecting temple-context instance";row.area=0;}
+ correctedModels.push(buildRaisedPavilionTerraces(correctedModels,heritage.find(m=>m.id==="gopinath-krishna")!));
+ const raisedContext=correctedModels.map(integrateRaisedPavilion);
  const rawAfter=models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))).length;
- return {...baseline,models:correctedModels,buildings:buildings.filter(b=>!removedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
+ return {...baseline,models:raisedContext,buildings:buildings.filter(b=>!removedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
 }
