@@ -14,7 +14,8 @@ import {buildInsideSquareEdge} from "./inside-square-models.ts";
 import {monumentEnvelopes,streetRectangle} from "./urban-model.ts";
 import {contextColliders} from "./urban-occupancy.ts";
 import {insideFootprint} from "./geometry.ts";
-import {box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
+import {buildRameshwar,box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
+import {remainingSpecificationById} from "../../data/reconstruction/architecture/remaining-specifications.ts";
 import type {CentralModel} from "./central-model.ts";
 import type {Point} from "../../data/reconstruction/types.ts";
 import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
@@ -108,6 +109,15 @@ function coveredRange(id:string,polygons:MultiPolygon){
  Object.assign(m,{editorPartSources:editorFrames["context:9c:1159393578"]});
  return m;
 }
+function replaceIdentifiedRameshwar(source:CentralModel):CentralModel{
+ const spec=remainingSpecificationById.rameshwar;
+ const m=buildRameshwar({...spec,frozenAnchor:[...source.origin],orientationEvidence:{...spec.orientationEvidence,workingYaw:source.yaw}});
+ m.id=source.id;m.anchorId=source.anchorId;m.accuracy="PROVISIONALLY_IDENTIFIED";
+ Object.assign(m,{editorPartSources:Object.fromEntries(partitionArchitecturalParts(source).map(p=>[p.id,p.source]))});
+ for(const b of m.boxes){if(b.material==="brick"||b.material==="stone")b.material="museumStone";if(b.role==="rameshwar-layered-square-canopy"&&b.position[1]<3.7)b.material="carvedTimber";}
+ for(const p of m.profiles){if(p.material==="stone")p.material="museumStone";if(p.role==="rameshwar-four-stone-post")p.profile=p.profile.map(([r,y])=>[r*1.45,y]);if(p.role==="rameshwar-low-lotus-dome")p.profile=[[0,0],[1.56,0],[1.48,.14],[1.39,.5],[1.12,.99],[.76,1.32],[.24,1.47],[0,1.5]];}
+ pinnacle(m,0,5.67,0,.48,"rameshwar-pavilion-finial");return m;
+}
 export function buildCompletedSquareModels(reconstructLeftTemple=true){
  const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
@@ -117,7 +127,7 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  profile(m,0,3.25,0,[[0,0],[1.6,0],[1.49,.18],[1.34,.45],[1.17,1.35],[.89,2.5],[.62,3.33],[.25,3.65],[0,3.7]],"agedBrick","9c-observed-small-brick-shikhara",4);
  profile(m,0,6.95,0,[[0,0],[.52,0],[.49,.13],[.37,.3],[0,.5]],"roof","9c-small-shrine-capping-form",12);pinnacle(m,0,7.45,0,.47,"9c-small-shrine-summit");
  shape(m,0,.48,1.26,[[-.4,0],[-.4,1.55],[0,1.96],[.4,1.55],[.4,0]],.055,"recess","9c-small-shrine-closed-portal");stairs(m,1.3,.48,3,2.9,.3,"stone","9c-small-shrine-steps");
- return [...models,reconstructLeftTemple?correctEasternShikhara(m):m];
+ return [...models.map(model=>reconstructLeftTemple&&model.id==="kedarnath"?replaceIdentifiedRameshwar(model):model),reconstructLeftTemple?correctEasternShikhara(m):m];
 }
 export function buildCompletedSquareEdge(){
  const baseline=buildInsideSquareEdge(),heritage=buildCompletedSquareModels(false),oldRaw=baseline.models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))),rawIds=new Set(oldRaw.map(m=>m.id));
