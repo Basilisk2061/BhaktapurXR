@@ -11,7 +11,7 @@ import {entranceRoadEnds} from "../../data/reconstruction/khauma-entrance.ts";
 import {urbanStreetExits} from "../../data/reconstruction/urban-enclosure.ts";
 import {buildPalaceFrontageModels} from "./palace-frontage-models.ts";
 import {buildInsideSquareEdge} from "./inside-square-models.ts";
-import {monumentEnvelopes,rectangle,streetRectangle} from "./urban-model.ts";
+import {monumentEnvelopes,streetRectangle} from "./urban-model.ts";
 import {contextColliders} from "./urban-occupancy.ts";
 import {insideFootprint} from "./geometry.ts";
 import {buildRameshwar,box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
@@ -73,19 +73,21 @@ function occupiedArchitecture(id:string,polygons:MultiPolygon,sourceId:string){
  }
  return {m,height,floors};
 }
-function coveredRange(id:string,polygons:MultiPolygon){
+function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel){
  const b=bounds(polygons[0]),m=fresh(id,[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
   // Direct photograph supersedes the provisional short-front L extrusion. Keep its mapped anchor
  // and raw source trace; reconstructed exterior extent is an approximate photographic interpretation.
- const frontage:Polygon=[[[-11,-44],[18.1,-44],[18.1,-36.5],[-11,-36.5],[-11,-44]]];
+ const frontage:Polygon=museumSource?polygons[0]:[[[-11,-44],[18.1,-44],[18.1,-36.5],[-11,-36.5],[-11,-44]]];
+ if(museumSource){m.origin=[...museumSource.origin];m.yaw=museumSource.yaw;m.anchorId=museumSource.anchorId;}
  for(const rings of [frontage]){
   m.volumes!.push({rings,baseY:0,height:.45,material:"brick",role:"sattal-plinth"},{rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
   m.colliders.push(...contextColliders(rings,.45),...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
   const all=edges(rings);
   // Two joined hip ranges over the mapped L-shaped arms, with deep working overhangs.
   // The previous distance-field roof under-sampled the narrow arms and flattened their silhouette.
-  if(!m.roofs.length)m.roofs.push({position:[3.55,4.64,-40.25],width:30,depth:9.4,rise:1.8,yaw:0,material:"roof",role:"sattal-broad-tiled-roof"},{position:[15.65,4.655,-46.05],width:24,depth:8.5,rise:1.7,yaw:Math.PI/2,material:"roof",role:"sattal-broad-tiled-roof-return"});
-  for(const e of all){const x=e.mid[0]-m.origin[0],z=e.mid[1]-m.origin[1],publicFace=e.nx>.3||e.nz>.3;
+  if(museumSource){const band=museumSource.boxes.find(b=>b.role==="yetachapari-continuous-gallery-band")!;m.roofs.push({position:[museumSource.origin[0],4.64,museumSource.origin[1]],width:band.size[0]+.5,depth:8,rise:1.8,yaw:band.yaw,material:"roof",role:"sattal-broad-tiled-roof"});}
+  else if(!m.roofs.length)m.roofs.push({position:[3.55,4.64,-40.25],width:30,depth:9.4,rise:1.8,yaw:0,material:"roof",role:"sattal-broad-tiled-roof"},{position:[15.65,4.655,-46.05],width:24,depth:8.5,rise:1.7,yaw:Math.PI/2,material:"roof",role:"sattal-broad-tiled-roof-return"});
+  for(const e of all){const x=e.mid[0]-m.origin[0],z=e.mid[1]-m.origin[1],publicFace=museumSource?e.nz<-.3:e.nx>.3||e.nz>.3;
    box(m,x,3.04,z,e.length,.22,.4,"carvedTimber","sattal-lower-bay-lintel",false,e.yaw);
    box(m,x+e.nx*.65,4.57,z+e.nz*.65,e.length+.7,.24,.36,"carvedTimber","sattal-deep-eaves",false,e.yaw);
    box(m,x+e.nx*.81,4.53,z+e.nz*.81,e.length+.75,.13,.045,"shutter","sattal-photo-red-roof-border",false,e.yaw);
@@ -106,7 +108,7 @@ function coveredRange(id:string,polygons:MultiPolygon){
  }
   // Retain a modest rear return within the mapped north arm, classified with the same uncertainty.
  const rear=polygons.flatMap(r=>r[0]).filter(([x,z])=>z< -44&&x>10);if(rear.length){const x0=Math.min(...rear.map(p=>p[0])),x1=Math.max(...rear.map(p=>p[0])),z0=Math.min(...rear.map(p=>p[1]));box(m,(x0+x1)/2-m.origin[0],.225,(z0-44)/2-m.origin[1],x1-x0,.45,-44-z0,"brick","sattal-plinth-rear-return",true);box(m,(x0+x1)/2-m.origin[0],2.52,(z0-44)/2-m.origin[1],x1-x0,4.14,-44-z0,"timber","sattal-inferred-rear-return",true);}
- Object.assign(m,{editorPartSources:editorFrames["context:9c:1159393578"]});
+ Object.assign(m,{editorPartSources:museumSource?Object.fromEntries(partitionArchitecturalParts(museumSource).map(p=>[p.id,p.source])):editorFrames["context:9c:1159393578"]});
  return m;
 }
 function replaceIdentifiedRameshwar(source:CentralModel):CentralModel{
@@ -132,25 +134,9 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)];
 }
 function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
- const m=structuredClone(source),band=m.boxes.find(b=>b.role==="yetachapari-continuous-gallery-band")!;
- const yaw=band.yaw,width=36.6,depth=6.8;
- m.polygonRoofs=[];
- m.roofs=[{position:[m.origin[0],6.42,m.origin[1]],width,depth,rise:1.3,yaw,material:"roof",role:"museum-sitting-broad-tiled-roof"}];
- for(const b of m.boxes)if(/yetachapari-open-bay-post|yetachapari-continuous-gallery-band|yetachapari-upper-timber-frame|yetachapari-post-capital/.test(b.role))b.material="carvedTimber";
- const x=band.position[0]-m.origin[0],z=band.position[2]-m.origin[1];
- box(m,x,.31,z,band.size[0],.34,.7,"brick","museum-sitting-plinth-edge",true,yaw);
- // The sitting edge replaces this portion of the old floor, rather than covering a second coplanar top.
- const edge=m.boxes.find(b=>b.role==="museum-sitting-plinth-edge")!;
- const edgeFootprint=[rectangle([edge.position[0],edge.position[2]],edge.size[0],edge.size[2],edge.yaw)];
- m.volumes=(m.volumes??[]).flatMap(v=>v.role==="yetachapari-source-platform"?polygonClipping.difference(v.rings,edgeFootprint).map(rings=>({...v,rings})):v);
- // Existing floor colliders already support the retained edge; omit its redundant embedded collider.
- m.colliders=m.colliders.filter(c=>JSON.stringify([c.position,c.size,c.yaw])!==JSON.stringify([edge.position,edge.size,edge.yaw]));
- for(const side of [-1,1]){
-  const offset=side*depth/2,ex=Math.sin(yaw)*offset,ez=Math.cos(yaw)*offset;
-  box(m,ex,6.3,ez,width,.24,.4,"carvedTimber","museum-sitting-deep-eave",false,yaw);
-  box(m,ex,6.37,ez,width,.13,.045,"shutter","museum-sitting-red-eave-trim",false,yaw);
- }
- return m;
+ const floorPieces=(source.volumes??[]).filter(v=>v.role==="yetachapari-source-platform").map(v=>v.rings);
+ const footprint=polygonClipping.union(floorPieces[0],...floorPieces.slice(1));
+ return coveredRange(source.id,footprint,source);
 }
 const templeConflictingContextIds=new Set(["edge:western-cluster-east-link:1159633452","context:9c:1159633453","edge:western-cluster-east-link:1159633454","edge:western-cluster-east-link:211076664"]);
 export function buildCompletedSquareEdge(){
