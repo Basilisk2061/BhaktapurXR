@@ -16,12 +16,18 @@ export function finishCentralStoneMaterials(materials:Record<Exclude<CentralMate
    shader.fragmentShader="varying vec3 vAgedStone;\n"+shader.fragmentShader;
    shader.fragmentShader=shader.fragmentShader.replace("#include <color_fragment>",`#include <color_fragment>
     float row=floor(vAgedStone.y/.29);
-    vec2 cell=floor((vAgedStone.xz+vec2(mod(row,3.0)*.31)) / vec2(.83,1.07));
+    vec2 stoneUv=(vAgedStone.xz+vec2(mod(row,3.0)*.31)) / vec2(.83,1.07);
+    vec2 cell=floor(stoneUv);
+    vec2 edge=min(fract(stoneUv),1.0-fract(stoneUv));
+    float joint=(1.0-smoothstep(.004,.014,min(edge.x,edge.y)))*.025;
     float block=fract(sin(dot(vec3(cell,row),vec3(12.9898,78.233,37.719)))*43758.5453);
     float course=1.0-smoothstep(.008,.022,mod(vAgedStone.y,.29));
     float age=sin(vAgedStone.x*.79+vAgedStone.y*.37)*sin(vAgedStone.z*.67);
-    diffuseColor.rgb *= (0.95+block*.07+age*.018-course*.012)*mix(.91,1.0,smoothstep(0.0,2.4,vAgedStone.y));`);
-  };material.customProgramCacheKey=()=>"aged-heritage-stone-v1";return material;
+    diffuseColor.rgb *= mix(vec3(.96,.985,1.015),vec3(1.035,1.005,.96),block);
+    diffuseColor.rgb *= (0.86+block*.18+age*.045-course*.045-joint)*mix(.81,1.0,smoothstep(0.0,2.4,vAgedStone.y));`);
+  shader.fragmentShader=shader.fragmentShader.replace("#include <roughnessmap_fragment>",`#include <roughnessmap_fragment>
+ roughnessFactor=clamp(roughnessFactor+(block-.5)*.055,.91,1.0);`);
+  };material.customProgramCacheKey=()=>"aged-heritage-stone-v2";return material;
  };
- return {...materials,heritageStone:stone("#ada38f"),heritageStoneShade:stone("#928875"),ensembleBronze:new MeshStandardMaterial({color:"#66533a",roughness:.77,metalness:.68,side:DoubleSide})};
+ return {...materials,heritageStone:stone("#918e82"),heritageStoneShade:stone("#706f65"),ensembleBronze:new MeshStandardMaterial({color:"#82705a",roughness:.68,metalness:.72,side:DoubleSide})};
 }
