@@ -1,7 +1,7 @@
-import {createContext,useContext,useEffect,useRef,type ReactNode,type RefObject} from 'react';
+import {createContext,useContext,useEffect,useMemo,useRef,type ReactNode,type RefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {useRapier} from '@react-three/rapier';
-import type {Vector3} from 'three';
+import {Vector3} from 'three';
 import type {PlayerRuntime} from '../player/player-runtime';
 import type {PlayerInput} from '../input/player-input';
 import {gameplayCodes} from '../input/player-input';
@@ -11,6 +11,7 @@ import {colliderAudioSurface} from './audio-surfaces';
 const ContactAudio=createContext<((position:Vector3,running:boolean)=>void)|null>(null);
 export const useFootContactAudio=()=>useContext(ContactAudio);
 export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;children:ReactNode}){
+ const voiceVectors=useMemo(()=>({position:new Vector3(),forward:new Vector3(),up:new Vector3(),heads:[new Vector3(),new Vector3()]}),[]);
  const canvas=useThree(state=>state.gl.domElement),{world,rapier}=useRapier(),engine=useRef<GameAudioEngine|null>(null);
  useEffect(()=>{
   if(!enabled)return;const audio=new GameAudioEngine();engine.current=audio;
@@ -24,6 +25,15 @@ export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runt
   const hit=world.castRay(new rapier.Ray({x:position.x,y:position.y+.15,z:position.z},{x:0,y:-1,z:0}),.65,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,c=>!c.parent()||c.parent()!.isFixed());
   engine.current?.footstep(hit?colliderAudioSurface(hit.collider):'brick-stone',running);
  };
- useFrame(()=>{if(!input.current.active||!canPlayFootstep(runtime.current))engine.current?.stopSteps();});
+ useFrame(({scene,camera})=>{
+  if(!input.current.active||!canPlayFootstep(runtime.current))engine.current?.stopSteps();
+  if(!enabled||!engine.current)return;
+  const actors=['old-a','old-b'].flatMap((id,i)=>{
+   const actor=scene.getObjectByName('npc:'+id),head=actor?.getObjectByName('mixamorigHead');
+   return actor&&head?[{id,state:actor.userData.state as string,position:head.getWorldPosition(voiceVectors.heads[i])}]:[];
+  });
+  camera.getWorldPosition(voiceVectors.position);camera.getWorldDirection(voiceVectors.forward);voiceVectors.up.set(0,1,0).applyQuaternion(camera.quaternion);
+  engine.current.updateOldManVoices(actors,voiceVectors.position,voiceVectors.forward,voiceVectors.up);
+ });
  return <ContactAudio.Provider value={enabled?contact:null}>{children}</ContactAudio.Provider>;
 }

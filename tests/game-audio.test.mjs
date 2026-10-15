@@ -59,3 +59,18 @@ test('a downward physics hit selects wood on a material-owned deck and masonry a
  assert.equal(colliderAudioSurface(hit(0).collider),'wood');assert.equal(hit(5).collider,ground);assert.equal(colliderAudioSurface(hit(5).collider),'brick-stone');
  }finally{world.free();}
 });
+
+import {OldManVoiceTiming,oldManVoiceConfig} from '../src/game/audio/old-man-voice.ts';
+test('old-man voice opportunities discard walking/busy starts, serialize actors and retain cooldown',()=>{
+ const timing=new OldManVoiceTiming(()=>0),actors=['a','b'].map(id=>({id,state:'IDLE',position:{x:1,y:2,z:3}}));
+ assert.equal(timing.next(0,actors,false),null);
+ assert.equal(timing.next(34,actors,false),null);
+ assert.deepEqual(timing.next(35,actors,false),{id:'a',kind:'knee'});
+ assert.equal(timing.next(70,actors,true),null,'no second voice during playback');
+ timing.ended(89);assert.equal(timing.next(90,actors,false),null,'singing suppressed by cooldown');
+ actors.forEach(a=>a.state='WALKING');assert.equal(timing.next(105,actors,false),null);
+ actors.forEach(a=>a.state='SITTING');assert.equal(timing.next(106,actors,false),null,'no queued voice on stopping');
+ assert.deepEqual(timing.next(140,actors,false),{id:'a',kind:'knee'});
+ const other=new OldManVoiceTiming(()=>.999);other.next(0,actors,false);assert.equal(other.next(35,actors,false),null);
+ assert.equal(oldManVoiceConfig.gain,.045);assert.equal(oldManVoiceConfig.maxDistance,12);
+});
