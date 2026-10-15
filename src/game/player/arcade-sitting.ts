@@ -5,7 +5,7 @@ import {partWorldDelta,type TransformOverrides} from "../../features/world-edito
 
 export interface ArcadeSeat {point:Vector3;exit:Vector3;yaw:number}
 export interface SeatSpan {a:Vector3;b:Vector3;outward:Vector3;columns:Vector3[]}
-export const sittingConfig={distance:1.4,depth:.17,exit:.95,columnClearance:.55,visualY:.008} as const;
+export const sittingConfig={distance:1.4,depth:.32,exit:.95,columnClearance:.55,visualY:.008} as const;
 let source:ReturnType<typeof buildCompletedSquareEdge>["models"][number]|undefined;
 /** Source geometry is cached; live parent/part overrides are applied exactly once. */
 export function arcadeSeatSpans(overrides:TransformOverrides={}):SeatSpan[]{

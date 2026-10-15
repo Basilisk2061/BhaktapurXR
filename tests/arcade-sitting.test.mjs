@@ -8,7 +8,7 @@ import overrides from '../src/features/bhaktapur/data/manual-transform-overrides
 test('nearest continuous seats at three places avoid posts and face the final transformed plaza',()=>{
  for(const transforms of [{},overrides,{'edge:yetachapari:1160027594':{position:[15,2,10],rotation:[0,1.2,0],scale:[1.2,1,1]}}]){
   const spans=arcadeSeatSpans(transforms);assert.ok(spans.length);const span=spans.sort((a,b)=>b.a.distanceTo(b.b)-a.a.distanceTo(a.b))[0];
-  const seats=[.15,.5,.85].map(t=>{const feet=span.a.clone().lerp(span.b,t).addScaledVector(span.outward,.5);feet.y-=.775;
+  const seats=[.15,.5,.85].map(t=>{const feet=span.a.clone().lerp(span.b,t).addScaledVector(span.outward,.3);feet.y-=.775;
    const seat=nearestArcadeSeat(feet,spans);assert.ok(seat);assert.ok(Math.abs(seat.point.y-span.a.y)<1e-8);
    assert.ok(span.columns.every(p=>Math.hypot(p.x-seat.point.x,p.z-seat.point.z)>=sittingConfig.columnClearance-1e-8));
    assert.ok(new Vector3(-Math.sin(seat.yaw),0,-Math.cos(seat.yaw)).dot(span.outward)>.999);
