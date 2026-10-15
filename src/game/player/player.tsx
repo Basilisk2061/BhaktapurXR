@@ -11,7 +11,7 @@ import { worldConfig } from "@/game/world/world-config";
 import { bodySpawnPosition, playerConfig } from "./player-config";
 import { cameraRelativeDirection, approachVelocity, dampAngle, movementState, safeDelta } from "./movement";
 import { createCharacterController, stepCharacter } from "./character-physics";
-import { PlayerProxy } from "./player-proxy";
+import { PlayerCharacter } from "./player-character";
 import { ThirdPersonCamera } from "./third-person-camera";
 import type { PlayerRuntime } from "./player-runtime";
 
@@ -83,7 +83,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     <>
       <RigidBody ref={body} type="kinematicPosition" colliders={false} enabledRotations={[false, false, false]} position={[spawnPosition.x, spawnPosition.y, spawnPosition.z]} name="player-body">
         <CapsuleCollider args={[playerConfig.capsuleHalfSegment, playerConfig.radius]} />
-        <PlayerProxy visualRef={visual} />
+        <PlayerCharacter visualRef={visual} runtime={runtimeRef} />
       </RigidBody>
       <ThirdPersonCamera reviewCamera={reviewCamera} bodyRef={body} visualRef={visual} input={inputRef} runtime={runtimeRef} />
     </>
