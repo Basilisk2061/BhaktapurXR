@@ -1,0 +1,68 @@
+{
+  "old_man_01": {
+    "master": "animations/old/Old Man Idle.fbx",
+    "mesh": "Meshy_AI_Himalayan_Heritage_Po_1015150316_texture.fbx",
+    "triangles": 174820,
+    "vertices": 101097,
+    "weightedBones": 34,
+    "boneNodes": 41,
+    "height": 1.68,
+    "scale": 0.9559350507708158,
+    "groundOffset": 0.010385063247189411,
+    "sitVisualY": 0.12054289612076527,
+    "uvVerified": true,
+    "clips": [
+      {
+        "name": "OldManIdle",
+        "seconds": 12.166666984558105
+      },
+      {
+        "name": "OldManWalk",
+        "seconds": 1.2666666507720947
+      }
+    ],
+    "textures": {
+      "baseColor": 2048,
+      "normal": 1024,
+      "metallicRoughness": 1024
+    },
+    "bytes": 10773517
+  },
+  "female_01": {
+    "master": "animations/female/Female_Idle.fbx",
+    "mesh": "Meshy_AI_Crimson_Grace_1015143011_texture.fbx",
+    "triangles": 179028,
+    "vertices": 104900,
+    "weightedBones": 34,
+    "boneNodes": 41,
+    "height": 1.63,
+    "scale": 0.8753708347672751,
+    "groundOffset": 0.039589038370571254,
+    "sitVisualY": -0.3442643266708278,
+    "uvVerified": true,
+    "clips": [
+      {
+        "name": "FemaleIdle",
+        "seconds": 8.333333015441895
+      },
+      {
+        "name": "FemaleWalk",
+        "seconds": 1.3666666746139526
+      },
+      {
+        "name": "FemaleSit",
+        "seconds": 6.400000095367432
+      },
+      {
+        "name": "FemalePhone",
+        "seconds": 37.233333587646484
+      }
+    ],
+    "textures": {
+      "baseColor": 2048,
+      "normal": 1024,
+      "metallicRoughness": 1024
+    },
+    "bytes": 12582561
+  }
+}

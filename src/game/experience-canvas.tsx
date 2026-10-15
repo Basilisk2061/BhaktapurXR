@@ -1,4 +1,5 @@
 "use client";
+import {NpcPopulation} from "./npcs/npc-population";
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
 import {EditorScene} from "../features/world-editor/editor-scene";
@@ -78,6 +79,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+          {mode==="BHAKTAPUR"&&<NpcPopulation transforms={manualOverrides} player={runtime}/>}
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={onReady} />
