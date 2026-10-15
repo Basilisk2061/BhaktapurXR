@@ -14,23 +14,20 @@ export const centralEnsembleEvidence={classification:"PHOTO_INFERRED",dimensions
 function fresh(source:CentralModel):CentralModel{
  return {...source,editorPartSources:editorFrames[source.id as keyof typeof editorFrames],boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]} as CentralModel;
 }
-// West is the plaza/front; Z is the lateral span in the supplied front views.
-export const templePodiumDimensions={frontDepth:8.2,width:9.25,levels:3,classification:"APPROXIMATE"} as const;
-function smallPodiumBounds(tier:number){return {left:-15.65+tier*.1,right:-11.65-tier*.1,north:9.4+tier*.1,south:13.2-tier*.1};}
-function course(m:CentralModel,y:number,h:number,w:number,d:number,role:string,slot=false){
- // Split the broad slabs around the stair/guardian channel and the independently editable right podium.
- const cut=-2.05,half=2.1;
- const solid=(x:number,z:number,sx:number,sz:number)=>{
-  const tier=Math.min(2,Math.floor((y-h/2+.001)/.84)),notch=smallPodiumBounds(tier);
-  const l=x-sx/2,r=x+sx/2,n=z-sz/2,s=z+sz/2;
-  const il=Math.max(l,notch.left-m.origin[0]-.006),ir=Math.min(r,notch.right-m.origin[0]+.006),inn=Math.max(n,notch.north-m.origin[1]-.006),is=Math.min(s,notch.south-m.origin[1]+.006);
-  const add=(l:number,r:number,n:number,s:number)=>{if(r-l>.001&&s-n>.001)box(m,(l+r)/2,y,(n+s)/2,r-l,h,s-n,stone,role,true);};
-  if(il>=ir||inn>=is){add(l,r,n,s);return;}
-  add(l,il,n,s);add(ir,r,n,s);add(il,ir,n,inn);add(il,ir,is,s);
- };
- if(slot){for(const sign of [-1,1])solid(0,sign*(d/2+half)/2,w,d/2-half);solid((cut+w/2)/2,0,w/2-cut,half*2);}
- else solid(0,0,w,d);
+// PHOTO_INFERRED form; all metre dimensions below remain APPROXIMATE.
+// X is front/back (west is plaza); Z spans the front elevation.
+export const vatsalaPlinthStages=[
+ {name:"bottom",front:-5.8,back:4.1,north:-4.625,south:6,bottom:0,top:.84},
+ {name:"middle",front:-3.6,back:3.4,north:-4.415,south:3,bottom:.84,top:1.68},
+ {name:"upper",front:-2.45,back:2.45,north:-4.205,south:2.425,bottom:1.68,top:2.52}
+] as const;
+function slottedCourse(m:CentralModel,y:number,h:number,front:number,back:number,north:number,south:number,half:number,role:string,material:CentralMaterial=stone){
+ const cut=-2.05;
+ // One podium: two continuous flanks plus the solid rear; no detached bell-base island.
+ for(const [n,s]of [[north,-half],[half,south]])box(m,(front+back)/2,y,(n+s)/2,back-front,h,s-n,material,role,true);
+ box(m,(cut+back)/2,y,0,back-cut,h,half*2,material,role,true);
 }
+function course(m:CentralModel,y:number,h:number,w:number,d:number,role:string){slottedCourse(m,y,h,-w/2,w/2,-d/2,d/2,1.12,role);}
 function moulding(m:CentralModel,y:number,width:number,depth:number,role:string){
  for(const [dy,h,p]of [[0,.08,0],[.095,.11,.1],[.205,.14,.16]] as const)box(m,0,y+dy,0,width+p,h,depth+p,stone,role);
 }
@@ -53,12 +50,14 @@ function miniatureTower(m:CentralModel,x:number,y:number,z:number){
 }
 function temple(m:CentralModel){
  const base=3.1;
- // Three setbacks, each with a differently weighted foot, ashlar field and coping.
- for(let tier=0;tier<3;tier++){
-  const y=tier*.84,w=templePodiumDimensions.frontDepth-tier*.42,d=templePodiumDimensions.width-tier*.42;
-  for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)course(m,y+dy+h/2,h,w+projection,d+projection,"vatsala-stepped-base-course",true);
+ // Three architectural stages, not three near-identical footprints with tiny trims.
+ for(const [tier,stage]of vatsalaPlinthStages.entries()){
+  for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const){
+   const {front,back,north,south}=stage;
+   slottedCourse(m,stage.bottom+dy+h/2,h,front-projection/2,back+projection/2,north-projection/2,south+projection/2,tier===0?1.32:1.12,"vatsala-stepped-base-course");
+  }
  }
- course(m,2.63,.22,4.7,4.85,"vatsala-platform-neck",true);course(m,2.86,.24,4.82,4.97,"vatsala-platform-coping",true);course(m,3.04,.12,4.7,4.85,"vatsala-platform-landing",true);
+ course(m,2.63,.22,4.7,4.85,"vatsala-platform-neck");course(m,2.86,.24,4.82,4.97,"vatsala-platform-coping");course(m,3.04,.12,4.7,4.85,"vatsala-platform-landing");
  const stairCourses=[...Array.from({length:4},(_,i)=>({x:-6.1+i*.23,top:(i+1)*.17,width:2.55})),...Array.from({length:12},(_,i)=>({x:-4.68+i*.23,top:.68+(i+1)*(base-.68)/12,width:2.05}))];
  for(const {x,top,width}of stairCourses){box(m,x,top/2,0,.245,top,width,stone,"vatsala-west-access-stair",true);box(m,x-.007,top-.025,0,.26,.05,width+.05,stone,"vatsala-west-stair-nosing");for(const side of [-1,1])box(m,x,top/2,side*(width/2+.11),.24,top,.15,shade,"vatsala-west-stair-cheek",true);}
  box(m,-5.04,.34,0,.5,.68,2.6,stone,"vatsala-west-stair-intermediate-landing",true);
@@ -77,7 +76,16 @@ function temple(m:CentralModel){
  niche(m,-1.2,base+.12,0,1.08,2.76,"vatsala-west-sanctum-door",-Math.PI/2,false);
  for(const side of [-1,1]){box(m,-1.33,base+1.33,side*.64,.19,2.52,.13,shade,"vatsala-doorway-carved-jamb");for(let i=0;i<10;i++)profile(m,-1.44,base+.3+i*.21,side*.64,[[0,0],[.045,.025],[.05,.07],[0,.1]],stone,"vatsala-doorway-band-relief",10);}
  box(m,-1.37,base+.08,0,.52,.16,1.3,stone,"vatsala-doorway-threshold",true);
- for(const side of [-1,1]){box(m,-3.28,.64,side*1.51,1.05,1.28,1.04,shade,"vatsala-stair-guardian-pedestal",true);mouldingAt(m,-3.28,1.26,side*1.51,1.12,"vatsala-stair-guardian-plinth");stairGuardian(m,-3.28,1.43,side*1.51);box(m,-3.28,2.16,side*1.51,.9,1.46,.76,shade,"vatsala-stair-guardian-collision",true);}
+ // Guardian projections spring from the common lowest terrace and meet the middle stage.
+ for(const side of [-1,1]){
+  const x=-4.18,z=side*1.8;
+  box(m,x,.9,z,1.1,.12,1.2,stone,"vatsala-stair-guardian-pedestal-foot",true);
+  box(m,x,1.08,z,1.03,.24,1.12,shade,"vatsala-stair-guardian-pedestal",true);
+  box(m,x,1.25,z,1.1,.1,1.2,stone,"vatsala-stair-guardian-pedestal-cap",true);
+  mouldingAt(m,x,1.26,z,1.12,"vatsala-stair-guardian-plinth");
+  stairGuardian(m,x,1.43,z);box(m,x,2.16,z,.9,1.46,.76,shade,"vatsala-stair-guardian-collision",true);
+ }
+
  for(const [y,w]of [[6.28,4.12],[6.54,4.46],[6.81,4.67],[7.08,4.38]] as const)moulding(m,y,w,w,"vatsala-colonnade-entablature");
  for(const face of [0,Math.PI/2,Math.PI,Math.PI*1.5])for(let i=0;i<19;i++){
   const [x,z]=facePoint((i-9)*.225,2.3,face);box(m,x,6.75,z,.09,.13,.12,shade,"vatsala-cornice-dentil",false,face);
@@ -123,8 +131,8 @@ function largeBell(m:CentralModel){
  // The new authoritative local photograph resolves TWO masonry blades, not four separate columns.
  // Each course butts against the temple's northern setback at the same elevation.
  const courses:{bottom:number;top:number;depth:number}[]=[];
- for(let tier=0;tier<3;tier++)for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)courses.push({bottom:tier*.84+dy,top:tier*.84+dy+h,depth:templePodiumDimensions.width-tier*.42+projection});
- courses.push({bottom:2.52,top:2.6,depth:templePodiumDimensions.width-.84});
+ for(let tier=0;tier<3;tier++)for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)courses.push({bottom:tier*.84+dy,top:tier*.84+dy+h,depth:9.25-tier*.42+projection});
+ courses.push({bottom:2.52,top:2.6,depth:9.25-.84});
  for(const {bottom,top,depth:d}of courses){const south=templeAnchor[1]-d/2-.012,depth=south-front,z=(south+front)/2-m.origin[1];box(m,0,(bottom+top)/2,z,bellTerraceDimensions.width,top-bottom,depth,"bellTerraceMasonry",top===2.6?"bell-terrace-coping":"bell-terrace-course",true);}
  for(const side of [-1,1]){
   const r=side<0?"bell-left-pier":"bell-right-pier",x=side*1.65;
@@ -146,15 +154,16 @@ function largeBell(m:CentralModel){
  // No dedicated bell stair: access and the major stair hierarchy belong to Vatsala.
 }
 function smallBell(m:CentralModel){
- for(let tier=0;tier<3;tier++){
-  const b=smallPodiumBounds(tier),x=(b.left+b.right)/2-m.origin[0],z=(b.north+b.south)/2-m.origin[1];
-  // The assembly is west-facing: local X spans world Z, local Z spans world X.
-  box(m,z,tier*.28+.12,-x,b.south-b.north,.24,b.right-b.left,stone,"small-bell-platform-course",true);
-  box(m,z,tier*.28+.26,-x,b.south-b.north,.04,b.right-b.left,shade,"small-bell-platform-coping",true);
- }
+ // No separate podium: Vatsala owns the continuous lowest plinth beneath these posts.
  const start={boxes:m.boxes.length,profiles:m.profiles.length,shapes:m.shapes.length,colliders:m.colliders.length};
  for(const side of [-1,1]){profile(m,side*.68,.48,0,[[.24,0],[.25,.15],[.18,.27],[.14,2.1],[.21,2.25],[.28,2.4],[0,2.45]],stone,"bell-arch-column",16);box(m,side*.68,1.7,0,.3,2.44,.36,stone,"bell-arch-column-collision",true);}
  shape(m,0,2.95,0,[[-1,0],[-1,.62],[-.7,.72],[-.37,.66],[0,.91],[.37,.66],[.7,.72],[1,.62],[1,0],[.48,0],[.36,.16],[0,.37],[-.36,.16],[-.48,0]],.38,stone,"bell-ornate-lobed-lintel");
+ for(const side of [-1,1]){
+  box(m,side*.72,3.02,0,.62,.14,.49,shade,"bell-frame-upright-capital");
+  profile(m,side*.79,3.55,0,[[.11,0],[.15,.07],[.1,.17],[.07,.23],[0,.28]],stone,"bell-frame-flanking-stone-finial",12);
+ }
+ box(m,0,3.59,0,2.17,.12,.48,stone,"bell-frame-projecting-cornice");
+ shape(m,0,3.69,0,[[-.39,0],[-.3,.12],[-.23,.24],[-.16,.31],[0,.58],[.16,.31],[.23,.24],[.3,.12],[.39,0]],.32,shade,"bell-frame-carved-central-crest");
  for(const x of [-.7,.7])profile(m,x,3.2,.4,[[0,0],[.13,.02],[.15,.1],[.08,.18],[0,.2]],shade,"bell-carved-rosette",12);
  profile(m,0,3.79,0,[[.18,0],[.23,.08],[.15,.18],[.13,.3],[0,.41]],stone,"bell-arch-central-crown",16);
  bellBody(m,1.55,.33,1.1);box(m,0,3.11,0,.05,.5,.05,metal,"bell-suspension");
