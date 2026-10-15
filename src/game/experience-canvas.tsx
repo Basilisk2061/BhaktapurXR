@@ -1,4 +1,5 @@
 "use client";
+import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
 import {EditorScene} from "../features/world-editor/editor-scene";
 import type {EditorSession} from "../features/world-editor/session";
@@ -72,6 +73,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       <ContextGuard onUnavailable={onUnavailable} />
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
+          <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
@@ -79,6 +81,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={onReady} />
+          </GameAudio>
         </Physics>
       </Suspense>
       {developmentConfig.performance && <Stats />}

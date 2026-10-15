@@ -1,0 +1,29 @@
+import {createContext,useContext,useEffect,useRef,type ReactNode,type RefObject} from 'react';
+import {useFrame,useThree} from '@react-three/fiber';
+import {useRapier} from '@react-three/rapier';
+import type {Vector3} from 'three';
+import type {PlayerRuntime} from '../player/player-runtime';
+import type {PlayerInput} from '../input/player-input';
+import {gameplayCodes} from '../input/player-input';
+import {GameAudioEngine} from './game-audio-engine';
+import {canPlayFootstep} from './foot-contacts';
+import {colliderAudioSurface} from './audio-surfaces';
+const ContactAudio=createContext<((position:Vector3,running:boolean)=>void)|null>(null);
+export const useFootContactAudio=()=>useContext(ContactAudio);
+export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;children:ReactNode}){
+ const canvas=useThree(state=>state.gl.domElement),{world,rapier}=useRapier(),engine=useRef<GameAudioEngine|null>(null);
+ useEffect(()=>{
+  if(!enabled)return;const audio=new GameAudioEngine();engine.current=audio;
+  const pointer=(event:PointerEvent)=>{if(event.isTrusted)void audio.unlock();};
+  const key=(event:KeyboardEvent)=>{if(event.isTrusted&&input.current.active&&gameplayCodes.has(event.code)&&(document.pointerLockElement===canvas||document.activeElement===canvas))void audio.unlock();};
+  canvas.addEventListener('pointerdown',pointer);window.addEventListener('keydown',key);
+  return ()=>{canvas.removeEventListener('pointerdown',pointer);window.removeEventListener('keydown',key);audio.dispose();engine.current=null;};
+ },[enabled,canvas,input]);
+ const contact=(position:Vector3,running:boolean)=>{
+  if(!enabled||!input.current.active||!canPlayFootstep(runtime.current))return;
+  const hit=world.castRay(new rapier.Ray({x:position.x,y:position.y+.15,z:position.z},{x:0,y:-1,z:0}),.65,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,c=>!c.parent()||c.parent()!.isFixed());
+  engine.current?.footstep(hit?colliderAudioSurface(hit.collider):'brick-stone',running);
+ };
+ useFrame(()=>{if(!input.current.active||!canPlayFootstep(runtime.current))engine.current?.stopSteps();});
+ return <ContactAudio.Provider value={enabled?contact:null}>{children}</ContactAudio.Provider>;
+}

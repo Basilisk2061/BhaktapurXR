@@ -1,0 +1,169 @@
+{
+  "sampleRate": 24000,
+  "sources": {
+    "durbar_square_ambience": {
+      "file": "incoming/audio/durbar_square_ambience.wav",
+      "seconds": 10.36,
+      "sha256": "b241a8516e5f2bcd739a4b03d86952bd735dd6b83a54e7388e19d67646ebb748"
+    },
+    "footsteps_brick_stone": {
+      "file": "incoming/audio/footsteps_brick_stone.wav",
+      "seconds": 8.0,
+      "sha256": "8c4d9e72fc518de4e0980851991da5054b8e24322d253ce9d6940364c316f977"
+    },
+    "footsteps_wood": {
+      "file": "incoming/audio/footsteps_wood.wav",
+      "seconds": 8.0,
+      "sha256": "00ce8da23aaa9a2b487847894d025e5230bc48df1a70ce444397812ec53b5dc8"
+    }
+  },
+  "footsteps": {
+    "brick-stone": [
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-01.wav",
+        "sourceStart": 0.34,
+        "sourceEnd": 0.615,
+        "peak": 0.37
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-02.wav",
+        "sourceStart": 1.125,
+        "sourceEnd": 1.41,
+        "peak": 1.24
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-03.wav",
+        "sourceStart": 1.79,
+        "sourceEnd": 2.02,
+        "peak": 1.82
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-04.wav",
+        "sourceStart": 2.44,
+        "sourceEnd": 2.705,
+        "peak": 2.47
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-05.wav",
+        "sourceStart": 3.1,
+        "sourceEnd": 3.365,
+        "peak": 3.22
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-06.wav",
+        "sourceStart": 3.79,
+        "sourceEnd": 4.02,
+        "peak": 3.9
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-07.wav",
+        "sourceStart": 4.51,
+        "sourceEnd": 4.805,
+        "peak": 4.545
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-08.wav",
+        "sourceStart": 5.135,
+        "sourceEnd": 5.65,
+        "peak": 5.325
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-09.wav",
+        "sourceStart": 6.005,
+        "sourceEnd": 6.265,
+        "peak": 6.035
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-10.wav",
+        "sourceStart": 6.705,
+        "sourceEnd": 7.075,
+        "peak": 6.74
+      },
+      {
+        "path": "/assets/audio/footsteps/brick-stone/step-11.wav",
+        "sourceStart": 7.44,
+        "sourceEnd": 7.685,
+        "peak": 7.47
+      }
+    ],
+    "wood": [
+      {
+        "path": "/assets/audio/footsteps/wood/step-01.wav",
+        "sourceStart": 0.475,
+        "sourceEnd": 0.735,
+        "peak": 0.515
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-02.wav",
+        "sourceStart": 1.07,
+        "sourceEnd": 1.325,
+        "peak": 1.105
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-03.wav",
+        "sourceStart": 1.65,
+        "sourceEnd": 1.88,
+        "peak": 1.68
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-04.wav",
+        "sourceStart": 2.105,
+        "sourceEnd": 2.4,
+        "peak": 2.22
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-05.wav",
+        "sourceStart": 2.705,
+        "sourceEnd": 3.04,
+        "peak": 2.82
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-06.wav",
+        "sourceStart": 3.41,
+        "sourceEnd": 3.695,
+        "peak": 3.445
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-07.wav",
+        "sourceStart": 4.175,
+        "sourceEnd": 4.525,
+        "peak": 4.275
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-08.wav",
+        "sourceStart": 4.95,
+        "sourceEnd": 5.265,
+        "peak": 4.98
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-09.wav",
+        "sourceStart": 5.715,
+        "sourceEnd": 6.135,
+        "peak": 5.81
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-10.wav",
+        "sourceStart": 6.475,
+        "sourceEnd": 6.695,
+        "peak": 6.505
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-11.wav",
+        "sourceStart": 7.15,
+        "sourceEnd": 7.385,
+        "peak": 7.18
+      },
+      {
+        "path": "/assets/audio/footsteps/wood/step-12.wav",
+        "sourceStart": 7.56,
+        "sourceEnd": 7.87,
+        "peak": 7.605
+      }
+    ]
+  },
+  "ambience": {
+    "path": "/assets/audio/ambience/durbar-square.wav",
+    "seconds": 10.11,
+    "boundaryCrossfadeSeconds": 0.25
+  }
+}
