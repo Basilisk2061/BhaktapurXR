@@ -37,7 +37,7 @@ export class NpcSimulation {
    if(agent.state==='IDLE'){
     if(this.time<agent.waitUntil)continue;
     if(this.time>=agent.nextSeatAt&&agent.random()<.35)this.chooseSeat(agent,player,playerSeat);
-    if(!agent.seat){const candidates=this.graph.nodes.filter(n=>n.id!==agent.node&&route(this.graph,agent.node,n.id).length<=2&&this.clearOfPeople(n.point,agent,player));const destination=candidates[Math.floor(agent.random()*candidates.length)];if(!destination){agent.waitUntil=this.time+1;continue;}agent.path=route(this.graph,agent.node,destination.id);}
+    if(!agent.seat){const candidates=this.graph.nodes.filter(n=>n.id!==agent.node&&route(this.graph,agent.node,n.id).length>0&&this.clearOfPeople(n.point,agent,player));const destination=candidates[Math.floor(agent.random()*candidates.length)];if(!destination){agent.waitUntil=this.time+1;continue;}agent.path=route(this.graph,agent.node,destination.id);}
     agent.state='WALKING';
    }
    if(agent.target&&flatDistance(agent.position,agent.target)<.12){

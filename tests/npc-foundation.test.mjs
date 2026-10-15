@@ -14,7 +14,8 @@ for(const model of [...buildCompletedSquareModels(),...buildCompletedSquareEdge(
 const span=arcadeSeatSpans(overrides)[0],probe=createNpcNavigationProbe(world,RAPIER),graph=pedestrianGraph(span,probe);
 
 test('small pedestrian graph uses only collision-clear plaza nodes/edges; no disconnected destinations',()=>{
- console.log('NPC graph',graph.nodes.length,'nodes',graph.edges.length,'edges');assert.ok(graph.nodes.length>=4);assert.ok(graph.nodes.length<=10);assert.ok(graph.edges.length<=13);
+ console.log('NPC graph',graph.nodes.length,'nodes',graph.edges.length,'edges');assert.ok(graph.nodes.length>=4);assert.ok(graph.nodes.length>10);assert.ok(graph.edges.length>13);
+ assert.ok(graph.nodes.some(n=>n.point.x< -100));assert.ok(graph.nodes.some(n=>n.point.x> -20&&n.point.z< -10));
  for(const node of graph.nodes){assert.ok(node.point.y<.2);assert.notEqual(probe.height(node.point),null);for(const other of graph.nodes)if(node!==other)assert.ok(route(graph,node.id,other.id).length);}
  for(const [a,b]of graph.edges)assert.ok(probe.clear(graph.nodes.find(n=>n.id===a).point,graph.nodes.find(n=>n.id===b).point));
  assert.equal(probe.height(new Vector3(span.a.x,.775,span.a.z)),null,'raised arcade top is not a normal walking destination');
@@ -22,13 +23,14 @@ test('small pedestrian graph uses only collision-clear plaza nodes/edges; no dis
 
 test('four configured agents desynchronize, reserve separate seats, sit and resume without leaving safe segments',()=>{
  assert.equal(npcInstances.length,4);assert.equal(npcInstances.filter(n=>n.character==='female_01').length,2);assert.equal(npcInstances.filter(n=>n.character==='old_man_01').length,2);
- const sim=new NpcSimulation(graph,span,probe,npcInstances),player=new Vector3(-135,0,-35),history=new Map(sim.agents.map(a=>[a.id,new Set()]));let separation=Infinity;const firstSit={};
+ const sim=new NpcSimulation(graph,span,probe,npcInstances),player=new Vector3(-135,0,-35),history=new Map(sim.agents.map(a=>[a.id,new Set()]));let separation=Infinity;const firstSit={},visited=new Set();
  for(let i=0;i<60*600;i++){
   sim.tick(1/60,player,null);
-  for(const a of sim.agents){const seen=history.get(a.id);if(a.state==='SITTING'){seen.add('sit');firstSit[a.id]??=sim.time;}if(a.state==='WALKING'&&seen.has('sit'))seen.add('resume');const desired=sim.displacement(a,1/60,player);a.position.add(desired);if(a.state!=='SITTING')assert.ok(a.position.y<.2,'only sitting enters the raised platform');}
+  for(const a of sim.agents){if(a.position.x< -100)visited.add('west');if(a.position.x> -25&&a.position.z< -10)visited.add('palace');const seen=history.get(a.id);if(a.state==='SITTING'){seen.add('sit');firstSit[a.id]??=sim.time;}if(a.state==='WALKING'&&seen.has('sit'))seen.add('resume');const desired=sim.displacement(a,1/60,player);a.position.add(desired);if(a.state!=='SITTING')assert.ok(a.position.y<.2,'only sitting enters the raised platform');}
   for(let a=0;a<4;a++)for(let b=a+1;b<4;b++){const x=sim.agents[a],y=sim.agents[b];separation=Math.min(separation,Math.hypot(x.position.x-y.position.x,x.position.z-y.position.z));if(x.seat&&y.seat)assert.ok(x.seat.point.distanceTo(y.seat.point)>=1.3);}
  }
  console.log('NPC histories',Object.fromEntries([...history].map(([id,set])=>[id,[...set]])),'min separation',separation,'first sit',firstSit);
+ assert.ok(visited.has('west'));assert.ok(visited.has('palace'));
  for(const seen of history.values()){assert.ok(seen.has('sit'));assert.ok(seen.has('resume'));}assert.ok(separation>=.85);assert.equal(new Set(sim.agents.map(a=>a.phase)).size,4);assert.ok(npcDefinitions.old_man_01.speed<npcDefinitions.female_01.speed);
  const repeat=new NpcSimulation(graph,span,probe,npcInstances);const again=new NpcSimulation(graph,span,probe,npcInstances);assert.deepEqual(repeat.agents.map(a=>[a.phase,a.speed,a.waitUntil]),again.agents.map(a=>[a.phase,a.speed,a.waitUntil]));
 });
