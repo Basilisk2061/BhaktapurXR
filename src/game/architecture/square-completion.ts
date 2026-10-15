@@ -1,3 +1,4 @@
+import {refineCentralStoneEnsemble} from "./central-stone-ensemble.ts";
 import {integrateRaisedPavilion,buildRaisedPavilionTerraces} from "./raised-pavilion-terraces.ts";
 import {correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
 import editorFrames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
@@ -130,9 +131,9 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  profile(m,0,3.25,0,[[0,0],[1.6,0],[1.49,.18],[1.34,.45],[1.17,1.35],[.89,2.5],[.62,3.33],[.25,3.65],[0,3.7]],"agedBrick","9c-observed-small-brick-shikhara",4);
  profile(m,0,6.95,0,[[0,0],[.52,0],[.49,.13],[.37,.3],[0,.5]],"roof","9c-small-shrine-capping-form",12);pinnacle(m,0,7.45,0,.47,"9c-small-shrine-summit");
  shape(m,0,.48,1.26,[[-.4,0],[-.4,1.55],[0,1.96],[.4,1.55],[.4,0]],.055,"recess","9c-small-shrine-closed-portal");stairs(m,1.3,.48,3,2.9,.3,"stone","9c-small-shrine-steps");
- if(!reconstructLeftTemple)return [...models,m];
+ if(!reconstructLeftTemple)return [...models,m].map(refineCentralStoneEnsemble);
  const historicalPavilion=buildPalaceFrontageModels().find(model=>model.id==="rameshwar")!;
- return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)].map(integrateRaisedPavilion);
+ return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)].map(integrateRaisedPavilion).map(refineCentralStoneEnsemble);
 }
 function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
  const floorPieces=(source.volumes??[]).filter(v=>v.role==="yetachapari-source-platform").map(v=>v.rings);

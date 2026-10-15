@@ -4,7 +4,7 @@ import {adoptedFit} from "../../data/reconstruction/present-day.ts";
 import {openSpaces} from "../../data/reconstruction/open-spaces.ts";
 import {proportionParameters as proportions} from "../../data/reconstruction/architecture/proportions.ts";
 import type {SolidBox} from "./geometry.ts";
-export type CentralMaterial="guardianStone"|"museumRelief"|"museumStone"|"museumSign"|"agedBrick"|"redMasonry"|"carvedTimber"|"gateBrick"|"road"|"brick"|"timber"|"stone"|"roof"|"paving"|"recess"|"gold"|"bronze"|"plaster"|"neutral"|"shutter";
+export type CentralMaterial="heritageStone"|"heritageStoneShade"|"ensembleBronze"|"guardianStone"|"museumRelief"|"museumStone"|"museumSign"|"agedBrick"|"redMasonry"|"carvedTimber"|"gateBrick"|"road"|"brick"|"timber"|"stone"|"roof"|"paving"|"recess"|"gold"|"bronze"|"plaster"|"neutral"|"shutter";
 export interface CentralBox extends SolidBox {material:CentralMaterial;role:string;tilt?:number}
 export interface CentralProfile {position:[number,number,number];profile:[number,number][];segments:number;material:CentralMaterial;yaw:number;role:string;sculptedSurface?:{positions:number[];indices:number[]}}
 export interface CentralShape {position:[number,number,number];points:[number,number][];depth:number;material:CentralMaterial;yaw:number;role:string;sculpturalBevel?:number}

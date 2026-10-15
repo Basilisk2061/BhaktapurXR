@@ -23,6 +23,10 @@ export function architecturalPartKey(m:CentralModel,p:Piece):string{
   if(/window|jamb|gallery|carved|projecting-sill|cornice/.test(r))return "windows";
   return "body";
  }
+ if(m.id==="large-bell"&&/hollow-bell|bell-relief-ring|bell-clapper|bell-crown-hanger|bell-suspension/.test(r))return "bell";
+ if(m.id==="malla-column"&&/royal-seat|royal-figure|prayer|joined-hands|seated-knee/.test(r))return "statue";
+ if(m.id==="vatsala-durga"&&/subsidiary-spire/.test(r))return "subsidiary-towers";
+ if(m.id==="vatsala-durga"&&/column-foot|twelve-column|column-abacus|column-collision|columned-lobed-arch/.test(r))return "columns";
  if(m.id==="vatsala-durga")return /stair|landing/.test(r)?"stairs":/stepped-base|platform/.test(r)?"plinth":/pinnacle|finial/.test(r)?"ornament":/shikhara|spire|niche/.test(r)?"shikhara":"body";
  if(m.id==="chyasilin")return /platform|landing/.test(r)?"plinth":/stair/.test(r)?"stairs":/roof|eave/.test(r)?"roof":/finial/.test(r)?"ornament":r==="pavilion-post"?"columns":(p.position?.[1]??0)>4?"upper":"lower";
  if(/stair|access|landing/.test(r))return "stairs";
