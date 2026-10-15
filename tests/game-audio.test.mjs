@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import {contactCrossings,canPlayFootstep,chooseVariation} from '../src/game/audio/foot-contacts.ts';
 import {modelAudioSurfaces,bindAudioSurface,colliderAudioSurface} from '../src/game/audio/audio-surfaces.ts';
+import {audioConfig} from '../src/game/audio/audio-config.ts';
 import {GameAudioEngine} from '../src/game/audio/game-audio-engine.ts';
 import manifest from '../public/assets/audio/manifest.json' with {type:'json'};
 
@@ -43,7 +44,9 @@ test('one gesture-owned ambience survives repeated unlocks; one-shots randomize 
  try{
   const engine=new GameAudioEngine(()=>{contexts++;return context;});assert.equal(contexts,0);
   await Promise.all([engine.unlock(),engine.unlock()]);await engine.unlock();assert.equal(contexts,1);assert.equal(sources.filter(s=>s.loop).length,1);
-  engine.footstep('brick-stone',false);engine.footstep('wood',true);assert.equal(sources.length,3);assert.ok(sources.slice(1).every(s=>s.started&&s.playbackRate.value>=.98&&s.playbackRate.value<=1.02));assert.ok(gains.slice(1).every(g=>g.gain.value>.5&&g.gain.value<.8));
+  engine.footstep('brick-stone',false);engine.footstep('wood',true);assert.equal(sources.length,3);assert.ok(sources.slice(1).every(s=>s.started&&s.playbackRate.value>=.98&&s.playbackRate.value<=1.02));assert.equal(gains[0].gain.value,.12*1.25);
+  assert.ok(Math.abs(audioConfig.footstepGain-.6*.75)<1e-12);assert.ok(Math.abs(audioConfig.runFootstepMultiplier-.7/.6)<1e-12);
+  for(const [i,base]of [[1,.6*.75],[2,.7*.75]])assert.ok(gains[i].gain.value>=base*.94-1e-12&&gains[i].gain.value<=base*1.06+1e-12);
   engine.stopSteps();assert.ok(sources.slice(1).every(s=>s.stopped));assert.ok(!sources[0].stopped);
   engine.dispose();engine.dispose();await engine.unlock();assert.equal(closed,1);assert.ok(sources[0].stopped);assert.equal(contexts,1);
  }finally{globalThis.fetch=original;}

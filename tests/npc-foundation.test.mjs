@@ -58,6 +58,19 @@ test('both actual runtime skins animate; old man reuses an immutable, compatible
   const asset=await load(`public/assets/characters/npcs/${id}/character.glb`);let skin;asset.scene.traverse(o=>{if(o.isSkinnedMesh)skin=o;});assert.ok(skin);assert.equal(skin.geometry.index.count/3,npcManifest[id].triangles);assert.equal(npcManifest[id].uvVerified,true);
   const seated=id==='old_man_01'?retargetMixamoClip(sit,mixamoRig(player.scene),mixamoRig(asset.scene)):asset.animations.find(c=>c.name==='FemaleSit');assert.equal(seated.tracks.length,35);
   const mixer=new AnimationMixer(asset.scene);for(const clip of [asset.animations[0],asset.animations[1],seated]){mixer.stopAllAction();mixer.clipAction(clip).play();mixer.update(clip.duration*.3);asset.scene.updateMatrixWorld(true);const head=asset.scene.getObjectByName('mixamorigHead').getWorldPosition(new Vector3());assert.ok(head.toArray().every(Number.isFinite));assert.ok(head.y>.5&&head.y<2.2);}
+  mixer.stopAllAction();mixer.clipAction(seated).reset().play();
+  const offset=npcDefinitions[id].sitPoseOffsetY??npcManifest[id].sitVisualY;
+  if(id==='old_man_01'){
+   assert.equal(npcDefinitions[id].sitDepth,undefined,'retain shared seat depth');
+   assert.ok(offset<npcManifest[id].sitVisualY-.1,'remove the import estimate that lifted the entire pose');
+   for(let frame=0;frame<20;frame++){
+    mixer.update(seated.duration/20);asset.scene.updateMatrixWorld(true);
+    const hip=asset.scene.getObjectByName('mixamorigHips').getWorldPosition(new Vector3());
+    const thigh=asset.scene.getObjectByName('mixamorigLeftUpLeg').getWorldPosition(new Vector3());
+    assert.ok(hip.y+offset>.08&&hip.y+offset<.16,'pelvis remains just above the support, not floating');
+    assert.ok(thigh.y+offset>0&&thigh.y+offset<.08,'folded thigh stays near the sitting surface');
+   }
+  }else{assert.equal(offset,-.3442643266708278);assert.equal(npcDefinitions[id].sitDepth,.12);}
   mixer.stopAllAction();
  }
  assert.deepEqual(sit.tracks.map(t=>Array.from(t.values)),values);assert.equal(npcInstances.length,4);

@@ -24,7 +24,7 @@ function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:A
  const library=useMemo(()=>npcAnimationLibrary(definition,asset.scene,asset.animations,player.scene,player.animations),[definition,asset,player]);
  const mixer=useMemo(()=>new AnimationMixer(model),[model]);
  const actions=useMemo(()=>Object.fromEntries(Object.entries(library).map(([role,clip])=>[role,mixer.clipAction(clip!).setLoop(LoopRepeat,Infinity)])),[library,mixer]);
- const records=manifest as Record<string,{sitVisualY:number}>,sitOffset=records[definition.id].sitVisualY;
+ const records=manifest as Record<string,{sitVisualY:number}>,sitOffset=definition.sitPoseOffsetY??records[definition.id].sitVisualY;
  useEffect(()=>{
   const controller=world.createCharacterController(.015);controller.setSlideEnabled(true);controller.disableAutostep();controller.enableSnapToGround(.18);controller.setMaxSlopeClimbAngle(.4);controller.setApplyImpulsesToDynamicBodies(false);
   register(agent.id,{body:body.current!,controller});lastRole.current='';

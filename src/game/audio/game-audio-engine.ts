@@ -1,4 +1,5 @@
 import manifest from '../../../public/assets/audio/manifest.json' with {type:'json'};
+import {audioConfig} from './audio-config.ts';
 import {chooseVariation} from './foot-contacts.ts';
 import type {FootstepSurface} from './audio-surfaces.ts';
 /** One owner per mounted game. Buffers are cached; only actual impacts allocate one-shot voices. */
@@ -20,7 +21,7 @@ export class GameAudioEngine {
   const resumed=context.resume();
   this.loading??=this.load(context).catch(error=>{this.loading=null;throw error;});
   try{await Promise.all([resumed,this.loading]);if(!this.disposed&&context.state==='running'&&!this.ambience){
-   const source=context.createBufferSource(),gain=context.createGain();source.buffer=this.buffers.get(manifest.ambience.path)!;source.loop=true;gain.gain.value=.12;source.connect(gain).connect(context.destination);this.ambience=source;source.start();
+   const source=context.createBufferSource(),gain=context.createGain();source.buffer=this.buffers.get(manifest.ambience.path)!;source.loop=true;gain.gain.value=audioConfig.ambienceGain;source.connect(gain).connect(context.destination);this.ambience=source;source.start();
   }}catch(error){if(!this.disposed)console.warn('Game audio could not start; another game gesture will retry.',error);}
  }
  private async load(context:AudioContext){
@@ -30,7 +31,7 @@ export class GameAudioEngine {
  footstep(surface:FootstepSurface,running:boolean){
   const context=this.context;if(this.disposed||!context||context.state!=='running')return;
   const samples=manifest.footsteps[surface],index=chooseVariation(samples.length,this.last[surface]),buffer=this.buffers.get(samples[index].path);if(!buffer)return;
-  this.last[surface]=index;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.playbackRate.value=.98+Math.random()*.04;gain.gain.value=(running?.7:.6)*(.94+Math.random()*.12);source.connect(gain).connect(context.destination);
+  this.last[surface]=index;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.playbackRate.value=.98+Math.random()*.04;gain.gain.value=(audioConfig.footstepGain*(running?audioConfig.runFootstepMultiplier:1))*(.94+Math.random()*.12);source.connect(gain).connect(context.destination);
   const voice={source,gain};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
  }
  stopSteps(){for(const voice of this.voices){voice.gain.gain.setTargetAtTime(0,this.context!.currentTime,.005);voice.source.stop(this.context!.currentTime+.02);}this.voices.clear();}
