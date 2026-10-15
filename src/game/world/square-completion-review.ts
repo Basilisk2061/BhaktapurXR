@@ -1,6 +1,9 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "vatsala-composition-final":pose([-25,1.8,13],[-13,7.4,5.5],80),
+ "vatsala-podium-close":pose([-23,2.6,15],[-12.5,3.2,8],67),
+ "vatsala-bell-column":pose([-25,3.4,14],[-14,5.8,2.8],76),
  "vatsala-reference-final":pose([-25,1.8,13],[-12.2,7.8,5.5],72),
  "vatsala-bell-side":pose([-22,3.2,12],[-12.6,5.5,3.4],66),
  "vatsala-stone-final":pose([-23,2.8,12.8],[-11.8,7.6,5.5],67),

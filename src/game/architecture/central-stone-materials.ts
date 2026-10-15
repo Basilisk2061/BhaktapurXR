@@ -24,18 +24,20 @@ export function finishCentralStoneMaterials(materials:Record<Exclude<CentralMate
     vec2 stoneUv=abs(vStoneAxis.y)>.7?vAgedStone.xz/vec2(.91,1.13):vec2((horizontal+mod(row,3.0)*.31)/.93,vAgedStone.y/.29);
     vec2 cell=floor(stoneUv);
     vec2 edge=min(fract(stoneUv),1.0-fract(stoneUv));
-    float joint=(1.0-smoothstep(.004,.014,min(edge.x,edge.y)))*.025;
+    float joint=(1.0-smoothstep(.004,.014,min(edge.x,edge.y)))*.055;
     float block=fract(sin(dot(vec3(cell,row),vec3(12.9898,78.233,37.719)))*43758.5453);
     float course=1.0-smoothstep(.008,.022,mod(vAgedStone.y,.29));
     float age=sin(vAgedStone.x*.79+vAgedStone.y*.37)*sin(vAgedStone.z*.67);
     float streak=sin(horizontal*5.1+sin(vAgedStone.y*.83)*.22)*sin(horizontal*2.7+.8);
     diffuseColor.rgb *= mix(vec3(.96,.985,1.015),vec3(1.035,1.005,.96),block);
-    ${pier?"float monolithAge=stoneNoise(vec2(horizontal*3.2,vAgedStone.y*.22));diffuseColor.rgb*=mix(vec3(.77,.78,.73),vec3(1.04,1.035,1.01),smoothstep(.12,.85,monolithAge));":"diffuseColor.rgb *= 0.89+block*.14+age*.045-course*.045-joint;"}
-    diffuseColor.rgb *= mix(.77,1.0,smoothstep(0.0,3.4,vAgedStone.y));
-    diffuseColor.rgb *= (vStoneAxis.y<-.3?.79:1.0)*(1.0+streak*${pier?".075":".025"});`);
+    ${pier?"float monolithAge=stoneNoise(vec2(horizontal*3.2,vAgedStone.y*.22));diffuseColor.rgb*=mix(vec3(.66,.69,.63),vec3(1.04,1.035,1.01),smoothstep(.12,.85,monolithAge));":"diffuseColor.rgb *= 0.89+block*.14+age*.065-course*.07-joint;"}
+    float protectedAge=stoneNoise(vec2(horizontal*1.7,vAgedStone.y*.48));
+    diffuseColor.rgb *= mix(vec3(.87,.9,.83),vec3(1.0),smoothstep(.15,.7,protectedAge));
+    diffuseColor.rgb *= mix(.67,1.0,smoothstep(0.0,3.4,vAgedStone.y));
+    diffuseColor.rgb *= (vStoneAxis.y<-.3?.73:1.0)*(1.0+streak*${pier?".10":".04"});`);
   shader.fragmentShader=shader.fragmentShader.replace("#include <roughnessmap_fragment>",`#include <roughnessmap_fragment>
  roughnessFactor=clamp(roughnessFactor+(block-.5)*.055,.91,1.0);`);
-  };material.customProgramCacheKey=()=>"aged-heritage-stone-v4:"+pier;return material;
+  };material.customProgramCacheKey=()=>"aged-heritage-stone-v5:"+pier;return material;
  };
  const agedBellBronze=new MeshStandardMaterial({color:"#625444",roughness:.82,metalness:.7,side:DoubleSide});
  agedBellBronze.onBeforeCompile=shader=>{shader.vertexShader="varying vec3 vOldBronze;\n"+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace("#include <project_vertex>",`#include <project_vertex>

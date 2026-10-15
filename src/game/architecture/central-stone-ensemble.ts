@@ -8,17 +8,28 @@ export const centralEnsembleIds=["vatsala-durga","large-bell","malla-column","va
 export const centralEnsembleVisualCorrections={
  "large-bell":{oldPosition:[-14.082263006873802,5.484746931956687],newPosition:[-12.9,3.0],oldYaw:0,newYaw:0,classification:"VISUAL_CORRECTION_APPROXIMATE",evidence:"Phase 6C central-forecourt: no identifiable bell footprint, 6m qualitative allowance; spatial audit places roofed bell northwest of Vatsala. Both front photographs and opposed side view separate its masonry platform on the northern/left flank. The north/east render offset separates the enlarged bell platform from the temple and retained column without moving the source point; its ~2.75m displacement is a working interpretation, not a photo measurement."},
  "vatsala-bell":{oldPosition:[-13.993626212805736,9.258540586377714],newPosition:[-13.993626212805736,10.2],oldYaw:0,newYaw:-Math.PI/2,classification:"PHOTO_INFERRED",evidence:"Phase 6C small bell has no traced footprint; western/southwestern terrace relation is approximate. All supplied front/side photos show the arch opening toward the western plaza/stair facade, not along the north/south axis. The frame is moved ~0.94m outboard/south in the visual layer so its near post no longer masks the photographed right stair guardian; the untraced source centre remains unchanged."},
- "malla-column":{oldPosition:[-16.370175677944573,4.531584033885247],newPosition:[-17.5,3.2],oldYaw:0,newYaw:0,classification:"PHOTO_INFERRED",evidence:"APPROXIMATE visual correction: retain the Digital Himalaya icon association/west-of-temple relationship; shift the rendered footing ~1.75m west/north from the previous interpretation, outside the enlarged bell terrace and off its pier axis. The new bell-detail and both front photographs show an independent foreground column. This is within the existing 4m qualitative allowance, not a surveyed footing correction."}
+ "malla-column":{oldPosition:[-16.370175677944573,4.531584033885247],newPosition:[-20.2,3.8],oldYaw:0,newYaw:0,classification:"PHOTO_INFERRED",evidence:"APPROXIMATE visual correction: retain the Digital Himalaya icon association/west-of-temple relationship; move the rendered footing forward/west to [-20.2,3.8], from the previous visual position [-17.5,3.2], outside the enlarged bell terrace and off its pier axis. The new bell-detail and both front photographs show an independent foreground column. This photographic composition correction is APPROXIMATE and remains within the original 4m qualitative allowance (~3.9m from the source icon); it is not a surveyed footing correction. Phase 6C remains unchanged."}
 } as const;
 export const centralEnsembleEvidence={classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",references:["reference/vatsala-area/large-bell-detail-reference.jpg","reference/vatsala-area/vatsala-front-composition-reference.png","reference/vatsala-area/malla-column-detail-reference.png","reference/vatsala-area/vatsala-front-reference.jpg","reference/vatsala-area/vatsala-side-reference.jpg"],spatial:"Phase 6C source coordinates unchanged; documented approximate bell/column render corrections and the west-facing small-arch yaw are applied here; the new two-pier photograph overrides the earlier four-support form interpretation",stairs:"West-facing entrance, stair facade, guardians and tower niche reconciled using all supplied views; no metre dimensions inferred from a single photo"};
 function fresh(source:CentralModel):CentralModel{
  return {...source,editorPartSources:editorFrames[source.id as keyof typeof editorFrames],boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]} as CentralModel;
 }
+// West is the plaza/front; Z is the lateral span in the supplied front views.
+export const templePodiumDimensions={frontDepth:8.2,width:9.25,levels:3,classification:"APPROXIMATE"} as const;
+function smallPodiumBounds(tier:number){return {left:-15.65+tier*.1,right:-11.65-tier*.1,north:9.4+tier*.1,south:13.2-tier*.1};}
 function course(m:CentralModel,y:number,h:number,w:number,d:number,role:string,slot=false){
- // Three solids leave the west stair channel genuinely open, including in the collision model.
- const cut=-2.05,half=1.12;
- if(slot){for(const sign of [-1,1])box(m,0,y,sign*(d/2+half)/2,w,h,d/2-half,stone,role,true);box(m,(cut+w/2)/2,y,0,w/2-cut,h,half*2,stone,role,true);}
- else box(m,0,y,0,w,h,d,stone,role,true);
+ // Split the broad slabs around the stair/guardian channel and the independently editable right podium.
+ const cut=-2.05,half=2.1;
+ const solid=(x:number,z:number,sx:number,sz:number)=>{
+  const tier=Math.min(2,Math.floor((y-h/2+.001)/.84)),notch=smallPodiumBounds(tier);
+  const l=x-sx/2,r=x+sx/2,n=z-sz/2,s=z+sz/2;
+  const il=Math.max(l,notch.left-m.origin[0]-.006),ir=Math.min(r,notch.right-m.origin[0]+.006),inn=Math.max(n,notch.north-m.origin[1]-.006),is=Math.min(s,notch.south-m.origin[1]+.006);
+  const add=(l:number,r:number,n:number,s:number)=>{if(r-l>.001&&s-n>.001)box(m,(l+r)/2,y,(n+s)/2,r-l,h,s-n,stone,role,true);};
+  if(il>=ir||inn>=is){add(l,r,n,s);return;}
+  add(l,il,n,s);add(ir,r,n,s);add(il,ir,n,inn);add(il,ir,is,s);
+ };
+ if(slot){for(const sign of [-1,1])solid(0,sign*(d/2+half)/2,w,d/2-half);solid((cut+w/2)/2,0,w/2-cut,half*2);}
+ else solid(0,0,w,d);
 }
 function moulding(m:CentralModel,y:number,width:number,depth:number,role:string){
  for(const [dy,h,p]of [[0,.08,0],[.095,.11,.1],[.205,.14,.16]] as const)box(m,0,y+dy,0,width+p,h,depth+p,stone,role);
@@ -44,7 +55,7 @@ function temple(m:CentralModel){
  const base=3.1;
  // Three setbacks, each with a differently weighted foot, ashlar field and coping.
  for(let tier=0;tier<3;tier++){
-  const y=tier*.84,w=5.8-tier*.42,d=6.05-tier*.42;
+  const y=tier*.84,w=templePodiumDimensions.frontDepth-tier*.42,d=templePodiumDimensions.width-tier*.42;
   for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)course(m,y+dy+h/2,h,w+projection,d+projection,"vatsala-stepped-base-course",true);
  }
  course(m,2.63,.22,4.7,4.85,"vatsala-platform-neck",true);course(m,2.86,.24,4.82,4.97,"vatsala-platform-coping",true);course(m,3.04,.12,4.7,4.85,"vatsala-platform-landing",true);
@@ -106,15 +117,15 @@ function bellBody(m:CentralModel,y:number,r:number,height:number){
  for(const t of [.13,.3,.73])profile(m,0,y+h*t,0,[[r*(t<.4?.97:.62),0],[r*(t<.4?1.01:.65),.035],[r*(t<.4?.97:.62),.07]],metal,"bell-relief-ring",32);
  box(m,0,y+.05,0,.075,.4,.075,"agedBellBronze","bell-clapper");profile(m,0,y+h,0,[[.09,0],[.15,.08],[.12,.2],[.07,.24],[0,.25]],metal,"bell-crown-hanger",16);
 }
-export const bellTerraceDimensions={width:7.2,northEdge:.8,top:2.6,depthRange:[3.43,4.05],classification:"APPROXIMATE",connection:"Coursed south edge follows the northern Vatsala plinth setbacks; distinct coping and a narrow construction joint, no shared featureless slab"} as const;
+export const bellTerraceDimensions={width:10.5,northEdge:-2.5,top:2.6,depthRange:[5.13,5.69],classification:"APPROXIMATE",connection:"Coursed south edge follows the northern Vatsala plinth setbacks; distinct coping and a narrow construction joint, no shared featureless slab"} as const;
 function largeBell(m:CentralModel){
  const templeAnchor=frozenArchitectureAnchors.find(a=>a.id==="vatsala-durga")!.position!,front=bellTerraceDimensions.northEdge;
  // The new authoritative local photograph resolves TWO masonry blades, not four separate columns.
  // Each course butts against the temple's northern setback at the same elevation.
  const courses:{bottom:number;top:number;depth:number}[]=[];
- for(let tier=0;tier<3;tier++)for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)courses.push({bottom:tier*.84+dy,top:tier*.84+dy+h,depth:6.05-tier*.42+projection});
- courses.push({bottom:2.52,top:2.6,depth:4.85});
- for(const {bottom,top,depth:d}of courses){const south=templeAnchor[1]-d/2-.012,depth=south-front,z=(south+front)/2-m.origin[1];box(m,0,(bottom+top)/2,z,7.2,top-bottom,depth,"bellTerraceMasonry",top===2.6?"bell-terrace-coping":"bell-terrace-course",true);}
+ for(let tier=0;tier<3;tier++)for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)courses.push({bottom:tier*.84+dy,top:tier*.84+dy+h,depth:templePodiumDimensions.width-tier*.42+projection});
+ courses.push({bottom:2.52,top:2.6,depth:templePodiumDimensions.width-.84});
+ for(const {bottom,top,depth:d}of courses){const south=templeAnchor[1]-d/2-.012,depth=south-front,z=(south+front)/2-m.origin[1];box(m,0,(bottom+top)/2,z,bellTerraceDimensions.width,top-bottom,depth,"bellTerraceMasonry",top===2.6?"bell-terrace-coping":"bell-terrace-course",true);}
  for(const side of [-1,1]){
   const r=side<0?"bell-left-pier":"bell-right-pier",x=side*1.65;
   box(m,x,2.71,0,1.3,.22,1.7,"bellPierStone",r+"-foot");
@@ -135,16 +146,24 @@ function largeBell(m:CentralModel){
  // No dedicated bell stair: access and the major stair hierarchy belong to Vatsala.
 }
 function smallBell(m:CentralModel){
- for(const [y,w,d,h]of [[.1,1.8,1.05,.2],[.3,1.68,.95,.2],[.44,1.82,1.08,.08]] as const)box(m,0,y,0,w,h,d,stone,"small-bell-platform-course",true);
+ for(let tier=0;tier<3;tier++){
+  const b=smallPodiumBounds(tier),x=(b.left+b.right)/2-m.origin[0],z=(b.north+b.south)/2-m.origin[1];
+  // The assembly is west-facing: local X spans world Z, local Z spans world X.
+  box(m,z,tier*.28+.12,-x,b.south-b.north,.24,b.right-b.left,stone,"small-bell-platform-course",true);
+  box(m,z,tier*.28+.26,-x,b.south-b.north,.04,b.right-b.left,shade,"small-bell-platform-coping",true);
+ }
+ const start={boxes:m.boxes.length,profiles:m.profiles.length,shapes:m.shapes.length,colliders:m.colliders.length};
  for(const side of [-1,1]){profile(m,side*.68,.48,0,[[.24,0],[.25,.15],[.18,.27],[.14,2.1],[.21,2.25],[.28,2.4],[0,2.45]],stone,"bell-arch-column",16);box(m,side*.68,1.7,0,.3,2.44,.36,stone,"bell-arch-column-collision",true);}
  shape(m,0,2.95,0,[[-1,0],[-1,.62],[-.7,.72],[-.37,.66],[0,.91],[.37,.66],[.7,.72],[1,.62],[1,0],[.48,0],[.36,.16],[0,.37],[-.36,.16],[-.48,0]],.38,stone,"bell-ornate-lobed-lintel");
  for(const x of [-.7,.7])profile(m,x,3.2,.4,[[0,0],[.13,.02],[.15,.1],[.08,.18],[0,.2]],shade,"bell-carved-rosette",12);
  profile(m,0,3.79,0,[[.18,0],[.23,.08],[.15,.18],[.13,.3],[0,.41]],stone,"bell-arch-central-crown",16);
  bellBody(m,1.55,.33,1.1);box(m,0,3.11,0,.05,.5,.05,metal,"bell-suspension");
+ for(const key of ["boxes","profiles","shapes","colliders"] as const)for(const piece of m[key].slice(start[key]))piece.position[1]+=.36;
+
 }
 function column(m:CentralModel){
- for(const [y,w,h]of [[.07,1.26,.14],[.2,1.17,.12],[.34,1.05,.16],[.45,1.2,.06]] as const)box(m,0,y,0,w,h,w,stone,"malla-plinth-course",true);
- profile(m,0,.48,0,[[0,0],[.44,0],[.45,.17],[.34,.29],[.3,.4],[.275,5.55],[.36,5.67],[.43,5.75],[0,5.77]],"bellPierStone","malla-shaft",20);box(m,0,3.26,0,.55,5.56,.55,stone,"malla-column-collision",true);
+ for(const [y,w,h]of [[.09,1.7,.18],[.25,1.55,.14],[.39,1.35,.14],[.5,1.48,.08]] as const)box(m,0,y,0,w,h,w,stone,"malla-plinth-course",true);
+ profile(m,0,.54,0,[[0,0],[.61,0],[.62,.13],[.54,.25],[.5,.35],[.455,5.45],[.53,5.57],[.58,5.65],[0,5.71]],"bellPierStone","malla-shaft",8);box(m,0,3.26,0,.94,5.44,.94,stone,"malla-column-collision",true);
  // One fluted pot/lotus capital with a narrow neck, not a pile of spherical beads.
  carvedLoft(m,[0,6.08,0],[[0,0,0,.32,.32],[.1,0,0,.46,.46],[.22,0,0,.62,.62],[.38,0,0,.72,.72],[.61,0,0,.75,.75],[.8,0,0,.69,.69],[.93,0,0,.58,.58],[1.03,0,0,.47,.47],[1.12,0,0,.46,.46]],metal,"malla-lotus-capital",0,64,.025);
  for(const [h,r]of [[6.1,.4],[6.32,.64],[6.96,.67],[7.14,.49]] as const)profile(m,0,h,0,[[r,0],[r+.035,.035],[r+.035,.085],[r,.12]],metal,"malla-capital-ornamental-band",40);
