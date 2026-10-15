@@ -19,7 +19,9 @@ export function transformedCollider(box:SolidBox,source:ManualTransform,current:
  return affineCollider(box,overrideMatrix(source,current));
 }
 export function affineCollider(box:SolidBox,delta:Matrix4){
- const centre=new Vector3(...box.position).applyMatrix4(delta),piece=new Matrix4().compose(new Vector3(...box.position),new Quaternion().setFromAxisAngle(new Vector3(0,1,0),box.yaw),new Vector3(...box.size));const vertices:number[]=[];
+ const centre=new Vector3(...box.position).applyMatrix4(delta);
+ if(box.vertices){const vertices:number[]=[];for(let i=0;i<box.vertices.length;i+=3)vertices.push(...new Vector3().fromArray(box.vertices,i).add(new Vector3(...box.position)).applyMatrix4(delta).sub(centre).toArray());return {position:centre.toArray() as Triple,vertices};}
+ const piece=new Matrix4().compose(new Vector3(...box.position),new Quaternion().setFromAxisAngle(new Vector3(0,1,0),box.yaw),new Vector3(...box.size));const vertices:number[]=[];
  for(const x of [-.5,.5])for(const y of [-.5,.5])for(const z of [-.5,.5])vertices.push(...new Vector3(x,y,z).applyMatrix4(piece).applyMatrix4(delta).sub(centre).toArray());
  return {position:centre.toArray() as Triple,vertices};
 }

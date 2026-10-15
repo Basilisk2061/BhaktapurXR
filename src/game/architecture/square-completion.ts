@@ -1,3 +1,4 @@
+import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import {refineCentralStoneEnsemble} from "./central-stone-ensemble.ts";
 import {integrateRaisedPavilion,buildRaisedPavilionTerraces} from "./raised-pavilion-terraces.ts";
 import {correctKhaumaContext,khaumaInteriorAudit} from "./khauma-interior-correction.ts";
@@ -81,9 +82,11 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
  // and raw source trace; reconstructed exterior extent is an approximate photographic interpretation.
  const frontage:Polygon=museumSource?polygons[0]:[[[-11,-44],[18.1,-44],[18.1,-36.5],[-11,-36.5],[-11,-44]]];
  if(museumSource){m.origin=[...museumSource.origin];m.yaw=museumSource.yaw;m.anchorId=museumSource.anchorId;}
+ const floorHeight=museumSource?.65:.45;
  for(const rings of [frontage]){
-  m.volumes!.push({rings,baseY:0,height:.45,material:"brick",role:"sattal-plinth"},{rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
-  m.colliders.push(...contextColliders(rings,.45),...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
+  m.volumes!.push({rings,baseY:0,height:floorHeight,material:"brick",role:"sattal-plinth"},{rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
+  for(const collider of walkableFloorColliders(rings,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-plinth-collision"});}
+  m.colliders.push(...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
   const all=edges(rings);
   // Two joined hip ranges over the mapped L-shaped arms, with deep working overhangs.
   // The previous distance-field roof under-sampled the narrow arms and flattened their silhouette.
@@ -97,15 +100,16 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
    const bays=Math.max(1,Math.round(e.length/1.75));
    // Set rear plane behind the posts; ground-level bays remain open and colliders follow walls/posts.
    box(m,x-e.nx*1.7,1.75,z-e.nz*1.7,e.length,2.6,.18,"brick","sattal-recessed-rear-wall",true,e.yaw);
-   for(let i=0;i<=bays;i++){const t=(i+.05)/(bays+.1),px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1];box(m,px,1.73,pz,.22,2.56,.22,"carvedTimber","sattal-columns",true);box(m,px,.53,pz,.38,.16,.38,"stone","sattal-plinth-post-foot");box(m,px,2.93,pz,.52,.16,.38,"carvedTimber","sattal-columns-capital");}
+   for(let i=0;i<=bays;i++){const t=(i+.05)/(bays+.1),px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1];box(m,px,1.73,pz,.22,2.56,.22,"carvedTimber","sattal-columns",true);box(m,px,floorHeight+.08,pz,.38,.16,.38,museumSource?"carvedTimber":"stone","sattal-plinth-post-foot");box(m,px,2.93,pz,.52,.16,.38,"carvedTimber","sattal-columns-capital");}
    for(let i=0;i<bays;i++){const t=(i+.5)/bays,px=e.a[0]+(e.b[0]-e.a[0])*t-m.origin[0],pz=e.a[1]+(e.b[1]-e.a[1])*t-m.origin[1],w=e.length/bays-.24;
     shape(m,px,2.64,pz,[[-w/2,0],[-w/2,.38],[w/2,.38],[w/2,0],[w*.3,.16],[0,.29],[-w*.3,.16]],.16,"carvedTimber","sattal-lower-bay-bracket",e.yaw);
     box(m,px+e.nx*.12,3.83,pz+e.nz*.12,w,.9,.1,"carvedTimber","sattal-upper-gallery-frame",false,e.yaw);
     box(m,px+e.nx*.18,3.83,pz+e.nz*.18,w-.14,.7,.04,"recess","sattal-upper-gallery-recess",false,e.yaw);
     for(const q of [-.35,0,.35])box(m,px+q*w*Math.cos(e.yaw)+e.nx*.22,3.83,pz-q*w*Math.sin(e.yaw)+e.nz*.22,.035,.7,.035,"timber","sattal-upper-gallery-screen",false,e.yaw);
    }
-   // Two shallow access treads below the raised sitting edge, aligned to each public face.
-   for(let j=0;j<2;j++)box(m,x+e.nx*(.55-j*.28),.075*(j+1),z+e.nz*(.55-j*.28),e.length,.15*(j+1),.3,"brick","sattal-plinth-access",true,e.yaw);
+   // Shallow access treads below the raised sitting edge, aligned to each public face.
+   const treads=museumSource?3:2,step=floorHeight/(treads+1);
+   for(let j=0;j<treads;j++)box(m,x+e.nx*(.27+(treads-1-j)*.28),step*(j+1)/2,z+e.nz*(.27+(treads-1-j)*.28),e.length,step*(j+1),.3,"brick","sattal-plinth-access",true,e.yaw);
   }
  }
   // Retain a modest rear return within the mapped north arm, classified with the same uncertainty.

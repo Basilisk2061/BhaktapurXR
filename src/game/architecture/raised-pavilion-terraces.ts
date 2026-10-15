@@ -3,7 +3,7 @@ import polygonClipping from "polygon-clipping";
 import type {MultiPolygon,Polygon} from "polygon-clipping";
 import type {CentralModel} from "./central-model.ts";
 import {rectangle} from "./urban-model.ts";
-import {contextColliders} from "./urban-occupancy.ts";
+import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 
 export const terraceVerticalChanges:Record<string,number>={"gopinath-krishna":.4,rameshwar:1.5,"entrance:khauma-raised-veranda":1.87};
@@ -22,7 +22,7 @@ export function buildRaisedPavilionTerraces(context:CentralModel[],pagoda:Centra
  const m:CentralModel={id:"terrace:khauma-pavilion",anchorId:"PHOTO_INFORMED_INDEPENDENT_PLATFORMS",origin:[-108,-20],yaw:0,accuracy:"APPROXIMATE",neutral:false,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[]};
  const exclusions:Polygon[]=context.filter(c=>c.id!=="entrance:khauma-raised-veranda").flatMap(c=>[...(c.volumes??[]).filter(v=>v.baseY<2.1).map(v=>v.rings),...c.colliders.filter(b=>b.position[1]-b.size[1]/2<2.1).map(b=>[rectangle([b.position[0],b.position[2]],b.size[0],b.size[2],b.yaw)])]);
  const cut=(rings:Polygon):MultiPolygon=>exclusions.length?polygonClipping.difference(rings,...exclusions):[rings];
- const add=(pieces:MultiPolygon,base:number,height:number,material:"brick"|"stone",role:string)=>{for(const rings of pieces){m.volumes!.push({rings,baseY:base,height,material,role});for(const c of contextColliders(rings,height)){c.position[1]+=base;m.colliders.push(c);m.boxes.push({...c,position:[...c.position],size:[...c.size],material,role:role+"-collision"});}}};
+ const add=(pieces:MultiPolygon,base:number,height:number,material:"brick"|"stone",role:string)=>{for(const rings of pieces){m.volumes!.push({rings,baseY:base,height,material,role});for(const c of walkableFloorColliders(rings,height)){c.position[1]+=base;m.colliders.push(c);m.boxes.push({...c,position:[...c.position],size:[...c.size],material,role:role+"-collision"});}}};
  const localPagoda=(z:number):[number,number]=>[pagoda.origin[0]+Math.sin(pagoda.yaw)*z,pagoda.origin[1]+Math.cos(pagoda.yaw)*z];
  const upperAccess:Polygon[]=[],lowerAccess:Polygon[]=[];
  for(let i=0;i<5;i++){

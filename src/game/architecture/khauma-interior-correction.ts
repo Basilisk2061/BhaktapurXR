@@ -1,3 +1,4 @@
+import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import polygonClipping from "polygon-clipping";
 import {contextColliders} from "./urban-occupancy.ts";
 import type {CentralModel} from "./central-model.ts";
@@ -86,7 +87,7 @@ export function correctKhaumaContext(models:CentralModel[]){
   return [...models.map(m=>{
  if(m.id==="context:9c:1159393579"){
   const r=structuredClone(m);r.accuracy="PHOTO_INFERRED";r.boxes=[];r.profiles=[];r.shapes=[];r.roofs=[];r.polygonRoofs=[];
-  r.volumes=(r.volumes??[]).filter(v=>v.baseY===0).map(v=>({...v,height:.3,material:"brick" as const,role:"sattal-photo-apron-low-platform"}));r.colliders=r.volumes.flatMap(v=>contextColliders(v.rings,v.height));return r;
+  r.volumes=(r.volumes??[]).filter(v=>v.baseY===0).map(v=>({...v,height:.3,material:"brick" as const,role:"sattal-photo-apron-low-platform"}));r.colliders=r.volumes.flatMap(v=>walkableFloorColliders(v.rings,v.height));for(const c of r.colliders)r.boxes.push({...c,material:"brick",role:"sattal-photo-apron-low-platform-collision"});return r;
  }
  if(m.id==="context:9c:1159393576"){
   const r=structuredClone(m),apron:[number,number][][]=[[[6,-36],[18.4,-36],[18.4,-23.7],[6,-23.7],[6,-36]]],inside=(p:[number,number,number])=>p[0]>6&&p[0]<18.4&&p[2]>-36&&p[2]<-23.7;

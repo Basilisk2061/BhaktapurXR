@@ -39,7 +39,7 @@ export function hipRoofGeometry(width: number, depth: number, rise: number) {
 export function insideFootprint(point: LocalPoint,f:Pick<SpatialFeature,"vertices"|"holes">) {
   return pointInsidePolygon(point,f.vertices) && !(f.holes??[]).some(h=>pointInsidePolygon(point,h));
 }
-export interface SolidBox { position:[number,number,number]; size:[number,number,number]; yaw:number }
+export interface SolidBox { position:[number,number,number]; size:[number,number,number]; yaw:number; vertices?:number[] }
 
 /** Thin compound boundary walls plus coalesced interior cuboids; white voids stay open. */
 export function footprintColliders(f: Pick<SpatialFeature,"vertices"|"holes">,height:number): SolidBox[] {
