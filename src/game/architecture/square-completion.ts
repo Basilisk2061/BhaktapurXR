@@ -14,7 +14,7 @@ import {entranceRoadEnds} from "../../data/reconstruction/khauma-entrance.ts";
 import {urbanStreetExits} from "../../data/reconstruction/urban-enclosure.ts";
 import {buildPalaceFrontageModels} from "./palace-frontage-models.ts";
 import {buildInsideSquareEdge} from "./inside-square-models.ts";
-import {monumentEnvelopes,streetRectangle} from "./urban-model.ts";
+import {monumentEnvelopes,streetRectangle,rectangle} from "./urban-model.ts";
 import {contextColliders} from "./urban-occupancy.ts";
 import {insideFootprint} from "./geometry.ts";
 import {buildRameshwar,box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
@@ -97,6 +97,14 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
    box(m,x+e.nx*.65,4.57,z+e.nz*.65,e.length+.7,.24,.36,"carvedTimber","sattal-deep-eaves",false,e.yaw);
    box(m,x+e.nx*.81,4.53,z+e.nz*.81,e.length+.75,.13,.045,"shutter","sattal-photo-red-roof-border",false,e.yaw);
    if(!publicFace){box(m,x,1.75,z,e.length,2.6,.22,"agedBrick","sattal-rear-wall",true,e.yaw);continue;}
+   if(museumSource){
+    // Only the recessed sitting strip rises; keep the front platform and post feet intact.
+    const strip:Polygon=[rectangle([e.mid[0]-e.nx*.94,e.mid[1]-e.nz*.94],e.length,1.32,e.yaw)];
+    for(const sittingRings of polygonClipping.intersection(rings,strip)){
+     m.volumes!.push({rings:sittingRings,baseY:floorHeight,height:.2,material:"brick",role:"sattal-sitting-plinth"});
+     for(const collider of walkableFloorColliders(sittingRings,.2,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-sitting-plinth-collision"});}
+    }
+   }
    const bays=Math.max(1,Math.round(e.length/1.75));
    // Set rear plane behind the posts; ground-level bays remain open and colliders follow walls/posts.
    box(m,x-e.nx*1.7,1.75,z-e.nz*1.7,e.length,2.6,.18,"brick","sattal-recessed-rear-wall",true,e.yaw);
