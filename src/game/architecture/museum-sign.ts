@@ -1,11 +1,12 @@
 import {CanvasTexture,MeshStandardMaterial,SRGBColorSpace} from "three";
 import {museumEntrance} from "./museum-entrance.ts";
 import type {CentralMaterial} from "./central-model.ts";
-export function finishMuseumMaterials(materials:Record<Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief">,MeshStandardMaterial>){
+export function finishMuseumMaterials(materials:Record<Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone">,MeshStandardMaterial>){
  const museumStone=materials.stone.clone();museumStone.color.set("#9f9586");museumStone.roughness=1;museumStone.flatShading=false;
  museumStone.onBeforeCompile=materials.stone.onBeforeCompile;museumStone.customProgramCacheKey=()=>materials.stone.customProgramCacheKey()+":museum-stone";
- const museumRelief=museumStone.clone();museumRelief.color.set("#746e64");museumRelief.onBeforeCompile=museumStone.onBeforeCompile;museumRelief.customProgramCacheKey=()=>museumStone.customProgramCacheKey()+":relief";
- return {...materials,museumStone,museumRelief,museumSign:createMuseumSignMaterial()};
+ const guardianStone=museumStone.clone();guardianStone.color.set("#afa28f");guardianStone.roughness=.98;guardianStone.onBeforeCompile=museumStone.onBeforeCompile;guardianStone.customProgramCacheKey=()=>museumStone.customProgramCacheKey()+":guardian";
+ const museumRelief=museumStone.clone();museumRelief.color.set("#81776a");museumRelief.onBeforeCompile=museumStone.onBeforeCompile;museumRelief.customProgramCacheKey=()=>museumStone.customProgramCacheKey()+":relief";
+ return {...materials,museumStone,museumRelief,guardianStone,museumSign:createMuseumSignMaterial()};
 }
 /** One small locally generated board, with system Devanagari fallback; no web font. */
 export function createMuseumSignMaterial(){

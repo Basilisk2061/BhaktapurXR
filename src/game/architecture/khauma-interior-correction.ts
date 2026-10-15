@@ -18,20 +18,20 @@ function pedestal(m:CentralModel,x:number,z:number,width:number,depth:number,hei
  for(let j=0;j<9;j++)profile(m,x+(j-4)*width/11,height*.77,z+depth*.49,[[0,0],[.035,0],[.045,.05],[.024,.1],[0,.12]],"stone","school-pedestals-carved-band",8);
 }
 /** Reuse the continuous loft/tube technique, with distinct proportions, crown and figure staging.
- * Museum geometry and builders are untouched. No deity identity is assigned. */
+ * Shared sculpture refinements retain the school-specific proportions. No deity identity is assigned. */
 function guardian(m:CentralModel,x:number,y:number,z:number,left:boolean){
  const temp=fresh("sculpture",[0,0]);buildCarvedMuseumLion(temp,0,0,0);
  const role=left?"school-left-guardian":"school-right-guardian",sx=1.18,sy=1.22,sz=1.1;
- for(const p of temp.profiles){p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.role=role;p.material=p.material==="recess"?"recess":"museumStone";if(p.sculptedSurface)p.sculptedSurface.positions=p.sculptedSurface.positions.map((v,i)=>v*[sx,sy,sz][i%3]);else p.profile=p.profile.map(([r,h])=>[r*sx,h*sy]);m.profiles.push(p);}
+ for(const p of temp.profiles){p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.role=role;p.material=p.material==="recess"?"recess":"guardianStone";if(p.sculptedSurface)p.sculptedSurface.positions=p.sculptedSurface.positions.map((v,i)=>v*[sx,sy,sz][i%3]);else p.profile=p.profile.map(([r,h])=>[r*sx,h*sy]);m.profiles.push(p);}
  for(const p of temp.shapes){p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.points=p.points.map(([a,b])=>[a*sx,b*sy]);p.role=role;m.shapes.push(p);}
  // The school guardians have a conspicuous tiered crown and heavy breast/leg bands.
- profile(m,x,y+2.78,z+.4,[[0,0],[.22,0],[.28,.12],[.2,.22],[.24,.32],[.12,.47],[0,.62]],"stone",role+"-crown",20);
- box(m,x,y+1.18,z+.69,.7,.13,.12,"stone",role+"-breast-band");box(m,x,y+1.09,z+.64,1.15,2.18,1.25,"stone",role+"-collision",true);
+ profile(m,x,y+2.78,z+.4,[[0,0],[.22,0],[.28,.12],[.2,.22],[.24,.32],[.12,.47],[0,.62]],"guardianStone",role+"-crown",24);
+ shape(m,x,y+1.12,z+.69,[[-.36,.13],[-.24,.1],[0,.065],[.24,.1],[.36,.13],[.32,-.015],[0,-.07],[-.32,-.015]],.065,"guardianStone",role+"-breast-band");box(m,x,y+1.09,z+.64,1.15,2.18,1.25,"stone",role+"-collision",true);
 }
 function relief(m:CentralModel,x:number,y:number,z:number,left:boolean){
  const t=fresh("sculpture",[0,0]);buildCarvedMuseumRelief(t,0,0,0,!left);const role=left?"school-left-relief":"school-right-relief",sx=.87,sy=.79,sz=1.15;
- for(const p of t.profiles){if(/held-|reclining|base-recessed|pedestal/.test(p.role))continue;p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.role=role;p.material=p.material==="recess"?"recess":"museumStone";if(p.sculptedSurface)p.sculptedSurface.positions=p.sculptedSurface.positions.map((v,i)=>v*[sx,sy,sz][i%3]);else p.profile=p.profile.map(([r,h])=>[r*sx,h*sy]);m.profiles.push(p);}
- for(const p of t.shapes){p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.points=p.points.map(([a,b])=>[a*sx,b*sy]);p.role=role;p.material=p.material==="recess"?"recess":"museumStone";m.shapes.push(p);}
+ for(const p of t.profiles){if(/held-|reclining|base-recessed|pedestal/.test(p.role))continue;p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.role=role;p.material=p.material==="recess"?"recess":"museumRelief";if(p.sculptedSurface)p.sculptedSurface.positions=p.sculptedSurface.positions.map((v,i)=>v*[sx,sy,sz][i%3]);else p.profile=p.profile.map(([r,h])=>[r*sx,h*sy]);m.profiles.push(p);}
+ for(const p of t.shapes){p.position=[m.origin[0]+x+p.position[0]*sx,y+p.position[1]*sy,m.origin[1]+z+p.position[2]*sz];p.points=p.points.map(([a,b])=>[a*sx,b*sy]);p.role=role;p.material=p.material==="recess"?"recess":"museumRelief";m.shapes.push(p);}
  box(m,x,y+.93,z,.95,1.9,.35,"stone",role+"-collision",true);
 }
 export function schoolEntrance(source:CentralModel){

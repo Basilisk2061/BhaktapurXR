@@ -26,10 +26,19 @@ export function animal(m:CentralModel,x:number,y:number,z:number,kind:"horse"|"r
  "human-faced":[[-.53,0],[-.62,.81],[-.55,1.2],[-.4,1.46],[-.12,1.44],[.08,1.19],[.13,.83],[.39,1.01],[.64,.56],[.6,0],[.37,0],[.21,.55],[-.24,.54],[-.3,0]],
  };
  shape(m,x-.23*scale,y,z,outlines[kind].map(([a,b])=>[a*scale,b*scale]),.46*scale,"stone","guardian-"+kind,Math.PI/2);
+ // Eased stone edges and four modeled ankles replace the cardboard-cutout reading.
+ // The original animal outline, anchor, orientation and pedestal remain the source of truth.
+ m.shapes[m.shapes.length-1].sculpturalBevel=.035*scale;
+ for(const side of [-1,1])for(const end of [-1,1])profile(m,x+side*.17*scale,y,z+end*.4*scale,[[0,0],[.095*scale,0],[.11*scale,.055*scale],[.085*scale,.16*scale],[.075*scale,.29*scale],[0,.32*scale]],"stone","guardian-carved-ankle",12);
  if(kind==="elephant")for(const side of [-1,1])profile(m,x+side*.32*scale,y+.67*scale,z+.57*scale,[[0,0],[.29*scale,.06*scale],[.35*scale,.45*scale],[.18*scale,.69*scale],[0,.7*scale]],"stone","guardian-elephant-ear",8);
  if(kind==="lion"||kind==="human-faced")profile(m,x,y+.78*scale,z+.45*scale,[[.14*scale,0],[.23*scale,.13*scale],[.21*scale,.35*scale],[0,.45*scale]],"stone","guardian-face",8);
 }
-function attendant(m:CentralModel,x:number,y:number,z:number){profile(m,x,y,z,[[0,0],[.23,0],[.27,.62],[.22,1.03],[.13,1.19],[.23,1.31],[.19,1.53],[0,1.6]],"stone","guardian-attendant",10);profile(m,x-.32,y,z+.05,[[0,0],[.1,0],[.12,.45],[.08,.57],[.12,.69],[0,.83]],"stone","guardian-child",8);animal(m,x+.37,y,z+.12,"dog",.52);}
+function attendant(m:CentralModel,x:number,y:number,z:number){
+ for(const side of [-1,1]){
+  shape(m,x,y,z+.07,[[side*.18,.68],[side*.3,.65],[side*.37,.87],[side*.31,1.12],[side*.21,1.15],[side*.25,.9]],.13,"stone","guardian-attendant-arm");m.shapes[m.shapes.length-1].sculpturalBevel=.025;
+  profile(m,x+side*.13,y,z+.12,[[0,0],[.1,0],[.12,.065],[.085,.15],[0,.18]],"stone","guardian-attendant-foot",12);
+ }
+ profile(m,x,y,z,[[0,0],[.23,0],[.27,.62],[.22,1.03],[.13,1.19],[.23,1.31],[.19,1.53],[0,1.6]],"stone","guardian-attendant",10);profile(m,x-.32,y,z+.05,[[0,0],[.1,0],[.12,.45],[.08,.57],[.12,.69],[0,.83]],"stone","guardian-child",8);animal(m,x+.37,y,z+.12,"dog",.52);}
 
 export function buildSiddhiLakshmi(s=remainingSpecificationById["siddhi-lakshmi"]):CentralModel {const m=model(s),d=s.dimensions.renderingAssumption;
  for(let i=0;i<5;i++){const w=d.baseWidth-i*.78,dep=d.baseDepth-i*.65;terrace(m,w,dep,i*.72,.72,d.stairWidth,.5,"stone","siddhi-five-terraces");for(const side of [-1,1])box(m,side*(w+d.stairWidth)/4,(i+1)*.72-.09,dep/2+.015,(w-d.stairWidth)/2,.12,.15,"stone","siddhi-terrace-cornice");}

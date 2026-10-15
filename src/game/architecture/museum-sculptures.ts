@@ -18,7 +18,15 @@ function surface(m:CentralModel,at:Point,positions:number[],indices:number[],mat
 // Explicit elliptical sections produce heavy, continuous stone masses, not stacked spheres.
 function loft(m:CentralModel,at:Point,rings:Ring[],material:CentralMaterial,role:string,segments=24){
  const vertices:number[]=[],faces:number[]=[];
- rings.forEach(([y,x,z,rx,rz],row)=>{for(let j=0;j<=segments;j++){const a=j*2*Math.PI/segments,relief=1+.009*Math.sin(a*5+row*.6);vertices.push(x+rx*Math.cos(a)*relief,y,z+rz*Math.sin(a)*relief);if(row&&j){const b=row*(segments+1)+j;faces.push(b,b-segments-2,b-1,b,b-segments-1,b-segments-2);}}});
+ // Smooth only the large masses: preserve crisp small carved ridges and a modest budget.
+ const sections:Ring[]=[];
+ for(let i=0;i<rings.length-1;i++){
+  sections.push(rings[i]);
+  if(segments>=20){const a=rings[Math.max(0,i-1)],b=rings[i],c=rings[i+1],d=rings[Math.min(rings.length-1,i+2)];
+   sections.push(b.map((v,k)=>k===0?(v+c[k])/2:Math.max(k>2?.001:-Infinity,(-a[k]+9*v+9*c[k]-d[k])/16)) as Ring);}
+ }
+ sections.push(rings[rings.length-1]);
+ sections.forEach(([y,x,z,rx,rz],row)=>{for(let j=0;j<=segments;j++){const a=j*2*Math.PI/segments,relief=1+.012*Math.cos(a*4)+.003*Math.sin(a*7+row*.6);vertices.push(x+rx*Math.cos(a)*relief,y,z+rz*Math.sin(a)*relief);if(row&&j){const b=row*(segments+1)+j;faces.push(b,b-segments-2,b-1,b,b-segments-1,b-segments-2);}}});
  surface(m,at,vertices,faces,material,role);
 }
 function tube(m:CentralModel,at:Point,points:Point[],radius:number,material:CentralMaterial,role:string,samples=12,sides=8){
@@ -39,7 +47,7 @@ function band(m:CentralModel,at:Point,rx:number,rz:number,y:number,material:Cent
  const points:Point[]=Array.from({length:25},(_,i)=>{const a=i*Math.PI/12;return [Math.cos(a)*rx,y,Math.sin(a)*rz];});tube(m,at,points,radius,material,role,24,6);
 }
 export function buildCarvedMuseumLion(m:CentralModel,x:number,y=.95,z=1.62){
- const r=lionRole,stone:CentralMaterial="museumStone",at:Point=[x,y,z];
+ const r=lionRole,stone:CentralMaterial="guardianStone",at:Point=[x,y,z];
  // Reference: broad hanging belly, heavy shoulders, seated rear mass and thick short legs.
  loft(m,at,[[.18,0,-.12,.05,.05],[.36,0,-.12,.39,.43],[.6,0,-.06,.53,.55],[.88,0,.03,.57,.56],[1.13,0,.09,.52,.46],[1.37,0,.15,.4,.36],[1.48,0,.18,.23,.27],[1.52,0,.18,.01,.01]],stone,r+"-body");
  loft(m,[x,y+.45,z+.41],[[0,0,0,.02,.02],[.14,0,0,.36,.22],[.4,0,0,.47,.28],[.66,0,-.05,.43,.24],[.89,0,-.1,.25,.18],[1,0,-.1,.01,.01]],stone,r+"-chest");
@@ -51,37 +59,58 @@ export function buildCarvedMuseumLion(m:CentralModel,x:number,y=.95,z=1.62){
    for(let j=0;j<4;j++)loft(m,[px+(j-1.5)*.105,y+.015,pz+.32],[[0,0,0,.051,.1],[.035,0,0,.057,.14],[.11,0,-.02,.05,.115],[.16,0,-.05,.025,.06],[.17,0,-.05,.001,.001]],stone,r+"-toe",12);
    for(const h of [.19,.36,.55])if(h<(rear?.4:1))band(m,[px,y,pz],.183,.213,h,stone,r+"-leg-carved-band",.011);
   }
+  for(let j=0;j<3;j++)tube(m,at,[[side*(.22+j*.105),.04,.77],[side*(.22+j*.105),.09,.81],[side*(.22+j*.105),.14,.76]],.009,"museumRelief",r+"-paw-groove",6,5);
   // Shoulder rosette is visible in both close photographs.
   curl(m,[x+side*.46,y+1.02,z+.36],.105,stone,r+"-shoulder-rosette");
   tube(m,at,[[side*.38,.85,.58],[side*.4,.64,.58],[side*.34,.44,.6]],.035,stone,r+"-shoulder-border");
  }
+ // Shallow pectoral/abdominal planes join the chest instead of a single balloon silhouette.
+ for(const side of [-1,1]){
+  tube(m,at,[[side*.12,1.37,.59],[side*.29,1.15,.67],[side*.34,.92,.66],[side*.2,.76,.6]],.044,stone,r+"-pectoral-ridge",18,8);
+  tube(m,at,[[side*.11,.78,.62],[side*.22,.65,.57],[side*.27,.51,.48]],.023,stone,r+"-belly-plane",14,8);
+ }
  // Broad head shell opens around a deep dark jaw instead of a painted black rectangle.
  loft(m,[x,y+1.31,z+.4],[[0,0,0,.17,.21],[.12,0,0,.35,.32],[.32,0,0,.45,.35],[.53,0,0,.46,.35],[.68,0,0,.39,.31],[.78,0,0,.19,.2],[.8,0,0,.01,.01]],stone,r+"-head",28);
- const mouth:[number,number][]=Array.from({length:33},(_,i)=>{const a=i*Math.PI/16;return [.37*Math.cos(a),.18+.17*Math.sin(a)] as [number,number];});
- shape(m,x,y+1.38,z+.91,mouth,.09,"recess",r+"-open-mouth");
+ // Recess the underlying head mass too, so it cannot protrude through the throat at oblique views.
+ const head=m.profiles[m.profiles.length-1].sculptedSurface!;
+ for(let i=0;i<head.positions.length;i+=3){const q=(head.positions[i]/.38)**2+((head.positions[i+1]+1.31-1.635)/.24)**2;if(q<1&&head.positions[i+2]>0)head.positions[i+2]-=.28*(1-q);}
+ // Recessed bowl: opening, tapering inner walls and rear throat, not a flat dark decal.
+ const cavity:number[]=[],cavityFaces:number[]=[];
+ for(let row=0;row<5;row++)for(let j=0;j<=32;j++){
+  const a=j*Math.PI/16,t=row/4,rx=.365*(1-t*.93),ry=.225*(1-t*.92);
+  cavity.push(rx*Math.cos(a),1.635+ry*Math.sin(a),1.065-t*.34);
+  if(row&&j){const k=row*33+j;cavityFaces.push(k,k-1,k-34,k,k-34,k-33);}
+ }
+ const throat=cavity.length/3;cavity.push(0,1.635,.725);for(let j=0;j<32;j++)cavityFaces.push(throat,132+j,133+j);
+ surface(m,at,cavity,cavityFaces,"recess",r+"-open-mouth");
+ tube(m,at,[[-.36,1.65,1.06],[-.29,1.49,1.08],[0,1.43,1.105],[.29,1.49,1.08],[.36,1.65,1.06]],.041,stone,r+"-mouth-rim",24,10);
  // Extruded upper jaw/lower lip have real depth, broad flattened edges and corner cheeks.
- loft(m,[x,y+1.71,z+.92],[[0,0,0,.3,.12],[.05,0,0,.41,.17],[.13,0,-.02,.38,.19],[.21,0,-.065,.24,.16],[.25,0,-.09,.01,.01]],stone,r+"-upper-jaw",28);
+ loft(m,[x,y+1.78,z+.92],[[0,0,0,.3,.12],[.05,0,0,.41,.17],[.13,0,-.02,.38,.19],[.21,0,-.065,.24,.16],[.25,0,-.09,.01,.01]],stone,r+"-upper-jaw",28);
  loft(m,[x,y+1.29,z+.9],[[0,0,0,.16,.11],[.055,0,0,.36,.15],[.12,0,0,.39,.17],[.185,0,0,.32,.15],[.21,0,-.05,.01,.01]],stone,r+"-lower-jaw",28);
  tube(m,at,[[-.33,1.47,1.065],[-.17,1.435,1.087],[0,1.425,1.095],[.17,1.435,1.087],[.33,1.47,1.065]],.031,stone,r+"-lower-lip",20);
  loft(m,[x,y+1.89,z+.91],[[0,0,0,.12,.08],[.06,0,.04,.2,.13],[.12,0,.01,.16,.1],[.14,0,-.03,.03,.02]],stone,r+"-broad-nose",20);
  for(const side of [-1,1]){
   bead(m,[x+side*.09,y+1.9,z+1.024],.04,.035,"recess",r+"-nostril");
-  loft(m,[x+side*.22,y+1.97,z+.86],[[0,0,0,.08,.07],[.045,0,0,.14,.12],[.12,0,0,.12,.1],[.17,0,-.015,.02,.02]],"stone",r+"-bulging-eye",20);
-  bead(m,[x+side*.22,y+2.03,z+.985],.05,.035,"road",r+"-eye-centre");
+  loft(m,[x+side*.23,y+1.945,z+.865],[[0,0,0,.055,.035],[.04,0,0,.17,.105],[.13,0,0,.18,.12],[.21,0,-.02,.1,.06],[.23,0,0,.005,.005]],"museumRelief",r+"-eye-socket",20);
+  loft(m,[x+side*.22,y+1.97,z+.90],[[0,0,0,.08,.07],[.045,0,0,.14,.12],[.12,0,0,.12,.1],[.17,0,-.015,.02,.02]],"stone",r+"-bulging-eye",20);
+  bead(m,[x+side*.22,y+2.03,z+1.015],.037,.035,"museumRelief",r+"-eye-centre");
   tube(m,at,[[side*.07,2.105,.96],[side*.22,2.16,.95],[side*.37,2.09,.86]],.045,stone,r+"-heavy-brow");
   // Curled elongated ears wrap the cheeks; the reference does not have pointed cat ears.
   tube(m,at,[[side*.37,1.51,.71],[side*.51,1.74,.72],[side*.56,1.98,.58],[side*.51,2.07,.51],[side*.43,2.01,.52],[side*.42,1.87,.64]],.07,stone,r+"-curled-ear",24,10);
   curl(m,[x+side*.47,y+1.99,z+.61],.11,stone,r+"-ear-scroll");
-  for(let j=0;j<7;j++)curl(m,[x+side*(.32+.035*Math.sin(j)),y+1.49+j*.061,z+.78],.044,stone,r+"-cheek-scroll");
+  for(let j=0;j<5;j++)curl(m,[x+side*(.35+.025*Math.sin(j*1.7)),y+1.49+j*.082,z+.78+.025*Math.cos(j)],.05+.007*Math.sin(j),stone,r+"-cheek-scroll");
+  loft(m,[x+side*.34,y+1.65,z+.69],[[0,0,0,.04,.035],[.08,0,0,.135,.13],[.22,0,-.025,.145,.135],[.36,0,-.07,.1,.08],[.4,0,-.08,.005,.005]],stone,r+"-cheek-plane",20);
+  tube(m,at,[[side*.16,1.91,1.04],[side*.29,1.89,1.035],[side*.37,1.8,.97]],.025,stone,r+"-muzzle-fold",14,8);
   loft(m,[x+side*.28,y+1.48,z+.89],[[0,0,0,.05,.04],[.14,0,-.07,.12,.1],[.33,0,-.13,.1,.11],[.39,0,-.16,.005,.005]],stone,r+"-jaw-corner");
   loft(m,[x+side*.28,y+1.5,z+1.015],[[0,side*.03,.025,.005,.005],[.06,side*.015,.025,.018,.02],[.15,0,.005,.032,.037],[.24,0,-.018,.043,.055],[.28,0,-.05,.02,.025]],stone,r+"-large-fang",16);
  }
- for(let j=0;j<9;j++)profile(m,x+(j-4)*.054,y+1.685,z+1.07,[[.019,0],[.025,.065],[.019,.1],[0,.105]],stone,r+"-upper-teeth",8);
- bead(m,[x,y+1.43,z+1.025],.13,.075,stone,r+"-tongue");
+ for(let j=0;j<7;j++){const h=.07+.02*Math.cos(j*1.3);profile(m,x+(j-3)*.064,y+1.79-h,z+1.065,[[0,0],[.014,.012],[.025,h*.7],[.023,h]],stone,r+"-upper-teeth",10);}
+ for(let j=0;j<5;j++)profile(m,x+(j-2)*.075,y+1.455,z+1.065,[[.025,0],[.023,.04],[.013,.061],[0,.069]],stone,r+"-lower-teeth",10);
+ bead(m,[x,y+1.43,z+.99],.14,.055,stone,r+"-tongue");
  // Layered mane tiles wrap the back/sides of the head and descend onto the neck.
  for(let row=0;row<6;row++)for(let j=0;j<9;j++){
-  const a=.05+j*Math.PI/8,rx=.42+row*.011,rz=.34+row*.015;
-  loft(m,[x+Math.cos(a)*rx,y+1.81-row*.125,z+.13-Math.sin(a)*rz],[[0,0,0,.018,.018],[.035,0,0,.076,.06],[.12,0,-.025,.075,.055],[.17,0,-.05,.045,.025],[.18,0,-.05,.001,.001]],stone,r+"-layered-mane",12);
+  const a=.05+(j+(row%2)*.32)*Math.PI/8,rx=.42+row*.011,rz=.34+row*.015;
+  loft(m,[x+Math.cos(a)*rx,y+1.81-row*.125+.014*Math.sin(j*2+row),z+.13-Math.sin(a)*rz],[[0,0,0,.018,.018],[.035,0,0,.076,.06],[.12,0,-.025,.075,.055],[.17,0,-.05,.045,.025],[.18,0,-.05,.001,.001]],stone,r+"-layered-mane",12);
  }
  for(const side of [-1,1])for(let row=0;row<5;row++)curl(m,[x+side*(.45+row*.009),y+1.3-row*.11,z+.18],.065,stone,r+"-neck-scroll");
  tube(m,at,[[-.43,1.34,.46],[-.28,1.24,.64],[0,1.17,.71],[.28,1.24,.64],[.43,1.34,.46]],.04,stone,r+"-necklace",24);
@@ -101,11 +130,11 @@ export function buildCarvedMuseumRelief(m:CentralModel,x:number,y=.72,z=.92,turn
  for(const side of [-1,1])for(let j=0;j<14;j++){const h=.28+j*.135,px=side*(h<1.6?.495:.495-(h-1.6)*.52);curl(m,[x+px,y+h,z+.12],.031,stone,r+"-border-scroll");}
  // Main figure has a broad torso, spread/bent legs and four visible arms as in the close view.
  loft(m,[x,y+.73,z+.18],[[0,0,0,.16,.08],[.14,0,0,.145,.1],[.34,0,0,.17,.11],[.55,0,0,.27,.115],[.69,0,-.02,.22,.1],[.75,0,0,.08,.065]],stone,r+"-central-figure",24);
- loft(m,[x,y+1.51,z+.2],[[0,0,0,.09,.08],[.045,0,.015,.16,.105],[.14,0,.025,.18,.12],[.28,0,.01,.14,.1],[.31,0,0,.01,.01]],stone,r+"-head",24);
+ loft(m,[x,y+1.51,z+.2],[[0,0,0,.075,.07],[.045,0,.015,.115,.095],[.14,0,.025,.155,.12],[.23,0,.015,.14,.11],[.28,0,.01,.115,.08],[.31,0,0,.01,.01]],stone,r+"-head",24);
  loft(m,[x,y+1.56,z+.305],[[0,0,0,.05,.025],[.05,0,0,.11,.06],[.15,0,-.01,.12,.065],[.23,0,-.02,.06,.025]],stone,r+"-face",20);
  tube(m,at,[[0,1.71,.387],[0,1.64,.416],[.04,1.62,.39]],.025,stone,r+"-nose",8);
  for(const side of [-1,1]){
-  bead(m,[x+side*.07,y+1.71,z+.377],.031,.033,stone,r+"-eye");
+  tube(m,at,[[side*.035,1.71,.38],[side*.07,1.725,.385],[side*.108,1.71,.374]],.011,"museumRelief",r+"-eye",8,6);
   tube(m,at,[[side*.035,1.77,.37],[side*.09,1.78,.36],[side*.13,1.73,.34]],.021,stone,r+"-brow",8,6);
   curl(m,[x+side*.18,y+1.61,z+.23],.049,stone,r+"-ear-jewelry");
   tube(m,at,[[side*.2,1.37,.2],[side*.35,1.56,.19],[side*.39,1.82,.2]],.065,stone,r+"-upper-arm",20);
@@ -118,6 +147,13 @@ export function buildCarvedMuseumRelief(m:CentralModel,x:number,y=.72,z=.92,turn
   loft(m,[x+side*(lifted?.31:.2),y+(lifted?.53:.36),z+.32],[[0,0,0,.085,.13],[.045,0,.03,.11,.14],[.1,0,0,.06,.09],[.12,0,-.03,.001,.001]],stone,r+"-foot",16);
   tube(m,at,[[side*.04,.92,.325],[side*.18,.84,.32],[side*.1,.72,.31],[side*.16,.51,.31]],.025,stone,r+"-garment-fold",14,6);
   band(m,[x,y,z+.19],.165,.12,.92,stone,r+"-waist-jewelry");
+ }
+ for(const side of [-1,1]){
+  loft(m,[x+side*.1,y+1.12,z+.26],[[0,0,0,.025,.02],[.1,0,.015,.085,.055],[.22,side*.015,.01,.09,.065],[.29,0,0,.04,.035],[.32,0,0,.002,.002]],stone,r+"-torso-plane",20);
+  tube(m,at,[[side*.11,1.49,.29],[side*.23,1.4,.31],[side*.27,1.29,.3]],.031,stone,r+"-shoulder-contour",12,8);
+  for(let j=0;j<3;j++)tube(m,at,[[side*(.37+j*.022),1.25,.374],[side*(.36+j*.023),1.29,.39]],.009,stone,r+"-lower-hand-finger",5,5);
+  loft(m,[x+side*.12,y+.62,z+.22],[[0,0,0,.02,.025],[.075,side*.04,.015,.075,.065],[.16,side*.025,.025,.09,.07],[.28,0,.015,.065,.06],[.34,0,0,.01,.01]],stone,r+"-draped-hip",20);
+  tube(m,at,[[side*.025,.98,.315],[side*.07,.81,.335],[side*.21,.63,.335]],.018,stone,r+"-cloth-relief",16,6);
  }
  tube(m,at,[[-.075,1.6,.37],[0,1.584,.39],[.075,1.6,.37]],.013,stone,r+"-carved-lip",10,6);
  // Only coarse observed held-object silhouettes, without assigning their religious meaning.

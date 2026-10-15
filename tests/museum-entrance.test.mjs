@@ -19,7 +19,7 @@ test("museum entrance stays on red section with four grouped editable components
  assert.equal(m.profiles.filter(p=>p.role==="museum-entrance-lions-head").length,2);assert.equal(m.profiles.filter(p=>p.role==="museum-entrance-lions-leg").length,8);assert.equal(m.profiles.filter(p=>p.role==="museum-entrance-figures-central-figure").length,2);
  assert.equal(m.boxes.filter(b=>b.material==="museumSign").length,1);assert.ok(!m.profiles.some(p=>p.role==="gallery-guardian"));assert.deepEqual(buildPalaceFrontageModels(),models);
  const sign=m.boxes.find(b=>b.role==="museum-entrance-sign-board"),window=m.boxes.find(b=>b.role==="museum-entrance-door-window-recess");assert.ok(sign.position[1]-sign.size[1]/2>window.position[1]+window.size[1]/2);
- assert.equal(m.boxes.filter(b=>b.role==="museum-entrance-door-pale-column").length,2);assert.equal(m.shapes.filter(p=>p.role==="museum-entrance-lions-open-mouth").length,2);
+ assert.equal(m.boxes.filter(b=>b.role==="museum-entrance-door-pale-column").length,2);const mouths=m.profiles.filter(p=>p.role==="museum-entrance-lions-open-mouth");assert.equal(mouths.length,2);for(const p of mouths){const z=p.sculptedSurface.positions.filter((_,i)=>i%3===2);assert.ok(Math.max(...z)-Math.min(...z)>.3,"mouth must have modeled cavity depth");}
 });
 test("exactly one new museum review resolves only in development",()=>{
  assert.equal(resolveKhaumaAxisReview("9b2-museum-entrance",true),"9b2-museum-entrance");assert.equal(resolveKhaumaAxisReview("9b2-museum-entrance",false),null);assert.ok(khaumaPhotoCamera("9b2-museum-entrance").position.every(Number.isFinite));

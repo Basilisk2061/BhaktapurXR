@@ -1,6 +1,8 @@
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=64)=>{const dx=target[0]-position[0],dy=target[1]-position[1],dz=target[2]-position[2];return {position,height:position[1],yaw:Math.atan2(-dx,-dz),pitch:Math.atan2(dy,Math.hypot(dx,dz)),fov};};
 export const squareCompletionReviews={
+ "guardian-statue-close":pose([-103.8,2.6,-38.2],[-104.8,2.65,-43.4],56),
+ "guardian-statue-context":pose([-102,1.65,-32],[-102.7,2.7,-44],68),
  "separate-pavilion-platforms":pose([-110,25,-45],[-109,1,-20],86),
  "pavilion-platform-reference":pose([-108,1.65,-35],[-109,4,-22],90),
  "raised-pavilion-reference":pose([-108,1.65,-35],[-109,4,-22],90),
