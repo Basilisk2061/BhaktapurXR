@@ -1,7 +1,7 @@
 import type {MeshStandardMaterial} from "three";
 import type {CentralMaterial} from "./central-model.ts";
 /** Photo-inferred palette. Reuses existing maps; no downloaded texture/PBR dependency. */
-type PalaceMaterial=Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone"|"heritageStone"|"heritageStoneShade"|"ensembleBronze">;
+type PalaceMaterial=Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone"|"heritageStone"|"heritageStoneShade"|"ensembleBronze"|"bellPierStone"|"bellTerraceMasonry"|"agedBellBronze">;
 type FoundationMaterial=Exclude<PalaceMaterial,"agedBrick"|"redMasonry"|"carvedTimber">;
 export function finishPalacePalette(materials:Record<FoundationMaterial,MeshStandardMaterial>){
  const palette=materials as Record<PalaceMaterial,MeshStandardMaterial>;

@@ -1,7 +1,7 @@
 import {CanvasTexture,MeshStandardMaterial,SRGBColorSpace} from "three";
 import {museumEntrance} from "./museum-entrance.ts";
 import type {CentralMaterial} from "./central-model.ts";
-export function finishMuseumMaterials(materials:Record<Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone"|"heritageStone"|"heritageStoneShade"|"ensembleBronze">,MeshStandardMaterial>){
+export function finishMuseumMaterials(materials:Record<Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone"|"heritageStone"|"heritageStoneShade"|"ensembleBronze"|"bellPierStone"|"bellTerraceMasonry"|"agedBellBronze">,MeshStandardMaterial>){
  const museumStone=materials.stone.clone();museumStone.color.set("#9f9586");museumStone.roughness=1;museumStone.flatShading=false;
  museumStone.onBeforeCompile=materials.stone.onBeforeCompile;museumStone.customProgramCacheKey=()=>materials.stone.customProgramCacheKey()+":museum-stone";
  const guardianStone=museumStone.clone();guardianStone.color.set("#afa28f");guardianStone.roughness=.98;guardianStone.onBeforeCompile=museumStone.onBeforeCompile;guardianStone.customProgramCacheKey=()=>museumStone.customProgramCacheKey()+":guardian";

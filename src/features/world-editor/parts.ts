@@ -4,7 +4,7 @@ import type {SolidBox} from "../../game/architecture/geometry.ts";
 import {transformMatrix,type ManualTransform} from "./transforms.ts";
 export interface ArchitecturalPart {id:string;parentId:string;name:string;source:ManualTransform;model:CentralModel;colliderCount:number}
 type Piece={role:string;position?:[number,number,number];yaw?:number};
-const labels:Record<string,string>={"museum-entrance-door":"Museum entrance / carved doorway and nearby windows","museum-entrance-sign":"National Art Museum sign","museum-entrance-lions":"Museum guardian lions / plinths","museum-entrance-figures":"Museum carved side figures / bases","gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves","pagoda-platform":"Pagoda platform","pavilion-platform":"Pavilion brick plinth","pavilion-stone-cap":"Pavilion stone cap","veranda-platform":"Veranda platform","main-terrace":"Main raised terrace","secondary-terrace":"Secondary pavilion/veranda terrace","pagoda-terrace":"Pagoda terrace","stone-slabs":"Stone coping / slabs","access-steps":"Terrace access steps",gallery:"Upper timber gallery",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
+const labels:Record<string,string>={"left-pier":"Left massive bell pier","right-pier":"Right massive bell pier",suspension:"Bell suspension",terrace:"Raised bell terrace",shaft:"Column shaft",capital:"Decorated lotus capital",statue:"Seated royal figure",pole:"Parasol pole",umbrella:"Parasol canopy","left-post":"Left stone bell post","right-post":"Right stone bell post",crosspiece:"Carved stone crosspiece",guardians:"Temple stair guardians","museum-entrance-door":"Museum entrance / carved doorway and nearby windows","museum-entrance-sign":"National Art Museum sign","museum-entrance-lions":"Museum guardian lions / plinths","museum-entrance-figures":"Museum carved side figures / bases","gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves","pagoda-platform":"Pagoda platform","pavilion-platform":"Pavilion brick plinth","pavilion-stone-cap":"Pavilion stone cap","veranda-platform":"Veranda platform","main-terrace":"Main raised terrace","secondary-terrace":"Secondary pavilion/veranda terrace","pagoda-terrace":"Pagoda terrace","stone-slabs":"Stone coping / slabs","access-steps":"Terrace access steps",gallery:"Upper timber gallery",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
 /** Existing procedural roles are grouped, never split into individual mesh primitives. */
 export function architecturalPartKey(m:CentralModel,p:Piece):string{
  const r=p.role;
@@ -23,6 +23,19 @@ export function architecturalPartKey(m:CentralModel,p:Piece):string{
   if(/window|jamb|gallery|carved|projecting-sill|cornice/.test(r))return "windows";
   return "body";
  }
+ if(m.id==="large-bell"){
+  if(r.startsWith("bell-left-pier"))return "left-pier";if(r.startsWith("bell-right-pier"))return "right-pier";
+  if(r==="bell-suspension"||r==="bell-crown-hanger")return "suspension";if(r.startsWith("bell-terrace"))return "terrace";
+ }
+ if(m.id==="malla-column"){
+  if(/parasol-stem/.test(r))return "pole";if(/parasol/.test(r))return "umbrella";if(/capital|lotus/.test(r))return "capital";if(r==="malla-shaft"||r==="malla-column-collision")return "shaft";
+ }
+ if(m.id==="vatsala-bell"){
+  if(/hollow-bell|bell-relief-ring|bell-clapper|bell-crown-hanger|bell-suspension/.test(r))return "bell";
+  if(/arch-column/.test(r))return (p.position?.[2]??m.origin[1])<m.origin[1]?"left-post":"right-post";
+  if(/lintel|rosette|central-crown/.test(r))return "crosspiece";
+ }
+ if(m.id==="vatsala-durga"&&/stair-guardian/.test(r))return "guardians";
  if(m.id==="large-bell"&&/hollow-bell|bell-relief-ring|bell-clapper|bell-crown-hanger|bell-suspension/.test(r))return "bell";
  if(m.id==="malla-column"&&/royal-seat|royal-figure|prayer|joined-hands|seated-knee/.test(r))return "statue";
  if(m.id==="vatsala-durga"&&/subsidiary-spire/.test(r))return "subsidiary-towers";
