@@ -23,7 +23,7 @@ export function EditorScene({session,input,runtime,onPointerStatus,spawn}:{sessi
  const preview=()=>{if(!object||!state.selectedId)return;const valid=session.preview(state.selectedId,{position:object.position.toArray(),rotation:[object.rotation.x,object.rotation.y,object.rotation.z],scale:object.scale.toArray()});if(!valid){const t=session.getSnapshot().transforms[state.selectedId];object.position.fromArray(t.position);object.rotation.set(...t.rotation);object.scale.fromArray(t.scale);}};
  return <>
  <World mode="BHAKTAPUR" assemblyEditor={{ids:session.ids,state,activePartParent,transforms:state.transforms,hidden:state.hidden,walk:state.walk,dragging:state.dragging,select:session.select,register:session.register}}/>
- {state.walk?<Player reviewCamera={false} spawn={walkSpawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus}/>:<EditorViewportInput session={session}/>}
+ {state.walk?<Player sittingEnabled seatingTransforms={state.transforms} reviewCamera={false} spawn={walkSpawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus}/>:<EditorViewportInput session={session}/>}
  {!state.walk&&helper&&<primitive object={helper} dispose={null}/>}
  {!state.walk&&!state.navigating&&object&&!state.locked[object.userData.editableId]&&<TransformControls object={object} mode={state.mode} space={state.space} size={.85} translationSnap={state.translationSnap} rotationSnap={state.rotationSnap} onMouseDown={()=>session.begin(object.userData.editableId,true)} onObjectChange={preview} onMouseUp={()=>session.complete()}/>}
  </>;

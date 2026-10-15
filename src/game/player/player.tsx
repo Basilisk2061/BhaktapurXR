@@ -1,3 +1,6 @@
+import {arcadeSeatSpans,nearestArcadeSeat,sittingConfig} from "./arcade-sitting";
+import {ArcadeSittingPrompt} from "./arcade-sitting-prompt";
+import type {TransformOverrides} from "../../features/world-editor/transforms";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody, useBeforePhysicsStep, useRapier, type RapierRigidBody } from "@react-three/rapier";
@@ -15,12 +18,13 @@ import { PlayerCharacter } from "./player-character";
 import { ThirdPersonCamera } from "./third-person-camera";
 import type { PlayerRuntime } from "./player-runtime";
 
-export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerStatus, reviewCamera=false }: { spawn: SpawnPoint; reviewCamera?:boolean; input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
+export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerStatus, reviewCamera=false, sittingEnabled=false, seatingTransforms }: { sittingEnabled?:boolean; seatingTransforms?:TransformOverrides; spawn: SpawnPoint; reviewCamera?:boolean; input: RefObject<PlayerInput>; runtime: RefObject<PlayerRuntime>; onPointerStatus: (status: PointerStatus) => void }) {
   const body = useRef<RapierRigidBody>(null);
   const visual = useRef<Group>(null);
   const controller = useRef<KinematicCharacterController>(null);
   const { world, rapier } = useRapier();
   const spawnPosition = useMemo(() => bodySpawnPosition(spawn), [spawn]);
+  const seats=useMemo(()=>sittingEnabled?arcadeSeatSpans(seatingTransforms):[],[sittingEnabled,seatingTransforms]);
   const direction = useMemo(() => ({ x: 0, z: 0 }), []);
   usePlayerInput(inputRef, onPointerStatus);
 
@@ -44,8 +48,32 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       motion.velocity.x = 0; motion.velocity.y = 0; motion.velocity.z = 0;
       motion.grounded = false; motion.horizontalSpeed = 0; motion.movement = "FALL";
       motion.facingYaw = spawn.rotation[1]; motion.resetSequence++;
+      motion.seat=null; motion.sitPrompt=null; controls.sitting=false;
       controls.jumpRequested = false;
       controls.yaw = spawn.rotation[1]; controls.pitch = playerConfig.camera.initialPitch;
+      return;
+    }
+    const position=rigidBody.translation();
+    const candidate=!controls.flying&&!motion.seat?nearestArcadeSeat({x:position.x,y:position.y-playerConfig.height/2,z:position.z},seats):null;
+    motion.sitPrompt=motion.seat?"stand":candidate?"sit":null;
+    if(controls.interactRequested){
+      controls.interactRequested=false;
+      if(controls.active&&motion.seat){
+        const exit=motion.seat.exit;
+        const hit=world.castRay(new rapier.Ray({x:exit.x,y:exit.y+2,z:exit.z},{x:0,y:-1,z:0}),10,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,collider,rigidBody);
+        if(hit){const target={x:exit.x,y:exit.y+2-hit.timeOfImpact+playerConfig.height/2+.015,z:exit.z};
+          const blocked=world.intersectionWithShape(target,{x:0,y:0,z:0,w:1},new rapier.Capsule(playerConfig.capsuleHalfSegment,playerConfig.radius),rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,collider,rigidBody);
+          if(!blocked){rigidBody.setTranslation(target,true);rigidBody.setNextKinematicTranslation(target);Object.assign(motion.nextPosition,target);motion.seat=null;motion.sitPrompt=null;motion.movement="IDLE";}
+        }
+      }else if(controls.active&&candidate){motion.seat=candidate;motion.facingYaw=candidate.yaw;motion.sitPrompt="stand";}
+      controls.keys.clear();controls.jumpRequested=false;controls.lastSpacePress=null;
+    }
+    controls.sitting=!!motion.seat;
+    if(motion.seat){
+      const target={x:motion.seat.point.x,y:motion.seat.point.y+playerConfig.height/2+.015,z:motion.seat.point.z};
+      rigidBody.setNextKinematicTranslation(target);Object.assign(motion.nextPosition,target);
+      motion.velocity.x=0;motion.velocity.y=0;motion.velocity.z=0;motion.horizontalSpeed=0;motion.grounded=true;motion.movement="IDLE";
+      controls.jumpRequested=false;controls.lastSpacePress=null;
       return;
     }
     const delta = safeDelta(worldConfig.physicsTimeStep, playerConfig.maxDelta);
@@ -77,7 +105,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     }
   });
 
-  useFrame(() => { if (visual.current) visual.current.rotation.y = runtimeRef.current.facingYaw; }, -20);
+  useFrame(() => { if (visual.current) {visual.current.rotation.y = runtimeRef.current.facingYaw;visual.current.position.y=runtimeRef.current.seat?sittingConfig.visualY:0;} }, -20);
 
   return (
     <>
@@ -85,6 +113,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
         <CapsuleCollider args={[playerConfig.capsuleHalfSegment, playerConfig.radius]} />
         <PlayerCharacter visualRef={visual} runtime={runtimeRef} />
       </RigidBody>
+      {sittingEnabled&&<ArcadeSittingPrompt runtime={runtimeRef}/>}
       <ThirdPersonCamera reviewCamera={reviewCamera} bodyRef={body} visualRef={visual} input={inputRef} runtime={runtimeRef} />
     </>
   );

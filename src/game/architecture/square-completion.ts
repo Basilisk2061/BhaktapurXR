@@ -14,7 +14,7 @@ import {entranceRoadEnds} from "../../data/reconstruction/khauma-entrance.ts";
 import {urbanStreetExits} from "../../data/reconstruction/urban-enclosure.ts";
 import {buildPalaceFrontageModels} from "./palace-frontage-models.ts";
 import {buildInsideSquareEdge} from "./inside-square-models.ts";
-import {monumentEnvelopes,streetRectangle,rectangle} from "./urban-model.ts";
+import {monumentEnvelopes,streetRectangle} from "./urban-model.ts";
 import {contextColliders} from "./urban-occupancy.ts";
 import {insideFootprint} from "./geometry.ts";
 import {buildRameshwar,box,shape,profile,pinnacle,stairs} from "./remaining-models.ts";
@@ -82,10 +82,14 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
  // and raw source trace; reconstructed exterior extent is an approximate photographic interpretation.
  const frontage:Polygon=museumSource?polygons[0]:[[[-11,-44],[18.1,-44],[18.1,-36.5],[-11,-36.5],[-11,-44]]];
  if(museumSource){m.origin=[...museumSource.origin];m.yaw=museumSource.yaw;m.anchorId=museumSource.anchorId;}
- const floorHeight=museumSource?.65:.45;
+ const floorHeight=museumSource?.775:.45;
  for(const rings of [frontage]){
-  m.volumes!.push({rings,baseY:0,height:floorHeight,material:"brick",role:"sattal-plinth"},{rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
-  for(const collider of walkableFloorColliders(rings,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-plinth-collision"});}
+  const front=edges(rings).filter(e=>e.nz<-.3);
+  // Extend only the top to the former third tread edge; keep one watertight footprint.
+  const floorRings=[museumSource?rings.map(r=>r.map(p=>{const e=front.find(e=>p===e.a||p===e.b);return e?[p[0]+e.nx*.42,p[1]+e.nz*.42] as Point:p;})):rings];
+  for(const floor of floorRings){m.volumes!.push({rings:floor,baseY:0,height:floorHeight,material:"brick",role:"sattal-plinth"});
+   for(const collider of walkableFloorColliders(floor,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-plinth-collision"});}}
+  m.volumes!.push({rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
   m.colliders.push(...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
   const all=edges(rings);
   // Two joined hip ranges over the mapped L-shaped arms, with deep working overhangs.
@@ -97,14 +101,6 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
    box(m,x+e.nx*.65,4.57,z+e.nz*.65,e.length+.7,.24,.36,"carvedTimber","sattal-deep-eaves",false,e.yaw);
    box(m,x+e.nx*.81,4.53,z+e.nz*.81,e.length+.75,.13,.045,"shutter","sattal-photo-red-roof-border",false,e.yaw);
    if(!publicFace){box(m,x,1.75,z,e.length,2.6,.22,"agedBrick","sattal-rear-wall",true,e.yaw);continue;}
-   if(museumSource){
-    // Only the recessed sitting strip rises; keep the front platform and post feet intact.
-    const strip:Polygon=[rectangle([e.mid[0]-e.nx*.94,e.mid[1]-e.nz*.94],e.length,1.32,e.yaw)];
-    for(const sittingRings of polygonClipping.intersection(rings,strip)){
-     m.volumes!.push({rings:sittingRings,baseY:floorHeight,height:.2,material:"brick",role:"sattal-sitting-plinth"});
-     for(const collider of walkableFloorColliders(sittingRings,.2,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-sitting-plinth-collision"});}
-    }
-   }
    const bays=Math.max(1,Math.round(e.length/1.75));
    // Set rear plane behind the posts; ground-level bays remain open and colliders follow walls/posts.
    box(m,x-e.nx*1.7,1.75,z-e.nz*1.7,e.length,2.6,.18,"brick","sattal-recessed-rear-wall",true,e.yaw);
@@ -116,8 +112,8 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
     for(const q of [-.35,0,.35])box(m,px+q*w*Math.cos(e.yaw)+e.nx*.22,3.83,pz-q*w*Math.sin(e.yaw)+e.nz*.22,.035,.7,.035,"timber","sattal-upper-gallery-screen",false,e.yaw);
    }
    // Shallow access treads below the raised sitting edge, aligned to each public face.
-   const treads=museumSource?3:2,step=floorHeight/(treads+1);
-   for(let j=0;j<treads;j++)box(m,x+e.nx*(.27+(treads-1-j)*.28),step*(j+1)/2,z+e.nz*(.27+(treads-1-j)*.28),e.length,step*(j+1),.3,"brick","sattal-plinth-access",true,e.yaw);
+   const treads=2,step=museumSource?.1625:floorHeight/3;
+   for(let j=0;j<treads;j++)box(m,x+e.nx*((museumSource?.55:.27)+(treads-1-j)*.28),step*(j+1)/2,z+e.nz*((museumSource?.55:.27)+(treads-1-j)*.28),e.length,step*(j+1),.3,"brick","sattal-plinth-access",true,e.yaw);
   }
  }
   // Retain a modest rear return within the mapped north arm, classified with the same uncertainty.

@@ -1,3 +1,4 @@
+import type { ArcadeSeat } from "./arcade-sitting.ts";
 import type { MovementState } from "./movement";
 
 export interface PlayerRuntime {
@@ -6,6 +7,8 @@ export interface PlayerRuntime {
   nextPosition: { x: number; y: number; z: number };
   grounded: boolean;
   flying: boolean;
+  seat: ArcadeSeat | null;
+  sitPrompt: "sit" | "stand" | null;
   horizontalSpeed: number;
   movement: MovementState;
   facingYaw: number;
@@ -19,7 +22,7 @@ export function createPlayerRuntime(): PlayerRuntime {
     desiredTranslation: { x: 0, y: 0, z: 0 },
     nextPosition: { x: 0, y: 0, z: 0 },
     grounded: false,
-    flying: false, horizontalSpeed: 0, movement: "FALL", facingYaw: 0,
+    seat: null, sitPrompt: null, flying: false, horizontalSpeed: 0, movement: "FALL", facingYaw: 0,
     cameraDistance: 0, resetSequence: 0,
   };
 }

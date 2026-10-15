@@ -21,11 +21,11 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   useFrame((_,delta)=>{
     const motion=runtime.current;
     const airborne=!motion.flying&&!motion.grounded;
-    const name=airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15?"Run":"Walk";
+    const name=motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15?"Run":"Walk";
     if(name!==previous.current||reset.current!==motion.resetSequence){
       actions[previous.current]?.fadeOut(.18);
       actions[name].reset().fadeIn(.18).play();
-      previous.current=name;reset.current=motion.resetSequence;model.userData.animation=name;
+      previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
     mixer.update(Math.min(delta,.05));
   });

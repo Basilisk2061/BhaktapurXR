@@ -34,11 +34,12 @@ test('target floors are covered at every triangle centroid; parent/part edits tr
 
 test('normal capsule walks/runs full arcade, jumps/lands, enters open bays and is blocked by columns',()=>{
  const w=new RAPIER.World({x:0,y:-9.81,z:0});w.createCollider(RAPIER.ColliderDesc.cuboid(170,.25,170).setTranslation(-40,-.25,0));arcade.colliders.forEach(c=>add(w,c));w.step();
- const ring=arcade.volumes.find(v=>v.role==='sattal-plinth').rings[0],edges=ring.slice(0,-1).map((a,i)=>{const b=ring[i+1],length=Math.hypot(b[0]-a[0],b[1]-a[1]);return {a,b,length,dx:(b[0]-a[0])/length,dz:(b[1]-a[1])/length};}),front=edges.filter(e=>e.dx>0).sort((a,b)=>b.length-a.length)[0];const {a,dx,dz,length}=front,nx=dz,nz=-dx,at=(t,inside)=>[a[0]+dx*t-nx*inside, (inside>.28?.85:.65)+.925,a[1]+dz*t-nz*inside];
- try{for(const speed of [2.3,5]){const result=walk(w,at(.8,.85),[dx*speed,dz*speed],Math.floor((length-1.6)/speed*60));assert.ok(result.min>1.7,'no falling through bays or seams');assert.ok(Math.hypot(result.p.x-at(.8,.85)[0],result.p.z-at(.8,.85)[2])>length-2.2,'full frontage traversed');}
- const jump=walk(w,at(length*.5,.85),[0,0],130,true);assert.ok(jump.max>2.0,JSON.stringify(jump));assert.ok(Math.abs(jump.p.y-1.775)<.08);
- const exit=walk(w,at(length*.51,.85),[nx*2.3,nz*2.3],100);assert.ok(exit.p.y<1.05,'leaving the real platform edge returns to plaza');
- const entry=walk(w,at(length*.51,-1.2),[-nx*1.5,-nz*1.5],100);assert.ok(entry.p.y>1.7,'access treads climb into an open bay');
+ const ring=arcade.volumes.find(v=>v.role==='sattal-plinth').rings[0],edges=ring.slice(0,-1).map((a,i)=>{const b=ring[i+1],length=Math.hypot(b[0]-a[0],b[1]-a[1]);return {a,b,length,dx:(b[0]-a[0])/length,dz:(b[1]-a[1])/length};}),front=edges.filter(e=>e.dx>0).sort((a,b)=>b.length-a.length)[0];const {a,dx,dz,length}=front,nx=dz,nz=-dx,at=(t,inside)=>[a[0]+dx*t-nx*inside, .775+.925,a[1]+dz*t-nz*inside];
+ try{for(const speed of [2.3,5]){const result=walk(w,at(.8,1.27),[dx*speed,dz*speed],Math.floor((length-1.6)/speed*60));assert.ok(result.min>1.65,'no falling through bays or seams');assert.ok(Math.hypot(result.p.x-at(.8,1.27)[0],result.p.z-at(.8,1.27)[2])>length-2.2,'full frontage traversed');}
+ const jump=walk(w,at(length*.5,1.27),[0,0],130,true);assert.ok(jump.max>2.0,JSON.stringify(jump));assert.ok(Math.abs(jump.p.y-1.7)<.08);
+ const exit=walk(w,at(length*.51,1.27),[nx*2.3,nz*2.3],100);assert.ok(exit.p.y<1.05,'leaving the real platform edge returns to plaza');
+ const access=walk(w,[a[0]+dx*length*.51+nx*1.2,.925,a[1]+dz*length*.51+nz*1.2],[-nx*1.5,-nz*1.5],70);assert.ok(access.p.y>1.2&&access.p.y<1.4,"first two steps climb normally; taller final riser requires jumping");
+ const entry=walk(w,[a[0]+dx*length*.51+nx*.65,.325+.925,a[1]+dz*length*.51+nz*.65],[-nx*1.5,-nz*1.5],100,true);assert.ok(entry.p.y>1.65,'jump from unchanged access steps reaches the taller platform');
  const post=arcade.boxes.find(b=>b.role==='sattal-columns'),blocked=walk(w,[post.position[0]-nx*.8,1.775,post.position[2]-nz*.8],[nx*1.4,nz*1.4],80);assert.ok(Math.hypot(blocked.p.x-post.position[0],blocked.p.z-post.position[2])>.35);
  }finally{w.free();}
 });
@@ -53,7 +54,8 @@ test('Khauma raised pavilion/veranda floors support the normal capsule and their
  }finally{w.free();}
 });
 
-test('only the recessed sitting strip rises twenty centimetres above the unchanged front platform',()=>{
- const floor=arcade.volumes.find(v=>v.role==='sattal-plinth'),sitting=arcade.volumes.filter(v=>v.role==='sattal-sitting-plinth');assert.equal(floor.height,.65);assert.ok(sitting.length);for(const v of sitting){assert.equal(v.baseY,.65);assert.equal(v.height,.2);}
- assert.ok(arcade.boxes.filter(b=>b.role==='sattal-plinth-post-foot').every(b=>Math.abs(b.position[1]-.73)<1e-9&&b.material==='carvedTimber'));assert.ok(arcade.boxes.filter(b=>b.role==='sattal-plinth-access').every(b=>b.position[1]+b.size[1]/2<=.4875+1e-9));
+test('two unchanged access steps and one taller continuous top have exactly three levels',()=>{
+ const floor=arcade.volumes.filter(v=>v.role==='sattal-plinth');assert.ok(floor.length);assert.ok(floor.every(v=>v.baseY===0&&v.height===.775));assert.equal(arcade.volumes.filter(v=>v.role==='sattal-sitting-plinth').length,0);
+ const heights=[...new Set(arcade.boxes.filter(b=>b.role==='sattal-plinth-access').map(b=>b.size[1]))].sort((a,b)=>a-b);assert.deepEqual(heights,[.1625,.325]);
+ assert.ok(arcade.boxes.filter(b=>b.role==='sattal-plinth-post-foot').every(b=>Math.abs(b.position[1]-.855)<1e-9&&b.material==='carvedTimber'));
 });

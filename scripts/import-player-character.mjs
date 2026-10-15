@@ -15,7 +15,7 @@ const uv=mesh.geometry.attributes.uv.array,originalUV=sourceMesh.geometry.attrib
 if(uv.length!==originalUV.length||uv.some((v,i)=>Math.abs(v-originalUV[i])>1e-6))throw Error('Source/rig UV mismatch');
 mesh.geometry=mergeVertices(mesh.geometry,1e-6);mesh.normalizeSkinWeights();mesh.material=new MeshStandardMaterial({name:'Nepali traditional clothing and skin',color:0xffffff,roughness:1,metalness:1});
 const clips=[];
-for(const [name,file]of [['Idle','player_Idle.fbx'],['Walk','player_walk.fbx'],['Run','player_running.fbx'],['Jump','player_jumping.fbx']]){
+for(const [name,file]of [['Idle','player_Idle.fbx'],['Walk','player_walk.fbx'],['Run','player_running.fbx'],['Jump','player_jumping.fbx'],['Sit','player_sitting.fbx']]){
  const clip=(name==='Idle'?master:await load(file)).animations[0].clone();clip.name=name;
  for(const t of clip.tracks){const node=t.name.split('.')[0];if(!master.getObjectByName(node))throw Error('Missing animation bone '+node);if(t.name.endsWith('.position'))for(let i=0;i<t.values.length;i+=3){t.values[i]=0;t.values[i+2]=0;if(name==='Jump')t.values[i+1]=master.animations[0].tracks.find(t=>t.name==='mixamorigHips.position').values[1];}}
  clips.push(clip);

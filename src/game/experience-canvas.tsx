@@ -75,7 +75,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
-          <Player reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+          <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={onReady} />
