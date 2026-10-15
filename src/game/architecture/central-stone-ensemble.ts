@@ -1,5 +1,5 @@
 import {frozenArchitectureAnchors} from "../../data/reconstruction/architecture/specifications.ts";
-import {carvedLoft,carvedCurve,stairGuardian,mallaFigure} from "./ensemble-sculptures.ts";
+import {carvedLoft,carvedCurve,stairGuardian,mallaFigure,vatsalaElephant} from "./ensemble-sculptures.ts";
 import type {CentralModel,CentralMaterial} from "./central-model.ts";
 import {box,profile,shape} from "./remaining-models.ts";
 import editorFrames from "./central-ensemble-editor-frames.json" with {type:"json"};
@@ -18,8 +18,8 @@ function fresh(source:CentralModel):CentralModel{
 // X is front/back (west is plaza); Z spans the front elevation.
 export const vatsalaPlinthStages=[
  {name:"bottom",front:-5.8,back:4.1,north:-4.625,south:6,bottom:0,top:.84},
- {name:"middle",front:-3.6,back:3.4,north:-4.415,south:3,bottom:.84,top:1.68},
- {name:"upper",front:-2.45,back:2.45,north:-4.205,south:2.425,bottom:1.68,top:2.52}
+ {name:"middle",front:-3.6,back:3.4,north:-4.415,south:4.1,bottom:.84,top:1.68},
+ {name:"upper",front:-2.45,back:2.45,north:-4.205,south:3.6,bottom:1.68,top:2.52}
 ] as const;
 function slottedCourse(m:CentralModel,y:number,h:number,front:number,back:number,north:number,south:number,half:number,role:string,material:CentralMaterial=stone){
  const cut=-2.05;
@@ -31,7 +31,6 @@ function course(m:CentralModel,y:number,h:number,w:number,d:number,role:string){
 function moulding(m:CentralModel,y:number,width:number,depth:number,role:string){
  for(const [dy,h,p]of [[0,.08,0],[.095,.11,.1],[.205,.14,.16]] as const)box(m,0,y+dy,0,width+p,h,depth+p,stone,role);
 }
-function mouldingAt(m:CentralModel,x:number,y:number,z:number,width:number,role:string){box(m,x,y,z,width,.16,width,stone,role);box(m,x,y+.11,z,width*.92,.08,width*.92,stone,role);}
 function facePoint(x:number,z:number,yaw:number):[number,number]{return [x*Math.cos(yaw)+z*Math.sin(yaw),-x*Math.sin(yaw)+z*Math.cos(yaw)];}
 function niche(m:CentralModel,x:number,y:number,z:number,w:number,h:number,role:string,yaw=0,relief=true){
  const outer:[number,number][]=[[-w*.63,0],[-w*.63,h*.68],[-w*.45,h*.81],[0,h],[w*.45,h*.81],[w*.63,h*.68],[w*.63,0],[w*.4,0],[w*.4,h*.61],[0,h*.79],[-w*.4,h*.61],[-w*.4,0]];
@@ -76,16 +75,25 @@ function temple(m:CentralModel){
  niche(m,-1.2,base+.12,0,1.08,2.76,"vatsala-west-sanctum-door",-Math.PI/2,false);
  for(const side of [-1,1]){box(m,-1.33,base+1.33,side*.64,.19,2.52,.13,shade,"vatsala-doorway-carved-jamb");for(let i=0;i<10;i++)profile(m,-1.44,base+.3+i*.21,side*.64,[[0,0],[.045,.025],[.05,.07],[0,.1]],stone,"vatsala-doorway-band-relief",10);}
  box(m,-1.37,base+.08,0,.52,.16,1.3,stone,"vatsala-doorway-threshold",true);
- // Guardian projections spring from the common lowest terrace and meet the middle stage.
+ // Exactly two lower elephants and the retained pair above them; no imported guardian tiers.
  for(const side of [-1,1]){
-  const x=-4.18,z=side*1.8;
-  box(m,x,.9,z,1.1,.12,1.2,stone,"vatsala-stair-guardian-pedestal-foot",true);
-  box(m,x,1.08,z,1.03,.24,1.12,shade,"vatsala-stair-guardian-pedestal",true);
-  box(m,x,1.25,z,1.1,.1,1.2,stone,"vatsala-stair-guardian-pedestal-cap",true);
-  mouldingAt(m,x,1.26,z,1.12,"vatsala-stair-guardian-plinth");
-  stairGuardian(m,x,1.43,z);box(m,x,2.16,z,.9,1.46,.76,shade,"vatsala-stair-guardian-collision",true);
+  const suffix=side<0?"left":"right";
+  for(const level of ["lower","upper"] as const){
+   const lower=level==="lower",x=lower?-4.65:-2.98,z=side*(lower?2.05:1.65),floor=lower?.84:1.68;
+   const role=lower?`vatsala-lower-${suffix}-elephant`:`vatsala-upper-${suffix}-guardian`;
+   const w=lower?1.38:1.1,d=lower?1.38:1.18;
+   box(m,x,floor+.05,z,w,.1,d,stone,role+"-pedestal-foot",true);
+   box(m,x,floor+.16,z,w-.09,.12,d-.09,shade,role+"-pedestal-field",true);
+   box(m,x,floor+.25,z,w,.06,d,stone,role+"-pedestal-cap",true);
+   const baseY=floor+.28;
+   if(lower)vatsalaElephant(m,x,baseY,z,role);
+   else{
+    const first=m.profiles.length;stairGuardian(m,x,baseY,z);
+    for(const p of m.profiles.slice(first))p.role=p.role.replace("vatsala-stair-guardian",role);
+   }
+   box(m,lower?x-.12:x,baseY+.7,z,lower?1.5:.9,1.4,lower?1.14:.76,shade,role+"-collision",true);
+  }
  }
-
  for(const [y,w]of [[6.28,4.12],[6.54,4.46],[6.81,4.67],[7.08,4.38]] as const)moulding(m,y,w,w,"vatsala-colonnade-entablature");
  for(const face of [0,Math.PI/2,Math.PI,Math.PI*1.5])for(let i=0;i<19;i++){
   const [x,z]=facePoint((i-9)*.225,2.3,face);box(m,x,6.75,z,.09,.13,.12,shade,"vatsala-cornice-dentil",false,face);
@@ -133,7 +141,14 @@ function largeBell(m:CentralModel){
  const courses:{bottom:number;top:number;depth:number}[]=[];
  for(let tier=0;tier<3;tier++)for(const [dy,h,projection]of [[0,.14,0],[.14,.13,-.09],[.27,.4,-.17],[.67,.1,-.1],[.77,.07,.035]] as const)courses.push({bottom:tier*.84+dy,top:tier*.84+dy+h,depth:9.25-tier*.42+projection});
  courses.push({bottom:2.52,top:2.6,depth:9.25-.84});
- for(const {bottom,top,depth:d}of courses){const south=templeAnchor[1]-d/2-.012,depth=south-front,z=(south+front)/2-m.origin[1];box(m,0,(bottom+top)/2,z,bellTerraceDimensions.width,top-bottom,depth,"bellTerraceMasonry",top===2.6?"bell-terrace-coping":"bell-terrace-course",true);}
+ // Flatten the exposed west wall inside the EXISTING terrace envelope. The hidden
+ // east return retains its exact temple joints, while the visible mass has no tiered bands.
+ const west=m.origin[0]-bellTerraceDimensions.width/2,seam=templeAnchor[0]-5.9;
+ const south=Math.max(...courses.map(c=>templeAnchor[1]-c.depth/2-.012));
+ for(const [bottom,top,role]of [[0,2.52,"bell-terrace-course"],[2.52,2.6,"bell-terrace-coping"]] as const)
+  box(m,(west+seam)/2-m.origin[0],(bottom+top)/2,(south+front)/2-m.origin[1],seam-west,top-bottom,south-front,"bellTerraceMasonry",role,true);
+ const east=m.origin[0]+bellTerraceDimensions.width/2;
+ for(const {bottom,top,depth:d}of courses){const south=templeAnchor[1]-d/2-.012,depth=south-front,z=(south+front)/2-m.origin[1];box(m,(seam+east)/2-m.origin[0],(bottom+top)/2,z,east-seam,top-bottom,depth,"bellTerraceMasonry",top===2.6?"bell-terrace-coping":"bell-terrace-course",true);}
  for(const side of [-1,1]){
   const r=side<0?"bell-left-pier":"bell-right-pier",x=side*1.65;
   box(m,x,2.71,0,1.3,.22,1.7,"bellPierStone",r+"-foot");

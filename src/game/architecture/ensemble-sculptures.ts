@@ -26,6 +26,22 @@ export function stairGuardian(m:CentralModel,x:number,y:number,z:number){
  carvedLoft(m,[x-.39,y+.98,z],[[0,0,0,.08,.06],[.05,0,0,.17,.11],[.09,0,-.04,.15,.08]],material,r+"-jaw",yaw,16);
  for(let j=0;j<9;j++){const a=j*Math.PI/4.5;carvedLoft(m,[x+.04+Math.sin(a)*.12,y+.88+j*.016,z+Math.cos(a)*.29],[[0,0,0,.05,.04],[.1,0,0,.075,.06],[.2,0,0,.04,.04],[.22,0,0,.001,.001]],material,r+"-carved-mane",yaw,10);}
 }
+/** Two lower Vatsala elephants from the supplied stair photograph; dimensions are approximate. */
+export function vatsalaElephant(m:CentralModel,x:number,y:number,z:number,role:string){
+ const at:P=[x,y,z],mat:CentralMaterial="heritageStoneShade";
+ // Rounded seated body, heavy rear haunch and forward head face the western plaza.
+ carvedLoft(m,at,[[0,.16,0,.42,.32],[.18,.13,0,.53,.4],[.5,.09,0,.54,.4],[.86,-.03,0,.44,.35],[1.05,-.12,0,.3,.28],[1.1,-.14,0,.01,.01]],mat,role+"-body",0,20);
+ carvedLoft(m,[x-.4,y+.68,z],[[0,0,0,.25,.29],[.2,-.06,0,.33,.35],[.43,-.08,0,.29,.3],[.62,-.05,0,.2,.23],[.7,-.02,0,.01,.01]],"heritageStone",role+"-head",0,24);
+ for(const side of [-1,1]){
+  carvedLoft(m,[x-.22,y+.51,z+side*.33],[[0,0,0,.08,.1],[.14,0,side*.06,.12,.24],[.43,0,side*.06,.12,.27],[.72,.04,side*.02,.08,.13],[.76,.05,0,.01,.01]],mat,role+"-ear",0,16);
+  carvedLoft(m,[x-.38,y,z+side*.25],[[0,0,0,.19,.17],[.1,-.04,0,.2,.18],[.35,.04,0,.15,.15],[.65,.08,0,.17,.18],[.8,.1,0,.19,.21]],"heritageStone",role+"-front-leg",0,16);
+  carvedLoft(m,[x+.35,y+.03,z+side*.26],[[0,0,0,.24,.2],[.22,.02,0,.28,.23],[.45,0,0,.24,.21],[.62,-.03,0,.12,.13],[.65,-.03,0,.01,.01]],mat,role+"-haunch",0,16);
+  for(let toe=0;toe<3;toe++)carvedLoft(m,[x-.55,y+.02,z+side*.25+(toe-1)*.09],[[0,0,0,.055,.035],[.07,-.01,0,.06,.04],[.11,0,0,.01,.01]],mat,role+"-toe",0,8);
+  carvedLoft(m,[x-.66,y+1.08,z+side*.21],[[0,0,0,.025,.035],[.045,0,0,.035,.04],[.07,0,0,.01,.01]],mat,role+"-eye-recess",0,10);
+ }
+ carvedCurve(m,at,[[-.64,1.02,0],[-.79,.86,0],[-.83,.55,0],[-.8,.27,0],[-.92,.16,0],[-1,.27,0]],.12,"heritageStone",role+"-trunk",12);
+ carvedCurve(m,at,[[.58,.65,0],[.67,.45,.02],[.65,.18,.04]],.035,mat,role+"-tail",8);
+}
 export function mallaFigure(m:CentralModel,y:number){
  const r="malla-royal-figure",mat:CentralMaterial="ensembleBronze";
  carvedLoft(m,[0,y,0],[[0,0,0,.38,.27],[.12,0,0,.4,.29],[.24,0,-.03,.25,.21],[.42,0,-.02,.22,.17],[.76,0,0,.26,.16],[.85,0,0,.14,.12],[.9,0,0,.09,.08]],mat,r+"-torso",0,24);

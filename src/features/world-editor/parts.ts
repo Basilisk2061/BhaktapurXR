@@ -4,7 +4,7 @@ import type {SolidBox} from "../../game/architecture/geometry.ts";
 import {transformMatrix,type ManualTransform} from "./transforms.ts";
 export interface ArchitecturalPart {id:string;parentId:string;name:string;source:ManualTransform;model:CentralModel;colliderCount:number}
 type Piece={role:string;position?:[number,number,number];yaw?:number};
-const labels:Record<string,string>={"left-pier":"Left massive bell pier","right-pier":"Right massive bell pier",suspension:"Bell suspension",terrace:"Raised bell terrace",shaft:"Column shaft",capital:"Decorated lotus capital",statue:"Seated royal figure",pole:"Parasol pole",umbrella:"Parasol canopy","left-post":"Left stone bell post","right-post":"Right stone bell post",crosspiece:"Carved stone crosspiece",guardians:"Temple stair guardians","museum-entrance-door":"Museum entrance / carved doorway and nearby windows","museum-entrance-sign":"National Art Museum sign","museum-entrance-lions":"Museum guardian lions / plinths","museum-entrance-figures":"Museum carved side figures / bases","gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves","pagoda-platform":"Pagoda platform","pavilion-platform":"Pavilion brick plinth","pavilion-stone-cap":"Pavilion stone cap","veranda-platform":"Veranda platform","main-terrace":"Main raised terrace","secondary-terrace":"Secondary pavilion/veranda terrace","pagoda-terrace":"Pagoda terrace","stone-slabs":"Stone coping / slabs","access-steps":"Terrace access steps",gallery:"Upper timber gallery",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
+const labels:Record<string,string>={"lower-left-elephant":"Lower left elephant","lower-right-elephant":"Lower right elephant","upper-left-guardian":"Upper left guardian","upper-right-guardian":"Upper right guardian","left-pier":"Left massive bell pier","right-pier":"Right massive bell pier",suspension:"Bell suspension",terrace:"Raised bell terrace",shaft:"Column shaft",capital:"Decorated lotus capital",statue:"Seated royal figure",pole:"Parasol pole",umbrella:"Parasol canopy","left-post":"Left stone bell post","right-post":"Right stone bell post",crosspiece:"Carved stone crosspiece",guardians:"Temple stair guardians","museum-entrance-door":"Museum entrance / carved doorway and nearby windows","museum-entrance-sign":"National Art Museum sign","museum-entrance-lions":"Museum guardian lions / plinths","museum-entrance-figures":"Museum carved side figures / bases","gate-frame":"Gate frame / main decorative architecture",masonry:"Palace wall / gate masonry behind frame",canopy:"Golden Gate swept canopy",ornament:"Summit / upper ornament",plinth:"Plinth / platform",stairs:"Access stairs / landing",body:"Structural body",facade:"Timber facade / openings",roof:"Roof / eaves","pagoda-platform":"Pagoda platform","pavilion-platform":"Pavilion brick plinth","pavilion-stone-cap":"Pavilion stone cap","veranda-platform":"Veranda platform","main-terrace":"Main raised terrace","secondary-terrace":"Secondary pavilion/veranda terrace","pagoda-terrace":"Pagoda terrace","stone-slabs":"Stone coping / slabs","access-steps":"Terrace access steps",gallery:"Upper timber gallery",return:"Palace west return",windows:"Palace window / timber gallery band",arcade:"Gallery pale arcade / upper rooms",shikhara:"Shikhara tower",columns:"Pavilion columns",lower:"Lower open pavilion",upper:"Upper pavilion"};
 /** Existing procedural roles are grouped, never split into individual mesh primitives. */
 export function architecturalPartKey(m:CentralModel,p:Piece):string{
  const r=p.role;
@@ -35,7 +35,7 @@ export function architecturalPartKey(m:CentralModel,p:Piece):string{
   if(/arch-column/.test(r))return (p.position?.[2]??m.origin[1])<m.origin[1]?"left-post":"right-post";
   if(/lintel|rosette|central-crown/.test(r))return "crosspiece";
  }
- if(m.id==="vatsala-durga"&&/stair-guardian/.test(r))return "guardians";
+ if(m.id==="vatsala-durga"){const guardian=r.match(/^vatsala-((?:lower-(?:left|right)-elephant|upper-(?:left|right)-guardian))(?:-|$)/);if(guardian)return guardian[1];if(/stair-guardian/.test(r))return "guardians";}
  if(m.id==="large-bell"&&/hollow-bell|bell-relief-ring|bell-clapper|bell-crown-hanger|bell-suspension/.test(r))return "bell";
  if(m.id==="malla-column"&&/royal-seat|royal-figure|prayer|joined-hands|seated-knee/.test(r))return "statue";
  if(m.id==="vatsala-durga"&&/subsidiary-spire/.test(r))return "subsidiary-towers";
@@ -49,10 +49,12 @@ export function architecturalPartKey(m:CentralModel,p:Piece):string{
  if(/window|portal|door|shutter|opening|lattice|guardian|relief|carved|photo-.*band|cornice/.test(r))return "facade";
  return "body";
 }
+/** Requested guardian IDs keep their existing Vatsala assembly as parent. */
+export function architecturalPartId(m:CentralModel,key:string){return m.id==="vatsala-durga"&&/^(lower-(left|right)-elephant|upper-(left|right)-guardian)$/.test(key)?"vatsala/"+key:m.id+"/"+key;}
 const signature=(b:SolidBox)=>JSON.stringify([b.position,b.size,b.yaw]);
 export function partitionArchitecturalParts(m:CentralModel & {editorPartSources?:Record<string,ManualTransform>}):ArchitecturalPart[]{
  const groups=new Map<string,CentralModel>();
- const group=(key:string)=>{let g=groups.get(key);if(!g){g={...m,id:m.id+"/"+key,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]};groups.set(key,g);}return g;};
+ const group=(key:string)=>{let g=groups.get(key);if(!g){g={...m,id:architecturalPartId(m,key),boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]};groups.set(key,g);}return g;};
  for(const kind of ["boxes","profiles","shapes","roofs","volumes","polygonRoofs"] as const)for(const p of m[kind]??[]){const key=architecturalPartKey(m,p);(group(key)[kind] as unknown[]).push(p);}
  for(const id of Object.keys(m.editorPartSources??{}))group(id.slice(m.id.length+1));
  const owners=new Map(m.boxes.map(b=>[signature(b),architecturalPartKey(m,b)]));
