@@ -21,21 +21,34 @@ test('exterior leaves every approved monument primitive, source transform and co
  assert.equal(createHash('sha256').update(JSON.stringify(models)).digest('hex'),'03a247f639c5f2077239c31cafc77a6079af8200f09a9b78a1ddd0fe11bbdacd');
  assert.equal(createHash('sha256').update(JSON.stringify(edge.models.filter(m=>!m.id.startsWith('entrance:KhaumaExterior_')))).digest('hex'),'883f84c6535026240ad0f4e2b9a7914fc4a43e4073e811af561df8479287e247');
 });
+test('approved right assemblies, road, props and right review remain byte-identical',()=>{
+ const protectedScene={right:exterior.filter(m=>/KhaumaExterior_Right/.test(m.id)),road:exterior.find(m=>m.id.endsWith('_Road')),gate:overrides['khauma-gate'],review:khaumaExteriorReviews['khauma-exterior-right']};
+ assert.equal(createHash('sha256').update(JSON.stringify(protectedScene)).digest('hex'),'e247930cefa1848868afe0ac7dcac6f9055a72f346737146c571dc1a5f7b3422');
+ const props=exterior.find(m=>m.id.endsWith('_StreetProps')),rightProps=Object.fromEntries(['boxes','profiles','shapes','roofs','colliders'].map(k=>[k,props[k].filter(p=>exteriorLocal(p.position)[0]>=0)]));
+ assert.equal(createHash('sha256').update(JSON.stringify(rightProps)).digest('hex'),'549fceb3d0df2acfa3df1558dbb2e14320639076f7eda6a56f84a315540bb88c');
+});
 test('nine deterministic photo-inferred assemblies replace exterior proxies and remain independently editable',()=>{
  assert.deepEqual(buildKhaumaExterior(),exterior);assert.equal(exterior.length,9);
  const registry=getEditableRegistry();for(const m of exterior){assert.equal(m.accuracy,'PHOTO_INFERRED');assert.equal(edge.models.filter(n=>n.id===m.id).length,1);assert(registry.some(e=>e.id===m.id&&e.classification==='PHOTO_INFERRED'));}
  for(const id of exteriorReplacedIds)assert(!edge.models.some(m=>m.id===id));
- for(const [kind,budget]of Object.entries({boxes:627,profiles:248,shapes:15,roofs:6,colliders:67}))assert(exterior.reduce((n,m)=>n+m[kind].length,0)<=budget,kind+' budget');
+ for(const [kind,budget]of Object.entries({boxes:628,profiles:248,shapes:15,roofs:6,colliders:69}))assert(exterior.reduce((n,m)=>n+m[kind].length,0)<=budget,kind+' budget');
  for(const [id,c]of Object.entries(khaumaExteriorReviews)){assert.equal(resolveKhaumaAxisReview(id,true),id);assert.equal(resolveKhaumaAxisReview(id,false),null);assert(c.position.every(Number.isFinite));}
 });
-test('gate stays frozen; immediate left frontage stops and both ranges turn into street depth',()=>{
+test('gate stays frozen; compact green storefront and red terrace cluster frame a real lane',()=>{
  assert.deepEqual(overrides['khauma-gate'],{position:[-121.53684759946469,0,-34.285908249582874],rotation:[Math.PI,-1.5163246617599573,Math.PI],scale:[1,1,1]});
  const byId=key=>exterior.find(m=>m.id===`entrance:KhaumaExterior_${key}`);
  const localOrigin=m=>exteriorLocal([m.origin[0],0,m.origin[1]]);
  const left=byId('LeftTraditional'),small=byId('LeftShops'),deep=byId('LeftLaneShops'),terrace=byId('LeftTerrace'),right=byId('RightCommercial'),upper=byId('RightUpper'),near=byId('RightGateShop');
  assert(Math.abs(left.yaw-exteriorFrame.yaw)<1e-8);assert(Math.abs(localOrigin(left)[0]+10.05)<1e-6);
  assert(Math.abs(small.yaw-left.yaw)<1e-8);assert(small.boxes.filter(b=>b.role==='exterior-shop-platform').length===1);
- assert(Math.abs(deep.yaw-left.yaw-Math.PI/2)<1e-8);assert(localOrigin(deep)[2]>8);assert(localOrigin(terrace)[2]>localOrigin(deep)[2]);assert.equal(terrace.yaw,deep.yaw);
+ assert.equal(deep.yaw,left.yaw+exteriorPlan.leftTurn);assert(localOrigin(deep)[0]<localOrigin(small)[0]);
+ const greenBase=deep.boxes.find(b=>b.role==='exterior-shop-platform'),redBase=small.boxes.find(b=>b.role==='exterior-shop-platform');
+ assert(greenBase.size[0]<6&&greenBase.size[2]<3.6,'giant footprint removed');assert(deep.roofs.every(r=>r.position[1]+r.rise<4));
+ const gx=exteriorLocal(greenBase.position)[0],greenRight=gx+Math.abs(Math.cos(exteriorPlan.leftTurn))*greenBase.size[0]/2+Math.abs(Math.sin(exteriorPlan.leftTurn))*greenBase.size[2]/2,redLeft=exteriorLocal(redBase.position)[0]-redBase.size[0]/2;
+ assert(redLeft-greenRight>2&&redLeft-greenRight<4,'pedestrian lane between shops');
+ assert(Math.abs(localOrigin(terrace)[0]-localOrigin(small)[0])<.1);assert.equal(terrace.yaw,small.yaw);assert(terrace.profiles.filter(p=>p.role==='exterior-terrace-umbrella').length===4);
+ assert(localOrigin(terrace)[0]<localOrigin(left)[0]-4,'terrace belongs to red cluster');
+ assert(!exterior.filter(m=>/KhaumaExterior_Left/.test(m.id)).some(m=>m.colliders.some(c=>{const p=exteriorLocal(c.position);return p[0]>-15&&p[0]<-8&&p[2]>8;})),'no old foreground colliders');
  assert(Math.abs(right.yaw-exteriorFrame.yaw+Math.PI/2)<1e-8);assert.equal(upper.yaw,right.yaw);assert.equal(near.yaw,right.yaw);
  const platforms=right.boxes.filter(b=>b.role==='exterior-shop-platform').map(b=>exteriorLocal(b.position));
  assert(Math.max(...platforms.map(p=>p[2]))-Math.min(...platforms.map(p=>p[2]))>8);assert(Math.max(...platforms.map(p=>p[0]))-Math.min(...platforms.map(p=>p[0]))<.3);
@@ -51,8 +64,9 @@ test('saved-transform physical scene permits gate round trip, exterior street an
  const cross=(a,b)=>{const from=exteriorPoint(a[0],.925,a[1]),to=exteriorPoint(b[0],.925,b[1]),dx=to[0]-from[0],dz=to[2]-from[2],length=Math.hypot(dx,dz),body=w.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(...from)),collider=w.createCollider(RAPIER.ColliderDesc.capsule(playerConfig.capsuleHalfSegment,playerConfig.radius),body),controller=createCharacterController(w,playerConfig),runtime=createPlayerRuntime();w.step();for(let i=0;i<Math.ceil(length/2.3*60)+10;i++){runtime.velocity.x=dx/length*2.3;runtime.velocity.z=dz/length*2.3;stepCharacter(body,collider,controller,runtime,1/60,playerConfig,-9.81,RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);w.step();}const p=body.translation(),progress=((p.x-from[0])*dx+(p.z-from[2])*dz)/length;w.removeCharacterController(controller);w.removeRigidBody(body);assert(progress>=length-.4,`blocked ${JSON.stringify([a,b])}: ${progress}/${length}`);};
  try{
   cross([0,-3],[0,15]);cross([0,15],[0,-3]);cross([0,14],[0,36]);
-  cross([-2,6],[-19.6,6]);cross([-19.6,6],[-17.5,9]);cross([-17.5,9],[-17.5,20]);
-  cross([-2,10],[-8.6,10]);cross([-8.6,10],[-8.6,18]);cross([-8.6,11.2],[-10.4,11.2]);
+  cross([-2,4.5],[-12,4.5]);cross([-12,4.5],[-15,2.2]);cross([-15,2.2],[-15,.7]);
+  cross([-15,4.5],[-21.6,6]);cross([-21.6,6],[-21.6,1]);cross([-21.6,1],[-26.5,-2]);cross([-26.5,-2],[-32.5,-6]);cross([-32.5,-6],[-26.5,-2]);cross([-26.5,-2],[-21.6,1]);cross([-21.6,1],[-21.6,6]);
+  cross([-21.6,6],[-23.7,5.3]);cross([-23.7,5.3],[-24.9,4.6]);cross([-24.9,4.6],[-21.6,6]);cross([-21.6,6],[-2,6]);
   cross([2.8,1.8],[12.7,1.8]);cross([12.7,1.8],[2.8,1.8]);
   cross([2.8,6],[6,6]);cross([2.8,14],[5.5,14]);cross([3.8,9],[3.8,18]);
  const graph=pedestrianGraph(arcadeSeatSpans(overrides)[0],createNpcNavigationProbe(w,RAPIER));assert.equal(graph.nodes.length,58);assert.equal(graph.edges.length,143);
