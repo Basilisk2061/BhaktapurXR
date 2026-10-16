@@ -1,3 +1,4 @@
+import {buildKhaumaExterior,exteriorReplacedIds} from "./khauma-exterior.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import {refineCentralStoneEnsemble} from "./central-stone-ensemble.ts";
 import {integrateRaisedPavilion,buildRaisedPavilionTerraces} from "./raised-pavilion-terraces.ts";
@@ -181,5 +182,5 @@ export function buildCompletedSquareEdge(){
  correctedModels.push(buildRaisedPavilionTerraces(correctedModels,heritage.find(m=>m.id==="gopinath-krishna")!));
  const raisedContext=correctedModels.map(integrateRaisedPavilion);
  const rawAfter=models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))).length;
- return {...baseline,models:raisedContext,buildings:buildings.filter(b=>!removedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
+ return {...baseline,models:[...raisedContext.filter(m=>!exteriorReplacedIds.has(m.id)&&m.id!=="entrance:khauma-road"),...buildKhaumaExterior()],buildings:buildings.filter(b=>!removedIds.has(b.id)&&!exteriorReplacedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
 }

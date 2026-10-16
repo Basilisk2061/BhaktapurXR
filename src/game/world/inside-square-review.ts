@@ -1,3 +1,4 @@
+import {khaumaExteriorReviews} from "../architecture/khauma-exterior.ts";
 import {squareCompletionReviewCamera,squareCompletionReviewSpawn} from "./square-completion-review.ts";
 import type {SpawnPoint} from "../../types/world.ts";
 const pose=(position:[number,number,number],target:[number,number,number],fov=58)=>{
@@ -6,6 +7,7 @@ const pose=(position:[number,number,number],target:[number,number,number],fov=58
 };
 /** Photo comparison poses are approximate perspectives, not evidence coordinates. */
 export const insideSquareReviews={
+ ...Object.fromEntries(Object.entries(khaumaExteriorReviews).map(([id,c])=>[id,pose(c.position,c.target,c.fov)])),
  "9b-gate-entry":pose([-116.6,1.65,-33.6],[-43,4,-7]),
  "9b-reference-match":pose([-92,1.65,-14],[-13,4,5],54),
  "9b-western-square":pose([-113,1.65,-18],[-90,4,-12],66),

@@ -1,3 +1,4 @@
+import {exteriorNames} from "../../game/architecture/khauma-exterior.ts";
 import {buildCompletedSquareModels,buildCompletedSquareEdge} from "../../game/architecture/square-completion.ts";
 import {partitionArchitecturalParts} from "./parts.ts";
 
@@ -11,9 +12,9 @@ let cached:EditableAssembly[]|null=null;
 export function getEditableRegistry():EditableAssembly[]{if(cached)return cached;const monuments=buildCompletedSquareModels(),urban=buildCompletedSquareEdge();cached=[...monuments,...urban.models].filter(m=>!m.id.startsWith("distant:")&&!m.id.startsWith("ground:")&&m.id!=="entrance:khauma-road"&&(m.boxes.some(b=>!b.role.includes("collision"))||m.shapes.length||m.profiles.length||m.roofs.length||(m.volumes?.length??0))).map(m=>{
  const edge=urban.buildings.find(b=>b.id===m.id),west=westSpecificationById[m.id];
  const name=m.id==="edge:khauma-north-flank:1158762014"?"Khauma school-side wall / lattice gate / guardians":m.id==="entrance:khauma-raised-veranda"?"Khauma raised plastered veranda (identity unresolved)":m.id==="east:small-shikhara-unresolved"?"Eastern small brick shikhara (identity unresolved)":m.id==="khauma-gate"?"Khauma / Old Town Entrance Gate (west square entrance)":west?.identity??remainingSpecificationById[m.id]?.canonicalName??specificationById[m.id]?.canonicalName??edge?.identity??(edge?.groupId.startsWith("9c-")?`Square-edge building ${edge.sourceId}`:null)??(m.id==="palace-corner-shrine-unresolved"?"Palace corner shrine (identity unresolved)":null)??(m.id==="entrance:khauma-masonry-return"?"Khauma low sitting wall":m.id);
- const category=edge?.groupId==="9c-palace-depth"?"PALACE":m.id.includes("gate")?"GATES":/frontage/.test(m.id)&&!edge?"PALACE":/bell|column/.test(m.id)?"COLUMNS/BELLS":m.id==="palace-corner-shrine-unresolved"||m.id==="rameshwar"||m.id==="chyasilin"?"SHRINES":m.id.startsWith("entrance:")||m.id.startsWith("edge:khauma")||m.id.startsWith("edge:western-approach")?"CONTEXT":edge?"SQUARE EDGES":"TEMPLES";
+ const category=m.id.startsWith("entrance:KhaumaExterior_")?"CONTEXT":edge?.groupId==="9c-palace-depth"?"PALACE":m.id.includes("gate")?"GATES":/frontage/.test(m.id)&&!edge?"PALACE":/bell|column/.test(m.id)?"COLUMNS/BELLS":m.id==="palace-corner-shrine-unresolved"||m.id==="rameshwar"||m.id==="chyasilin"?"SHRINES":m.id.startsWith("entrance:")||m.id.startsWith("edge:khauma")||m.id.startsWith("edge:western-approach")?"CONTEXT":edge?"SQUARE EDGES":"TEMPLES";
  const classification=m.accuracy==="FOOTPRINT_ONLY_CONTEXT"?m.accuracy:m.id.startsWith("context:9c:")?m.accuracy:west?.state==="PROVISIONALLY_IDENTIFIED"||m.id.startsWith("edge:yetachapari:")?"PROVISIONALLY_IDENTIFIED":edge?.classification==="FOOTPRINT_ONLY_CONTEXT"?"FOOTPRINT_ONLY_CONTEXT":edge?.classification==="PHOTO_DERIVED_CONTEXT"||m.id.startsWith("entrance:")?"PHOTO_INFERRED":m.accuracy;
- return {id:m.id,name,category,classification,source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]},defaultLocked:true};
+ return {id:m.id,name:m.id.startsWith("entrance:KhaumaExterior_")?exteriorNames[m.id.split("_")[1] as keyof typeof exteriorNames]:name,category,classification,source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]},defaultLocked:true};
  });return cached;}
 
 let partsCache:EditableAssembly[]|null=null;
