@@ -1,3 +1,6 @@
+import savedScene from "../../features/bhaktapur/data/world-editor-state.json";
+import {EditorPrimitives} from "../../features/world-editor/editor-primitives";
+import type {CreatedObject} from "../../features/world-editor/scene-data";
 import type {AssemblyEditorBinding} from "../../features/world-editor/binding";
 import type {TransformOverrides} from "../../features/world-editor/transforms";
 import { developmentConfig } from "@/lib/development-config";
@@ -16,6 +19,7 @@ export function World({ mode, architecturalDebug=false, silhouette=false, assemb
     <>
       {mode === "BHAKTAPUR" ? <HeritageDaylight /> : <><Environment /><Ground config={worldConfig.ground} name="engineering-ground" /></>}
       {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld architecturalDebug={architecturalDebug} silhouette={silhouette} assemblyEditor={assemblyEditor} manualOverrides={manualOverrides} />}
+      {mode==="BHAKTAPUR"&&!assemblyEditor&&<EditorPrimitives objects={savedScene.createdObjects as CreatedObject[]}/>}
       {developmentConfig.spawnMarker && <SpawnMarker spawn={worldSpawns[mode]} />}
       {developmentConfig.worldDebug && (
         <group position={[0, 0.01, 0]}>

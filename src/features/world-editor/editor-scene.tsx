@@ -1,4 +1,5 @@
 "use client";
+import {EditorPrimitives} from "./editor-primitives";
 import {useEffect,useMemo,useRef,useSyncExternalStore,type RefObject} from "react";
 import {useFrame,useThree} from "@react-three/fiber";
 import {TransformControls} from "@react-three/drei";
@@ -14,6 +15,7 @@ export function useEditorSnapshot(session:EditorSession){return useSyncExternalS
 export function EditorScene({session,input,runtime,onPointerStatus,spawn}:{session:EditorSession;input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>;onPointerStatus:(s:PointerStatus)=>void;spawn:SpawnPoint}){
  const state=useEditorSnapshot(session),camera=useThree(s=>s.camera),focused=useRef(0),object=state.selectedId?session.objects.get(state.selectedId):undefined;
  const walkSpawn=useMemo(()=>state.walk?{position:[camera.position.x,.05,camera.position.z] as [number,number,number],rotation:[0,input.current.yaw,0] as [number,number,number]}:spawn,[state.walk,camera,input,spawn]);
+ useEffect(()=>{session.setSpawnPosition(()=>{const p=camera.position.clone().addScaledVector(camera.getWorldDirection(new Vector3()),5);p.y=Math.max(.6,p.y);return p.toArray() as [number,number,number];});return ()=>session.setSpawnPosition(null);},[session,camera]);
  const helper=useMemo(()=>object&&!state.walk?new BoxHelper(object,0xf2bc39):null,[object,state.walk]);
  useEffect(()=>()=>{helper?.geometry.dispose();(helper?.material as import("three").Material|undefined)?.dispose();},[helper]);
  useFrame(()=>helper?.update());
@@ -23,6 +25,7 @@ export function EditorScene({session,input,runtime,onPointerStatus,spawn}:{sessi
  const preview=()=>{if(!object||!state.selectedId)return;const valid=session.preview(state.selectedId,{position:object.position.toArray(),rotation:[object.rotation.x,object.rotation.y,object.rotation.z],scale:object.scale.toArray()});if(!valid){const t=session.getSnapshot().transforms[state.selectedId];object.position.fromArray(t.position);object.rotation.set(...t.rotation);object.scale.fromArray(t.scale);}};
  return <>
  <World mode="BHAKTAPUR" assemblyEditor={{ids:session.ids,state,activePartParent,transforms:state.transforms,hidden:state.hidden,walk:state.walk,dragging:state.dragging,select:session.select,register:session.register}}/>
+ <EditorPrimitives objects={state.createdObjects.map(o=>({...o,...state.transforms[o.id]}))} session={session}/>
  {state.walk?<Player sittingEnabled seatingTransforms={state.transforms} reviewCamera={false} spawn={walkSpawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus}/>:<EditorViewportInput session={session}/>}
  {!state.walk&&helper&&<primitive object={helper} dispose={null}/>}
  {!state.walk&&!state.navigating&&object&&!state.locked[object.userData.editableId]&&<TransformControls object={object} mode={state.mode} space={state.space} size={.85} translationSnap={state.translationSnap} rotationSnap={state.rotationSnap} onMouseDown={()=>session.begin(object.userData.editableId,true)} onObjectChange={preview} onMouseUp={()=>session.complete()}/>}
