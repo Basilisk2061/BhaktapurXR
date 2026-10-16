@@ -1,4 +1,5 @@
 "use client";
-import dynamic from "next/dynamic";
-const Model=dynamic(()=>import("./hero-model"),{ssr:false,loading:()=> <div className="model-loading" aria-label="Loading guardian sculpture"/>});
-export function HeroArtifact(){return <Model/>;}
+import dynamic from 'next/dynamic';
+import type {TransformOverrides} from '../../features/world-editor/transforms';
+const Model=dynamic(()=>import('./hero-model'),{ssr:false,loading:()=>null});
+export function HeroArtifact({overrides}:{overrides:TransformOverrides}){return <Model overrides={overrides}/>;}

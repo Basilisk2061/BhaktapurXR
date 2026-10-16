@@ -1,3 +1,4 @@
+import {readMouseSensitivity,subscribeSensitivity} from "./mouse-sensitivity";
 import { useEffect, type RefObject } from "react";
 import { useThree } from "@react-three/fiber";
 import { playerConfig } from "@/game/player/player-config";
@@ -8,6 +9,8 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
 
   useEffect(() => {
     const input = inputRef.current;
+    let sensitivity=readMouseSensitivity();
+    const unsubscribeSensitivity=subscribeSensitivity(()=>{sensitivity=readMouseSensitivity();});
     let disposed = false, lockFailed = false, dragging = false, requesting = false;
     const previousTabIndex = canvas.tabIndex;
     canvas.setAttribute("tabindex", "0");
@@ -49,7 +52,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
     };
     const mouseMoved = (event: MouseEvent) => {
       if (!input.active || (!input.locked && (!dragging || document.activeElement !== canvas))) return;
-      const { sensitivity, maxMouseDelta, minPitch, maxPitch } = playerConfig.camera;
+      const { maxMouseDelta, minPitch, maxPitch } = playerConfig.camera;
       const x = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementX));
       const y = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementY));
       input.yaw = Math.atan2(Math.sin(input.yaw - x * sensitivity), Math.cos(input.yaw - x * sensitivity));
@@ -83,6 +86,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
     document.addEventListener("focusin", focusChanged);
     window.addEventListener("blur", resetFocus);
     return () => {
+      unsubscribeSensitivity();
       disposed = true;
       clear(); input.locked = false;
       canvas.setAttribute("tabindex", String(previousTabIndex));

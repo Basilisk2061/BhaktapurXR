@@ -100,3 +100,6 @@ export function CentralHeritageEnvironment({debug=false,silhouette=false,assembl
  {debug&&process.env.NODE_ENV==="development"&&assets.models.map(m=><group key={m.id} position={[m.origin[0],.08,m.origin[1]]}><axesHelper args={[1.5]}/><mesh rotation={[-Math.PI/2,0,0]}><ringGeometry args={[.55,.62,24]}/><meshBasicMaterial color="#b63bc1"/></mesh><Html position={[0,1,0]} center><span className="whitespace-nowrap rounded bg-white/90 px-2 text-xs text-purple-900">{remainingSpecificationById[m.id]?.canonicalName??m.id} / {m.accuracy} / {m.id===insideSquareEvidence.palaceCornerShrine.id?"UNRESOLVED_IDENTITY":remainingSpecificationById[m.id]?.reconstructionState??"CENTRAL_BASELINE"} / source anchor; audit corrections apply</span></Html></group>)}
  </group>;
 }
+
+// Shared visual builders for the homepage preview; gameplay geometry is unchanged.
+export {profileGeometry,shapeGeometry,roofGeometry};
