@@ -1,4 +1,4 @@
-import {OldManReactions,reactiveVoicePaths,type VoicePlayer} from './old-man-reactions.ts';
+import {OldManReactions,reactiveVoicePaths,femaleVoicePaths,type VoicePlayer} from './old-man-reactions.ts';
 import {OldManVoiceTiming,oldManVoiceConfig,type OldManVoiceActor} from './old-man-voice.ts';
 import manifest from '../../../public/assets/audio/manifest.json' with {type:'json'};
 import {audioConfig} from './audio-config.ts';
@@ -16,6 +16,7 @@ export class GameAudioEngine {
  private voices=new Set<{source:AudioBufferSourceNode;gain:GainNode;landing:boolean}>();
  private last:Record<FootstepSurface,number>={'brick-stone':-1,wood:-1};
  private npcReactions=new OldManReactions();
+ private femaleReactions=new OldManReactions(true);
  private npcTiming=new OldManVoiceTiming();
  private npcLoading:Promise<void>|null=null;
  private npcVoice:{id:string;source:AudioBufferSourceNode;gain:GainNode;panner:PannerNode}|null=null;
@@ -44,26 +45,29 @@ export class GameAudioEngine {
   const voice={source,gain,landing};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
  }
  private async loadNpcVoices(context:AudioContext){
-  await Promise.all(Object.values(npcVoicePaths).map(async path=>{
+  await Promise.all([...Object.values(npcVoicePaths),...Object.values(femaleVoicePaths)].map(async path=>{
    const response=await fetch(path,{signal:this.abort.signal});if(!response.ok)throw Error('NPC audio '+response.status);
    const buffer=await context.decodeAudioData(await response.arrayBuffer());if(!this.disposed)this.buffers.set(path,buffer);
   }));
  }
- updateOldManVoices(actors:OldManVoiceActor[],position:{x:number;y:number;z:number},forward:{x:number;y:number;z:number},up:{x:number;y:number;z:number},player?:VoicePlayer){
+ updateOldManVoices(actors:OldManVoiceActor[],position:{x:number;y:number;z:number},forward:{x:number;y:number;z:number},up:{x:number;y:number;z:number},player?:VoicePlayer,females:OldManVoiceActor[]=[]){
   const context=this.context;if(this.disposed||!context||context.state!=='running')return;
   const listener=context.listener;
   listener.positionX.value=position.x;listener.positionY.value=position.y;listener.positionZ.value=position.z;
   listener.forwardX.value=forward.x;listener.forwardY.value=forward.y;listener.forwardZ.value=forward.z;
   listener.upX.value=up.x;listener.upY.value=up.y;listener.upZ.value=up.z;
   const active=this.npcVoice;
-  if(active){const actor=actors.find(a=>a.id===active.id);if(actor){active.panner.positionX.value=actor.position.x;active.panner.positionY.value=actor.position.y;active.panner.positionZ.value=actor.position.z;}else{active.source.stop();}}
+  if(active){const actor=[...actors,...females].find(a=>a.id===active.id);if(actor){active.panner.positionX.value=actor.position.x;active.panner.positionY.value=actor.position.y;active.panner.positionZ.value=actor.position.z;}else{active.source.stop();}}
   const ready=Object.values(npcVoicePaths).every(path=>this.buffers.has(path));
-  const reaction=player?this.npcReactions.next(context.currentTime,actors,player,!!this.npcVoice||!ready):null;
+  const oldReaction=player?this.npcReactions.next(context.currentTime,actors,player,!!this.npcVoice||!ready):null;
+  const femaleReady=Object.values(femaleVoicePaths).every(path=>this.buffers.has(path));
+  const femaleReaction=player?this.femaleReactions.next(context.currentTime,females,player,!!this.npcVoice||!femaleReady||!!oldReaction):null;
+  const reaction=oldReaction?{id:oldReaction.id,path:reactiveVoicePaths[oldReaction.kind as keyof typeof reactiveVoicePaths]}:femaleReaction?{id:femaleReaction.id,path:femaleVoicePaths[femaleReaction.kind as keyof typeof femaleVoicePaths]}:null;
   const scheduled=this.npcTiming.next(context.currentTime,actors,!!this.npcVoice||!ready||!!reaction);
-  const opportunity=reaction??scheduled;
+  const opportunity=reaction??(scheduled?{id:scheduled.id,path:oldManVoiceConfig.paths[scheduled.kind]}:null);
   if(!opportunity)return;
-  const actor=actors.find(a=>a.id===opportunity.id)!,source=context.createBufferSource(),gain=context.createGain(),panner=context.createPanner();
-  source.buffer=this.buffers.get(npcVoicePaths[opportunity.kind])!;
+  const actor=[...actors,...females].find(a=>a.id===opportunity.id)!,source=context.createBufferSource(),gain=context.createGain(),panner=context.createPanner();
+  source.buffer=this.buffers.get(opportunity.path)!;
   gain.gain.value=oldManVoiceConfig.gain;panner.panningModel='HRTF';panner.distanceModel='linear';panner.refDistance=oldManVoiceConfig.refDistance;panner.maxDistance=oldManVoiceConfig.maxDistance;panner.rolloffFactor=1;
   panner.positionX.value=actor.position.x;panner.positionY.value=actor.position.y;panner.positionZ.value=actor.position.z;
   source.connect(gain).connect(panner).connect(context.destination);this.npcVoice={id:actor.id,source,gain,panner};
