@@ -13,7 +13,7 @@ export class GameAudioEngine {
  private abort=new AbortController();
  private buffers=new Map<string,AudioBuffer>();
  private ambience:AudioBufferSourceNode|null=null;
- private voices=new Set<{source:AudioBufferSourceNode;gain:GainNode}>();
+ private voices=new Set<{source:AudioBufferSourceNode;gain:GainNode;landing:boolean}>();
  private last:Record<FootstepSurface,number>={'brick-stone':-1,wood:-1};
  private npcReactions=new OldManReactions();
  private npcTiming=new OldManVoiceTiming();
@@ -37,11 +37,11 @@ export class GameAudioEngine {
   const paths=[manifest.ambience.path,...Object.values(manifest.footsteps).flatMap(set=>set.map(sample=>sample.path))];
   await Promise.all(paths.map(async path=>{if(this.buffers.has(path))return;const response=await fetch(path,{signal:this.abort.signal});if(!response.ok)throw new Error('Audio asset '+response.status+': '+path);const buffer=await context.decodeAudioData(await response.arrayBuffer());if(!this.disposed)this.buffers.set(path,buffer);}));
  }
- footstep(surface:FootstepSurface,running:boolean){
+ footstep(surface:FootstepSurface,running:boolean,landing=false){
   const context=this.context;if(this.disposed||!context||context.state!=='running')return;
   const samples=manifest.footsteps[surface],index=chooseVariation(samples.length,this.last[surface]),buffer=this.buffers.get(samples[index].path);if(!buffer)return;
-  this.last[surface]=index;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.playbackRate.value=.98+Math.random()*.04;gain.gain.value=(audioConfig.footstepGain*(running?audioConfig.runFootstepMultiplier:1))*(.94+Math.random()*.12);source.connect(gain).connect(context.destination);
-  const voice={source,gain};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
+  this.last[surface]=index;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.playbackRate.value=.98+Math.random()*.04;gain.gain.value=(audioConfig.footstepGain*(landing?audioConfig.landingMultiplier:running?audioConfig.runFootstepMultiplier:1))*(.94+Math.random()*.12);source.connect(gain).connect(context.destination);
+  const voice={source,gain,landing};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
  }
  private async loadNpcVoices(context:AudioContext){
   await Promise.all(Object.values(npcVoicePaths).map(async path=>{
@@ -67,8 +67,9 @@ export class GameAudioEngine {
   gain.gain.value=oldManVoiceConfig.gain;panner.panningModel='HRTF';panner.distanceModel='linear';panner.refDistance=oldManVoiceConfig.refDistance;panner.maxDistance=oldManVoiceConfig.maxDistance;panner.rolloffFactor=1;
   panner.positionX.value=actor.position.x;panner.positionY.value=actor.position.y;panner.positionZ.value=actor.position.z;
   source.connect(gain).connect(panner).connect(context.destination);this.npcVoice={id:actor.id,source,gain,panner};
-  source.onended=()=>{source.disconnect();gain.disconnect();panner.disconnect();this.npcVoice=null;this.npcTiming.ended(context.currentTime);};source.start();
+  source.onended=()=>{source.disconnect();gain.disconnect();panner.disconnect();this.npcVoice=null;this.npcTiming.ended(context.currentTime,reaction?undefined:actor.id);};source.start();
  }
- stopSteps(){for(const voice of this.voices){voice.gain.gain.setTargetAtTime(0,this.context!.currentTime,.005);voice.source.stop(this.context!.currentTime+.02);}this.voices.clear();}
- dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();this.npcVoice?.source.stop();this.stopSteps();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
+ landing(surface:FootstepSurface){this.footstep(surface,false,true);}
+ stopSteps(){for(const voice of this.voices)if(!voice.landing){voice.gain.gain.setTargetAtTime(0,this.context!.currentTime,.005);voice.source.stop(this.context!.currentTime+.02);this.voices.delete(voice);}}
+ dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();this.npcVoice?.source.stop();this.stopSteps();for(const voice of this.voices)voice.source.stop();this.voices.clear();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
 }

@@ -4,7 +4,7 @@ import overrides from '../src/features/bhaktapur/data/manual-transform-overrides
 import {buildCompletedSquareModels,buildCompletedSquareEdge} from '../src/game/architecture/square-completion.ts';
 import {partitionArchitecturalParts} from '../src/features/world-editor/parts.ts';import {partWorldDelta,affineCollider} from '../src/features/world-editor/transforms.ts';
 import {arcadeSeatSpans,nearestArcadeSeat} from '../src/game/player/arcade-sitting.ts';
-import {npcInstances,npcDefinitions} from '../src/game/npcs/definitions.ts';import {NpcSimulation} from '../src/game/npcs/behavior.ts';import {pedestrianGraph,route} from '../src/game/npcs/navigation.ts';import {createNpcNavigationProbe} from '../src/game/npcs/physics-navigation.ts';import {mixamoRig,retargetMixamoClip} from '../src/game/npcs/mixamo-retarget.ts';
+import {npcInstances,npcDefinitions} from '../src/game/npcs/definitions.ts';import {NpcSimulation,oldManSitPreference} from '../src/game/npcs/behavior.ts';import {pedestrianGraph,route} from '../src/game/npcs/navigation.ts';import {createNpcNavigationProbe} from '../src/game/npcs/physics-navigation.ts';import {mixamoRig,retargetMixamoClip} from '../src/game/npcs/mixamo-retarget.ts';
 await RAPIER.init();
 const world=new RAPIER.World({x:0,y:-9.81,z:0});world.createCollider(RAPIER.ColliderDesc.cuboid(170,.25,170).setTranslation(-40,-.25,0));
 for(const model of [...buildCompletedSquareModels(),...buildCompletedSquareEdge().models]){
@@ -24,12 +24,14 @@ test('small pedestrian graph uses only collision-clear plaza nodes/edges; no dis
 test('four configured agents desynchronize, reserve separate seats, sit and resume without leaving safe segments',()=>{
  assert.equal(npcInstances.length,4);assert.equal(npcInstances.filter(n=>n.character==='female_01').length,2);assert.equal(npcInstances.filter(n=>n.character==='old_man_01').length,2);
  const sim=new NpcSimulation(graph,span,probe,npcInstances),player=new Vector3(-135,0,-35),history=new Map(sim.agents.map(a=>[a.id,new Set()]));let separation=Infinity;const firstSit={},visited=new Set();
- for(let i=0;i<60*600;i++){
+ for(let i=0;i<60*1800;i++){
   sim.tick(1/60,player,null);
-  for(const a of sim.agents){if(a.position.x< -100)visited.add('west');if(a.position.x> -25&&a.position.z< -10)visited.add('palace');const seen=history.get(a.id);if(a.state==='SITTING'){seen.add('sit');firstSit[a.id]??=sim.time;}if(a.state==='WALKING'&&seen.has('sit'))seen.add('resume');const desired=sim.displacement(a,1/60,player);a.position.add(desired);if(a.state!=='SITTING')assert.ok(a.position.y<.2,'only sitting enters the raised platform');}
+  for(const a of sim.agents){if(a.position.x< -100)visited.add('west');if(a.position.x> -25&&a.position.z< -10)visited.add('palace');const seen=history.get(a.id);if(a.state==='SITTING'){if(a.character==='old_man_01')assert.equal(a.restCycles,0,'rest preference resets while sitting');seen.add('sit');firstSit[a.id]??=sim.time;}if(a.state==='WALKING'&&seen.has('sit'))seen.add('resume');const desired=sim.displacement(a,1/60,player);a.position.add(desired);if(a.state!=='SITTING')assert.ok(a.position.y<.2,'only sitting enters the raised platform');}
   for(let a=0;a<4;a++)for(let b=a+1;b<4;b++){const x=sim.agents[a],y=sim.agents[b];separation=Math.min(separation,Math.hypot(x.position.x-y.position.x,x.position.z-y.position.z));if(x.seat&&y.seat)assert.ok(x.seat.point.distanceTo(y.seat.point)>=1.3);}
+  if([...history.values()].every(seen=>seen.has('resume'))&&sim.time>120)break;
  }
  console.log('NPC histories',Object.fromEntries([...history].map(([id,set])=>[id,[...set]])),'min separation',separation,'first sit',firstSit);
+ assert.ok(Math.min(firstSit['old-a'],firstSit['old-b'])<=120,'at least one old man naturally rests within two simulated minutes');
  assert.ok(visited.has('west'));assert.ok(visited.has('palace'));
  for(const seen of history.values()){assert.ok(seen.has('sit'));assert.ok(seen.has('resume'));}assert.ok(separation>=.85);assert.equal(new Set(sim.agents.map(a=>a.phase)).size,4);assert.ok(npcDefinitions.old_man_01.speed<npcDefinitions.female_01.speed);
  const repeat=new NpcSimulation(graph,span,probe,npcInstances);const again=new NpcSimulation(graph,span,probe,npcInstances);assert.deepEqual(repeat.agents.map(a=>[a.phase,a.speed,a.waitUntil]),again.agents.map(a=>[a.phase,a.speed,a.waitUntil]));
@@ -82,4 +84,22 @@ test('walkers can separate from close occupants; a player taking a seat makes it
  const sim=new NpcSimulation(graph,span,probe,[npcInstances[2]]),a=sim.agents[0];a.state='WALKING';a.target=a.position.clone().add(new Vector3(-2,0,0));const close=a.position.clone().add(new Vector3(.8,0,0));assert.ok(sim.displacement(a,1/60,close).length()>0,'moving away must remain possible inside the personal-space radius');
  const seat=nearestArcadeSeat(span.a.clone().lerp(span.b,.5),[span]);assert.ok(seat);a.state='SITTING';a.seat=seat;a.position.copy(seat.point);a.sitUntil=999;
  sim.tick(1/60,seat.point.clone(),seat);assert.equal(a.state,'WALKING');assert.equal(a.seat,null);assert.ok(Math.hypot(a.position.x-seat.exit.x,a.position.z-seat.exit.z)<.001);assert.ok(a.position.y<.2);
+});
+
+test('old-man rest preference builds and resets without startup forcing or changing female policy',()=>{
+ assert.ok(oldManSitPreference(0)>.35);assert.ok(oldManSitPreference(3)>oldManSitPreference(0));assert.equal(oldManSitPreference(100),.85);
+ const sim=new NpcSimulation(graph,span,probe,npcInstances),player=new Vector3(-1000,0,-1000);
+ for(const a of sim.agents){assert.equal(a.restCycles,0);assert.ok(a.nextSeatAt>=25);assert.equal(a.state,'IDLE');}
+ sim.tick(10,player,null);assert.ok(sim.agents.every(a=>a.state!=='SITTING'));
+ const female=sim.agents.find(a=>a.character==='female_01'),seeded=new NpcSimulation(graph,span,probe,[npcInstances[0]]).agents[0];
+ assert.equal(female.nextSeatAt,seeded.nextSeatAt);assert.equal(female.speed,seeded.speed);assert.equal(female.phase,seeded.phase);
+});
+
+test('old-man preference uses existing seat reservations and player occupancy; female threshold stays .35',()=>{
+ const player=new Vector3(-1000,0,-1000),female=new NpcSimulation(graph,span,probe,[npcInstances[0]]),old=new NpcSimulation(graph,span,probe,[npcInstances[2]]);
+ for(const sim of [female,old]){const a=sim.agents[0];a.waitUntil=0;a.nextSeatAt=0;a.random=()=>.36;sim.tick(1/60,player,null);}
+ assert.equal(female.agents[0].seat,null);assert.ok(old.agents[0].seat);
+ const occupied=old.agents[0].seat,another=new NpcSimulation(graph,span,probe,[npcInstances[3]]),a=another.agents[0];
+ a.waitUntil=0;a.nextSeatAt=0;a.random=()=>0;another.tick(1/60,occupied.exit,occupied);
+ if(a.seat)assert.ok(a.seat.point.distanceTo(occupied.point)>=1.3);
 });

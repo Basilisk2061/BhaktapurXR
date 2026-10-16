@@ -17,14 +17,26 @@ test('proximity reactions prioritize sitting, respect lock/cooldown and require 
  assert.equal(r.next(108,[a],p,false),null,'per-NPC cooldown applies across reactions');
  assert.deepEqual(r.next(125,[a],p,false),{id:'a',kind:'tooClose'});
 });
-test('run-again requires two genuine recent passes by the SAME actor',()=>{
- const r=new OldManReactions(),a={id:'a',state:'IDLE',position:{x:0,y:1.6,z:0}},b={...a,id:'b',position:{x:30,y:1.6,z:0}},p={position:{x:-4,y:.89,z:0},running:true};
- const at=(t,x)=>{p.position.x=x;return r.next(t,[a,b],p,false);};
- at(0,-4);at(1,-2);assert.equal(at(2,4),null);at(3,2);
- assert.deepEqual(at(4,-4),{id:'a',kind:'runAgain'});assert.equal(at(5,-4),null);
- const other=new OldManReactions();p.position.x=10;assert.equal(other.next(50,[a,b],p,false),null);
- p.position.x=-2;other.next(51,[a],p,false);p.position.x=-4;assert.equal(other.next(52,[a],p,false),null,'turning back is not passing');
+test('running reaction accumulates nearby running only, latches once and resets episodes',()=>{
+ const actors=[{id:'a',state:'IDLE',position:{x:0,y:1.6,z:0}}],p={position:{x:2,y:.89,z:0},running:true};
+ const r=new OldManReactions();let now=0,events=[];
+ const advance=(seconds)=>{for(let i=0;i<Math.round(seconds*10);i++){now+=.1;const event=r.next(now,actors,p,false);if(event)events.push(event);}};
+ r.next(0,actors,p,false);advance(2.4);assert.equal(events.length,0);advance(.2);assert.deepEqual(events,[{id:'a',kind:'runAgain'}]);
+ advance(70);assert.equal(events.length,1,'one per episode even after cooldown');
+ p.position.x=4;advance(.1);p.position.x=2;advance(1);assert.equal(events.length,1,'quick run-by does not trigger');
+ p.running=false;advance(2);p.running=true;advance(2.4);assert.equal(events.length,1,'long pause resets cumulative time');advance(.3);assert.equal(events.length,2);
 });
+test('short pauses preserve cumulative running; walking/standing/distant running never qualify; voice lock preserves due reaction',()=>{
+ const actor={id:'a',state:'IDLE',position:{x:0,y:1.6,z:0}},player={position:{x:2,y:.89,z:0},running:true},r=new OldManReactions();let now=0;
+ const advance=(seconds,busy=false)=>{let result=null;for(let i=0;i<Math.round(seconds*10);i++){now+=.1;result=r.next(now,[actor],player,busy)??result;}return result;};
+ r.next(0,[actor],player,false);assert.equal(advance(1.5),null);player.running=false;assert.equal(advance(.5),null);player.running=true;
+ assert.equal(advance(1.2,true),null);assert.deepEqual(advance(.1),{id:'a',kind:'runAgain'});
+ for(const [running,x]of [[false,2],[true,4]]){const quiet=new OldManReactions();for(let t=0;t<10;t+=.1)assert.equal(quiet.next(t,[actor],{position:{x,y:.89,z:0},running},false),null);}
+ const different=new OldManReactions(),other={...actor,id:'b',position:{x:20,y:1.6,z:0}};
+ for(let t=0;t<1.6;t+=.1)assert.equal(different.next(t,[actor,other],{position:{x:2,y:.89,z:0},running:true},false),null);
+ for(let t=1.6;t<3.2;t+=.1)assert.equal(different.next(t,[actor,other],{position:{x:22,y:.89,z:0},running:true},false),null,'each actor accumulates independently');
+});
+
 test('walk/sprint controller blocks against stable kinematic NPC; overlap correction cannot shove an idle/yielding NPC',async()=>{
  await RAPIER.init();
  for(const speed of [2.3,5]){

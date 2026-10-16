@@ -37,17 +37,20 @@ test('surface follows exact material/collider ownership; tiled roof supports and
 });
 
 test('one gesture-owned ambience survives repeated unlocks; one-shots randomize and disposal closes audio',async()=>{
- const original=globalThis.fetch;globalThis.fetch=async()=>({ok:true,arrayBuffer:async()=>new ArrayBuffer(1)});
+ const original=globalThis.fetch;globalThis.fetch=async path=>({ok:true,arrayBuffer:async()=>new TextEncoder().encode(path).buffer});
  const sources=[],gains=[];let contexts=0,closed=0;
  const node=()=>({connect(destination){return destination;},disconnect(){}});
- const context={state:'suspended',currentTime:0,destination:node(),async resume(){this.state='running';},async decodeAudioData(){return {};},createGain(){const n={...node(),gain:{value:0,setTargetAtTime(){}}};gains.push(n);return n;},createBufferSource(){const n={...node(),playbackRate:{value:1},loop:false,start(){this.started=true;},stop(){this.stopped=true;this.onended?.();}};sources.push(n);return n;},async close(){closed++;this.state='closed';}};
+ const context={state:'suspended',currentTime:0,destination:node(),async resume(){this.state='running';},async decodeAudioData(data){return {path:new TextDecoder().decode(data)};},createGain(){const n={...node(),gain:{value:0,setTargetAtTime(){}}};gains.push(n);return n;},createBufferSource(){const n={...node(),playbackRate:{value:1},loop:false,start(){this.started=true;},stop(){this.stopped=true;this.onended?.();}};sources.push(n);return n;},async close(){closed++;this.state='closed';}};
  try{
   const engine=new GameAudioEngine(()=>{contexts++;return context;});assert.equal(contexts,0);
   await Promise.all([engine.unlock(),engine.unlock()]);await engine.unlock();assert.equal(contexts,1);assert.equal(sources.filter(s=>s.loop).length,1);
   engine.footstep('brick-stone',false);engine.footstep('wood',true);assert.equal(sources.length,3);assert.ok(sources.slice(1).every(s=>s.started&&s.playbackRate.value>=.98&&s.playbackRate.value<=1.02));assert.equal(gains[0].gain.value,.12*1.25);
   assert.ok(Math.abs(audioConfig.footstepGain-.32)<1e-12);assert.ok(Math.abs(audioConfig.runFootstepMultiplier-.7/.6)<1e-12);
   for(const [i,base]of [[1,.32],[2,.32*(7/6)]])assert.ok(gains[i].gain.value>=base*.94-1e-12&&gains[i].gain.value<=base*1.06+1e-12);
-  engine.stopSteps();assert.ok(sources.slice(1).every(s=>s.stopped));assert.ok(!sources[0].stopped);
+  engine.landing('brick-stone');engine.landing('wood');
+  for(const [i,surface]of [[3,'brick-stone'],[4,'wood']]){assert.ok(sources[i].buffer.path.includes(surface));assert.ok(gains[i].gain.value>=.384*.94-1e-12&&gains[i].gain.value<=.384*1.06+1e-12);}
+  assert.notEqual(sources[1].buffer.path,sources[3].buffer.path);assert.notEqual(sources[2].buffer.path,sources[4].buffer.path);
+  engine.stopSteps();assert.ok(sources.slice(1,3).every(s=>s.stopped));assert.ok(sources.slice(3).every(s=>!s.stopped),'stationary landing rings out');assert.ok(!sources[0].stopped);
   engine.dispose();engine.dispose();await engine.unlock();assert.equal(closed,1);assert.ok(sources[0].stopped);assert.equal(contexts,1);
  }finally{globalThis.fetch=original;}
 });
@@ -61,16 +64,26 @@ test('a downward physics hit selects wood on a material-owned deck and masonry a
 });
 
 import {OldManVoiceTiming,oldManVoiceConfig} from '../src/game/audio/old-man-voice.ts';
-test('old-man voice opportunities discard walking/busy starts, serialize actors and retain cooldown',()=>{
- const timing=new OldManVoiceTiming(()=>0),actors=['a','b'].map(id=>({id,state:'IDLE',position:{x:1,y:2,z:3}})),knee=oldManVoiceConfig.knee[0];
- assert.equal(timing.next(0,actors,false),null);
- assert.equal(timing.next(knee-1,actors,false),null);
- assert.deepEqual(timing.next(knee,actors,false),{id:'a',kind:'knee'});
- assert.equal(timing.next(knee*2,actors,true),null,'no second voice during playback');
- timing.ended(knee*2);assert.equal(timing.next(knee*2+1,actors,false),null);
- actors.forEach(a=>a.state='WALKING');assert.equal(timing.next(knee*10,actors,false),null);
- actors.forEach(a=>a.state='SITTING');assert.equal(timing.next(knee*10+1,actors,false),null,'no queued voice on stopping');
- assert.deepEqual(timing.next(knee*11+1,actors,false),{id:'a',kind:'knee'});
- const other=new OldManVoiceTiming(()=>.999);other.next(0,actors,false);assert.equal(other.next(knee,actors,false),null);
+test('ambient vocals retain walking/busy pending events for their own actor and reschedule from completion',()=>{
+ const timing=new OldManVoiceTiming(()=>0),actors=['a','b'].map(id=>({id,state:'WALKING',position:{x:0,y:1,z:0}}));
+ assert.equal(timing.next(0,actors,false),null);assert.equal(timing.next(12,actors,false),null);
+ assert.equal(timing.next(120,actors,false),null,'pending survives continued walking');
+ actors[0].state='IDLE';assert.equal(timing.next(121,actors,false),null,'settle after entering idle');
+ assert.equal(timing.next(122,actors,true),null,'reactive/playing voice has priority');
+ assert.deepEqual(timing.next(123,actors,false),{id:'a',kind:'knee'});
+ assert.equal(timing.next(124,actors,true),null);timing.ended(125,'a');
+ actors[1].state='SITTING';assert.equal(timing.next(126,actors,false),null);
+ assert.equal(timing.next(127,actors,false),null,'global post-voice cooldown');
+ assert.deepEqual(timing.next(137,actors,false),{id:'b',kind:'knee'});timing.ended(140,'b');
+ assert.equal(timing.next(154.9,actors,false),null);
+ assert.deepEqual(timing.next(155,actors,false),{id:'a',kind:'knee'},'next event is 30 seconds after completion');
  assert.equal(oldManVoiceConfig.gain,.060);assert.equal(oldManVoiceConfig.maxDistance,12);
+});
+test('first/later ambient intervals cover 12-25 and 30-55; clip choice is randomized without forced alternation',()=>{
+ for(const [value,first,later,kind]of [[0,12,30,'knee'],[1-1e-9,25,55,'sing']]){
+  const timing=new OldManVoiceTiming(()=>value),actors=[{id:'a',state:'IDLE',position:{x:0,y:1,z:0}}];
+  timing.next(0,actors,false);assert.equal(timing.next(first-.01,actors,false),null);
+  assert.deepEqual(timing.next(first,actors,false),{id:'a',kind});timing.ended(30,'a');
+  assert.equal(timing.next(30+later-.01,actors,false),null);assert.deepEqual(timing.next(30+later,actors,false),{id:'a',kind});
+ }
 });
