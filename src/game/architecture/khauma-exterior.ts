@@ -7,10 +7,20 @@ import {box,profile,shape} from "./remaining-models.ts";
 // appearance, not surveyed dimensions. +Z is outside; +X is reference-camera right.
 const gate=overrides["khauma-gate"],matrix=new Matrix4().makeRotationFromEuler(new Euler(...gate.rotation as [number,number,number]));
 export const exteriorFrame={origin:[gate.position[0],gate.position[2]] as [number,number],yaw:Math.atan2(matrix.elements[8],matrix.elements[10])};
+/** Gate-local coordinates; never world +Z. */
+export function exteriorLocal(p:readonly number[]):[number,number,number]{const dx=p[0]-exteriorFrame.origin[0],dz=p[2]-exteriorFrame.origin[1],a=exteriorFrame.yaw;return [dx*Math.cos(a)-dz*Math.sin(a),p[1],dx*Math.sin(a)+dz*Math.cos(a)];}
+export const exteriorPlan={
+ classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",
+ rightTurn:-Math.PI/2,rightSource:[17.9,1.1] as [number,number],rightCentre:[8,13.9] as [number,number],
+ nearSource:[9.15,.2] as [number,number],nearCentre:[9,4.9] as [number,number],
+ leftTurn:Math.PI/2,leftDepthSource:[-24.5,2.1] as [number,number],leftDepthCentre:[-11.8,13.8] as [number,number],
+ leftTerraceCentre:[-11.8,16.65] as [number,number],
+ roadCentreline:[[0,0],[.12,6],[-.45,16],[.1,28],[.65,40]] as [number,number][],roadWidths:[3.8,3.7,3.4,3.6,3.5],
+};
 export function exteriorPoint(x:number,y:number,z:number):[number,number,number]{const {origin,yaw}=exteriorFrame;return [origin[0]+x*Math.cos(yaw)+z*Math.sin(yaw),y,origin[1]-x*Math.sin(yaw)+z*Math.cos(yaw)];}
 export const exteriorReplacedIds=new Set(["edge:khauma-south-flank:1159661606","edge:western-approach-low-roofs:1159661608","edge:western-approach-low-roofs:1159672142","edge:western-approach-low-roofs:1159672143"]);
 export const exteriorEvidence={classification:"PHOTO_INFERRED",references:["Screenshot 2026-10-16 123805.png","Screenshot 2026-10-16 123816.png","Screenshot 2026-10-16 123826.png"],dimensions:"APPROXIMATE",limitations:"No survey solution. Rear shells, shop depth, merchandise counts and street continuation inferred; neutral signage, no business identities asserted."};
-export const exteriorNames={LeftTraditional:"Khauma exterior / left traditional building",LeftShops:"Khauma exterior / left commercial sequence",LeftTerrace:"Khauma exterior / restaurant terrace",RightGateShop:"Khauma exterior / gate-side shop",RightCommercial:"Khauma exterior / right shop bays",RightUpper:"Khauma exterior / brick-timber upper storey",Road:"Khauma exterior / roadway and brick margins",StreetProps:"Khauma exterior / street furniture and greenery"};
+export const exteriorNames={LeftTraditional:"Khauma exterior / left traditional building",LeftShops:"Khauma exterior / immediate left shop",LeftLaneShops:"Khauma exterior / deeper lane storefront",LeftTerrace:"Khauma exterior / restaurant terrace",RightGateShop:"Khauma exterior / gate-side shop",RightCommercial:"Khauma exterior / right shop bays",RightUpper:"Khauma exterior / brick-timber upper storey",Road:"Khauma exterior / roadway and brick margins",StreetProps:"Khauma exterior / street furniture and greenery"};
 function model(key:keyof typeof exteriorNames):CentralModel{return {id:`entrance:KhaumaExterior_${key}`,anchorId:"APPROVED_KHAUMA_GATE",origin:[...exteriorFrame.origin],yaw:exteriorFrame.yaw,accuracy:"PHOTO_INFERRED",neutral:false,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};}
 function tiledRoof(m:CentralModel,x:number,z:number,y:number,w:number,d:number,rise:number){m.roofs.push({position:exteriorPoint(x,y,z),width:w,depth:d,rise,yaw:m.yaw,material:"roof",role:"exterior-tile-roof"});box(m,x,y-.08,z,w,.17,d,"carvedTimber","exterior-deep-eave");for(let i=0;i<w/.6;i++)box(m,x-w/2+.2+i*.6,y-.24,z+d/2-.35,.1,.4,.65,"carvedTimber","exterior-eave-bracket");}
 function window(m:CentralModel,x:number,y:number,z:number,w=1.05,h=1.25){box(m,x,y,z,w,h,.12,"recess","exterior-window-recess");for(const s of [-1,1])box(m,x+s*w/2,y,z+.1,.11,h+.22,.18,"carvedTimber","exterior-window-frame");for(const dy of [-h/2,h/2])box(m,x,y+dy,z+.12,w+.25,.12,.2,"carvedTimber","exterior-window-lintel");for(let i=1;i<7;i++)box(m,x-w/2+i*w/7,y,z+.17,.025,h,.035,"carvedTimber","exterior-lattice");for(let i=1;i<6;i++)box(m,x,y-h/2+i*h/6,z+.18,w,.026,.03,"carvedTimber","exterior-lattice");}
@@ -37,6 +47,18 @@ function display(m:CentralModel,x:number,z:number,w:number){
  for(let k=0;k<3;k++){box(m,x, .55+k*.45,z-.8,w-.3,.055,.35,"carvedTimber","exterior-shop-shelf");for(let j=0;j<Math.floor(w/.22)-2;j++)profile(m,x-w/2+.35+j*.22,.58+k*.45,z-.8,[[.055,0],[.065,.15],[.03,.2],[.03,.27],[0,.27]],cloth[(j+k)%cloth.length],"exterior-bottle-souvenir",6);}
 }
 function board(m:CentralModel,x:number,z:number,w=.75){box(m,x,.68,z,w,1.2,.1,"carvedTimber","exterior-standing-board",true);box(m,x,.7,z+.065,w-.1,.98,.025,"exteriorTeal","exterior-board-face");for(let j=0;j<6;j++)box(m,x,.4+j*.12,z+.085,w-.23,.025,.015,"plaster","exterior-menu-lines");for(const s of [-1,1])box(m,x+s*w*.38,.2,z-.18,.05,.4,.55,"carvedTimber","exterior-board-feet");}
+/** Reuse primitives in the gate frame. Scale is along the original frontage only. */
+function reframe(m:CentralModel,from:[number,number],to:[number,number],turn:number,stretch=1,include=(role:string)=>!!role,updateYaw=true){
+ const point=(p:[number,number,number]):[number,number,number]=>{const q=exteriorLocal(p),x=(q[0]-from[0])*stretch,z=q[2]-from[1];return exteriorPoint(to[0]+x*Math.cos(turn)+z*Math.sin(turn),p[1],to[1]-x*Math.sin(turn)+z*Math.cos(turn));};
+ const signature=(b:{position:number[];size:number[];yaw:number})=>JSON.stringify([b.position,b.size,b.yaw]);
+ const selected=new Set(m.boxes.filter(b=>include(b.role)).map(signature));
+ for(const b of m.colliders){if(!updateYaw&&!selected.has(signature(b)))continue;b.position=point(b.position);b.size[0]*=stretch;b.yaw+=turn;}
+ for(const b of m.boxes.filter(b=>include(b.role))){b.position=point(b.position);b.size[0]*=stretch;b.yaw+=turn;}
+ for(const p of m.profiles.filter(p=>include(p.role))){p.position=point(p.position);p.yaw+=turn;}
+ for(const p of m.shapes.filter(p=>include(p.role))){p.position=point(p.position);p.yaw+=turn;p.points=p.points.map(([x,y])=>[x*stretch,y]);}
+ for(const p of m.roofs.filter(p=>include(p.role))){p.position=point(p.position);p.yaw+=turn;p.width*=stretch;}
+ if(updateYaw)m.yaw+=turn;
+}
 export function buildKhaumaExterior(){
  const left=model("LeftTraditional");
  box(left,-10.05,1.83,-.4,6.4,3.3,5.4,"agedBrick","exterior-traditional-masonry",true);
@@ -47,9 +69,16 @@ export function buildKhaumaExterior(){
  box(left,-10.05,4.65,-.4,1.4,.5,1.25,"agedBrick","exterior-roof-vent");tiledRoof(left,-10.05,-.4,4.96,1.9,1.7,.5);
  const shops=model("LeftShops");
  shop(shops,-16.1,1,5.3,2.7,"redMasonry");tiledRoof(shops,-16.1,1,3.65,5.9,5.5,.55);display(shops,-16.1,3.28,3.8);board(shops,-17.4,4.7);
- // Lane opening between the terrace shops and green photography-like frontage.
- shop(shops,-24.5,2.1,5.4,2.65,"exteriorTeal");tiledRoof(shops,-24.5,2.1,3.65,6,5.4,.65);
- for(const x of [-26.2,-24.5,-22.8])box(shops,x,1.55,4.5,.16,2.4,.15,"exteriorTeal","exterior-painted-photo-front-frame");
+ // The immediate lateral frontage ends here. Reuse the green storefront as a
+ // longer lane-facing building; only this minimum split needs a new editor ID.
+ const deeper=model("LeftLaneShops");shop(deeper,-24.5,2.1,5.4,2.65,"exteriorTeal");
+ for(const x of [-26.2,-24.5,-22.8])box(deeper,x,1.55,4.5,.16,2.4,.15,"exteriorTeal","exterior-painted-photo-front-frame");
+ // Extend existing supporting masonry up to the relocated terrace, not a floating deck.
+ for(const b of [...deeper.boxes,...deeper.colliders]){
+  if(Math.abs(b.size[1]-2.65)<.001){b.size[1]+=.62;b.position[1]+=.31;}
+  if(Math.abs(b.size[1]-.18)<.001&&b.position[1]>2.8)b.position[1]+=.62;
+ }
+ const greenRoof=model("LeftLaneShops");tiledRoof(greenRoof,-24.5,2.1,3.65,6,5.4,.65);
  const terrace=model("LeftTerrace");
  box(terrace,-17.3,3.65,-1.1,6.7,.28,5.2,"redMasonry","exterior-terrace-floor",true);
  for(const z of [-3.55,1.35]){box(terrace,-17.3,4,z,6.7,.45,.18,"agedBrick","exterior-terrace-parapet",true);for(let i=0;i<10;i++)box(terrace,-20.4+i*.68,4.4,z,.055,.8,.055,"exteriorLeaf","exterior-terrace-rail");box(terrace,-17.3,4.8,z,6.7,.055,.07,"exteriorLeaf","exterior-terrace-handrail");}
@@ -58,23 +87,39 @@ export function buildKhaumaExterior(){
  const right=model("RightCommercial");for(const [x,w,z]of [[13.6,4.4,1.1],[17.85,4.1,1.15],[22.2,4.5,.95]]){shop(right,x,z,w,2.8,"agedBrick");display(right,x,z+2.48,w-.8);board(right,x+w*.32,z+3.1,.6);box(right,x,3.25,z+2.9,w+.1,.13,1.2,"roof","exterior-shop-weathered-awning",false,0,.16);}
  for(let i=0;i<8;i++){const x=14+i*.43;box(right,x,.88,4.45,.38,1.55,.16,cloth[i%cloth.length],"exterior-pavement-textile-rack");for(let j=0;j<6;j++)box(right,x,.25+j*.22,4.55,.36,.025,.025,"exteriorOchre","exterior-textile-rack-stripe");}box(right,15.5,.7,4.45,3.5,1.4,.25,"carvedTimber","exterior-textile-rack-collision",true);
  box(right,15.5,1.72,4.43,3.5,.07,.16,"carvedTimber","exterior-textile-rack-top-rail");
- const upper=model("RightUpper");box(upper,17.9,4.97,.2,13.1,2.2,5.8,"agedBrick","exterior-upper-brick-shell",true);
- for(let i=0;i<6;i++){const x=12.3+i*2.2;window(upper,x,5.05,3.16,1.3,1.28);box(upper,x,5.16,3.3,.09,2.15,.15,"carvedTimber","exterior-upper-timber-upright");}
- for(const y of [4.02,5.98])box(upper,17.9,y,3.24,13.15,.13,.2,"carvedTimber","exterior-upper-timber-band");tiledRoof(upper,17.9,.2,6.15,14.4,7.2,1.5);
- const road=model("Road");box(road,0,.027,20,5.25,.025,40,"exteriorRoad","exterior-worn-grey-road");for(const s of [-1,1]){box(road,s*5.7,.019,20,6.1,.016,40,"exteriorPaving","exterior-brick-pedestrian-margin");for(let i=0;i<23;i++)if(i%4!==0)box(road,s*2.45,.044,1.5+i*1.6,.065,.005,.85,"exteriorMark","exterior-faded-road-edge");}
- // A continuous forecourt joins both storefront rows; lane at x=-20 stays open.
- box(road,0,.02,7.5,57,.018,7,"exteriorPaving","exterior-shop-forecourt");box(road,0,.035,7.5,5.25,.014,7.1,"exteriorRoad","exterior-road-through-forecourt");
+ const upper=model("RightUpper");box(upper,17.9,4.97,1.1,13.1,2.2,4.7,"agedBrick","exterior-upper-brick-shell",true);
+ for(let i=0;i<6;i++){const x=12.3+i*2.2;window(upper,x,5.05,3.5,1.3,1.28);box(upper,x,5.16,3.65,.09,2.15,.15,"carvedTimber","exterior-upper-timber-upright");}
+ for(const y of [4.02,5.98])box(upper,17.9,y,3.6,13.15,.13,.2,"carvedTimber","exterior-upper-timber-band");tiledRoof(upper,17.9,1.1,6.15,14.4,6,1.5);
+ const road=model("Road"),line=exteriorPlan.roadCentreline,widths=exteriorPlan.roadWidths;
+ // Reuse ground batches (no new material/shadow system). Short sections gently
+ // bend and taper; unequal pedestrian strips replace the 57 m forecourt slab.
+ for(let i=1;i<line.length;i++){
+  const a=line[i-1],b=line[i],length=Math.hypot(b[0]-a[0],b[1]-a[1]),yaw=Math.atan2(b[0]-a[0],b[1]-a[1]);
+  box(road,(a[0]+b[0])/2,.027,(a[1]+b[1])/2,(widths[i-1]+widths[i])/2,.025,length+.03,"exteriorRoad","exterior-irregular-road",false,yaw);
+  for(let j=1;j<length;j+=2.4){const t=j/length,w=(widths[i-1]*(1-t)+widths[i]*t)/2;for(const side of [-1,1])if((i+Math.floor(j))%4!==0)box(road,a[0]*(1-t)+b[0]*t+side*(w-.1),.043,a[1]*(1-t)+b[1]*t,.05,.005,.65,"exteriorMark","exterior-faded-road-edge",false,yaw);}
+ }
+ for(const [x,z,w,d]of [[-4.1,4.5,4.4,8],[-14,4.6,10,2],[-6,15,6,18],[-17.3,14.5,3.2,18],[-2.7,31,3,18],[3.8,15,3.5,22],[8.8,1.7,7,1.4],[3.4,33,2.6,14]])box(road,x,.019,z,w,.016,d,"exteriorPaving","exterior-asymmetric-pedestrian-margin");
  const props=model("StreetProps");board(props,-4.2,5.2);board(props,4.2,6.4,.62);
- for(const [x,z]of [[-21,8],[26,5]]){profile(props,x,0,z,[[.11,0],[.09,7.8],[0,7.8]],"neutral","exterior-utility-pole",8);box(props,x+.2,7.4,z,.6,.1,.18,"neutral","exterior-streetlight");box(props,x,.65,z,.5,1.3,.4,"exteriorTeal","exterior-utility-box",true);}
+ for(const [x,z]of [[-16.3,6.5],[12.5,4]]){profile(props,x,0,z,[[.11,0],[.09,7.8],[0,7.8]],"neutral","exterior-utility-pole",8);box(props,x+.2,7.4,z,.6,.1,.18,"neutral","exterior-streetlight");box(props,x,.65,z,.5,1.3,.4,"exteriorTeal","exterior-utility-box",true);}
  // Sagging wire built from a few thin straight segments in the gate-local frame.
- for(let i=0;i<12;i++){const x=-21+i*47/12,z=8-i*3/12,y=7.55-.5*Math.sin(i/12*Math.PI),nx=x+47/12,nz=z-3/12,ny=7.55-.5*Math.sin((i+1)/12*Math.PI);box(props,(x+nx)/2,(y+ny)/2,(z+nz)/2,Math.hypot(nx-x,nz-z),.018,.018,"carvedTimber","exterior-overhead-wire",false,Math.atan2(-(nz-z),nx-x),Math.atan2(ny-y,nx-x));}
- for(const [x,z,h]of [[-13,-4.8,7],[-19,-5.4,7.5],[-26,-3,6.5]]){profile(props,x,0,z,[[.22,0],[.17,h*.66],[0,h*.7]],"carvedTimber","exterior-tree-trunk",7);for(let j=0;j<6;j++){const a=j*2.4;profile(props,x+Math.cos(a)*1.2,h-2+(j%2)*.6,z+Math.sin(a),[[0,0],[1.45,.5],[1.7,1.15],[1.15,2.25],[0,2.7]],j%2?"exteriorLeaf":"exteriorLeafShade","exterior-tree-canopy",7);}}
- for(const [x,z]of [[25,6],[-27,6]]){box(props,x,.5,z,.8,1,.8,"exteriorTeal","exterior-street-bin",true);box(props,x,1.04,z,.87,.09,.87,"carvedTimber","exterior-bin-lid");}
+ for(let i=0;i<12;i++){const x=-16.3+i*28.8/12,z=6.5-i*2.5/12,y=7.55-.5*Math.sin(i/12*Math.PI),nx=x+28.8/12,nz=z-2.5/12,ny=7.55-.5*Math.sin((i+1)/12*Math.PI);box(props,(x+nx)/2,(y+ny)/2,(z+nz)/2,Math.hypot(nx-x,nz-z),.018,.018,"carvedTimber","exterior-overhead-wire",false,Math.atan2(-(nz-z),nx-x),Math.atan2(ny-y,nx-x));}
+ for(const [x,z,h]of [[-13,-4.8,7],[-16,17,7.5],[-16,23,6.5]]){profile(props,x,0,z,[[.22,0],[.17,h*.66],[0,h*.7]],"carvedTimber","exterior-tree-trunk",7);for(let j=0;j<6;j++){const a=j*2.4;profile(props,x+Math.cos(a)*1.2,h-2+(j%2)*.6,z+Math.sin(a),[[0,0],[1.45,.5],[1.7,1.15],[1.15,2.25],[0,2.7]],j%2?"exteriorLeaf":"exteriorLeafShade","exterior-tree-canopy",7);}}
+ for(const [x,z]of [[12,24],[-15.2,22]]){box(props,x,.5,z,.8,1,.8,"exteriorTeal","exterior-street-bin",true);box(props,x,1.04,z,.87,.09,.87,"carvedTimber","exterior-bin-lid");}
  // One static parked motorcycle silhouette, away from the circulation line.
  for(const z of [5.9,7.45]){shape(props,23.4,.38,z,Array.from({length:12},(_,i)=>[Math.cos(i*Math.PI/6)*.35,Math.sin(i*Math.PI/6)*.35] as [number,number]),.12,"recess","exterior-parked-wheel",Math.PI/2);}
  box(props,23.4,.67,6.7,.38,.3,1.35,"exteriorBlue","exterior-parked-motorcycle-body",true);box(props,23.4,.95,6.6,.42,.12,.75,"recess","exterior-motorcycle-seat");box(props,23.4,1.15,7.25,.8,.065,.08,"neutral","exterior-motorcycle-handlebar");
- // Keep geometry in world space, but give each editable assembly a useful local pivot.
- const assemblies=[left,shops,terrace,near,right,upper,road,props],pivots=[[-10.05,-.4],[-20,1.8],[-17.3,-1.1],[9.15,.2],[17.8,1.1],[17.9,.2],[0,20],[0,0]];
+ // Recompose complete buildings (including props/colliders), not camera facades.
+ reframe(near,exteriorPlan.nearSource,exteriorPlan.nearCentre,exteriorPlan.rightTurn);
+ for(const m of [right,upper])reframe(m,exteriorPlan.rightSource,exteriorPlan.rightCentre,exteriorPlan.rightTurn);
+ reframe(deeper,exteriorPlan.leftDepthSource,exteriorPlan.leftDepthCentre,exteriorPlan.leftTurn,2.1);
+ reframe(greenRoof,exteriorPlan.leftDepthSource,[-11.8,10],exteriorPlan.leftTurn);
+ deeper.boxes.push(...greenRoof.boxes);deeper.roofs.push(...greenRoof.roofs);
+ reframe(terrace,[-17.3,-1.1],exteriorPlan.leftTerraceCentre,exteriorPlan.leftTurn);
+ // The existing parked motorcycle follows the shop range; no props remain at its old frontage.
+ const bike=(role:string)=>role.startsWith("exterior-parked-")||role.startsWith("exterior-motorcycle-");
+ reframe(props,exteriorPlan.rightSource,[9,13.9],exteriorPlan.rightTurn,1,bike,false);
+ const assemblies=[left,shops,deeper,terrace,near,right,upper,road,props];
+ const pivots:[number,number][]=[[-10.05,-.4],[-16.1,1],exteriorPlan.leftDepthCentre,exteriorPlan.leftTerraceCentre,exteriorPlan.nearCentre,exteriorPlan.rightCentre,exteriorPlan.rightCentre,[0,20],[0,7]];
  assemblies.forEach((m,i)=>{const p=exteriorPoint(pivots[i][0],0,pivots[i][1]);m.origin=[p[0],p[2]];});
  return assemblies;
 }
