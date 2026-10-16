@@ -1,8 +1,10 @@
+import {OldManReactions,reactiveVoicePaths,type VoicePlayer} from './old-man-reactions.ts';
 import {OldManVoiceTiming,oldManVoiceConfig,type OldManVoiceActor} from './old-man-voice.ts';
 import manifest from '../../../public/assets/audio/manifest.json' with {type:'json'};
 import {audioConfig} from './audio-config.ts';
 import {chooseVariation} from './foot-contacts.ts';
 import type {FootstepSurface} from './audio-surfaces.ts';
+const npcVoicePaths={...oldManVoiceConfig.paths,...reactiveVoicePaths};
 /** One owner per mounted game. Buffers are cached; only actual impacts allocate one-shot voices. */
 export class GameAudioEngine {
  private context:AudioContext|null=null;
@@ -13,6 +15,7 @@ export class GameAudioEngine {
  private ambience:AudioBufferSourceNode|null=null;
  private voices=new Set<{source:AudioBufferSourceNode;gain:GainNode}>();
  private last:Record<FootstepSurface,number>={'brick-stone':-1,wood:-1};
+ private npcReactions=new OldManReactions();
  private npcTiming=new OldManVoiceTiming();
  private npcLoading:Promise<void>|null=null;
  private npcVoice:{id:string;source:AudioBufferSourceNode;gain:GainNode;panner:PannerNode}|null=null;
@@ -41,12 +44,12 @@ export class GameAudioEngine {
   const voice={source,gain};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
  }
  private async loadNpcVoices(context:AudioContext){
-  await Promise.all(Object.values(oldManVoiceConfig.paths).map(async path=>{
+  await Promise.all(Object.values(npcVoicePaths).map(async path=>{
    const response=await fetch(path,{signal:this.abort.signal});if(!response.ok)throw Error('NPC audio '+response.status);
    const buffer=await context.decodeAudioData(await response.arrayBuffer());if(!this.disposed)this.buffers.set(path,buffer);
   }));
  }
- updateOldManVoices(actors:OldManVoiceActor[],position:{x:number;y:number;z:number},forward:{x:number;y:number;z:number},up:{x:number;y:number;z:number}){
+ updateOldManVoices(actors:OldManVoiceActor[],position:{x:number;y:number;z:number},forward:{x:number;y:number;z:number},up:{x:number;y:number;z:number},player?:VoicePlayer){
   const context=this.context;if(this.disposed||!context||context.state!=='running')return;
   const listener=context.listener;
   listener.positionX.value=position.x;listener.positionY.value=position.y;listener.positionZ.value=position.z;
@@ -54,11 +57,13 @@ export class GameAudioEngine {
   listener.upX.value=up.x;listener.upY.value=up.y;listener.upZ.value=up.z;
   const active=this.npcVoice;
   if(active){const actor=actors.find(a=>a.id===active.id);if(actor){active.panner.positionX.value=actor.position.x;active.panner.positionY.value=actor.position.y;active.panner.positionZ.value=actor.position.z;}else{active.source.stop();}}
-  const ready=Object.values(oldManVoiceConfig.paths).every(path=>this.buffers.has(path));
-  const opportunity=this.npcTiming.next(context.currentTime,actors,!!this.npcVoice||!ready);
+  const ready=Object.values(npcVoicePaths).every(path=>this.buffers.has(path));
+  const reaction=player?this.npcReactions.next(context.currentTime,actors,player,!!this.npcVoice||!ready):null;
+  const scheduled=this.npcTiming.next(context.currentTime,actors,!!this.npcVoice||!ready||!!reaction);
+  const opportunity=reaction??scheduled;
   if(!opportunity)return;
   const actor=actors.find(a=>a.id===opportunity.id)!,source=context.createBufferSource(),gain=context.createGain(),panner=context.createPanner();
-  source.buffer=this.buffers.get(oldManVoiceConfig.paths[opportunity.kind])!;
+  source.buffer=this.buffers.get(npcVoicePaths[opportunity.kind])!;
   gain.gain.value=oldManVoiceConfig.gain;panner.panningModel='HRTF';panner.distanceModel='linear';panner.refDistance=oldManVoiceConfig.refDistance;panner.maxDistance=oldManVoiceConfig.maxDistance;panner.rolloffFactor=1;
   panner.positionX.value=actor.position.x;panner.positionY.value=actor.position.y;panner.positionZ.value=actor.position.z;
   source.connect(gain).connect(panner).connect(context.destination);this.npcVoice={id:actor.id,source,gain,panner};

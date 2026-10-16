@@ -45,8 +45,8 @@ test('one gesture-owned ambience survives repeated unlocks; one-shots randomize 
   const engine=new GameAudioEngine(()=>{contexts++;return context;});assert.equal(contexts,0);
   await Promise.all([engine.unlock(),engine.unlock()]);await engine.unlock();assert.equal(contexts,1);assert.equal(sources.filter(s=>s.loop).length,1);
   engine.footstep('brick-stone',false);engine.footstep('wood',true);assert.equal(sources.length,3);assert.ok(sources.slice(1).every(s=>s.started&&s.playbackRate.value>=.98&&s.playbackRate.value<=1.02));assert.equal(gains[0].gain.value,.12*1.25);
-  assert.ok(Math.abs(audioConfig.footstepGain-.6*.75)<1e-12);assert.ok(Math.abs(audioConfig.runFootstepMultiplier-.7/.6)<1e-12);
-  for(const [i,base]of [[1,.6*.75],[2,.7*.75]])assert.ok(gains[i].gain.value>=base*.94-1e-12&&gains[i].gain.value<=base*1.06+1e-12);
+  assert.ok(Math.abs(audioConfig.footstepGain-.32)<1e-12);assert.ok(Math.abs(audioConfig.runFootstepMultiplier-.7/.6)<1e-12);
+  for(const [i,base]of [[1,.32],[2,.32*(7/6)]])assert.ok(gains[i].gain.value>=base*.94-1e-12&&gains[i].gain.value<=base*1.06+1e-12);
   engine.stopSteps();assert.ok(sources.slice(1).every(s=>s.stopped));assert.ok(!sources[0].stopped);
   engine.dispose();engine.dispose();await engine.unlock();assert.equal(closed,1);assert.ok(sources[0].stopped);assert.equal(contexts,1);
  }finally{globalThis.fetch=original;}
@@ -62,15 +62,15 @@ test('a downward physics hit selects wood on a material-owned deck and masonry a
 
 import {OldManVoiceTiming,oldManVoiceConfig} from '../src/game/audio/old-man-voice.ts';
 test('old-man voice opportunities discard walking/busy starts, serialize actors and retain cooldown',()=>{
- const timing=new OldManVoiceTiming(()=>0),actors=['a','b'].map(id=>({id,state:'IDLE',position:{x:1,y:2,z:3}}));
+ const timing=new OldManVoiceTiming(()=>0),actors=['a','b'].map(id=>({id,state:'IDLE',position:{x:1,y:2,z:3}})),knee=oldManVoiceConfig.knee[0];
  assert.equal(timing.next(0,actors,false),null);
- assert.equal(timing.next(34,actors,false),null);
- assert.deepEqual(timing.next(35,actors,false),{id:'a',kind:'knee'});
- assert.equal(timing.next(70,actors,true),null,'no second voice during playback');
- timing.ended(89);assert.equal(timing.next(90,actors,false),null,'singing suppressed by cooldown');
- actors.forEach(a=>a.state='WALKING');assert.equal(timing.next(105,actors,false),null);
- actors.forEach(a=>a.state='SITTING');assert.equal(timing.next(106,actors,false),null,'no queued voice on stopping');
- assert.deepEqual(timing.next(140,actors,false),{id:'a',kind:'knee'});
- const other=new OldManVoiceTiming(()=>.999);other.next(0,actors,false);assert.equal(other.next(35,actors,false),null);
- assert.equal(oldManVoiceConfig.gain,.045);assert.equal(oldManVoiceConfig.maxDistance,12);
+ assert.equal(timing.next(knee-1,actors,false),null);
+ assert.deepEqual(timing.next(knee,actors,false),{id:'a',kind:'knee'});
+ assert.equal(timing.next(knee*2,actors,true),null,'no second voice during playback');
+ timing.ended(knee*2);assert.equal(timing.next(knee*2+1,actors,false),null);
+ actors.forEach(a=>a.state='WALKING');assert.equal(timing.next(knee*10,actors,false),null);
+ actors.forEach(a=>a.state='SITTING');assert.equal(timing.next(knee*10+1,actors,false),null,'no queued voice on stopping');
+ assert.deepEqual(timing.next(knee*11+1,actors,false),{id:'a',kind:'knee'});
+ const other=new OldManVoiceTiming(()=>.999);other.next(0,actors,false);assert.equal(other.next(knee,actors,false),null);
+ assert.equal(oldManVoiceConfig.gain,.060);assert.equal(oldManVoiceConfig.maxDistance,12);
 });

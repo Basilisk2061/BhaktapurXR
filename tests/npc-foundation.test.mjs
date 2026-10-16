@@ -36,7 +36,7 @@ test('four configured agents desynchronize, reserve separate seats, sit and resu
 });
 
 test('player occupancy blocks NPC advance and seat selection',()=>{
- const sim=new NpcSimulation(graph,span,probe,[npcInstances[2]]),a=sim.agents[0];a.state='WALKING';a.target=graph.nodes[(a.node+1)%graph.nodes.length].point.clone();const player=a.position.clone().add(a.target.clone().sub(a.position).normalize().multiplyScalar(.7));assert.equal(sim.displacement(a,1/60,player).length(),0);
+ const sim=new NpcSimulation(graph,span,probe,[npcInstances[2]]),a=sim.agents[0];a.state='WALKING';a.target=graph.nodes[(a.node+1)%graph.nodes.length].point.clone();const player=a.position.clone().add(a.target.clone().sub(a.position).normalize().multiplyScalar(.7));assert.equal(sim.displacement(a,1/60,player).length(),0);assert.ok(sim.displacement(a,1/60,new Vector3(-1000,0,-1000)).length()>0,'resume once the player clears the path');
 });
 
 test('Mixamo role retargeting validates parent chains, normalizes rotations and preserves source clip',()=>{

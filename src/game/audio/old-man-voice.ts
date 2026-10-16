@@ -1,6 +1,6 @@
 export const oldManVoiceConfig={
  knee:[35,70],sing:[90,180],cooldown:12,settle:3,
- gain:.045,refDistance:2,maxDistance:12,
+ gain:.060,refDistance:2,maxDistance:12,
  paths:{knee:'/assets/audio/npc/old-man-knee-pain.mp3',sing:'/assets/audio/npc/old-man-resham-firiri.mp3'},
 } as const;
 export type VoiceKind=keyof typeof oldManVoiceConfig.paths;

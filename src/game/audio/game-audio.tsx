@@ -33,7 +33,7 @@ export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runt
    return actor&&head?[{id,state:actor.userData.state as string,position:head.getWorldPosition(voiceVectors.heads[i])}]:[];
   });
   camera.getWorldPosition(voiceVectors.position);camera.getWorldDirection(voiceVectors.forward);voiceVectors.up.set(0,1,0).applyQuaternion(camera.quaternion);
-  engine.current.updateOldManVoices(actors,voiceVectors.position,voiceVectors.forward,voiceVectors.up);
+  engine.current.updateOldManVoices(actors,voiceVectors.position,voiceVectors.forward,voiceVectors.up,{position:runtime.current.nextPosition,running:runtime.current.grounded&&!runtime.current.flying&&!runtime.current.seat&&runtime.current.movement==='RUN'});
  });
  return <ContactAudio.Provider value={enabled?contact:null}>{children}</ContactAudio.Provider>;
 }
