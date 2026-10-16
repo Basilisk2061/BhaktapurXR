@@ -13,14 +13,14 @@ export const exteriorPlan={
  classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",
  rightTurn:-Math.PI/2,rightSource:[17.9,1.1] as [number,number],rightCentre:[8,13.9] as [number,number],
  nearSource:[9.15,.2] as [number,number],nearCentre:[9,4.9] as [number,number],
- leftTurn:Math.PI/3,leftDepthSource:[-24.5,2.1] as [number,number],leftDepthCentre:[-26,4] as [number,number],
- leftCommercialCentre:[-16.8,-.7] as [number,number],leftTerraceCentre:[-16.8,-1] as [number,number],
+ leftTurn:Math.PI*2/9,leftDepthSource:[-24.5,2.1] as [number,number],leftDepthCentre:[-30.4,3.5] as [number,number],
+ leftCommercialCentre:[-17.9,-2.2] as [number,number],leftTerraceCentre:[-17.9,-2.5] as [number,number],
  roadCentreline:[[0,0],[.12,6],[-.45,16],[.1,28],[.65,40]] as [number,number][],roadWidths:[3.8,3.7,3.4,3.6,3.5],
 };
 export function exteriorPoint(x:number,y:number,z:number):[number,number,number]{const {origin,yaw}=exteriorFrame;return [origin[0]+x*Math.cos(yaw)+z*Math.sin(yaw),y,origin[1]-x*Math.sin(yaw)+z*Math.cos(yaw)];}
 export const exteriorReplacedIds=new Set(["edge:khauma-south-flank:1159661606","edge:western-approach-low-roofs:1159661608","edge:western-approach-low-roofs:1159672142","edge:western-approach-low-roofs:1159672143"]);
 export const exteriorEvidence={classification:"PHOTO_INFERRED",references:["Screenshot 2026-10-16 123805.png","Screenshot 2026-10-16 123816.png","Screenshot 2026-10-16 123826.png"],dimensions:"APPROXIMATE",limitations:"No survey solution. Rear shells, shop depth, merchandise counts and street continuation inferred; neutral signage, no business identities asserted."};
-export const exteriorNames={LeftTraditional:"Khauma exterior / left traditional building",LeftShops:"Khauma exterior / low left commercial cluster",LeftLaneShops:"Khauma exterior / green storefront beside lane",LeftTerrace:"Khauma exterior / restaurant terrace",RightGateShop:"Khauma exterior / gate-side shop",RightCommercial:"Khauma exterior / right shop bays",RightUpper:"Khauma exterior / brick-timber upper storey",Road:"Khauma exterior / roadway and brick margins",StreetProps:"Khauma exterior / street furniture and greenery"};
+export const exteriorNames={LeftTraditional:"Khauma exterior / left traditional building",LeftShops:"Khauma exterior / low left commercial cluster",LeftLaneShops:"Khauma exterior / green commercial range",LeftUrbanContext:"Khauma exterior / older brick commercial frontage",LeftTerrace:"Khauma exterior / restaurant terrace",RightGateShop:"Khauma exterior / gate-side shop",RightCommercial:"Khauma exterior / right shop bays",RightUpper:"Khauma exterior / brick-timber upper storey",Road:"Khauma exterior / roadway and brick margins",StreetProps:"Khauma exterior / street furniture and greenery"};
 function model(key:keyof typeof exteriorNames):CentralModel{return {id:`entrance:KhaumaExterior_${key}`,anchorId:"APPROVED_KHAUMA_GATE",origin:[...exteriorFrame.origin],yaw:exteriorFrame.yaw,accuracy:"PHOTO_INFERRED",neutral:false,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};}
 function tiledRoof(m:CentralModel,x:number,z:number,y:number,w:number,d:number,rise:number){m.roofs.push({position:exteriorPoint(x,y,z),width:w,depth:d,rise,yaw:m.yaw,material:"roof",role:"exterior-tile-roof"});box(m,x,y-.08,z,w,.17,d,"carvedTimber","exterior-deep-eave");for(let i=0;i<w/.6;i++)box(m,x-w/2+.2+i*.6,y-.24,z+d/2-.35,.1,.4,.65,"carvedTimber","exterior-eave-bracket");}
 function window(m:CentralModel,x:number,y:number,z:number,w=1.05,h=1.25){box(m,x,y,z,w,h,.12,"recess","exterior-window-recess");for(const s of [-1,1])box(m,x+s*w/2,y,z+.1,.11,h+.22,.18,"carvedTimber","exterior-window-frame");for(const dy of [-h/2,h/2])box(m,x,y+dy,z+.12,w+.25,.12,.2,"carvedTimber","exterior-window-lintel");for(let i=1;i<7;i++)box(m,x-w/2+i*w/7,y,z+.17,.025,h,.035,"carvedTimber","exterior-lattice");for(let i=1;i<6;i++)box(m,x,y-h/2+i*h/6,z+.18,w,.026,.03,"carvedTimber","exterior-lattice");}
@@ -74,14 +74,20 @@ export function buildKhaumaExterior(){
  tiledRoof(shops,-16.1,1.95,3.1,5.9,1.8,.35);display(shops,-16.1,1.28,3.8);board(shops,-17.4,2.7);
  box(shops,-16.1,1.61,1.35,.16,2.74,.2,"carvedTimber","exterior-left-shop-centre-post",true);
  for(const b of shops.boxes)if(b.role==="exterior-pale-sign-band"){b.position[1]=3.3;b.size[1]=.4;}
- // Opposite side of a visible pedestrian lane, not a stretched foreground range.
- const deeper=model("LeftLaneShops");shop(deeper,-24.5,2.1,5.4,2.45,"exteriorTeal");
- for(const x of [-26.2,-24.5,-22.8])box(deeper,x,1.55,4.5,.16,2.4,.15,"exteriorTeal","exterior-painted-photo-front-frame");
- tiledRoof(deeper,-24.5,2.1,3.15,6,5.4,.55);
- for(const b of deeper.boxes)if(b.role==="exterior-pale-sign-band"){b.position[1]=3.05;b.size[1]=.45;}
- // Modest 3.29 m shell depth. All opening, roof and collider pieces follow it.
- for(const b of [...deeper.boxes,...deeper.colliders]){const q=exteriorLocal(b.position);b.position=exteriorPoint(q[0],q[1],2.1+(q[2]-2.1)*.7);b.size[2]*=.7;}
- for(const r of deeper.roofs){const q=exteriorLocal(r.position);r.position=exteriorPoint(q[0],q[1],2.1+(q[2]-2.1)*.7);r.depth*=.7;}
+ // One continuous low range: three commercial bays share a roof and platform edge.
+ const deeper=model("LeftLaneShops");
+ for(const x of [-28.3,-24.5,-20.7]){
+  shop(deeper,x,2.1,3.8,2.55,"exteriorTeal");
+  box(deeper,x,.62,4.5,3.1,.68,.12,"exteriorTeal","exterior-green-window-stall-base");
+ }
+ for(const b of deeper.boxes){if(b.role==="exterior-pale-sign-band"){b.position[1]=3.15;b.size[1]=.5;}if(/shop-jamb|shop-lintel/.test(b.role))b.material="exteriorTeal";}
+ tiledRoof(deeper,-24.5,2.1,3.3,12.1,5.7,.6);
+ // Limited older frontage joins the green range; no distant city expansion.
+ const urban=model("LeftUrbanContext");shop(urban,-41.2,6.2,9.5,2.8,"agedBrick");
+ box(urban,-42,4.63,5.8,8,2.85,6.2,"agedBrick","exterior-older-upper-storey",true);
+ for(const x of [-44.6,-42,-39.4])window(urban,x,4.65,8.98,1.2,1.25);
+ tiledRoof(urban,-42,5.8,6.15,9.2,7,.85);tiledRoof(urban,-37.1,6.3,3.4,2.2,5.3,.45);
+ for(let i=0;i<6;i++)box(urban,-44.8+i*1.2,1.35,8.74,.65,1.65,.07,cloth[i%cloth.length],"exterior-older-textile-display");
  const terrace=model("LeftTerrace");
  box(terrace,-17.3,3.65,-1.1,6.7,.28,5.2,"redMasonry","exterior-terrace-floor",true);
  for(const z of [-3.55,1.35]){box(terrace,-17.3,4,z,6.7,.45,.18,"agedBrick","exterior-terrace-parapet",true);for(let i=0;i<10;i++)box(terrace,-20.4+i*.68,4.4,z,.055,.8,.055,"exteriorLeaf","exterior-terrace-rail");box(terrace,-17.3,4.8,z,6.7,.055,.07,"exteriorLeaf","exterior-terrace-handrail");}
@@ -103,9 +109,9 @@ export function buildKhaumaExterior(){
  }
  for(const [x,z,w,d]of [[-4.1,4.5,4.4,8],[-14,4.6,10,2],[-6,15,6,18],[-17.3,14.5,3.2,18],[-2.7,31,3,18],[3.8,15,3.5,22],[8.8,1.7,7,1.4],[3.4,33,2.6,14]])box(road,x,.019,z,w,.016,d,"exteriorPaving","exterior-asymmetric-pedestrian-margin");
  const props=model("StreetProps");board(props,-4.2,5.2);board(props,4.2,6.4,.62);
- for(const [x,z]of [[-16.3,6.5],[12.5,4]]){profile(props,x,0,z,[[.11,0],[.09,7.8],[0,7.8]],"neutral","exterior-utility-pole",8);box(props,x+.2,7.4,z,.6,.1,.18,"neutral","exterior-streetlight");box(props,x,.65,z,.5,1.3,.4,"exteriorTeal","exterior-utility-box",true);}
+ for(const [x,z]of [[-15.1,6.5],[12.5,4]]){profile(props,x,0,z,[[.11,0],[.09,7.8],[0,7.8]],"neutral","exterior-utility-pole",8);box(props,x+.2,7.4,z,.6,.1,.18,"neutral","exterior-streetlight");box(props,x,.65,z,.5,1.3,.4,"exteriorTeal","exterior-utility-box",true);}
  // Sagging wire built from a few thin straight segments in the gate-local frame.
- for(let i=0;i<12;i++){const x=-16.3+i*28.8/12,z=6.5-i*2.5/12,y=7.55-.5*Math.sin(i/12*Math.PI),nx=x+28.8/12,nz=z-2.5/12,ny=7.55-.5*Math.sin((i+1)/12*Math.PI);box(props,(x+nx)/2,(y+ny)/2,(z+nz)/2,Math.hypot(nx-x,nz-z),.018,.018,"carvedTimber","exterior-overhead-wire",false,Math.atan2(-(nz-z),nx-x),Math.atan2(ny-y,nx-x));}
+ for(let i=0;i<12;i++){const x=i===0?-15.1:-16.3+i*28.8/12,z=6.5-i*2.5/12,y=7.55-.5*Math.sin(i/12*Math.PI),nx=i===0?-13.9:x+28.8/12,nz=z-2.5/12,ny=7.55-.5*Math.sin((i+1)/12*Math.PI);box(props,(x+nx)/2,(y+ny)/2,(z+nz)/2,Math.hypot(nx-x,nz-z),.018,.018,"carvedTimber","exterior-overhead-wire",false,Math.atan2(-(nz-z),nx-x),Math.atan2(ny-y,nx-x));}
  for(const [x,z,h]of [[-13,-4.8,7],[-21,-5.5,7.5],[-35,-8,6.5]]){profile(props,x,0,z,[[.22,0],[.17,h*.66],[0,h*.7]],"carvedTimber","exterior-tree-trunk",7);for(let j=0;j<6;j++){const a=j*2.4;profile(props,x+Math.cos(a)*1.2,h-2+(j%2)*.6,z+Math.sin(a),[[0,0],[1.45,.5],[1.7,1.15],[1.15,2.25],[0,2.7]],j%2?"exteriorLeaf":"exteriorLeafShade","exterior-tree-canopy",7);}}
  for(const [x,z]of [[12,24],[-18,-4.4]]){box(props,x,.5,z,.8,1,.8,"exteriorTeal","exterior-street-bin",true);box(props,x,1.04,z,.87,.09,.87,"carvedTimber","exterior-bin-lid");}
  // One static parked motorcycle silhouette, away from the circulation line.
@@ -114,23 +120,20 @@ export function buildKhaumaExterior(){
  // Recompose complete buildings (including props/colliders), not camera facades.
  reframe(near,exteriorPlan.nearSource,exteriorPlan.nearCentre,exteriorPlan.rightTurn);
  for(const m of [right,upper])reframe(m,exteriorPlan.rightSource,exteriorPlan.rightCentre,exteriorPlan.rightTurn);
+ reframe(urban,[-41.2,6.2],[-41.2,6.2],Math.PI/4);
  reframe(shops,[-16.1,-1],exteriorPlan.leftCommercialCentre,0,1.25);
  reframe(deeper,exteriorPlan.leftDepthSource,exteriorPlan.leftDepthCentre,exteriorPlan.leftTurn);
- // Approximate low rear boundary frames the lane continuation, without another building.
- const laneWall=model("LeftLaneShops"),a:[number,number]=[-19.1,-3.4],b:[number,number]=[-30.5,-10.5];
- box(laneWall,(a[0]+b[0])/2,.6,(a[1]+b[1])/2,Math.hypot(b[0]-a[0],b[1]-a[1]),1.2,.22,"agedBrick","exterior-left-lane-rear-boundary",true,-Math.atan2(b[1]-a[1],b[0]-a[0]));
- deeper.boxes.push(...laneWall.boxes);deeper.colliders.push(...laneWall.colliders);
  reframe(terrace,[-17.3,-1.1],exteriorPlan.leftTerraceCentre,0,.98);
  // The existing parked motorcycle follows the shop range; no props remain at its old frontage.
  const bike=(role:string)=>role.startsWith("exterior-parked-")||role.startsWith("exterior-motorcycle-");
  reframe(props,exteriorPlan.rightSource,[9,13.9],exteriorPlan.rightTurn,1,bike,false);
- const assemblies=[left,shops,deeper,terrace,near,right,upper,road,props];
- const pivots:[number,number][]=[[-10.05,-.4],exteriorPlan.leftCommercialCentre,exteriorPlan.leftDepthCentre,exteriorPlan.leftTerraceCentre,exteriorPlan.nearCentre,exteriorPlan.rightCentre,exteriorPlan.rightCentre,[0,20],[0,7]];
+ const assemblies=[left,shops,deeper,terrace,near,right,upper,road,props,urban];
+ const pivots:[number,number][]=[[-10.05,-.4],exteriorPlan.leftCommercialCentre,exteriorPlan.leftDepthCentre,exteriorPlan.leftTerraceCentre,exteriorPlan.nearCentre,exteriorPlan.rightCentre,exteriorPlan.rightCentre,[0,20],[0,7],[-41.2,6.2]];
  assemblies.forEach((m,i)=>{const p=exteriorPoint(pivots[i][0],0,pivots[i][1]);m.origin=[p[0],p[2]];});
  return assemblies;
 }
 export const khaumaExteriorReviews={
  "khauma-exterior-front":{position:exteriorPoint(0,1.65,14),target:exteriorPoint(0,3.3,0),fov:66},
- "khauma-exterior-left":{position:exteriorPoint(-2,1.65,11),target:exteriorPoint(-16,2.8,0),fov:62},
+ "khauma-exterior-left":{position:exteriorPoint(-8,1.9,13),target:exteriorPoint(-18.5,2.6,0),fov:68},
  "khauma-exterior-right":{position:exteriorPoint(0,1.65,14),target:exteriorPoint(17,3.1,1),fov:66},
 };

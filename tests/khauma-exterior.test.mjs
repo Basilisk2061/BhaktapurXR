@@ -27,14 +27,14 @@ test('approved right assemblies, road, props and right review remain byte-identi
  const props=exterior.find(m=>m.id.endsWith('_StreetProps')),rightProps=Object.fromEntries(['boxes','profiles','shapes','roofs','colliders'].map(k=>[k,props[k].filter(p=>exteriorLocal(p.position)[0]>=0)]));
  assert.equal(createHash('sha256').update(JSON.stringify(rightProps)).digest('hex'),'549fceb3d0df2acfa3df1558dbb2e14320639076f7eda6a56f84a315540bb88c');
 });
-test('nine deterministic photo-inferred assemblies replace exterior proxies and remain independently editable',()=>{
- assert.deepEqual(buildKhaumaExterior(),exterior);assert.equal(exterior.length,9);
+test('ten deterministic photo-inferred assemblies replace exterior proxies and remain independently editable',()=>{
+ assert.deepEqual(buildKhaumaExterior(),exterior);assert.equal(exterior.length,10);
  const registry=getEditableRegistry();for(const m of exterior){assert.equal(m.accuracy,'PHOTO_INFERRED');assert.equal(edge.models.filter(n=>n.id===m.id).length,1);assert(registry.some(e=>e.id===m.id&&e.classification==='PHOTO_INFERRED'));}
  for(const id of exteriorReplacedIds)assert(!edge.models.some(m=>m.id===id));
- for(const [kind,budget]of Object.entries({boxes:628,profiles:248,shapes:15,roofs:6,colliders:69}))assert(exterior.reduce((n,m)=>n+m[kind].length,0)<=budget,kind+' budget');
+ for(const [kind,budget]of Object.entries({boxes:760,profiles:248,shapes:15,roofs:8,colliders:96}))assert(exterior.reduce((n,m)=>n+m[kind].length,0)<=budget,kind+' budget');
  for(const [id,c]of Object.entries(khaumaExteriorReviews)){assert.equal(resolveKhaumaAxisReview(id,true),id);assert.equal(resolveKhaumaAxisReview(id,false),null);assert(c.position.every(Number.isFinite));}
 });
-test('gate stays frozen; compact green storefront and red terrace cluster frame a real lane',()=>{
+test('gate stays frozen; wide connected green frontage and red terrace cluster frame a real lane',()=>{
  assert.deepEqual(overrides['khauma-gate'],{position:[-121.53684759946469,0,-34.285908249582874],rotation:[Math.PI,-1.5163246617599573,Math.PI],scale:[1,1,1]});
  const byId=key=>exterior.find(m=>m.id===`entrance:KhaumaExterior_${key}`);
  const localOrigin=m=>exteriorLocal([m.origin[0],0,m.origin[1]]);
@@ -42,10 +42,16 @@ test('gate stays frozen; compact green storefront and red terrace cluster frame 
  assert(Math.abs(left.yaw-exteriorFrame.yaw)<1e-8);assert(Math.abs(localOrigin(left)[0]+10.05)<1e-6);
  assert(Math.abs(small.yaw-left.yaw)<1e-8);assert(small.boxes.filter(b=>b.role==='exterior-shop-platform').length===1);
  assert.equal(deep.yaw,left.yaw+exteriorPlan.leftTurn);assert(localOrigin(deep)[0]<localOrigin(small)[0]);
- const greenBase=deep.boxes.find(b=>b.role==='exterior-shop-platform'),redBase=small.boxes.find(b=>b.role==='exterior-shop-platform');
- assert(greenBase.size[0]<6&&greenBase.size[2]<3.6,'giant footprint removed');assert(deep.roofs.every(r=>r.position[1]+r.rise<4));
- const gx=exteriorLocal(greenBase.position)[0],greenRight=gx+Math.abs(Math.cos(exteriorPlan.leftTurn))*greenBase.size[0]/2+Math.abs(Math.sin(exteriorPlan.leftTurn))*greenBase.size[2]/2,redLeft=exteriorLocal(redBase.position)[0]-redBase.size[0]/2;
- assert(redLeft-greenRight>2&&redLeft-greenRight<4,'pedestrian lane between shops');
+ const greenBases=deep.boxes.filter(b=>b.role==='exterior-shop-platform'),redBase=small.boxes.find(b=>b.role==='exterior-shop-platform');
+ assert.equal(greenBases.length,3);assert(greenBases.reduce((n,b)=>n+b.size[0],0)>10.5,'substantially wider than rejected kiosk');assert(greenBases.every(b=>b.size[2]>=4.5&&b.size[2]<6));assert(deep.roofs.length===1&&deep.roofs[0].width>11);assert(deep.roofs.every(r=>r.position[1]+r.rise<=4));
+ const greenRight=Math.max(...greenBases.map(b=>exteriorLocal(b.position)[0]+Math.abs(Math.cos(exteriorPlan.leftTurn))*b.size[0]/2+Math.abs(Math.sin(exteriorPlan.leftTurn))*b.size[2]/2)),redLeft=exteriorLocal(redBase.position)[0]-redBase.size[0]/2;
+ assert(redLeft-greenRight>2&&redLeft-greenRight<4.5,'lane directly between connected blocks');
+ assert(Math.abs(deep.yaw-left.yaw)<Math.PI/3,'frontage faces approach rather than perpendicular range');
+ const urban=byId('LeftUrbanContext');assert(urban&&localOrigin(urban)[0]<localOrigin(deep)[0]);assert(urban.boxes.some(b=>b.role==='exterior-older-upper-storey'));assert(urban.roofs.length===2);
+ const edgeX=(b,side)=>exteriorLocal(b.position)[0]+side*(Math.abs(Math.cos(b.yaw-exteriorFrame.yaw))*b.size[0]/2+Math.abs(Math.sin(b.yaw-exteriorFrame.yaw))*b.size[2]/2);
+ const greenLeft=Math.min(...greenBases.map(b=>edgeX(b,-1))),urbanRight=Math.max(...urban.boxes.filter(b=>b.role==='exterior-shop-platform').map(b=>edgeX(b,1)));assert(Math.abs(greenLeft-urbanRight)<1.5,'older frontage closes the former detached-kiosk void');
+
+ const redRoofRight=Math.max(...small.roofs.map(r=>exteriorLocal(r.position)[0]+r.width/2)),houseRoofLeft=Math.min(...left.roofs.map(r=>exteriorLocal(r.position)[0]-r.width/2));assert(houseRoofLeft-redRoofRight>.25,'distinct commercial/traditional roof seam');
  assert(Math.abs(localOrigin(terrace)[0]-localOrigin(small)[0])<.1);assert.equal(terrace.yaw,small.yaw);assert(terrace.profiles.filter(p=>p.role==='exterior-terrace-umbrella').length===4);
  assert(localOrigin(terrace)[0]<localOrigin(left)[0]-4,'terrace belongs to red cluster');
  assert(!exterior.filter(m=>/KhaumaExterior_Left/.test(m.id)).some(m=>m.colliders.some(c=>{const p=exteriorLocal(c.position);return p[0]>-15&&p[0]<-8&&p[2]>8;})),'no old foreground colliders');
@@ -64,9 +70,9 @@ test('saved-transform physical scene permits gate round trip, exterior street an
  const cross=(a,b)=>{const from=exteriorPoint(a[0],.925,a[1]),to=exteriorPoint(b[0],.925,b[1]),dx=to[0]-from[0],dz=to[2]-from[2],length=Math.hypot(dx,dz),body=w.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(...from)),collider=w.createCollider(RAPIER.ColliderDesc.capsule(playerConfig.capsuleHalfSegment,playerConfig.radius),body),controller=createCharacterController(w,playerConfig),runtime=createPlayerRuntime();w.step();for(let i=0;i<Math.ceil(length/2.3*60)+10;i++){runtime.velocity.x=dx/length*2.3;runtime.velocity.z=dz/length*2.3;stepCharacter(body,collider,controller,runtime,1/60,playerConfig,-9.81,RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);w.step();}const p=body.translation(),progress=((p.x-from[0])*dx+(p.z-from[2])*dz)/length;w.removeCharacterController(controller);w.removeRigidBody(body);assert(progress>=length-.4,`blocked ${JSON.stringify([a,b])}: ${progress}/${length}`);};
  try{
   cross([0,-3],[0,15]);cross([0,15],[0,-3]);cross([0,14],[0,36]);
-  cross([-2,4.5],[-12,4.5]);cross([-12,4.5],[-15,2.2]);cross([-15,2.2],[-15,.7]);
-  cross([-15,4.5],[-21.6,6]);cross([-21.6,6],[-21.6,1]);cross([-21.6,1],[-26.5,-2]);cross([-26.5,-2],[-32.5,-6]);cross([-32.5,-6],[-26.5,-2]);cross([-26.5,-2],[-21.6,1]);cross([-21.6,1],[-21.6,6]);
-  cross([-21.6,6],[-23.7,5.3]);cross([-23.7,5.3],[-24.9,4.6]);cross([-24.9,4.6],[-21.6,6]);cross([-21.6,6],[-2,6]);
+  cross([-2,4.5],[-12,4.5]);cross([-12,4.5],[-17,1]);cross([-17,1],[-17,-.8]);
+  cross([-17,4.5],[-22.6,4]);cross([-22.6,4],[-23,0]);cross([-23,0],[-25.5,-4]);cross([-25.5,-4],[-28,-10]);cross([-28,-10],[-25.5,-4]);cross([-25.5,-4],[-23,0]);cross([-23,0],[-22.6,4]);
+  cross([-22.6,4],[-26,5]);cross([-26,5],[-28,5.5]);cross([-28,5.5],[-31,8.8]);cross([-31,8.8],[-34,11]);cross([-34,11],[-40,11]);cross([-40,11],[-34,11]);cross([-34,11],[-22.6,7]);cross([-22.6,7],[-2,7]);
   cross([2.8,1.8],[12.7,1.8]);cross([12.7,1.8],[2.8,1.8]);
   cross([2.8,6],[6,6]);cross([2.8,14],[5.5,14]);cross([3.8,9],[3.8,18]);
  const graph=pedestrianGraph(arcadeSeatSpans(overrides)[0],createNpcNavigationProbe(w,RAPIER));assert.equal(graph.nodes.length,58);assert.equal(graph.edges.length,143);
