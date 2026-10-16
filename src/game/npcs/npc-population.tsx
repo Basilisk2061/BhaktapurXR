@@ -15,7 +15,7 @@ import {pedestrianGraph,type NavigationProbe,type WalkGraph} from './navigation'
 import {npcDefinitions,npcInstances} from './definitions';
 import {NpcSimulation,type NpcAgent} from './behavior';
 import {npcAnimationLibrary} from './animation-library';
-import {npcHorizontalMovement} from './npc-collision';
+import {computeNpcMovement} from './npc-collision';
 const radius=.26;
 type ActorBinding={body:RapierRigidBody;controller:KinematicCharacterController};
 function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:ActorBinding|null)=>void}){
@@ -59,8 +59,8 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
    if(agent.state==='SITTING'){body.setNextKinematicTranslation({x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z});agent.actualSpeed=0;continue;}
    // Standing from a seat is a checked placement onto the same clear plaza exit as the player.
    const position=body.translation();if(Math.abs(position.y-definition.height/2-.015-agent.position.y)>.3){const next={x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z};body.setTranslation(next,true);body.setNextKinematicTranslation(next);}
-   const desired=simulation.displacement(agent,delta,playerPoint),collider=body.collider(0);controller.computeColliderMovement(collider,{x:desired.x,y:-.5*delta,z:desired.z},rapier.QueryFilterFlags.EXCLUDE_SENSORS);
-   const movement=controller.computedMovement(),horizontal=npcHorizontalMovement(desired,movement),current=body.translation();
+   const desired=simulation.displacement(agent,delta,playerPoint),collider=body.collider(0);
+   const movement=computeNpcMovement(controller,collider,{x:desired.x,y:-.5*delta,z:desired.z},rapier.QueryFilterFlags.EXCLUDE_SENSORS),horizontal=movement,current=body.translation();
    // This network is plaza-only: keep soles on its validated floor, never autostep onto plinths.
    const floor=graph.nodes.find(n=>n.id===agent.node)!.point.y;
    body.setNextKinematicTranslation({x:current.x+horizontal.x,y:Math.max(current.y+movement.y,floor+definition.height/2+.015),z:current.z+horizontal.z});const distance=Math.hypot(horizontal.x,horizontal.z);agent.walked+=distance;agent.actualSpeed=distance/delta;

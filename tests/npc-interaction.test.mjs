@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import RAPIER from '@dimforge/rapier3d-compat';
 import {OldManReactions} from '../src/game/audio/old-man-reactions.ts';
-import {npcHorizontalMovement} from '../src/game/npcs/npc-collision.ts';
+import {npcHorizontalMovement,computeNpcMovement} from '../src/game/npcs/npc-collision.ts';
 import {createCharacterController,stepCharacter} from '../src/game/player/character-physics.ts';
 import {playerConfig} from '../src/game/player/player-config.ts';
 import {createPlayerRuntime} from '../src/game/player/player-runtime.ts';
@@ -37,8 +37,7 @@ test('walk/sprint controller blocks against stable kinematic NPC; overlap correc
    runtime.grounded=true;w.step();
    for(let i=0;i<180;i++){
     runtime.velocity.x=speed;stepCharacter(body,collider,controller,runtime,1/60,playerConfig,-9.81,RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);
-    ncc.computeColliderMovement(nc,{x:0,y:-.008,z:0},RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);
-    const corrected=ncc.computedMovement(),horizontal=npcHorizontalMovement({x:0,z:0},corrected),p=npc.translation();npc.setNextKinematicTranslation({x:p.x+horizontal.x,y:.855,z:p.z+horizontal.z});w.step();
+    const horizontal=computeNpcMovement(ncc,nc,{x:0,y:-.008,z:0},RAPIER.QueryFilterFlags.EXCLUDE_SENSORS),p=npc.translation();npc.setNextKinematicTranslation({x:p.x+horizontal.x,y:.855,z:p.z+horizontal.z});w.step();
     assert.ok(Math.hypot(body.translation().x-npc.translation().x,body.translation().z-npc.translation().z)>.55,'player blocks/slides without overlapping');
    }
    assert.ok(Math.abs(npc.translation().x)<1e-6);
@@ -46,4 +45,43 @@ test('walk/sprint controller blocks against stable kinematic NPC; overlap correc
    assert.deepEqual(npcHorizontalMovement({x:.02,z:0},{x:.01,z:0}),{x:.01,z:0});
   }finally{w.free();}
  }
+});
+
+test('NPC controller excludes player contacts even when navigation is nonzero; static world stays solid',()=>{
+ let result;
+ const controller={computeColliderMovement(_c,desired,flags){
+  assert.equal(flags&RAPIER.QueryFilterFlags.ONLY_FIXED,RAPIER.QueryFilterFlags.ONLY_FIXED);
+  result=flags&RAPIER.QueryFilterFlags.EXCLUDE_KINEMATIC?desired:{x:.08,y:0,z:.07};
+ },computedMovement(){return result;}};
+ assert.deepEqual(computeNpcMovement(controller,{}, {x:0,y:0,z:.0125},0),{x:0,y:0,z:.0125});
+});
+test('sustained contacts in every direction cannot enter idle/yielding or walking NPC displacement',async()=>{
+ await RAPIER.init();
+ for(const [dx,dz]of [[1,0],[-1,0],[0,1],[0,-1],[Math.SQRT1_2,Math.SQRT1_2]])for(const walking of [false,true]){
+  const world=new RAPIER.World({x:0,y:-9.81,z:0});try{
+   // Isolate player-contact effects from triangulated ground-normal roundoff; wall/floor coverage is tested separately.
+   const npc=world.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(0,.855,0)),collider=world.createCollider(RAPIER.ColliderDesc.capsule(.58,.26),npc),controller=world.createCharacterController(.015);
+   controller.disableAutostep();controller.enableSnapToGround(.18);controller.setApplyImpulsesToDynamicBodies(false);
+   const player=world.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased());world.createCollider(RAPIER.ColliderDesc.capsule(.575,.3),player);
+   const nav=walking?{x:-dz*.75/60,z:dx*.75/60}:{x:0,z:0};
+   for(let i=0;i<240;i++){
+    const p=npc.translation();
+    // Deliberately inject overlap/repeated sprint impacts, stronger than ordinary controller contact.
+    player.setTranslation({x:p.x-dx*.48,y:.89,z:p.z-dz*.48},true);
+    player.setNextKinematicTranslation({x:p.x-dx*.48+dx*5/60,y:.89,z:p.z-dz*.48+dz*5/60});world.step();
+    const movement=computeNpcMovement(controller,collider,{...nav,y:0},RAPIER.QueryFilterFlags.EXCLUDE_SENSORS);
+    assert.ok(Math.abs(movement.x-nav.x)<1e-7,JSON.stringify({dx,dz,walking,i,movement,nav}));assert.ok(Math.abs(movement.z-nav.z)<1e-7,JSON.stringify({dx,dz,walking,i,movement,nav}));
+    npc.setNextKinematicTranslation({x:p.x+movement.x,y:.855,z:p.z+movement.z});world.step();
+   }
+   assert.ok(Math.abs(npc.translation().x-nav.x*240)<1e-4);assert.ok(Math.abs(npc.translation().z-nav.z*240)<1e-4);
+  }finally{world.free();}
+ }
+});
+test('NPC static-world query still blocks a wall',async()=>{
+ await RAPIER.init();const world=new RAPIER.World({x:0,y:0,z:0});try{
+  world.createCollider(RAPIER.ColliderDesc.cuboid(.1,3,3).setTranslation(1,0,0));
+  const npc=world.createRigidBody(RAPIER.RigidBodyDesc.kinematicPositionBased().setTranslation(0,.855,0)),collider=world.createCollider(RAPIER.ColliderDesc.capsule(.58,.26),npc),controller=world.createCharacterController(.015);world.step();
+  for(let i=0;i<120;i++){const p=npc.translation(),m=computeNpcMovement(controller,collider,{x:.75/60,y:0,z:0},0);npc.setNextKinematicTranslation({x:p.x+m.x,y:p.y,z:p.z+m.z});world.step();}
+  assert.ok(npc.translation().x<.65);
+ }finally{world.free();}
 });
