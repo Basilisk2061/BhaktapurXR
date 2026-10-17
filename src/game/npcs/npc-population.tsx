@@ -16,7 +16,7 @@ import {npcDefinitions,npcInstances} from './definitions';
 import {NpcSimulation,type NpcAgent} from './behavior';
 import {npcAnimationLibrary} from './animation-library';
 import {computeNpcMovement} from './npc-collision';
-import {keepStreamed} from '../world/streaming-zones';
+import {keepStreamed,streamingDistances} from '../world/streaming-zones';
 const radius=.26;
 type ActorBinding={body:RapierRigidBody;controller:KinematicCharacterController};
 function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:ActorBinding|null)=>void}){
@@ -47,7 +47,7 @@ function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:A
 function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:NavigationProbe;transforms?:TransformOverrides;player:RefObject<PlayerRuntime>}){
  const {rapier}=useRapier(),bindings=useRef(new Map<string,ActorBinding>()),span=useMemo(()=>arcadeSeatSpans(transforms)[0],[transforms]);
  const [simulation]=useState(()=>new NpcSimulation(graph,span,probe,npcInstances));
- const simulationRef=useRef(simulation),[activeIds,setActiveIds]=useState(()=>new Set(simulation.agents.filter(a=>Math.hypot(a.position.x-player.current.nextPosition.x,a.position.z-player.current.nextPosition.z)<=80).map(a=>a.id))),activationClock=useRef(0);
+ const simulationRef=useRef(simulation),[activeIds,setActiveIds]=useState(()=>new Set(simulation.agents.filter(a=>Math.hypot(a.position.x-player.current.nextPosition.x,a.position.z-player.current.nextPosition.z)<=streamingDistances.active).map(a=>a.id))),activationClock=useRef(0);
  useFrame((_,dt)=>{activationClock.current+=dt;if(activationClock.current<.25)return;activationClock.current=0;const p=player.current.nextPosition,next=new Set(simulation.agents.filter(a=>keepStreamed(Math.hypot(a.position.x-p.x,a.position.z-p.z),activeIds.has(a.id))).map(a=>a.id));if(next.size!==activeIds.size||[...next].some(id=>!activeIds.has(id)))setActiveIds(next);});
  const register=useMemo(()=>(id:string,binding:ActorBinding|null)=>{if(binding)bindings.current.set(id,binding);else bindings.current.delete(id);},[]);
  useEffect(()=>()=>simulation.dispose(),[simulation]);

@@ -5,8 +5,8 @@ import {zoneDistance,streamingDistances,zoneIds,keepStreamed} from '../src/game/
 test('coarse zones preload before activation and stop unsafe approaches; distance uses whole footprint',()=>{
  assert.equal(zoneDistance([0,0,10,10],5,5),0);
  assert.equal(zoneDistance([0,0,10,10],-3,-4),5);
- assert.equal(streamingDistances.active,80);assert.equal(streamingDistances.preload,120);assert.equal(streamingDistances.unload,150);
- assert.equal(keepStreamed(81,false),false);assert.equal(keepStreamed(149,true),true);assert.equal(keepStreamed(151,true),false);
+ assert.equal(streamingDistances.active,50);assert.equal(streamingDistances.preload,75);assert.equal(streamingDistances.unload,100);
+ assert.equal(keepStreamed(51,false),false);assert.equal(keepStreamed(99,true),true);assert.equal(keepStreamed(101,true),false);
  assert.ok(streamingDistances.preload>streamingDistances.active);
  assert.ok(streamingDistances.active>streamingDistances.safety);
 });
