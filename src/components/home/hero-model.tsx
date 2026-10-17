@@ -1,6 +1,6 @@
 "use client";
 import {use} from 'react';
-import {loadHomeModels} from '../../game/world/zone-assets';
+import {loadHomeModels} from '../../game/world/home-assets';
 import {createPortal} from 'react-dom';
 import {Canvas,useFrame,useThree} from '@react-three/fiber';
 import {PerspectiveCamera,View} from '@react-three/drei';

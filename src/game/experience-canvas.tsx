@@ -3,7 +3,6 @@ const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
 const EditorScene=lazy(()=>import("../features/world-editor/editor-scene").then(m=>({default:m.EditorScene})));
-import {StreamingReadiness,NpcReadiness,StreamingPlayerSpawn} from "./world/streaming-readiness";
 import type {EditorSession} from "../features/world-editor/session";
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import {KhaumaPhotoCamera} from "./world/khauma-photo-camera";
@@ -36,7 +35,6 @@ interface ExperienceCanvasProps {
   silhouette:boolean;
   mode: WorldMode;
   onReady: () => void;
-  onStreamingWait?: (waiting:boolean)=>void;
   onUnavailable: () => void;
   input: RefObject<PlayerInput>;
   runtime: RefObject<PlayerRuntime>;
@@ -62,10 +60,9 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,onStreamingWait }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
-  const [started,setStarted]=useState(false),[blocked,setBlocked]=useState(false),[worldReady,setWorldReady]=useState(false);
-  useEffect(()=>{onStreamingWait?.(blocked);},[blocked,onStreamingWait]);
+  const [started,setStarted]=useState(false);
   const initialReady=()=>{setStarted(true);onReady();};
   return (
     <Canvas
@@ -77,20 +74,20 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
-      <StreamingPlayerSpawn.Provider value={[spawn.position[0],spawn.position[2]]}><NpcReadiness.Provider value={setWorldReady}><StreamingReadiness.Provider value={setBlocked}><Suspense fallback={null}>
-        <Physics paused={blocked} gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
+      <Suspense fallback={null}>
+        <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
-          {started&&(worldReady||architecturalDebug||silhouette)&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><NpcPopulation transforms={manualOverrides} player={runtime}/></Suspense>}
+          {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><NpcPopulation transforms={manualOverrides} player={runtime}/></Suspense>}
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={initialReady} />
           </GameAudio>
         </Physics>
-      </Suspense></StreamingReadiness.Provider></NpcReadiness.Provider></StreamingPlayerSpawn.Provider>
+      </Suspense>
       {developmentConfig.performance && <Stats />}
     </Canvas>
   );

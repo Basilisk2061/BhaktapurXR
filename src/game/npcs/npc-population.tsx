@@ -16,7 +16,6 @@ import {npcDefinitions,npcInstances} from './definitions';
 import {NpcSimulation,type NpcAgent} from './behavior';
 import {npcAnimationLibrary} from './animation-library';
 import {computeNpcMovement} from './npc-collision';
-import {keepStreamed} from '../world/streaming-zones';
 const radius=.26;
 type ActorBinding={body:RapierRigidBody;controller:KinematicCharacterController};
 function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:ActorBinding|null)=>void}){
@@ -47,8 +46,7 @@ function NpcActor({agent,register}:{agent:NpcAgent;register:(id:string,binding:A
 function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:NavigationProbe;transforms?:TransformOverrides;player:RefObject<PlayerRuntime>}){
  const {rapier}=useRapier(),bindings=useRef(new Map<string,ActorBinding>()),span=useMemo(()=>arcadeSeatSpans(transforms)[0],[transforms]);
  const [simulation]=useState(()=>new NpcSimulation(graph,span,probe,npcInstances));
- const simulationRef=useRef(simulation),[activeIds,setActiveIds]=useState(()=>new Set(simulation.agents.filter(a=>Math.hypot(a.position.x-player.current.nextPosition.x,a.position.z-player.current.nextPosition.z)<=80).map(a=>a.id))),activationClock=useRef(0);
- useFrame((_,dt)=>{activationClock.current+=dt;if(activationClock.current<.25)return;activationClock.current=0;const p=player.current.nextPosition,next=new Set(simulation.agents.filter(a=>keepStreamed(Math.hypot(a.position.x-p.x,a.position.z-p.z),activeIds.has(a.id))).map(a=>a.id));if(next.size!==activeIds.size||[...next].some(id=>!activeIds.has(id)))setActiveIds(next);});
+ const simulationRef=useRef(simulation);
  const register=useMemo(()=>(id:string,binding:ActorBinding|null)=>{if(binding)bindings.current.set(id,binding);else bindings.current.delete(id);},[]);
  useEffect(()=>()=>simulation.dispose(),[simulation]);
  const playerPoint=useMemo(()=>new Vector3(),[]);
@@ -56,7 +54,7 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
   const simulation=simulationRef.current;
   const delta=1/60,motion=player.current;playerPoint.set(motion.nextPosition.x,motion.nextPosition.y-.875,motion.nextPosition.z);
   for(const agent of simulation.agents){const binding=bindings.current.get(agent.id);if(!binding)continue;const position=binding.body.translation();agent.position.set(position.x,position.y-npcDefinitions[agent.character].height/2-.015,position.z);}
-  simulation.tick(delta,playerPoint,motion.seat,new Set(bindings.current.keys()));
+  simulation.tick(delta,playerPoint,motion.seat);
   for(const agent of simulation.agents){const binding=bindings.current.get(agent.id);if(!binding)continue;const {body,controller}=binding,definition=npcDefinitions[agent.character];
    if(agent.state==='SITTING'){body.setNextKinematicTranslation({x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z});agent.actualSpeed=0;continue;}
    // Standing from a seat is a checked placement onto the same clear plaza exit as the player.
@@ -70,7 +68,7 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
    if(current.y< -2){const safe=graph.nodes.find(n=>n.id===agent.node)!.point;body.setTranslation({x:safe.x,y:safe.y+definition.height/2+.015,z:safe.z},true);}
   }
  });
- return <group name="npc-population" userData={{nodeCount:graph.nodes.length,edgeCount:graph.edges.length,expectedCount:4,availableCount:simulation.agents.length}}>{simulation.agents.filter(agent=>activeIds.has(agent.id)).map(agent=><Suspense key={agent.id} fallback={null}><NpcActor agent={agent} register={register}/></Suspense>)}</group>;
+ return <group name="npc-population" userData={{nodeCount:graph.nodes.length,edgeCount:graph.edges.length,expectedCount:4,availableCount:simulation.agents.length}}>{simulation.agents.map(agent=><Suspense key={agent.id} fallback={null}><NpcActor agent={agent} register={register}/></Suspense>)}</group>;
 }
 export function NpcPopulation({transforms,player}:{transforms?:TransformOverrides;player:RefObject<PlayerRuntime>}){
  const {world,rapier}=useRapier(),[graph,setGraph]=useState<WalkGraph|null>(null),warmup=useRef(0),span=useMemo(()=>arcadeSeatSpans(transforms)[0],[transforms]);
