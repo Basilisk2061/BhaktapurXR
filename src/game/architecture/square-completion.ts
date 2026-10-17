@@ -88,7 +88,9 @@ function coveredRange(id:string,polygons:MultiPolygon,museumSource?:CentralModel
   const front=edges(rings).filter(e=>e.nz<-.3);
   // Extend only the top to the former third tread edge; keep one watertight footprint.
   const floorRings=[museumSource?rings.map(r=>r.map(p=>{const e=front.find(e=>p===e.a||p===e.b);return e?[p[0]+e.nx*.42,p[1]+e.nz*.42] as Point:p;})):rings];
-  for(const floor of floorRings){m.volumes!.push({rings:floor,baseY:0,height:floorHeight,material:"brick",role:"sattal-plinth"});
+  for(const floor of floorRings){const timberThickness=museumSource?.018:0;
+   m.volumes!.push({rings:floor,baseY:0,height:floorHeight-timberThickness,material:"brick",role:"sattal-plinth"});
+   if(timberThickness)m.volumes!.push({rings:floor,baseY:floorHeight-timberThickness,height:timberThickness,material:"carvedTimber",role:"sattal-plinth"});
    for(const collider of walkableFloorColliders(floor,floorHeight)){m.colliders.push(collider);m.boxes.push({...collider,material:"brick",role:"sattal-plinth-collision"});}}
   m.volumes!.push({rings,baseY:3.08,height:1.52,material:"timber",role:"sattal-upper-recessed-gallery"});
   m.colliders.push(...contextColliders(rings,1.52).map(c=>({...c,position:[c.position[0],c.position[1]+3.08,c.position[2]] as [number,number,number]})));
@@ -131,6 +133,15 @@ function replaceIdentifiedRameshwar(source:CentralModel):CentralModel{
  for(const p of m.profiles){if(p.material==="stone")p.material="museumStone";if(p.role==="rameshwar-four-stone-post")p.profile=p.profile.map(([r,y])=>[r*1.45,y]);if(p.role==="rameshwar-low-lotus-dome")p.profile=[[0,0],[1.56,0],[1.48,.14],[1.39,.5],[1.12,.99],[.76,1.32],[.24,1.47],[0,1.5]];}
  pinnacle(m,0,5.67,0,.48,"rameshwar-pavilion-finial");return m;
 }
+function refineSelectedMonumentStone(m:CentralModel):CentralModel{
+ if(!["silu-mahadev","kedarnath","siddhi-lakshmi"].includes(m.id))return m;
+ // Only the existing stone pieces change material; the shared Vatsala material is not mutated.
+ for(const piece of [...m.boxes,...m.profiles,...m.shapes,...(m.volumes??[])])if(piece.material==="stone")piece.material="heritageStone";
+ // Corrected coping/landing tops were flush with brick; older terrace caps cleared it by only 5mm.
+ // Detach only the visible trim positions; original walkable colliders remain unchanged.
+ for(const b of m.boxes)if(b.role==="silu-platform-coping"||b.role==="silu-stairs-landing"||b.role==="silu-terrace-stone-cap")b.position=[b.position[0],b.position[1]+.012,b.position[2]];
+ return m;
+}
 export function buildCompletedSquareModels(reconstructLeftTemple=true){
  const models=buildPalaceFrontageModels().filter(m=>m.id!=="rameshwar").map(m=>!reconstructLeftTemple&&m.id==="badrinath"?correctEasternShikhara(m):m),f=snapshot.features.find(f=>f.id==="211082585")!,rings=f.rings.map(r=>r.map(local)),b=bounds(rings),m=fresh("east:small-shikhara-unresolved",[(b.minX+b.maxX)/2,(b.minZ+b.maxZ)/2],"PROVISIONALLY_IDENTIFIED");
  // Small brick shikhara visible in restored-Silu photographs. Exact Vatsala identity remains unresolved.
@@ -140,9 +151,9 @@ export function buildCompletedSquareModels(reconstructLeftTemple=true){
  profile(m,0,3.25,0,[[0,0],[1.6,0],[1.49,.18],[1.34,.45],[1.17,1.35],[.89,2.5],[.62,3.33],[.25,3.65],[0,3.7]],"agedBrick","9c-observed-small-brick-shikhara",4);
  profile(m,0,6.95,0,[[0,0],[.52,0],[.49,.13],[.37,.3],[0,.5]],"roof","9c-small-shrine-capping-form",12);pinnacle(m,0,7.45,0,.47,"9c-small-shrine-summit");
  shape(m,0,.48,1.26,[[-.4,0],[-.4,1.55],[0,1.96],[.4,1.55],[.4,0]],.055,"recess","9c-small-shrine-closed-portal");stairs(m,1.3,.48,3,2.9,.3,"stone","9c-small-shrine-steps");
- if(!reconstructLeftTemple)return [...models,m].map(refineCentralStoneEnsemble);
+ if(!reconstructLeftTemple)return [...models,m].map(refineCentralStoneEnsemble).map(refineSelectedMonumentStone);
  const historicalPavilion=buildPalaceFrontageModels().find(model=>model.id==="rameshwar")!;
- return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)].map(integrateRaisedPavilion).map(refineCentralStoneEnsemble);
+ return [...models.map(model=>model.id==="kedarnath"?correctEasternShikhara(model):model),m,replaceIdentifiedRameshwar(historicalPavilion)].map(integrateRaisedPavilion).map(refineCentralStoneEnsemble).map(refineSelectedMonumentStone);
 }
 function finishMuseumSittingFrontage(source:CentralModel):CentralModel{
  const floorPieces=(source.volumes??[]).filter(v=>v.role==="yetachapari-source-platform").map(v=>v.rings);
