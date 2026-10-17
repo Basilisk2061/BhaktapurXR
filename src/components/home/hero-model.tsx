@@ -1,4 +1,6 @@
 "use client";
+import {use} from 'react';
+import {loadHomeModels} from '../../game/world/zone-assets';
 import {createPortal} from 'react-dom';
 import {Canvas,useFrame,useThree} from '@react-three/fiber';
 import {PerspectiveCamera,View} from '@react-three/drei';
@@ -17,7 +19,8 @@ function Scene({assets,shot}:{assets:ReturnType<typeof buildPreviewAssets>;shot:
 function RenderOnChange(){const invalidate=useThree(s=>s.invalidate);useEffect(()=>{const update=()=>invalidate();window.addEventListener('scroll',update,{passive:true});window.addEventListener('resize',update);return()=>{window.removeEventListener('scroll',update);window.removeEventListener('resize',update);};},[invalidate]);useFrame(({gl})=>{gl.setScissorTest(false);gl.setClearColor(0,0);gl.clear(true,true,true);},0);return null;}
 export default function HeroModel({overrides}:{overrides:TransformOverrides}){
  const [shot,setShot]=useState<'entrance'|'palace'>('entrance'),[tracks,setTracks]=useState<RefObject<HTMLElement>[]>([]);
- const assets=useMemo(()=>buildPreviewAssets(overrides),[overrides]);
+ const models=use(loadHomeModels());
+ const assets=useMemo(()=>buildPreviewAssets(overrides,models),[overrides,models]);
  useEffect(()=>{setTracks(['home-hero-view','home-square-view','home-terrace-view'].map(id=>({current:document.getElementById(id)!})));return()=>assets.dispose();},[assets]);
  return <><div className="home-visuals" aria-hidden="true">{tracks.length===3&&<Canvas frameloop="demand" dpr={[1,1.25]} shadows gl={{alpha:true,antialias:true}} onCreated={({gl})=>{gl.toneMapping=ACESFilmicToneMapping;gl.outputColorSpace=SRGBColorSpace;gl.shadowMap.type=PCFSoftShadowMap;}} fallback={<p>Enter the square to explore the reconstruction.</p>}><RenderOnChange/>{tracks.map((track,i)=><View key={i} track={track} index={i+1}><Scene assets={assets} shot={i===0?shot:i===1?'palace':'terraces'}/></View>)}</Canvas>}</div>{tracks[0]?.current.parentElement&&createPortal(<div className="hero-view-controls"><span>Live reconstruction</span><div role="group" aria-label="Hero reconstruction viewpoint"><button type="button" aria-pressed={shot==='entrance'} onClick={()=>setShot('entrance')}>West entrance</button><button type="button" aria-pressed={shot==='palace'} onClick={()=>setShot('palace')}>Palace frontage</button></div></div>,tracks[0].current.parentElement)}</>;
 }

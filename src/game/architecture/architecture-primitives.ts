@@ -1,0 +1,5 @@
+import type {CentralModel,CentralBox,CentralMaterial} from "./central-model.ts";
+function point(m:CentralModel,x:number,y:number,z:number):[number,number,number]{const c=Math.cos(m.yaw),s=Math.sin(m.yaw);return [m.origin[0]+x*c+z*s,y,m.origin[1]-x*s+z*c];}
+export function box(m:CentralModel,x:number,y:number,z:number,w:number,h:number,d:number,material:CentralMaterial,role:string,collision=false,yaw=0,tilt=0){const b:CentralBox={position:point(m,x,y,z),size:[w,h,d],yaw:m.yaw+yaw,material,role,...(tilt?{tilt}:{})};m.boxes.push(b);if(collision)m.colliders.push({position:[...b.position],size:[...b.size],yaw:b.yaw});}
+export function profile(m:CentralModel,x:number,y:number,z:number,p:[number,number][],mat:CentralMaterial,role:string,segments=12){m.profiles.push({position:point(m,x,y,z),profile:p,segments,material:mat,yaw:m.yaw,role});}
+export function shape(m:CentralModel,x:number,y:number,z:number,points:[number,number][],depth:number,mat:CentralMaterial,role:string,yaw=0){m.shapes.push({position:point(m,x,y,z),points,depth,material:mat,yaw:m.yaw+yaw,role});}

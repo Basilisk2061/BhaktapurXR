@@ -10,7 +10,10 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "spatial:check": "node --experimental-strip-types scripts/check-spatial.mjs"
+    "spatial:check": "node --experimental-strip-types scripts/check-spatial.mjs",
+    "predev": "node --experimental-strip-types scripts/prepare-world-data.mjs",
+    "prebuild": "node --experimental-strip-types scripts/prepare-world-data.mjs --prune",
+    "pretypecheck": "node --experimental-strip-types scripts/prepare-world-data.mjs"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.3.3",

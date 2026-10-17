@@ -1,5 +1,5 @@
 import {CanvasTexture,MeshStandardMaterial,SRGBColorSpace} from "three";
-import {museumEntrance} from "./museum-entrance.ts";
+import {museumEntrance} from "./museum-entrance-data.ts";
 import type {CentralMaterial} from "./central-model.ts";
 export function finishMuseumMaterials(materials:Record<Exclude<CentralMaterial,"museumSign"|"museumStone"|"museumRelief"|"guardianStone"|"heritageStone"|"heritageStoneShade"|"ensembleBronze"|"bellPierStone"|"bellTerraceMasonry"|"agedBellBronze">,MeshStandardMaterial>){
  const museumStone=materials.stone.clone();museumStone.color.set("#9f9586");museumStone.roughness=1;museumStone.flatShading=false;

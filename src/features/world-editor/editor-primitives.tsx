@@ -2,7 +2,7 @@
 import {useEffect,useLayoutEffect,useMemo,useRef} from "react";
 import {type BoxGeometry,type CylinderGeometry,type SphereGeometry,Color,type Group,type MeshStandardMaterial} from "three";
 import {RigidBody,ConvexHullCollider} from "@react-three/rapier";
-import {createCentralMaterials} from "../../game/architecture/central-environment";
+import {createCentralMaterials} from "../../game/architecture/central-visual-assets";
 import {finishPalacePalette} from "../../game/architecture/palace-palette";
 import {finishMuseumMaterials} from "../../game/architecture/museum-sign";
 import {finishCentralStoneMaterials} from "../../game/architecture/central-stone-materials";

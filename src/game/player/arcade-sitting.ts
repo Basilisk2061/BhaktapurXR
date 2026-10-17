@@ -1,15 +1,16 @@
 import {Vector3} from "three";
-import {buildCompletedSquareEdge} from "../architecture/square-completion.ts";
+import seatSource from "../world/generated-seat-source.json" with {type:"json"};
+import type {CentralModel} from "../architecture/central-model.ts";
 import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 import {partWorldDelta,type TransformOverrides} from "../../features/world-editor/transforms.ts";
 
 export interface ArcadeSeat {point:Vector3;exit:Vector3;yaw:number}
 export interface SeatSpan {a:Vector3;b:Vector3;outward:Vector3;columns:Vector3[]}
 export const sittingConfig={distance:1.4,depth:.32,exit:.95,columnClearance:.55,visualY:.008} as const;
-let source:ReturnType<typeof buildCompletedSquareEdge>["models"][number]|undefined;
+let source:CentralModel|undefined;
 /** Source geometry is cached; live parent/part overrides are applied exactly once. */
 export function arcadeSeatSpans(overrides:TransformOverrides={}):SeatSpan[]{
- source??=buildCompletedSquareEdge().models.find(m=>m.id==="edge:yetachapari:1160027594");
+ source??=seatSource as unknown as CentralModel;
  const m=source!;const parts=partitionArchitecturalParts(m),plinth=parts.find(p=>p.id.endsWith("/plinth"))!,posts=parts.find(p=>p.id.endsWith("/columns"))!;
  const assembly={position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]} as import("../../features/world-editor/transforms.ts").ManualTransform;
  const delta=(p:typeof plinth)=>partWorldDelta(assembly,overrides[m.id]??assembly,p.source,overrides[p.id]??p.source);

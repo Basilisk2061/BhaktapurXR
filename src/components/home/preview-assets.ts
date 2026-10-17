@@ -1,21 +1,21 @@
 import {BoxGeometry,Group,InstancedMesh,Matrix4,Mesh,PlaneGeometry,Quaternion,Vector3,Texture,type BufferGeometry} from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {createCentralMaterials,profileGeometry,shapeGeometry,roofGeometry} from '../../game/architecture/central-environment';
+import {createCentralMaterials,profileGeometry,shapeGeometry,roofGeometry} from '../../game/architecture/central-visual-assets';
 import {finishPalacePalette} from '../../game/architecture/palace-palette';
 import {finishCentralStoneMaterials} from '../../game/architecture/central-stone-materials';
 import {finishMuseumMaterials} from '../../game/architecture/museum-sign';
 import {finishInsideSquarePaving} from '../../game/architecture/inside-square-surfaces';
 import {urbanVolumeGeometry,urbanRoofGeometry} from '../../game/architecture/urban-surface-geometry';
-import {buildCompletedSquareModels,buildCompletedSquareEdge} from '../../game/architecture/square-completion';
+import type {CentralModel} from '../../game/architecture/central-model';
 import {centralGround,type CentralMaterial} from '../../game/architecture/central-model';
 import {partitionArchitecturalParts} from '../../features/world-editor/parts';
 import {partWorldDelta,type ManualTransform,type TransformOverrides} from '../../features/world-editor/transforms';
 /** One set of current architecture buffers, shared by the homepage's scissored camera views. No physics/NPCs. */
-export function buildPreviewAssets(overrides:TransformOverrides){
+export function buildPreviewAssets(overrides:TransformOverrides,models:CentralModel[]){
  const materials=finishCentralStoneMaterials(finishMuseumMaterials(finishPalacePalette(createCentralMaterials())));
  finishInsideSquarePaving(materials.paving);
  const root=new Group(),box=new BoxGeometry(1,1,1),pieces=new Map<CentralMaterial,BufferGeometry[]>(),instances=new Map<CentralMaterial,Matrix4[]>();
- for(const model of [...buildCompletedSquareModels(),...buildCompletedSquareEdge().models]){
+ for(const model of models){
   const source:ManualTransform={position:[model.origin[0],0,model.origin[1]],rotation:[0,model.yaw,0],scale:[1,1,1]};
   for(const part of partitionArchitecturalParts(model)){
    const delta=partWorldDelta(source,overrides[model.id]??source,part.source,overrides[part.id]??part.source);

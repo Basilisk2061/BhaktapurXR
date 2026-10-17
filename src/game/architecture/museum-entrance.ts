@@ -3,7 +3,8 @@ import {buildCarvedMuseumLion,buildCarvedMuseumRelief} from "./museum-sculptures
 import {box,profile,shape} from "./remaining-models.ts";
 
 // Photo-proportioned entrance details only: not a survey or named deity reconstruction.
-export const museumEntrance={classification:"PHOTO_INFERRED",signLines:["राष्ट्रिय कला संग्रहालय","NATIONAL ART MUSEUM"],partKeys:["museum-entrance-door","museum-entrance-sign","museum-entrance-lions","museum-entrance-figures"]} as const;
+import {museumEntrance} from "./museum-entrance-data.ts";
+export {museumEntrance} from "./museum-entrance-data.ts";
 export function museumEntranceCentre(m:CentralModel){return m.boxes.find(b=>b.role==="palace-foundation")!.size[0]*(.5-.38)-4.1;}
 const signature=(b:{position:number[];size:number[];yaw:number})=>JSON.stringify([b.position,b.size,b.yaw]);
 function remove(m:CentralModel,test:(b:CentralBox)=>boolean){const gone=new Set(m.boxes.filter(test).map(signature));m.boxes=m.boxes.filter(b=>!test(b));m.colliders=m.colliders.filter(c=>!gone.has(signature(c)));}

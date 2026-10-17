@@ -1,13 +1,14 @@
 "use client";
-import {NpcPopulation} from "./npcs/npc-population";
+const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m.NpcPopulation})));
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
-import {EditorScene} from "../features/world-editor/editor-scene";
+const EditorScene=lazy(()=>import("../features/world-editor/editor-scene").then(m=>({default:m.EditorScene})));
+import {StreamingReadiness,NpcReadiness} from "./world/streaming-readiness";
 import type {EditorSession} from "../features/world-editor/session";
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import {KhaumaPhotoCamera} from "./world/khauma-photo-camera";
 
-import { Suspense, useEffect, useRef, type RefObject } from "react";
+import { Suspense, lazy, useState, useEffect, useRef, type RefObject } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Stats } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
@@ -35,6 +36,7 @@ interface ExperienceCanvasProps {
   silhouette:boolean;
   mode: WorldMode;
   onReady: () => void;
+  onStreamingWait?: (waiting:boolean)=>void;
   onUnavailable: () => void;
   input: RefObject<PlayerInput>;
   runtime: RefObject<PlayerRuntime>;
@@ -60,8 +62,11 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,onStreamingWait }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
+  const [started,setStarted]=useState(false),[blocked,setBlocked]=useState(false),[worldReady,setWorldReady]=useState(false);
+  useEffect(()=>{onStreamingWait?.(blocked);},[blocked,onStreamingWait]);
+  const initialReady=()=>{setStarted(true);onReady();};
   return (
     <Canvas
       shadows={{ type: PCFShadowMap }}
@@ -72,20 +77,20 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
-      <Suspense fallback={null}>
-        <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
+      <NpcReadiness.Provider value={setWorldReady}><StreamingReadiness.Provider value={setBlocked}><Suspense fallback={null}>
+        <Physics paused={blocked} gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
-          {mode==="BHAKTAPUR"&&<NpcPopulation transforms={manualOverrides} player={runtime}/>}
+          {started&&(worldReady||architecturalDebug||silhouette)&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><NpcPopulation transforms={manualOverrides} player={runtime}/></Suspense>}
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
-          <SceneReady onReady={onReady} />
+          <SceneReady onReady={initialReady} />
           </GameAudio>
         </Physics>
-      </Suspense>
+      </Suspense></StreamingReadiness.Provider></NpcReadiness.Provider>
       {developmentConfig.performance && <Stats />}
     </Canvas>
   );

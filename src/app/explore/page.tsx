@@ -1,6 +1,7 @@
-import {EditorExperience} from "../../features/world-editor/editor-experience";
+import dynamic from "next/dynamic";
+const EditorExperience=dynamic(()=>import("../../features/world-editor/editor-experience").then(m=>m.EditorExperience));
 import {resolveEditor} from "../../features/world-editor/transforms";
-import {readManualOverrides} from "../../features/world-editor/server";
+import {readRuntimeOverrides} from "../../features/world-editor/runtime-overrides";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveWorldMode } from "@/game/world/world-mode";
@@ -13,7 +14,7 @@ export default async function ExplorePage({ searchParams }: { searchParams: Prom
   const query=await searchParams;
   const mode = resolveWorldMode(query.world);
   const editor=resolveEditor(query.editor,process.env.NODE_ENV==="development",mode);
-  const manualOverrides=mode==="BHAKTAPUR"?await readManualOverrides():{};
+  const manualOverrides=mode==="BHAKTAPUR"?await readRuntimeOverrides():{};
   const review=mode==="BHAKTAPUR"?resolveArchitectureReview(query.review,process.env.NODE_ENV==="development"):null;
   const architecturalDebug=process.env.NODE_ENV==="development"&&query.architectureDebug==="1";
   const silhouette=process.env.NODE_ENV==="development"&&query.silhouette==="1";

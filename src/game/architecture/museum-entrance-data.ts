@@ -1,0 +1,1 @@
+export const museumEntrance={classification:"PHOTO_INFERRED",signLines:["राष्ट्रिय कला संग्रहालय","NATIONAL ART MUSEUM"],partKeys:["museum-entrance-door","museum-entrance-sign","museum-entrance-lions","museum-entrance-figures"]} as const;

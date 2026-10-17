@@ -1,6 +1,6 @@
 import {BufferGeometry,Float32BufferAttribute,Vector3,CatmullRomCurve3} from "three";
 import type {CentralModel,CentralProfile,CentralMaterial} from "./central-model.ts";
-import {profile,shape,box} from "./remaining-models.ts";
+import {profile,shape,box} from "./architecture-primitives.ts";
 type Point=[number,number,number];
 type Ring=[number,number,number,number,number]; // height, centre x/z, width/depth radii
 const lionRole="museum-entrance-lions",figureRole="museum-entrance-figures";
