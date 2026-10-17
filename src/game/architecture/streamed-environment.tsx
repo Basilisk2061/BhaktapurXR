@@ -26,12 +26,11 @@ export function StreamedEnvironment({manualOverrides}:{manualOverrides?:Transfor
   let waiting=false;const next=new Set(active);
   for(const entry of initial.manifest.zones){
    const distance=zoneDistance(entry.bounds,point.x,point.z);
-   if(!loaded.has(entry.id)&&distance<=streamingDistances.unload&&!pending.current.has(entry.id)){
+   if(!loaded.has(entry.id)&&distance<=streamingDistances.preload&&!pending.current.has(entry.id)){
     pending.current.add(entry.id);void loadZone(entry).then(models=>{if(alive.current)setLoaded(previous=>new Map(previous).set(entry.id,models));}).catch(e=>{if(alive.current)setError(e);});
    }
    if(!loaded.has(entry.id)&&distance<streamingDistances.safety)waiting=true;
-   // Fetch neighboring chunks ahead of the 75 m visibility band; only mount nearby footprints.
-   // The required area is 50 m; retain mounted geometry to 100 m to avoid boundary churn.
+   // Mount the preloaded visibility band while it is concealed by fog; 80 m is the required area.
    for(const {id} of loaded.get(entry.id)??[]){
     const d=zoneDistance(initial.manifest.modelBounds[id],point.x,point.z);
     if(d<=streamingDistances.preload||keepStreamed(d,active.has(id)))next.add(id);else next.delete(id);
