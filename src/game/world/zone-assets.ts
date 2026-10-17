@@ -1,7 +1,7 @@
 import type {CentralModel} from "../architecture/central-model";
 import type {ZoneId} from "./streaming-zones";
 export interface ZoneEntry {id:ZoneId;url:string;bounds:number[]}
-interface Manifest {zones:ZoneEntry[];groundPatches:{x:number;z:number;width:number;depth:number}[];home:string;overridesSignature:string}
+interface Manifest {zones:ZoneEntry[];modelBounds:Record<string,number[]>;groundPatches:{x:number;z:number;width:number;depth:number}[];home:string;overridesSignature:string}
 async function json<T>(url:string,priority:RequestPriority="auto"):Promise<T>{const r=await fetch(url,{priority});if(!r.ok)throw Error("World data unavailable: "+r.status);return r.json();}
 const surfaces=new Map<string,Promise<unknown>>();
 async function hydrate(models:CentralModel[],priority:RequestPriority="auto"){

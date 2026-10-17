@@ -1,10 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {zoneDistance,streamingDistances,zoneIds} from '../src/game/world/streaming-zones.ts';
+import {zoneDistance,streamingDistances,zoneIds,keepStreamed} from '../src/game/world/streaming-zones.ts';
 test('coarse zones preload before activation and stop unsafe approaches; distance uses whole footprint',()=>{
  assert.equal(zoneDistance([0,0,10,10],5,5),0);
  assert.equal(zoneDistance([0,0,10,10],-3,-4),5);
+ assert.equal(streamingDistances.active,80);assert.equal(streamingDistances.preload,120);assert.equal(streamingDistances.unload,150);
+ assert.equal(keepStreamed(81,false),false);assert.equal(keepStreamed(149,true),true);assert.equal(keepStreamed(151,true),false);
  assert.ok(streamingDistances.preload>streamingDistances.active);
  assert.ok(streamingDistances.active>streamingDistances.safety);
 });

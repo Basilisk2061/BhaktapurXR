@@ -20,6 +20,6 @@ const zones=[];for(const [id,list]of groups){const b=new Box3();list.forEach(m=>
 const shots=[[[-131,4.8,-43],[-119,4,-30]],[[-35,5,8],[-8,5,-12]],[[-120,5,1],[-100,3,-17]]];
 const frusta=shots.map(([position,target])=>{const c=new PerspectiveCamera(48,3,.1,350);c.position.fromArray(position);c.lookAt(new Vector3(...target));c.updateMatrixWorld();return new Frustum().setFromProjectionMatrix(new Matrix4().multiplyMatrices(c.projectionMatrix,c.matrixWorldInverse));});
 const home=models.filter(m=>frusta.some(f=>f.intersectsBox(boxes.get(m.id)))).map(m=>({...m,colliders:[],boxes:m.boxes.filter(b=>!b.role.includes('collision'))}));
-await writeFile(dir+'/manifest.json',JSON.stringify({zones,groundPatches:urban.groundPatches,home:await asset(home),overridesSignature:JSON.stringify(overrides)}));console.log('Prepared world data:',zones.map(e=>e.id+':'+groups.get(e.id).length).join(', '),'home visible candidates:',home.length);
+await writeFile(dir+'/manifest.json',JSON.stringify({zones,modelBounds:Object.fromEntries([...boxes].map(([id,b])=>[id,[b.min.x,b.min.z,b.max.x,b.max.z]])),groundPatches:urban.groundPatches,home:await asset(home),overridesSignature:JSON.stringify(overrides)}));console.log('Prepared world data:',zones.map(e=>e.id+':'+groups.get(e.id).length).join(', '),'home visible candidates:',home.length);
 
 if(process.argv.includes('--prune'))for(const name of await readdir(dir))if(/^chunk-[a-f0-9]{16}\.json$/.test(name)&&!emitted.has(name))await unlink(dir+'/'+name);

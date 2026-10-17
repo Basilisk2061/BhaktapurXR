@@ -3,7 +3,7 @@ const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
 const EditorScene=lazy(()=>import("../features/world-editor/editor-scene").then(m=>({default:m.EditorScene})));
-import {StreamingReadiness,NpcReadiness} from "./world/streaming-readiness";
+import {StreamingReadiness,NpcReadiness,StreamingPlayerSpawn} from "./world/streaming-readiness";
 import type {EditorSession} from "../features/world-editor/session";
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import {KhaumaPhotoCamera} from "./world/khauma-photo-camera";
@@ -77,7 +77,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
-      <NpcReadiness.Provider value={setWorldReady}><StreamingReadiness.Provider value={setBlocked}><Suspense fallback={null}>
+      <StreamingPlayerSpawn.Provider value={[spawn.position[0],spawn.position[2]]}><NpcReadiness.Provider value={setWorldReady}><StreamingReadiness.Provider value={setBlocked}><Suspense fallback={null}>
         <Physics paused={blocked} gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
@@ -90,7 +90,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <SceneReady onReady={initialReady} />
           </GameAudio>
         </Physics>
-      </Suspense></StreamingReadiness.Provider></NpcReadiness.Provider>
+      </Suspense></StreamingReadiness.Provider></NpcReadiness.Provider></StreamingPlayerSpawn.Provider>
       {developmentConfig.performance && <Stats />}
     </Canvas>
   );

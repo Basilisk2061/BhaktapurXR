@@ -26,9 +26,10 @@ export class NpcSimulation {
    agent.seat=seat;agent.path=route(this.graph,agent.node,approach.id);agent.approaching=true;return true;
   }return false;
  }
- tick(delta:number,player:Vector3,playerSeat:ArcadeSeat|null){
+ tick(delta:number,player:Vector3,playerSeat:ArcadeSeat|null,activeIds?:ReadonlySet<string>){
   this.planned.clear();this.time+=delta;
   for(const agent of this.agents){
+   if(activeIds&&!activeIds.has(agent.id)){agent.waitUntil+=delta;agent.sitUntil+=delta;agent.nextSeatAt+=delta;continue;}
    if(agent.state==='SITTING'){
     if(agent.seat&&Math.abs(player.y-agent.seat.point.y)<2&&flatDistance(player,agent.seat.point)<.8)agent.sitUntil=this.time;
     if(this.time<agent.sitUntil||!agent.seat||!this.clearOfPeople(agent.seat.exit,agent,player,.9))continue;

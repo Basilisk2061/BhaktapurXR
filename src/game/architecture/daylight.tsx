@@ -28,7 +28,7 @@ export function HeritageDaylight() {
     <primitive object={target} />
     <color attach="background" args={["#b0d1e9"]} />
     <DaylightSky/>
-    <fog attach="fog" args={["#b0d1e9",110,360]}/>
+    <fog attach="fog" args={["#b0d1e9",70,135]}/>
     <hemisphereLight args={["#d1e2fa","#aba99f",1.55]} />
     <ambientLight color="#f4f6f8" intensity={.27} />
     <directionalLight name="heritage-sun" position={[-93,65,25]} target={target} color="#fff8ed" intensity={3.35} castShadow shadow-mapSize={[size,size]}
