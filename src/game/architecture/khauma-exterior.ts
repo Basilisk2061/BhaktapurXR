@@ -99,15 +99,12 @@ export function buildKhaumaExterior(){
  const upper=model("RightUpper");box(upper,17.9,4.97,1.1,13.1,2.2,4.7,"agedBrick","exterior-upper-brick-shell",true);
  for(let i=0;i<6;i++){const x=12.3+i*2.2;window(upper,x,5.05,3.5,1.3,1.28);box(upper,x,5.16,3.65,.09,2.15,.15,"carvedTimber","exterior-upper-timber-upright");}
  for(const y of [4.02,5.98])box(upper,17.9,y,3.6,13.15,.13,.2,"carvedTimber","exterior-upper-timber-band");tiledRoof(upper,17.9,1.1,6.15,14.4,6,1.5);
- const road=model("Road"),line=exteriorPlan.roadCentreline,widths=exteriorPlan.roadWidths;
- // Reuse ground batches (no new material/shadow system). Short sections gently
- // bend and taper; unequal pedestrian strips replace the 57 m forecourt slab.
- for(let i=1;i<line.length;i++){
-  const a=line[i-1],b=line[i],length=Math.hypot(b[0]-a[0],b[1]-a[1]),yaw=Math.atan2(b[0]-a[0],b[1]-a[1]);
-  box(road,(a[0]+b[0])/2,.027,(a[1]+b[1])/2,(widths[i-1]+widths[i])/2,.025,length+.03,"exteriorRoad","exterior-irregular-road",false,yaw);
-  for(let j=1;j<length;j+=2.4){const t=j/length,w=(widths[i-1]*(1-t)+widths[i]*t)/2;for(const side of [-1,1])if((i+Math.floor(j))%4!==0)box(road,a[0]*(1-t)+b[0]*t+side*(w-.1),.043,a[1]*(1-t)+b[1]*t,.05,.005,.65,"exteriorMark","exterior-faded-road-edge",false,yaw);}
- }
- for(const [x,z,w,d]of [[-4.1,4.5,4.4,8],[-14,4.6,10,2],[-6,15,6,18],[-17.3,14.5,3.2,18],[-2.7,31,3,18],[3.8,15,3.5,22],[8.8,1.7,7,1.4],[3.4,33,2.6,14]])box(road,x,.019,z,w,.016,d,"exteriorPaving","exterior-asymmetric-pedestrian-margin");
+ const road=model("Road"),line:[[number,number],...[number,number][]]=[[0,-2],...exteriorPlan.roadCentreline],widths=[3.8,...exteriorPlan.roadWidths];
+ // One joined surface crosses the frozen gate, with a short rounded inner landing.
+ // Removed separate raised brick margins/paint; surrounding ground stays exposed.
+ const edges=(side:number)=>line.map((p,i)=>{const a=line[Math.max(0,i-1)],b=line[Math.min(line.length-1,i+1)],length=Math.hypot(b[0]-a[0],b[1]-a[1]);return [p[0]+side*(b[1]-a[1])/length*widths[i]/2,p[1]-side*(b[0]-a[0])/length*widths[i]/2] as [number,number];});
+ const ring=[...edges(-1),...edges(1).reverse(),...Array.from({length:5},(_,i)=>{const angle=-(i+1)*Math.PI/6;return [1.9*Math.cos(angle),-2+1.9*Math.sin(angle)] as [number,number];})];
+ road.volumes=[{rings:[ring.map(([x,z])=>{const p=exteriorPoint(x,0,z);return [p[0],p[2]];})],baseY:.014,height:.025,material:"exteriorRoad",role:"exterior-continuous-entrance-road"}];
  const props=model("StreetProps");board(props,-4.2,5.2);board(props,4.2,6.4,.62);
  for(const [x,z]of [[-15.1,6.5],[12.5,4]]){profile(props,x,0,z,[[.11,0],[.09,7.8],[0,7.8]],"neutral","exterior-utility-pole",8);box(props,x+.2,7.4,z,.6,.1,.18,"neutral","exterior-streetlight");box(props,x,.65,z,.5,1.3,.4,"exteriorTeal","exterior-utility-box",true);}
  // Sagging wire built from a few thin straight segments in the gate-local frame.
