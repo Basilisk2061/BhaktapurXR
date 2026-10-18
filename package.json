@@ -13,9 +13,13 @@
     "spatial:check": "node --experimental-strip-types scripts/check-spatial.mjs",
     "predev": "node --experimental-strip-types scripts/prepare-world-data.mjs",
     "prebuild": "node --experimental-strip-types scripts/prepare-world-data.mjs --prune",
-    "pretypecheck": "node --experimental-strip-types scripts/prepare-world-data.mjs"
+    "pretypecheck": "node --experimental-strip-types scripts/prepare-world-data.mjs",
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview:cloudflare": "opennextjs-cloudflare preview",
+    "deploy:cloudflare": "opennextjs-cloudflare deploy"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "1.20.12",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "22.20.5",
     "@types/react": "19.3.0",
@@ -24,13 +28,14 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.4.0",
     "tailwindcss": "4.3.3",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "wrangler": "4.151.1"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",
     "@react-three/fiber": "9.8.1",
     "@react-three/rapier": "2.2.0",
-    "next": "16.4.0",
+    "next": "16.4.1",
     "polygon-clipping": "0.15.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
