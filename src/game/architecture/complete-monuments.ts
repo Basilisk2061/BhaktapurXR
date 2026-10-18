@@ -36,43 +36,70 @@ export function buildCompleteYaksheshwar():CentralModel{
  pagodaRoof(m,9.82,7.2,7.2,1.6,3.93,3.93,9.45,"yak-complete-smaller-upper-roof");
  profile(m,0,11.42,0,[[.26,0],[.34,.23],[.16,.43],[0,.56]],"gold","yak-complete-gilded-roof-crown",12);pinnacle(m,0,11.98,0,.32,"yak-complete-summit");return m;
 }
-export const entrancePagodaPhotoEvidence={id:"gopinath-krishna",identity:"Gopinath / Dwarika (existing provisional binding)",identityConfidence:"PROVISIONALLY_IDENTIFIED",form:"PHOTO_INFERRED",dimensions:"APPROXIMATE",reference:"Screenshot 2026-10-18 205945.png",platformTop:.9,lowerSupportHeight:2.45,lowerRoof:{width:11.6,depth:10.2,eave:3.95,rise:1},upperPavilion:{width:3,depth:2.7,height:1.15},upperRoof:{width:5.8,depth:5.4,eave:6,rise:.8},overallTop:7.5,limitations:"Single oblique view: exact support count, rear/core layout, carvings and metre dimensions remain approximate. Existing identity/anchor retained; no newly verified dimensions."} as const;
+export const entrancePagodaPhotoEvidence={id:"gopinath-krishna",identity:"Gopinath / Dwarika (existing provisional binding)",identityConfidence:"PROVISIONALLY_IDENTIFIED",form:"PHOTO_INFERRED",dimensions:"APPROXIMATE",reference:"Two user-supplied clear frontal/oblique photographs",platformTop:1.44,lowerShrine:{width:6.8,depth:5.4,height:2.6},galleryHeight:.91,lowerRoof:{width:11.6,depth:10.2,eave:5.15,rise:1.55},upperTier:{width:3.8,depth:3.4,height:1.8},upperRoof:{width:6.4,depth:6,eave:8.15,rise:1.15},overallTop:10.2,limitations:"Photographic proportions, not surveyed dimensions. Rear openings, carving and stair-side sculpture remain unresolved. Existing provisional identity and anchor retained."} as const;
 function entrancePagoda(source:CentralModel):CentralModel{
- // Replace, rather than cover, the old enclosed shrine, giant portals and upper tower.
+ // Fresh arrays remove both previous interpretations and all their collision solids.
  const m:CentralModel={...source,accuracy:"PHOTO_INFERRED",boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]};
  Object.assign(m,{editorPartSources:Object.fromEntries(partitionArchitecturalParts(source).map(p=>[p.id,p.source]))});
- // Small masonry core behind an open timber perimeter. Front bays remain genuinely clear.
- box(m,0,1.99,-.72,2.2,2.18,1.9,"agedBrick","entrance-pagoda-recessed-inner-core",true);
- box(m,0,1.92,.25,1.26,1.94,.05,"recess","entrance-pagoda-core-door-shadow");
- for(const x of [-.72,.72])box(m,x,1.94,.32,.16,2.08,.19,"carvedTimber","entrance-pagoda-core-door-jamb");
- box(m,0,3.05,.34,1.72,.2,.25,"carvedTimber","entrance-pagoda-core-door-head");
- for(const z of [-2.35,2.35])for(const x of [-2.8,-.95,.95,2.8]){
-  box(m,x,2.125,z,.24,2.45,.24,"carvedTimber","entrance-pagoda-open-bay-post",true);
-  box(m,x,1.02,z,.39,.24,.39,"agedBrick","entrance-pagoda-post-foot",true);
-  box(m,x,3.27,z,.55,.18,.43,"carvedTimber","entrance-pagoda-post-capital");
+ // Enclosed shrine: brick side/rear masses surround a recessed three-bay timber front.
+ box(m,0,2.74,-.22,6.8,2.6,4.96,"agedBrick","gopinath-enclosed-shrine",true);
+ for(const x of [-2.75,2.75])box(m,x,2.74,2.48,1.3,2.6,.44,"agedBrick","gopinath-front-masonry-pier",true);
+ for(const x of [-1.38,0,1.38]){
+  const w=x===0?1.22:1.02,h=x===0?2.12:1.85,bottom=x===0?1.44:1.65;
+  box(m,x,bottom+h/2,2.275,w,h,.04,"recess","gopinath-recessed-facade-bay");
+  for(const side of [-1,1])for(let layer=0;layer<3;layer++)box(m,x+side*(w/2+.065+layer*.065),bottom+h/2,2.37+layer*.08,.075,h+.12+layer*.13,.12,"carvedTimber","gopinath-layered-portal-jamb");
+  for(let layer=0;layer<3;layer++)box(m,x,bottom+h+.06+layer*.09,2.4+layer*.08,w+.35+layer*.16,.1,.2,"carvedTimber","gopinath-layered-portal-lintel");
+  box(m,x,bottom-.04,2.45,w+.3,.12,.32,"carvedTimber","gopinath-portal-threshold");
+  if(x!==0)for(const side of [-1,1])box(m,x+side*.26,bottom+h/2,2.32,.035,h-.12,.045,"timber","gopinath-side-bay-panel");
  }
- for(const x of [-2.8,2.8])box(m,x,2.125,0,.24,2.45,.24,"carvedTimber","entrance-pagoda-side-post",true);
- for(const z of [-2.35,2.35])box(m,0,3.4,z,6.2,.3,.38,"carvedTimber","entrance-pagoda-continuous-head-beam");
- for(const x of [-2.8,2.8])box(m,x,3.4,0,.38,.3,5.1,"carvedTimber","entrance-pagoda-side-head-beam");
+ // The gallery is inset behind its structural frontage, not an open ground pavilion.
+ box(m,0,4.495,0,5.65,.91,4.25,"agedBrick","gopinath-recessed-gallery-core",true);
  for(let face=0;face<4;face++){
   const saved=m.yaw;m.yaw+=face*Math.PI/2;
-  const depth=face%2?5.6:4.7,span=face%2?4.7:5.6,outer=(face%2?11.6:10.2)/2-.24;
-  for(let i=0;i<7;i++)connectedStrut(m,-span/2+i*span/6,3.22,depth/2,3.84,outer,"entrance-pagoda-lower-connected-strut");
+  const span=face%2?5.4:6.8,depth=face%2?6.8:5.4;
+  for(const y of [3.87,4.04])box(m,0,y,depth/2+.04,span+.22,.14,.28,"carvedTimber","gopinath-shrine-carved-cornice");
+  for(const x of [-span*.31,0,span*.31]){
+   box(m,x,4.51,depth/2-.49,span*.22,.65,.045,"recess","gopinath-gallery-shadow-opening");
+   for(const side of [-1,1])box(m,x+side*span*.12,4.5,depth/2-.16,.18,.83,.24,"carvedTimber","gopinath-gallery-framing");
+  }
+  box(m,0,4.91,depth/2-.12,span+.18,.25,.36,"carvedTimber","gopinath-gallery-head-beam");
+  const outer=(face%2?11.6:10.2)/2-.24;
+  for(let i=0;i<5;i++){
+   connectedStrut(m,-span*.42+i*span*.21,4.03,depth/2+.05,5.03,outer,"gopinath-heavy-main-strut");
+   const strut=m.boxes[m.boxes.length-1];strut.size[0]=.3;strut.size[2]=.32;
+  }
   m.yaw=saved;
  }
- pagodaRoof(m,3.95,11.6,10.2,1,6.2,5.1,3.5,"entrance-pagoda-dominant-lower-roof");
- // Compact pavilion emerges from the lower roof; no extra full-height brick storey.
- box(m,0,4.935,0,3,.32,2.7,"agedBrick","entrance-pagoda-upper-low-apron",true);
- box(m,0,5.47,0,2.48,.75,2.18,"recess","entrance-pagoda-upper-shadowed-core",true);
- for(const x of [-1.4,1.4])for(const z of [-1.25,1.25])box(m,x,5.49,z,.18,1.15,.18,"carvedTimber","entrance-pagoda-upper-pavilion-post",true);
+ pagodaRoof(m,5.15,11.6,10.2,1.55,6.9,5.5,4.15,"gopinath-dominant-main-roof");
+ // Upper masonry storey emerges into the roof apex, avoiding a floating neck.
+ box(m,0,7.1,0,3.8,1.8,3.4,"agedBrick","gopinath-substantial-upper-tier",true);
  for(let face=0;face<4;face++){
-  const saved=m.yaw;m.yaw+=face*Math.PI/2;const d=face%2?3:2.7;
-  box(m,0,5.91,d/2,face%2?2.85:3.15,.2,.23,"carvedTimber","entrance-pagoda-upper-head-band");
-  for(const x of [-.82,0,.82])connectedStrut(m,x,5.73,d/2,5.9,(face%2?5.8:5.4)/2-.15,"entrance-pagoda-upper-connected-strut");
+  const saved=m.yaw;m.yaw+=face*Math.PI/2;const span=face%2?3.4:3.8,d=face%2?3.8:3.4;
+  for(const x of [-span*.27,0,span*.27]){
+   box(m,x,7.35,d/2+.025,.65,.93,.045,"recess","gopinath-upper-recessed-opening");
+   for(const side of [-1,1])box(m,x+side*.39,7.34,d/2+.12,.13,1.15,.2,"carvedTimber","gopinath-upper-bay-jamb");
+   box(m,x,7.86,d/2+.15,.94,.16,.28,"carvedTimber","gopinath-upper-bay-lintel");
+  }
+  for(const y of [6.75,7.99])box(m,0,y,d/2+.1,span+.25,.18,.29,"carvedTimber","gopinath-upper-carved-band");
+  for(const x of [-span*.36,0,span*.36]){
+   connectedStrut(m,x,7.48,d/2+.1,8.03,(face%2?6.4:6)/2-.2,"gopinath-upper-roof-strut");
+   const strut=m.boxes[m.boxes.length-1];strut.size[0]=.23;strut.size[2]=.25;
+  }
   m.yaw=saved;
  }
- pagodaRoof(m,6,5.8,5.4,.8,3.15,2.85,5.9,"entrance-pagoda-smaller-upper-roof");
- pinnacle(m,0,6.8,0,.7,"entrance-pagoda-restrained-finial");
+ pagodaRoof(m,8.15,6.4,6,1.15,4,3.6,7.55,"gopinath-smaller-upper-roof");
+ // Replace helper rims rather than overlaying two sets of eave geometry.
+ m.boxes=m.boxes.filter(b=>!/^gopinath-.*-roof-(edge-rim|side-rim)$/.test(b.role));
+ // Additional fascia depth and closely spaced underside rafter ends, shared materials.
+ for(const tier of [{y:5.15,w:11.6,d:10.2},{y:8.15,w:6.4,d:6}]){
+  for(const side of [-1,1]){
+   box(m,0,tier.y-.13,side*(tier.d/2-.11),tier.w,.29,.23,"carvedTimber","gopinath-heavy-eave-fascia");
+   box(m,side*(tier.w/2-.11),tier.y-.13,0,.23,.29,tier.d,"carvedTimber","gopinath-heavy-side-fascia");
+   for(let x=-tier.w/2+.3;x<tier.w/2-.2;x+=.42)box(m,x,tier.y-.16,side*(tier.d/2-.38),.075,.12,.57,"timber","gopinath-rafter-end");
+   for(let z=-tier.d/2+.3;z<tier.d/2-.2;z+=.42)box(m,side*(tier.w/2-.38),tier.y-.16,z,.57,.12,.075,"timber","gopinath-side-rafter-end");
+  }
+ }
+ profile(m,0,9.3,0,[[.3,0],[.38,.12],[.26,.23],[.22,.4],[.12,.58],[.17,.66],[.08,.75],[.1,.82],[0,.9]],"bronze","gopinath-ornamental-finial",12);
  return m;
 }
 export function buildPhase9a1Models(){return buildPhase9Models().filter(m=>m.id!=="khauma-adjoining-fabric").map(m=>{
