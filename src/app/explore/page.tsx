@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { resolveWorldMode } from "@/game/world/world-mode";
 import {resolveKhaumaAxisReview as resolveArchitectureReview} from "@/game/world/khauma-axis-review";
-import { Experience } from "@/components/experience";
+import { ExploreClient as Experience } from "@/components/explore-client";
 
 export const metadata: Metadata = { title: "Explore" };
 

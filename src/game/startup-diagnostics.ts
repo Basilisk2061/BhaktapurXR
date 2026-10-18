@@ -1,6 +1,6 @@
 export const startupDiagnosticsEnabled=process.env.NODE_ENV==='development';
 export type StartupStatus='WAITING'|'OK'|'ERROR';
-const names=['Experience mounted','Canvas requested','Canvas module loaded','Canvas component mounted','Canvas onCreated','Renderer available','Camera available','Critical scene committed','Physics/world committed','First frame callback','Second frame callback','Readiness callback','Loading overlay dismissed','Player assets (nonblocking)','NPC module (after readiness)'];
+const names=['Explore route render attempted','Explore route client mounted','Experience import requested','Experience import resolved','Experience import rejected','Experience component received','Experience render attempted','Experience mounted','Canvas requested','Canvas module loaded','Canvas component mounted','Canvas onCreated','Renderer available','Camera available','Critical scene committed','Physics/world committed','First frame callback','Second frame callback','Readiness callback','Loading overlay dismissed','Player assets (nonblocking)','NPC module (after readiness)'];
 export interface DiagnosticEntry{status:StartupStatus;time?:number;detail?:string}
 interface Snapshot{checks:Record<string,DiagnosticEntry>;info:Record<string,string>;errors:string[];resources:Record<string,DiagnosticEntry>}
 let snapshot:Snapshot={checks:Object.fromEntries(names.map(name=>[name,{status:'WAITING' as const}])),info:{},errors:[],resources:{}};

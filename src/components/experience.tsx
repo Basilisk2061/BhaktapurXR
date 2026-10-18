@@ -63,5 +63,6 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
 }
 
 export function Experience({ mode, review=null, architecturalDebug=false, silhouette=false,manualOverrides,developmentUI=false }: { mode: WorldMode; review?:string|null; architecturalDebug?:boolean;silhouette?:boolean;manualOverrides?:TransformOverrides;developmentUI?:boolean }) {
+  startupMark("Experience render attempted");
   return <ExperienceErrorBoundary><ExperienceContent developmentUI={developmentUI} key={mode+review} manualOverrides={manualOverrides} mode={mode} review={review} architecturalDebug={architecturalDebug} silhouette={silhouette} /></ExperienceErrorBoundary>;
 }
