@@ -24,19 +24,19 @@ export function buildRaisedPavilionTerraces(context:CentralModel[],pagoda:Centra
  const cut=(rings:Polygon):MultiPolygon=>exclusions.length?polygonClipping.difference(rings,...exclusions):[rings];
  const add=(pieces:MultiPolygon,base:number,height:number,material:"brick"|"stone",role:string)=>{for(const rings of pieces){m.volumes!.push({rings,baseY:base,height,material,role});for(const c of walkableFloorColliders(rings,height)){c.position[1]+=base;m.colliders.push(c);m.boxes.push({...c,position:[...c.position],size:[...c.size],material,role:role+"-collision"});}}};
  const localPagoda=(z:number):[number,number]=>[pagoda.origin[0]+Math.sin(pagoda.yaw)*z,pagoda.origin[1]+Math.cos(pagoda.yaw)*z];
- // Gopinath only: stepped masonry terraces with a real central stair interruption.
- // Independent white-pavilion and veranda platforms below remain unchanged.
- const stairSlot:Polygon=[rectangle(localPagoda(5.4),2.4,3,pagoda.yaw)];
+ // Gopinath: two substantial masonry terraces and a final temple-floor course.
+ // Stair slot is removed from every layer, so no hidden tall collider crosses the treads.
+ const stairSlot:Polygon=[rectangle(localPagoda(6.25),2.5,3.6,pagoda.yaw)];
  const pagodaLayer=(w:number,d:number,base:number,height:number,role:string)=>
   add(polygonClipping.difference(cut([rectangle(pagoda.origin,w,d,pagoda.yaw)]),stairSlot),base,height,"brick",role);
- pagodaLayer(12.9,11.5,0,.36,"pagoda-platform-lower-base");
- pagodaLayer(13,11.6,.36,.1,"pagoda-platform-lower-projecting-course");
- pagodaLayer(12,10.6,.46,.42,"pagoda-platform-middle-base");
- pagodaLayer(12.15,10.75,.88,.1,"pagoda-platform-middle-projecting-course");
- pagodaLayer(11,9.4,.98,.36,"pagoda-platform-upper-base");
- pagodaLayer(11.15,9.55,1.34,.1,"pagoda-platform-upper-coping");
- for(let i=0;i<8;i++){
-  const tread:Polygon=[rectangle(localPagoda(6.6-i*.36),2.4,.36,pagoda.yaw)];
+ pagodaLayer(14.2,12.2,0,.52,"pagoda-platform-lower-masonry");
+ pagodaLayer(14.4,12.4,.52,.12,"pagoda-platform-lower-projecting-course");
+ pagodaLayer(12.8,10.8,.64,.72,"pagoda-platform-upper-masonry");
+ pagodaLayer(13,11,1.36,.14,"pagoda-platform-upper-projecting-course");
+ pagodaLayer(11.8,9.8,1.5,.2,"pagoda-platform-temple-floor");
+ pagodaLayer(12,10,1.7,.1,"pagoda-platform-floor-coping");
+ for(let i=0;i<10;i++){
+  const tread:Polygon=[rectangle(localPagoda(7.87-i*.36),2.5,.36,pagoda.yaw)];
   add(cut(tread),0,(i+1)*.18,"brick","pagoda-platform-access");
  }
  // A single masonry block and structural cap; no front stair or shared terrace.
