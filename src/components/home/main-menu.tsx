@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import {MenuWindowFrame} from './menu-window-frame';
 import {enterMobilePresentation,isTouchPresentation} from '../../lib/mobile-presentation';
 import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
@@ -19,7 +20,7 @@ export function MainMenu(){
  useEffect(()=>{if(panel&&!dialog.current?.open)dialog.current?.showModal();},[panel]);
  return <>
   <section className="menu-content" aria-labelledby="menu-title">
-   <svg className="menu-ornament" width="110" height="24" viewBox="0 0 110 24" aria-hidden="true"><path d="M0 12H31L37 6 43 12 37 18 31 12M79 12H110M67 12L73 6 79 12 73 18Z" fill="none" stroke="currentColor"/><path d="M55 2L65 12 55 22 45 12Z" fill="none" stroke="currentColor"/><path d="M55 8L59 12 55 16 51 12Z" fill="currentColor"/></svg>
+   <svg className="menu-ornament" width="110" height="24" viewBox="0 0 110 24" aria-hidden="true"><path d="M0 12H31L37 6 43 12 37 18 31 12M79 12H110M67 12L73 6 79 12 73 18Z" fill="none" stroke="currentColor"/><path d="M55 2L65 12 55 22 45 12Z" fill="none" stroke="currentColor"/><path d="M55 8L59 12 55 16 51 12Z" fill="#a17f4a"/><path d="M20 12h5m60 0h5" stroke="#3c7777"/></svg>
    <h1 id="menu-title">BHAKTAPUR<span>XR</span></h1>
    <p className="menu-subtitle">3D HERITAGE EXPLORATION</p>
    <p className="menu-intro">An evolving digital interpretation of<br className="menu-desktop-break"/> Bhaktapur Durbar Square, Nepal.</p>
@@ -27,8 +28,8 @@ export function MainMenu(){
     <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false} onClick={event=>{
      if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!isTouchPresentation())return;
      event.preventDefault();void enterMobilePresentation().finally(()=>router.push(PUBLIC_EXPLORE_HREF));
-    }}><strong>PLAY</strong><span>Explore Bhaktapur</span></Link>
-    <button className="menu-settings" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}>Settings</button>
+    }}><MenuWindowFrame/><strong className="menu-window-label">PLAY</strong></Link>
+    <button className="menu-settings" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}><MenuWindowFrame/><span className="menu-window-label">Settings</span></button>
    </div>
    <nav className="menu-options" aria-label="Information">
     {(Object.entries(panels) as [Panel,string][]).filter(([key])=>key!=='settings').map(([key,label])=><button key={key} type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel(key)}>{label}</button>)}
