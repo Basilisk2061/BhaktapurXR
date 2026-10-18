@@ -1,0 +1,1418 @@
+{
+  "golden-gate": {
+    "id": "golden-gate",
+    "name": "Golden Gate",
+    "category": "GATE",
+    "alternateNames": [
+      "Sun Dokha",
+      "Swarna Dwar"
+    ],
+    "period": "Mid-18th century",
+    "overview": "The gilded entrance in the royal palace frontage leads toward the palace courtyards and the Taleju sanctuary. It is distinct from Khauma, the western entrance to the square.",
+    "history": "Cambridge Museums describes the gate as begun under Bhupatindra Malla and completed under Ranjit Malla in 1754. Tourism Board publications differ between 1753 and 1754; the completion year is therefore not treated as uncontested.",
+    "architecture": "Gilded copper ornament contrasts with the surrounding red brick. The torana includes Garuda and a multi-headed, multi-armed representation of Taleju; inscriptions flank the portal. The metalwork frames a ceremonial threshold rather than a freestanding city gate.",
+    "significance": "The gate expresses the relationship between Malla kingship, the royal palace and Taleju. Its religious setting should not be confused with unrestricted public access to every inner court.",
+    "images": [
+      {
+        "src": "/heritage/golden-gate/reference.jpg",
+        "alt": "Gilded portal and torana of the Golden Gate.",
+        "caption": "Gilded portal and torana of the Golden Gate.",
+        "credit": "Manoguru",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Golden_Gate_at_Bhaktapur_Durbar_Square.jpg",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c7/Golden_Gate_at_Bhaktapur_Durbar_Square.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c7/Golden_Gate_at_Bhaktapur_Durbar_Square.jpg/1280px-Golden_Gate_at_Bhaktapur_Durbar_Square.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2013-09-30 16:45:31",
+        "bytes": 749068,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      },
+      {
+        "src": "/heritage/golden-gate-wide/reference.jpg",
+        "alt": "Golden Gate within the palace frontage, photographed in 2014.",
+        "caption": "Golden Gate within the palace frontage, photographed in 2014.",
+        "credit": "Maesi64",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Golden_gate_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Golden_gate_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3b/Golden_gate_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg/1280px-Golden_gate_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "bytes": 739046,
+        "sourceDate": "2014-04-11",
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "cambridge",
+        "title": "Continuity and change in the Durbar Square at Bhaktapur, Nepal",
+        "organization": "University of Cambridge Museums",
+        "url": "https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/",
+        "note": "Institutional interpretation and identified photographs."
+      },
+      {
+        "id": "ntb-cultural",
+        "title": "Cultural Treasures of Nepal",
+        "organization": "Nepal Tourism Board",
+        "url": "https://trade.ntb.gov.np/wp-content/uploads/2023/04/cultural-treasures-of-nepal-inside.pdf",
+        "note": "Search-index corroboration only: direct PDF retrieval failed. Not the sole source for published claims."
+      },
+      {
+        "id": "photo:golden-gate",
+        "title": "Gilded portal and torana of the Golden Gate.",
+        "organization": "Wikimedia Commons / Manoguru",
+        "url": "https://commons.wikimedia.org/wiki/File:Golden_Gate_at_Bhaktapur_Durbar_Square.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      },
+      {
+        "id": "photo:golden-gate-wide",
+        "title": "Golden Gate within the palace frontage, photographed in 2014.",
+        "organization": "Wikimedia Commons / Maesi64",
+        "url": "https://commons.wikimedia.org/wiki/File:Golden_gate_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "golden-gate:overview",
+          "field": "overview",
+          "statement": "The gilded entrance in the royal palace frontage leads toward the palace courtyards and the Taleju sanctuary. It is distinct from Khauma, the western entrance to the square.",
+          "sourceIds": [
+            "cambridge"
+          ],
+          "locator": "Golden Gate / Sun Dokha discussion and palace frontage photographs."
+        },
+        {
+          "id": "golden-gate:history",
+          "field": "history",
+          "statement": "Cambridge Museums describes the gate as begun under Bhupatindra Malla and completed under Ranjit Malla in 1754. Tourism Board publications differ between 1753 and 1754; the completion year is therefore not treated as uncontested.",
+          "sourceIds": [
+            "cambridge",
+            "ntb-cultural"
+          ],
+          "locator": "Cambridge Golden Gate discussion; NTB Cultural Treasures Golden Gate entry (indexed text)."
+        },
+        {
+          "id": "golden-gate:architecture",
+          "field": "architecture",
+          "statement": "Gilded copper ornament contrasts with the surrounding red brick. The torana includes Garuda and a multi-headed, multi-armed representation of Taleju; inscriptions flank the portal. The metalwork frames a ceremonial threshold rather than a freestanding city gate.",
+          "sourceIds": [
+            "cambridge"
+          ],
+          "locator": "Golden Gate iconography and inscriptions discussion."
+        },
+        {
+          "id": "golden-gate:significance",
+          "field": "significance",
+          "statement": "The gate expresses the relationship between Malla kingship, the royal palace and Taleju. Its religious setting should not be confused with unrestricted public access to every inner court.",
+          "sourceIds": [
+            "cambridge"
+          ],
+          "locator": "Royal palace and Taleju context."
+        }
+      ],
+      "conflicts": [
+        "Cambridge gives completion in 1754; NTB Cultural Treasures indexed text gives 1753. NTB World Heritage booklet indexed text also gives 1754. The discrepancy is retained."
+      ],
+      "unresolved": [
+        "Exact Lu Dhowka spelling/transliteration not established by the consulted institutional text; not published as an authenticated local name.",
+        "No independently established conservation chronology for this exact portal."
+      ]
+    }
+  },
+  "fifty-five-frontage": {
+    "id": "fifty-five-frontage",
+    "name": "Fifty-Five Window Palace",
+    "category": "PALACE",
+    "alternateNames": [
+      "Palace of Fifty-Five Windows",
+      "Pachpanna Jhyale Durbar"
+    ],
+    "period": "Early-18th-century frontage; earlier palace site",
+    "overview": "The palace is distinguished by its continuous carved timber window gallery. It is part of the royal complex but has a history separate from the Golden Gate and the museum wing.",
+    "history": "The 2006 conservation report dates construction to 1702-1722 under Bhupatindra Malla and notes an attribution of the foundations to Jitamitra Malla. NTB describes a 15th-century palace origin. These accounts are not assumed to date the same surviving fabric. The 1934 earthquake badly damaged the window gallery, which was rebuilt using salvaged timbers with changes to its projecting support.",
+    "architecture": "Brick masonry, carved timber windows and structural frames, tiled roofs and painted interiors form a layered palace architecture. The conservation report records traditional ma appa and dachi appa brickwork with mud mortar, and first-floor murals including a Shiva Visvarupa composition.",
+    "significance": "The royal residence preserves evidence of Malla court culture and Newar timber craftsmanship. Its murals and window gallery preserve distinct artistic traditions within the same royal building.",
+    "images": [
+      {
+        "src": "/heritage/fifty-five-frontage/reference.jpg",
+        "alt": "Carved timber window gallery of the Fifty-Five Window Palace.",
+        "caption": "Carved timber window gallery of the Fifty-Five Window Palace.",
+        "credit": "Rajesh Dhungana",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_(3).jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/77/Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%283%29.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%283%29.jpg/1280px-Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%283%29.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2021-08-20 12:38:22",
+        "bytes": 378582,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "palace06",
+        "title": "Conservation of Fifty-Five Window Palace, Bhaktapur",
+        "organization": "Ram Govinda Shrestha / Lund University, 2006",
+        "url": "https://www.lth.se/fileadmin/hdm/alumni/papers/cmhb2005/cmhb2005-27.pdf",
+        "note": "Conservation report; proposals are not evidence of later completion."
+      },
+      {
+        "id": "ntb-bhaktapur",
+        "title": "Bhaktapur",
+        "organization": "Nepal Tourism Board",
+        "url": "https://ntb.gov.np/en/bhaktapur",
+        "note": "General palace chronology differs from the specific conservation report."
+      },
+      {
+        "id": "photo:fifty-five-frontage",
+        "title": "Carved timber window gallery of the Fifty-Five Window Palace.",
+        "organization": "Wikimedia Commons / Rajesh Dhungana",
+        "url": "https://commons.wikimedia.org/wiki/File:Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_(3).jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "fifty-five-frontage:overview",
+          "field": "overview",
+          "statement": "The palace is distinguished by its continuous carved timber window gallery. It is part of the royal complex but has a history separate from the Golden Gate and the museum wing.",
+          "sourceIds": [
+            "palace06",
+            "ntb-bhaktapur"
+          ],
+          "locator": "Conservation report introduction / building description; NTB Bhaktapur palace entry."
+        },
+        {
+          "id": "fifty-five-frontage:history",
+          "field": "history",
+          "statement": "The 2006 conservation report dates construction to 1702-1722 under Bhupatindra Malla and notes an attribution of the foundations to Jitamitra Malla. NTB describes a 15th-century palace origin. These accounts are not assumed to date the same surviving fabric. The 1934 earthquake badly damaged the window gallery, which was rebuilt using salvaged timbers with changes to its projecting support.",
+          "sourceIds": [
+            "palace06",
+            "ntb-bhaktapur"
+          ],
+          "locator": "Report introduction, historical background, earthquake damage and window-gallery conservation discussion."
+        },
+        {
+          "id": "fifty-five-frontage:architecture",
+          "field": "architecture",
+          "statement": "Brick masonry, carved timber windows and structural frames, tiled roofs and painted interiors form a layered palace architecture. The conservation report records traditional ma appa and dachi appa brickwork with mud mortar, and first-floor murals including a Shiva Visvarupa composition.",
+          "sourceIds": [
+            "palace06"
+          ],
+          "locator": "Building materials, structural description and mural documentation."
+        },
+        {
+          "id": "fifty-five-frontage:significance",
+          "field": "significance",
+          "statement": "The royal residence preserves evidence of Malla court culture and Newar timber craftsmanship. Its murals and window gallery preserve distinct artistic traditions within the same royal building.",
+          "sourceIds": [
+            "palace06"
+          ],
+          "locator": "Palace significance and conservation objectives."
+        }
+      ],
+      "conflicts": [
+        "NTB general 15th-century origin versus report 1702-1722 construction: distinguish site history and surviving frontage; do not collapse into one date."
+      ],
+      "unresolved": [
+        "Nyatapola is not accepted as a palace alias: it denotes the separate Taumadhi temple.",
+        "Nge Nyapa Jhya Laaykoo spelling not verified sufficiently to publish.",
+        "The 2006 conservation proposal is not evidence of a completed restoration in 2006; present access not established."
+      ]
+    }
+  },
+  "gallery-frontage": {
+    "id": "gallery-frontage",
+    "name": "National Art Gallery",
+    "category": "MUSEUM",
+    "alternateNames": [
+      "National Art Museum"
+    ],
+    "period": "Museum established 1960",
+    "overview": "The National Art Gallery occupies part of Bhaktapur's former royal palace. It is distinct from the Fifty-Five Window Palace farther east along the frontage.",
+    "history": "NTB dates the museum's establishment to 1960 under the Department of Archaeology. The palace wing is older: local accounts associate its lion entrance with Simhadhwaka Durbar. The Department of Archaeology's 2022 report documents conservation of the western gallery wing after the 2015 earthquake, using lime-based masonry work and Sal timber.",
+    "architecture": "The brick entrance has carved timber openings and prominent guardian sculpture. The adjoining white, Rana-period remodelled frontage is architecturally distinct. The local name of the lion-gate palace must not be applied indiscriminately to every section of the modern museum complex.",
+    "significance": "The museum preserves painting, manuscripts and stone sculpture associated with Hindu and Buddhist traditions. NTB highlights paubha painting among its collections. The historical palace building and the museum institution therefore have different chronologies.",
+    "images": [
+      {
+        "src": "/heritage/gallery-frontage/reference.jpg",
+        "alt": "Guardian sculptures at the National Art Gallery entrance.",
+        "caption": "Guardian sculptures at the National Art Gallery entrance.",
+        "credit": "Maesi64",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_04.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c6/National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_04.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c6/National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_04.jpg/1280px-National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_04.jpg",
+        "attributionRequired": "false",
+        "restrictions": "",
+        "sourceDate": "2014-04-11",
+        "bytes": 788745,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      },
+      {
+        "src": "/heritage/gallery-frontage-wide/reference.jpg",
+        "alt": "National Art Gallery frontage and adjoining white wing, photographed in 2014.",
+        "caption": "National Art Gallery frontage and adjoining white wing, photographed in 2014.",
+        "credit": "Maesi64",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/ca/National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg/1280px-National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "bytes": 343314,
+        "sourceDate": "2014-04-11",
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "ntb-museum",
+        "title": "Museums in Bhaktapur",
+        "organization": "Nepal Tourism Board",
+        "url": "https://ntb.gov.np/en/museums-in-bhaktapur",
+        "note": "Institutional establishment and collection information; internally inconsistent inscription chronology excluded."
+      },
+      {
+        "id": "cambridge",
+        "title": "Continuity and change in the Durbar Square at Bhaktapur, Nepal",
+        "organization": "University of Cambridge Museums",
+        "url": "https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/",
+        "note": "Institutional interpretation and identified photographs."
+      },
+      {
+        "id": "local-museum",
+        "title": "The National Art Museum",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/the-national-art-museum/",
+        "note": "Secondary local building-name evidence, distinguished from museum founding date."
+      },
+      {
+        "id": "doa22",
+        "title": "State of Conservation Report 2022: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/191662",
+        "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+      },
+      {
+        "id": "photo:gallery-frontage",
+        "title": "Guardian sculptures at the National Art Gallery entrance.",
+        "organization": "Wikimedia Commons / Maesi64",
+        "url": "https://commons.wikimedia.org/wiki/File:National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_04.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      },
+      {
+        "id": "photo:gallery-frontage-wide",
+        "title": "National Art Gallery frontage and adjoining white wing, photographed in 2014.",
+        "organization": "Wikimedia Commons / Maesi64",
+        "url": "https://commons.wikimedia.org/wiki/File:National_Art_Gallery_%E2%80%93_Bhaktapur_%E2%80%93_01.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "gallery-frontage:overview",
+          "field": "overview",
+          "statement": "The National Art Gallery occupies part of Bhaktapur's former royal palace. It is distinct from the Fifty-Five Window Palace farther east along the frontage.",
+          "sourceIds": [
+            "ntb-museum",
+            "cambridge"
+          ],
+          "locator": "NTB National Art Gallery entry; Cambridge museum entrance and palace photographs."
+        },
+        {
+          "id": "gallery-frontage:history",
+          "field": "history",
+          "statement": "NTB dates the museum's establishment to 1960 under the Department of Archaeology. The palace wing is older: local accounts associate its lion entrance with Simhadhwaka Durbar. The Department of Archaeology's 2022 report documents conservation of the western gallery wing after the 2015 earthquake, using lime-based masonry work and Sal timber.",
+          "sourceIds": [
+            "ntb-museum",
+            "local-museum",
+            "doa22"
+          ],
+          "locator": "NTB gallery entry; local museum building identity; DoA 2022 project 6, PDF p48."
+        },
+        {
+          "id": "gallery-frontage:architecture",
+          "field": "architecture",
+          "statement": "The brick entrance has carved timber openings and prominent guardian sculpture. The adjoining white, Rana-period remodelled frontage is architecturally distinct. The local name of the lion-gate palace must not be applied indiscriminately to every section of the modern museum complex.",
+          "sourceIds": [
+            "cambridge",
+            "local-museum"
+          ],
+          "locator": "Cambridge lion entrance and white wing discussion; local Simhadhwaka building account."
+        },
+        {
+          "id": "gallery-frontage:significance",
+          "field": "significance",
+          "statement": "The museum preserves painting, manuscripts and stone sculpture associated with Hindu and Buddhist traditions. NTB highlights paubha painting among its collections. The historical palace building and the museum institution therefore have different chronologies.",
+          "sourceIds": [
+            "ntb-museum"
+          ],
+          "locator": "National Art Gallery collection and establishment entry."
+        }
+      ],
+      "conflicts": [
+        "Local 1698 palace attribution is not treated as the date of the whole mixed frontage or of the museum institution.",
+        "NTB collection text contains inconsistent inscription chronology; that dating is excluded."
+      ],
+      "unresolved": [
+        "Precise construction phases of every white and brick facade section remain unverified."
+      ]
+    }
+  },
+  "gopinath-krishna": {
+    "id": "gopinath-krishna",
+    "name": "Gopinath Temple",
+    "category": "TEMPLE",
+    "alternateNames": [
+      "Gopi Nath",
+      "Dwarika Temple",
+      "Krishna Temple",
+      "Radhakrishna Temple"
+    ],
+    "period": "Original construction date unknown",
+    "overview": "This two-roof temple belongs to the western Durbar Square entrance cluster. The Department of Archaeology identifies Gopi Nath with Dwarika or Krishna Temple; the local Radhakrishna name is also documented.",
+    "history": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, replacement of deteriorated ground-floor Sal timber and use of lime mortar in conservation. Its 2022 report describes repair without wholesale dismantling, with the project completed in fiscal year 2076-77 BS. These reports do not establish an original construction year or patron.",
+    "architecture": "The documented form is a two-roof Nepalese temple with brick masonry and important structural timber. Photographs show a broad lower roof, a smaller upper roof and carved timber entrance work.",
+    "significance": "The temple is dedicated to Krishna. DoA lists Satyabhama, Krishna and Radha in its sanctum, while a local account supplies a different accompanying deity list. The Krishna dedication is secure; the conflicting subsidiary identifications are not silently merged.",
+    "images": [
+      {
+        "src": "/heritage/gopinath-krishna/reference.jpg",
+        "alt": "Two-roof temple at the western entrance cluster, identified through the project plan and Department of Archaeology records as Gopinath / Dwarika.",
+        "caption": "Two-roof temple at the western entrance cluster, identified through the project plan and Department of Archaeology records as Gopinath / Dwarika.",
+        "credit": "Sushilagrg",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/50/A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg/1280px-A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2016-04-28 15:20:31",
+        "bytes": 311855,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa19",
+        "title": "State of Conservation Report 2019: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/171737",
+        "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+      },
+      {
+        "id": "local-gopi",
+        "title": "Radhakrishna Temple",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/radhakrishna-temple/",
+        "note": "Secondary local account; deity list differs from DoA."
+      },
+      {
+        "id": "doa22",
+        "title": "State of Conservation Report 2022: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/191662",
+        "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+      },
+      {
+        "id": "photo:gopinath-krishna",
+        "title": "Two-roof temple at the western entrance cluster, identified through the project plan and Department of Archaeology records as Gopinath / Dwarika.",
+        "organization": "Wikimedia Commons / Sushilagrg",
+        "url": "https://commons.wikimedia.org/wiki/File:A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PROVISIONAL",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged. The mapped Gopinath binding remains provisional; no promotion to verified."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "gopinath-krishna:overview",
+          "field": "overview",
+          "statement": "This two-roof temple belongs to the western Durbar Square entrance cluster. The Department of Archaeology identifies Gopi Nath with Dwarika or Krishna Temple; the local Radhakrishna name is also documented.",
+          "sourceIds": [
+            "doa19",
+            "local-gopi"
+          ],
+          "locator": "DoA 2019 section 1.13, PDF p32; local Radhakrishna identity account."
+        },
+        {
+          "id": "gopinath-krishna:history",
+          "field": "history",
+          "statement": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, replacement of deteriorated ground-floor Sal timber and use of lime mortar in conservation. Its 2022 report describes repair without wholesale dismantling, with the project completed in fiscal year 2076-77 BS. These reports do not establish an original construction year or patron.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "DoA 2019 section 1.13, p32; DoA 2022 project 2, p44."
+        },
+        {
+          "id": "gopinath-krishna:architecture",
+          "field": "architecture",
+          "statement": "The documented form is a two-roof Nepalese temple with brick masonry and important structural timber. Photographs show a broad lower roof, a smaller upper roof and carved timber entrance work.",
+          "sourceIds": [
+            "doa19",
+            "photo:gopinath-krishna"
+          ],
+          "locator": "DoA section 1.13 and licensed entrance-cluster photograph."
+        },
+        {
+          "id": "gopinath-krishna:significance",
+          "field": "significance",
+          "statement": "The temple is dedicated to Krishna. DoA lists Satyabhama, Krishna and Radha in its sanctum, while a local account supplies a different accompanying deity list. The Krishna dedication is secure; the conflicting subsidiary identifications are not silently merged.",
+          "sourceIds": [
+            "doa19",
+            "local-gopi"
+          ],
+          "locator": "DoA 2019 section 1.13; local deity discussion."
+        }
+      ],
+      "conflicts": [
+        "DoA lists Satyabhama/Krishna/Radha; local account lists Balram/Krishna/Radha. Prefer the official report while retaining the disagreement."
+      ],
+      "unresolved": [
+        "Original construction date and patron UNKNOWN.",
+        "Project footprint-to-identity binding remains PROVISIONAL, despite supported real-world name equivalences."
+      ]
+    }
+  },
+  "vatsala-durga": {
+    "id": "vatsala-durga",
+    "name": "Vatsala Durga Temple",
+    "category": "TEMPLE",
+    "alternateNames": [
+      "Vatsala Temple"
+    ],
+    "period": "Malla period; original chronology disputed",
+    "overview": "Vatsala Durga is the stone shikhara temple in the central palace forecourt. Its Durga dedication and three-stage plinth are documented by the Department of Archaeology. It is distinct from the nearby two-roof Yaksheshwar temple and from other Vatsala-named shrines.",
+    "history": "DoA gives an initial construction under Jitamitra Malla in 1696 and rebuilding under Bhupatindra Malla around the turn of the 18th century. A local account instead gives 1672 and 1674. The 2015 earthquake destroyed the temple. Foundation investigations involved DoA, UNESCO and Durham University, followed by municipal reconstruction on the retained foundation. The 2019 report describes work still in progress.",
+    "architecture": "The sandstone temple combines a substantial stepped base, axial stairs, guardians and a deeply articulated lower level beneath a tapering shikhara. Secondary projections, niches, cornices and an ornamental crown break up the stone tower. The licensed 2026 photograph documents the standing rebuilt form rather than proving an exact completion date.",
+    "significance": "Its dedication to Durga places the shrine within the palace square's religious ensemble. The reconstructed building also records the substantial conservation response to the 2015 earthquake.",
+    "images": [
+      {
+        "src": "/heritage/vatsala-durga/reference.jpg",
+        "alt": "Vatsala Durga and its forecourt, photographed in 2026.",
+        "caption": "Vatsala Durga and its forecourt, photographed in 2026.",
+        "credit": "Dolon Prova",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Vatsala_Temple_by_Bhaktapur_(1).jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/4/41/Vatsala_Temple_by_Bhaktapur_%281%29.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/41/Vatsala_Temple_by_Bhaktapur_%281%29.jpg/1280px-Vatsala_Temple_by_Bhaktapur_%281%29.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2026-03-28 06:51:13",
+        "bytes": 274853,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa19",
+        "title": "State of Conservation Report 2019: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/171737",
+        "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+      },
+      {
+        "id": "local-vatsala",
+        "title": "Vatsala Durga Temple",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/vatsala-durga-temple/",
+        "note": "Secondary chronology conflicts with DoA; not silently reconciled."
+      },
+      {
+        "id": "photo:vatsala-durga",
+        "title": "Vatsala Durga and its forecourt, photographed in 2026.",
+        "organization": "Wikimedia Commons / Dolon Prova",
+        "url": "https://commons.wikimedia.org/wiki/File:Vatsala_Temple_by_Bhaktapur_(1).jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "vatsala-durga:overview",
+          "field": "overview",
+          "statement": "Vatsala Durga is the stone shikhara temple in the central palace forecourt. Its Durga dedication and three-stage plinth are documented by the Department of Archaeology. It is distinct from the nearby two-roof Yaksheshwar temple and from other Vatsala-named shrines.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "DoA 2019 section 1.15, PDF pp32-33; compare separate Yantra Vatsala entry 1.12."
+        },
+        {
+          "id": "vatsala-durga:history",
+          "field": "history",
+          "statement": "DoA gives an initial construction under Jitamitra Malla in 1696 and rebuilding under Bhupatindra Malla around the turn of the 18th century. A local account instead gives 1672 and 1674. The 2015 earthquake destroyed the temple. Foundation investigations involved DoA, UNESCO and Durham University, followed by municipal reconstruction on the retained foundation. The 2019 report describes work still in progress.",
+          "sourceIds": [
+            "doa19",
+            "local-vatsala"
+          ],
+          "locator": "DoA section 1.15, pp32-33; local Vatsala chronology."
+        },
+        {
+          "id": "vatsala-durga:architecture",
+          "field": "architecture",
+          "statement": "The sandstone temple combines a substantial stepped base, axial stairs, guardians and a deeply articulated lower level beneath a tapering shikhara. Secondary projections, niches, cornices and an ornamental crown break up the stone tower. The licensed 2026 photograph documents the standing rebuilt form rather than proving an exact completion date.",
+          "sourceIds": [
+            "doa19",
+            "photo:vatsala-durga"
+          ],
+          "locator": "DoA three-stage plinth and sandstone description; licensed 2026 forecourt photograph."
+        },
+        {
+          "id": "vatsala-durga:significance",
+          "field": "significance",
+          "statement": "Its dedication to Durga places the shrine within the palace square's religious ensemble. The reconstructed building also records the substantial conservation response to the 2015 earthquake.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "DoA dedication and post-earthquake reconstruction account."
+        }
+      ],
+      "conflicts": [
+        "DoA 1696/Jitamitra then Bhupatindra versus local 1672/Jagat Prakash and 1674/Jitamitra. No single uncontested original date claimed."
+      ],
+      "unresolved": [
+        "Exact modern reconstruction completion date not established here.",
+        "The smaller adjacent bell is not assigned the Barking Bell story or a date without secure object binding."
+      ]
+    }
+  },
+  "large-bell": {
+    "id": "large-bell",
+    "name": "Taleju Bell",
+    "category": "MONUMENT",
+    "alternateNames": [
+      "Large Bell",
+      "Big Bell"
+    ],
+    "period": "1737 attribution",
+    "overview": "The large bell is a separate assembly in the royal forecourt near the Golden Gate and Fifty-Five Window Palace. It must not be confused with the smaller bell beside Vatsala.",
+    "history": "NTB's Cultural Treasures publication and the local bell account attribute the large bell to Ranjit Malla in 1737. The local account reports an inscription date of 6 January, but that precise day has not been independently checked against an epigraphic transcription.",
+    "architecture": "A substantial hanging metal bell is carried on an independent raised support assembly. The 2015 photograph shows its scale and separation from the pavilion and palace. This image includes earthquake damage elsewhere in the forecourt and must not be read as a present-day view.",
+    "significance": "The documented bell is associated with worship of Taleju, the royal protective goddess. No modern ringing schedule or visitor access practice is asserted here.",
+    "images": [
+      {
+        "src": "/heritage/large-bell/reference.jpg",
+        "alt": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "caption": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "credit": "Gerd Eichmann",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg/1280px-Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2015-09-26 10:49:11",
+        "bytes": 336071,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "local-bell",
+        "title": "Taleju Bell (Big Bell)",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/taleju-bell-big-bell/",
+        "note": "Secondary local attribution and reported inscription; exact day not independently epigraphically checked."
+      },
+      {
+        "id": "ntb-cultural",
+        "title": "Cultural Treasures of Nepal",
+        "organization": "Nepal Tourism Board",
+        "url": "https://trade.ntb.gov.np/wp-content/uploads/2023/04/cultural-treasures-of-nepal-inside.pdf",
+        "note": "Search-index corroboration only: direct PDF retrieval failed. Not the sole source for published claims."
+      },
+      {
+        "id": "photo:large-bell",
+        "title": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "organization": "Wikimedia Commons / Gerd Eichmann",
+        "url": "https://commons.wikimedia.org/wiki/File:Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "large-bell:overview",
+          "field": "overview",
+          "statement": "The large bell is a separate assembly in the royal forecourt near the Golden Gate and Fifty-Five Window Palace. It must not be confused with the smaller bell beside Vatsala.",
+          "sourceIds": [
+            "local-bell",
+            "photo:large-bell"
+          ],
+          "locator": "Local Taleju Bell location account; identified licensed 2015 palace-square photograph."
+        },
+        {
+          "id": "large-bell:history",
+          "field": "history",
+          "statement": "NTB's Cultural Treasures publication and the local bell account attribute the large bell to Ranjit Malla in 1737. The local account reports an inscription date of 6 January, but that precise day has not been independently checked against an epigraphic transcription.",
+          "sourceIds": [
+            "ntb-cultural",
+            "local-bell"
+          ],
+          "locator": "NTB Big Bell indexed entry; local Taleju Bell patronage and reported inscription."
+        },
+        {
+          "id": "large-bell:architecture",
+          "field": "architecture",
+          "statement": "A substantial hanging metal bell is carried on an independent raised support assembly. The 2015 photograph shows its scale and separation from the pavilion and palace. This image includes earthquake damage elsewhere in the forecourt and must not be read as a present-day view.",
+          "sourceIds": [
+            "photo:large-bell",
+            "local-bell"
+          ],
+          "locator": "Licensed 2015 image; local independent platform/support description."
+        },
+        {
+          "id": "large-bell:significance",
+          "field": "significance",
+          "statement": "The documented bell is associated with worship of Taleju, the royal protective goddess. No modern ringing schedule or visitor access practice is asserted here.",
+          "sourceIds": [
+            "ntb-cultural",
+            "local-bell"
+          ],
+          "locator": "NTB Big Bell worship reference; local Taleju association."
+        }
+      ],
+      "conflicts": [
+        "Precise inscription day appears in a local secondary account, not an independently checked transcription."
+      ],
+      "unresolved": [
+        "Exact casting workshop, dimensions and support reconstruction chronology UNKNOWN.",
+        "Small-bell/Taleju/Barking Bell identities must remain separate."
+      ]
+    }
+  },
+  "malla-column": {
+    "id": "malla-column",
+    "name": "Bhupatindra Malla Column",
+    "category": "MONUMENT",
+    "alternateNames": [
+      "Statue of King Bhupatindra Malla"
+    ],
+    "period": "Malla royal monument; installation year unresolved",
+    "overview": "A seated royal figure rises above the plaza on a slender stone column. The documented identification is King Bhupatindra Malla, shown with joined hands facing toward the Golden Gate and Taleju precinct.",
+    "history": "A local heritage account interprets the column as an expression of Bhupatindra Malla's royal devotion. The consulted evidence does not securely establish an installation year, so no exact year or unsupported story about damage is presented.",
+    "architecture": "The stone shaft supports a broad ornamented lotus-like capital and a seated metal figure. The folded legs, joined hands, seat, thin supporting pole and parasol are important parts of its silhouette. The licensed close photograph is the primary evidence for these visible details.",
+    "significance": "The ruler's prayerful posture connects royal authority with devotion to Taleju. The column is a forecourt monument, not a temple and not a generic decorative pillar.",
+    "images": [
+      {
+        "src": "/heritage/malla-column/reference.jpg",
+        "alt": "Bhupatindra Malla statue, capital and parasol above the stone column.",
+        "caption": "Bhupatindra Malla statue, capital and parasol above the stone column.",
+        "credit": "Manoguru",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Statue_of_King_Bhupatindra_Malla_at_Bhaktapur_Durbar_Square.jpg",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/d/d0/Statue_of_King_Bhupatindra_Malla_at_Bhaktapur_Durbar_Square.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d0/Statue_of_King_Bhupatindra_Malla_at_Bhaktapur_Durbar_Square.jpg/1280px-Statue_of_King_Bhupatindra_Malla_at_Bhaktapur_Durbar_Square.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2013-09-30 16:44:38",
+        "bytes": 306551,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "local-column",
+        "title": "Statue of King Bhupatindra Malla",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/statue-of-king-bhupatindra-malla/",
+        "note": "Secondary interpretation checked against the supplied licensed detail photograph; sensational anecdotes omitted."
+      },
+      {
+        "id": "photo:malla-column",
+        "title": "Bhupatindra Malla statue, capital and parasol above the stone column.",
+        "organization": "Wikimedia Commons / Manoguru",
+        "url": "https://commons.wikimedia.org/wiki/File:Statue_of_King_Bhupatindra_Malla_at_Bhaktapur_Durbar_Square.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "malla-column:overview",
+          "field": "overview",
+          "statement": "A seated royal figure rises above the plaza on a slender stone column. The documented identification is King Bhupatindra Malla, shown with joined hands facing toward the Golden Gate and Taleju precinct.",
+          "sourceIds": [
+            "local-column",
+            "photo:malla-column"
+          ],
+          "locator": "Local column identity and orientation; licensed statue detail."
+        },
+        {
+          "id": "malla-column:history",
+          "field": "history",
+          "statement": "A local heritage account interprets the column as an expression of Bhupatindra Malla's royal devotion. The consulted evidence does not securely establish an installation year, so no exact year or unsupported story about damage is presented.",
+          "sourceIds": [
+            "local-column"
+          ],
+          "locator": "Royal devotion account; precise installation and damage stories excluded from publication."
+        },
+        {
+          "id": "malla-column:architecture",
+          "field": "architecture",
+          "statement": "The stone shaft supports a broad ornamented lotus-like capital and a seated metal figure. The folded legs, joined hands, seat, thin supporting pole and parasol are important parts of its silhouette. The licensed close photograph is the primary evidence for these visible details.",
+          "sourceIds": [
+            "photo:malla-column",
+            "local-column"
+          ],
+          "locator": "Statue/capital detail photograph; local lotus, seat and devotional-posture description."
+        },
+        {
+          "id": "malla-column:significance",
+          "field": "significance",
+          "statement": "The ruler's prayerful posture connects royal authority with devotion to Taleju. The column is a forecourt monument, not a temple and not a generic decorative pillar.",
+          "sourceIds": [
+            "local-column"
+          ],
+          "locator": "Devotional interpretation and Golden Gate orientation."
+        }
+      ],
+      "conflicts": [
+        "Frequently repeated installation dates were not corroborated adequately; an exact year is withheld."
+      ],
+      "unresolved": [
+        "Installation year, workshop and securely sourced repair chronology UNKNOWN.",
+        "Local bullet-damage anecdote omitted for lack of corroboration."
+      ]
+    }
+  },
+  "chyasilin": {
+    "id": "chyasilin",
+    "name": "Chyasilin Mandap",
+    "category": "PAVILION",
+    "alternateNames": [
+      "Chyasilin Pavilion",
+      "Chyasalin Mandap"
+    ],
+    "period": "Historical pavilion; modern reconstruction project from 1987",
+    "overview": "Chyasilin is the octagonal pavilion beside the palace forecourt. Its present form is a documented modern reconstruction of the pavilion lost in the 1934 earthquake, not wholly surviving Malla-period fabric.",
+    "history": "The reconstruction account describes royal reception and festival viewing, an inscribed record of a poetry competition, and later use as a tax office. After the 1934 collapse, a reconstruction was proposed in 1987 by Götz Hagmüller and Niels Gutschow. Historic photographs and surviving carved posts informed the design. Dated 1990 bolt heads identify the modern intervention; the authors report that the pavilion survived the 2015 earthquake without damage.",
+    "architecture": "Two roofs cover an octagonal timber pavilion. Traditional carved elements coexist with modern steel trusses, foundations and an inner supporting system. That structural distinction is explicitly described by the reconstruction authors. The two included photographs show lower carved posts and the whole pavilion in the forecourt.",
+    "significance": "The pavilion served royal and public viewing functions and is an important example of an openly documented reconstruction. Its survival in 2015 should be understood alongside its modern structural reinforcement.",
+    "images": [
+      {
+        "src": "/heritage/chyasilin/reference.jpg",
+        "alt": "Carved posts and lower level of the octagonal Chyasilin pavilion.",
+        "caption": "Carved posts and lower level of the octagonal Chyasilin pavilion.",
+        "credit": "Steve Edwards from Savannah, U.S.A.",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chyasilin_Mandap,_Bhaktapur_(49981965597).jpg",
+        "license": "CC BY-SA 2.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/b0/Chyasilin_Mandap%2C_Bhaktapur_%2849981965597%29.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Chyasilin_Mandap%2C_Bhaktapur_%2849981965597%29.jpg/1280px-Chyasilin_Mandap%2C_Bhaktapur_%2849981965597%29.jpg",
+        "sourceDate": "2019-10-30 10:00",
+        "attributionRequired": "true",
+        "bytes": 294139,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      },
+      {
+        "src": "/heritage/large-bell/reference.jpg",
+        "alt": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "caption": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "credit": "Gerd Eichmann",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/e/e4/Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg/1280px-Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2015-09-26 10:49:11",
+        "bytes": 336071,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "mandap",
+        "title": "The Chyasilin Mandap: reconstruction and the 2015 earthquake",
+        "organization": "Götz Hagmüller and Suresh Shrestha / Asianart.com",
+        "url": "https://www.asianart.com/articles/mandap/",
+        "note": "First-hand reconstruction account, 2015, expanded from Kapil Bisht, 2014."
+      },
+      {
+        "id": "photo:chyasilin",
+        "title": "Carved posts and lower level of the octagonal Chyasilin pavilion.",
+        "organization": "Wikimedia Commons / Steve Edwards from Savannah, U.S.A.",
+        "url": "https://commons.wikimedia.org/wiki/File:Chyasilin_Mandap,_Bhaktapur_(49981965597).jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      },
+      {
+        "id": "photo:large-bell",
+        "title": "Large bell at left, Chyasilin pavilion behind; the 2015 photograph includes earthquake-damaged Vatsala remains and is not a present-day view.",
+        "organization": "Wikimedia Commons / Gerd Eichmann",
+        "url": "https://commons.wikimedia.org/wiki/File:Bhaktapur-Palastplatz_52-Taleju-Glocke-Cyasilim-55-Fenster-Palastplatz_2015-gje.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "chyasilin:overview",
+          "field": "overview",
+          "statement": "Chyasilin is the octagonal pavilion beside the palace forecourt. Its present form is a documented modern reconstruction of the pavilion lost in the 1934 earthquake, not wholly surviving Malla-period fabric.",
+          "sourceIds": [
+            "mandap"
+          ],
+          "locator": "First-hand Chyasilin reconstruction account, historical and structural sections."
+        },
+        {
+          "id": "chyasilin:history",
+          "field": "history",
+          "statement": "The reconstruction account describes royal reception and festival viewing, an inscribed record of a poetry competition, and later use as a tax office. After the 1934 collapse, a reconstruction was proposed in 1987 by Götz Hagmüller and Niels Gutschow. Historic photographs and surviving carved posts informed the design. Dated 1990 bolt heads identify the modern intervention; the authors report that the pavilion survived the 2015 earthquake without damage.",
+          "sourceIds": [
+            "mandap"
+          ],
+          "locator": "Historical uses; 1987 proposal; photographic reconstruction; 1990 bolt marks; 2015 performance."
+        },
+        {
+          "id": "chyasilin:architecture",
+          "field": "architecture",
+          "statement": "Two roofs cover an octagonal timber pavilion. Traditional carved elements coexist with modern steel trusses, foundations and an inner supporting system. That structural distinction is explicitly described by the reconstruction authors. The two included photographs show lower carved posts and the whole pavilion in the forecourt.",
+          "sourceIds": [
+            "mandap",
+            "photo:chyasilin",
+            "photo:large-bell"
+          ],
+          "locator": "First-hand structural description; two licensed photographs."
+        },
+        {
+          "id": "chyasilin:significance",
+          "field": "significance",
+          "statement": "The pavilion served royal and public viewing functions and is an important example of an openly documented reconstruction. Its survival in 2015 should be understood alongside its modern structural reinforcement.",
+          "sourceIds": [
+            "mandap"
+          ],
+          "locator": "Original viewing function and modern structural performance."
+        }
+      ],
+      "conflicts": [
+        "A later academic caption suggests completion in 1992 but could not be directly checked; the text uses the documented 1987 proposal and 1990 marks, not an asserted exact completion year."
+      ],
+      "unresolved": [
+        "Original founding patron/date not established without conflicting attribution.",
+        "Protective local legends are not presented as historical causes."
+      ]
+    }
+  },
+  "khauma-gate": {
+    "id": "khauma-gate",
+    "name": "Khauma Gate",
+    "category": "GATE",
+    "alternateNames": [
+      "Khauma Entrance Gate"
+    ],
+    "period": "Original construction date unknown",
+    "overview": "Khauma is the principal western entrance gate to Bhaktapur Durbar Square. Its city-entry role is distinct from the gilded Golden Gate in the royal palace frontage.",
+    "history": "DoA records collapse of the southern portion and cracking of upper masonry in the 2015 earthquake. Damaged work was dismantled down to the foundations and restored using traditional techniques, including Sal posts and timber ties. The consulted report does not establish the gate's original date or patron.",
+    "architecture": "The entrance is a masonry gateway with a pointed central opening, articulated side masses and an ornamental curved crown. These visible forms are documented by the licensed photograph.",
+    "significance": "The gateway marks the transition from the western streets into the heritage square. Its post-earthquake repair is documented independently of the more elaborate royal Golden Gate.",
+    "images": [
+      {
+        "src": "/heritage/khauma-gate/reference.jpg",
+        "alt": "Western entrance gate of Bhaktapur Durbar Square.",
+        "caption": "Western entrance gate of Bhaktapur Durbar Square.",
+        "credit": "Shadow Ayush",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Old_Town_Entrance_Gate,_Bhaktapur_Durbar_Square.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/69/Old_Town_Entrance_Gate%2C_Bhaktapur_Durbar_Square.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Old_Town_Entrance_Gate%2C_Bhaktapur_Durbar_Square.jpg/1280px-Old_Town_Entrance_Gate%2C_Bhaktapur_Durbar_Square.jpg",
+        "attributionRequired": "true",
+        "restrictions": "",
+        "sourceDate": "2018-09-19 15:11:58",
+        "bytes": 324048,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa19",
+        "title": "State of Conservation Report 2019: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/171737",
+        "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+      },
+      {
+        "id": "cambridge",
+        "title": "Continuity and change in the Durbar Square at Bhaktapur, Nepal",
+        "organization": "University of Cambridge Museums",
+        "url": "https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/",
+        "note": "Institutional interpretation and identified photographs."
+      },
+      {
+        "id": "photo:khauma-gate",
+        "title": "Western entrance gate of Bhaktapur Durbar Square.",
+        "organization": "Wikimedia Commons / Shadow Ayush",
+        "url": "https://commons.wikimedia.org/wiki/File:Old_Town_Entrance_Gate,_Bhaktapur_Durbar_Square.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "khauma-gate:overview",
+          "field": "overview",
+          "statement": "Khauma is the principal western entrance gate to Bhaktapur Durbar Square. Its city-entry role is distinct from the gilded Golden Gate in the royal palace frontage.",
+          "sourceIds": [
+            "doa19",
+            "cambridge"
+          ],
+          "locator": "DoA 2019 section 1.14, p32; Cambridge entrance and royal frontage distinction."
+        },
+        {
+          "id": "khauma-gate:history",
+          "field": "history",
+          "statement": "DoA records collapse of the southern portion and cracking of upper masonry in the 2015 earthquake. Damaged work was dismantled down to the foundations and restored using traditional techniques, including Sal posts and timber ties. The consulted report does not establish the gate's original date or patron.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "Section 1.14, PDF p32."
+        },
+        {
+          "id": "khauma-gate:architecture",
+          "field": "architecture",
+          "statement": "The entrance is a masonry gateway with a pointed central opening, articulated side masses and an ornamental curved crown. These visible forms are documented by the licensed photograph.",
+          "sourceIds": [
+            "photo:khauma-gate",
+            "doa19"
+          ],
+          "locator": "Licensed western entrance photograph; DoA masonry and timber conservation account."
+        },
+        {
+          "id": "khauma-gate:significance",
+          "field": "significance",
+          "statement": "The gateway marks the transition from the western streets into the heritage square. Its post-earthquake repair is documented independently of the more elaborate royal Golden Gate.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "Khauma main-western-entrance and conservation entry."
+        }
+      ],
+      "conflicts": [],
+      "unresolved": [
+        "Original date, founding patron and authenticated local spelling variants UNKNOWN.",
+        "No current ticketing or ritual schedule asserted."
+      ]
+    }
+  },
+  "yaksheshwar": {
+    "id": "yaksheshwar",
+    "name": "Yaksheshwar Temple",
+    "category": "TEMPLE",
+    "alternateNames": [
+      "Yakshyeshwor Temple",
+      "Pashupatinath of Bhaktapur"
+    ],
+    "period": "15th century",
+    "overview": "This two-roof Shiva temple stands south of Vatsala in the central square. DoA identifies Yakshyashwor as a 15th-century monument; local documentation also calls it Pashupatinath. It is not the similarly named Kathmandu temple complex.",
+    "history": "The 2022 DoA report records partial damage in the 2015 earthquake and conservation without wholesale dismantling, still under way at the time of reporting. Local accounts associate the temple with Yaksha Malla, but their precise 1475 date is not treated as independently established.",
+    "architecture": "Two spreading tiled roofs shelter a brick and carved-timber temple. Carved struts and entrance work are important parts of its Shaiva imagery. The included post-earthquake photograph locates it beside the then-damaged Vatsala site.",
+    "significance": "The Shiva/Pashupati dedication belongs to Bhaktapur's own religious landscape. Shared divine names do not make its history interchangeable with Kathmandu's Pashupatinath.",
+    "images": [
+      {
+        "src": "/heritage/yaksheshwar/reference.jpg",
+        "alt": "Two-roof Yaksheshwar / Pashupatinath temple; this post-earthquake photograph also shows Vatsala ruins.",
+        "caption": "Two-roof Yaksheshwar / Pashupatinath temple; this post-earthquake photograph also shows Vatsala ruins.",
+        "credit": "Suraj Belbase",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:15th_Century_Yaksheswor_Temple_also_called_Pashupatinath_of_Bhaktapur_01.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/b/bc/15th_Century_Yaksheswor_Temple_also_called_Pashupatinath_of_Bhaktapur_01.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/15th_Century_Yaksheswor_Temple_also_called_Pashupatinath_of_Bhaktapur_01.jpg/1280px-15th_Century_Yaksheswor_Temple_also_called_Pashupatinath_of_Bhaktapur_01.jpg",
+        "sourceDate": "2016-09-09 01:51:45",
+        "attributionRequired": "true",
+        "bytes": 235540,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa22",
+        "title": "State of Conservation Report 2022: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/191662",
+        "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+      },
+      {
+        "id": "local-yak",
+        "title": "Pashupatinath Temple",
+        "organization": "Bhaktapur.com",
+        "url": "https://www.bhaktapur.com/discover/pashupatinath-temple/",
+        "note": "Bhaktapur monument, not the Kathmandu temple complex."
+      },
+      {
+        "id": "photo:yaksheshwar",
+        "title": "Two-roof Yaksheshwar / Pashupatinath temple; this post-earthquake photograph also shows Vatsala ruins.",
+        "organization": "Wikimedia Commons / Suraj Belbase",
+        "url": "https://commons.wikimedia.org/wiki/File:15th_Century_Yaksheswor_Temple_also_called_Pashupatinath_of_Bhaktapur_01.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "yaksheshwar:overview",
+          "field": "overview",
+          "statement": "This two-roof Shiva temple stands south of Vatsala in the central square. DoA identifies Yakshyashwor as a 15th-century monument; local documentation also calls it Pashupatinath. It is not the similarly named Kathmandu temple complex.",
+          "sourceIds": [
+            "doa22",
+            "local-yak"
+          ],
+          "locator": "DoA 2022 project 23, PDF p65; local Bhaktapur Pashupatinath location and identity."
+        },
+        {
+          "id": "yaksheshwar:history",
+          "field": "history",
+          "statement": "The 2022 DoA report records partial damage in the 2015 earthquake and conservation without wholesale dismantling, still under way at the time of reporting. Local accounts associate the temple with Yaksha Malla, but their precise 1475 date is not treated as independently established.",
+          "sourceIds": [
+            "doa22",
+            "local-yak"
+          ],
+          "locator": "Project 23, p65; local patronage account."
+        },
+        {
+          "id": "yaksheshwar:architecture",
+          "field": "architecture",
+          "statement": "Two spreading tiled roofs shelter a brick and carved-timber temple. Carved struts and entrance work are important parts of its Shaiva imagery. The included post-earthquake photograph locates it beside the then-damaged Vatsala site.",
+          "sourceIds": [
+            "local-yak",
+            "photo:yaksheshwar"
+          ],
+          "locator": "Local architectural description; identified two-roof temple photograph."
+        },
+        {
+          "id": "yaksheshwar:significance",
+          "field": "significance",
+          "statement": "The Shiva/Pashupati dedication belongs to Bhaktapur's own religious landscape. Shared divine names do not make its history interchangeable with Kathmandu's Pashupatinath.",
+          "sourceIds": [
+            "local-yak",
+            "doa22"
+          ],
+          "locator": "Bhaktapur-specific monument accounts."
+        }
+      ],
+      "conflicts": [],
+      "unresolved": [
+        "Precise original year and independently corroborated patronage remain unresolved.",
+        "Exact completion date of post-2015 conservation not established by the 2022 progress report."
+      ]
+    }
+  },
+  "siddhi-lakshmi": {
+    "id": "siddhi-lakshmi",
+    "name": "Siddhi Lakshmi Temple",
+    "category": "TEMPLE",
+    "alternateNames": [
+      "Siddhi Laxmi Temple"
+    ],
+    "period": "17th century",
+    "overview": "The stone shikhara temple near the southeastern side of the Fifty-Five Window Palace is identified by DoA as Siddhi Lakshmi. Its elevated stair approach and paired guardians distinguish it from the nearby brick shikhara.",
+    "history": "DoA dates the temple to the 17th century. It was damaged, but did not collapse, in 2015. Conservation retained the foundation and plinth, numbered and reused dismantled stone elements, and renewed damaged timber structure and the gilded pinnacle.",
+    "architecture": "An axial staircase climbs a high stepped plinth to a compact stone shikhara. Paired sculptural guardians flank successive levels of the approach. Moulded courses and a crowned tapering tower give the stone mass a strong vertical silhouette.",
+    "significance": "The temple is dedicated to Siddhi Lakshmi. Its repaired fabric illustrates a conservation approach that retained the historic base and reused identifiable stone members rather than treating the whole monument as a new replica.",
+    "images": [
+      {
+        "src": "/heritage/siddhi-lakshmi/reference.jpg",
+        "alt": "Siddhi Lakshmi temple and its guardian-lined stairs, photographed in 2021; background restoration work is historical context.",
+        "caption": "Siddhi Lakshmi temple and its guardian-lined stairs, photographed in 2021; background restoration work is historical context.",
+        "credit": "Rajesh Dhungana",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Siddha_Laxmi_Temple_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_(1).jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/2/28/Siddha_Laxmi_Temple_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%281%29.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Siddha_Laxmi_Temple_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%281%29.jpg/1280px-Siddha_Laxmi_Temple_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%281%29.jpg",
+        "sourceDate": "2021-08-20 13:01:14",
+        "attributionRequired": "true",
+        "bytes": 391051,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa19",
+        "title": "State of Conservation Report 2019: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/171737",
+        "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+      },
+      {
+        "id": "doa22",
+        "title": "State of Conservation Report 2022: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/191662",
+        "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+      },
+      {
+        "id": "photo:siddhi-lakshmi",
+        "title": "Siddhi Lakshmi temple and its guardian-lined stairs, photographed in 2021; background restoration work is historical context.",
+        "organization": "Wikimedia Commons / Rajesh Dhungana",
+        "url": "https://commons.wikimedia.org/wiki/File:Siddha_Laxmi_Temple_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_(1).jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "siddhi-lakshmi:overview",
+          "field": "overview",
+          "statement": "The stone shikhara temple near the southeastern side of the Fifty-Five Window Palace is identified by DoA as Siddhi Lakshmi. Its elevated stair approach and paired guardians distinguish it from the nearby brick shikhara.",
+          "sourceIds": [
+            "doa19",
+            "photo:siddhi-lakshmi"
+          ],
+          "locator": "DoA 2019 section 1.2, PDF pp28-29; licensed 2021 photograph."
+        },
+        {
+          "id": "siddhi-lakshmi:history",
+          "field": "history",
+          "statement": "DoA dates the temple to the 17th century. It was damaged, but did not collapse, in 2015. Conservation retained the foundation and plinth, numbered and reused dismantled stone elements, and renewed damaged timber structure and the gilded pinnacle.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "DoA 2019 section 1.2; DoA 2022 project 5, PDF p47."
+        },
+        {
+          "id": "siddhi-lakshmi:architecture",
+          "field": "architecture",
+          "statement": "An axial staircase climbs a high stepped plinth to a compact stone shikhara. Paired sculptural guardians flank successive levels of the approach. Moulded courses and a crowned tapering tower give the stone mass a strong vertical silhouette.",
+          "sourceIds": [
+            "photo:siddhi-lakshmi",
+            "doa19"
+          ],
+          "locator": "Licensed stairs/guardian photograph; DoA stone-shikhara identification."
+        },
+        {
+          "id": "siddhi-lakshmi:significance",
+          "field": "significance",
+          "statement": "The temple is dedicated to Siddhi Lakshmi. Its repaired fabric illustrates a conservation approach that retained the historic base and reused identifiable stone members rather than treating the whole monument as a new replica.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "Dedication in section 1.2; project 5 retained fabric account."
+        }
+      ],
+      "conflicts": [],
+      "unresolved": [
+        "Exact founding year and patron UNKNOWN in the sources used here.",
+        "Guardian identities are not assigned from appearance alone."
+      ]
+    }
+  },
+  "silu-mahadev": {
+    "id": "silu-mahadev",
+    "name": "Silu Mahadev Temple",
+    "category": "TEMPLE",
+    "alternateNames": [
+      "Silu Mahadev / Fasi Dega"
+    ],
+    "period": "Historic Shiva shrine; present form reconstructed",
+    "overview": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the monumental stepped base at the eastern end of the square. It is distinguished by its broad, stepped-plinth site and restored tower.",
+    "history": "The 1934 earthquake damaged the earlier temple; a dome-roofed replacement subsequently occupied the surviving stepped base. The 2015 earthquake destroyed that upper building. DoA's 2022 report describes reconstruction of the pre-1934 form in its final phase. The licensed 2024 photograph shows the standing rebuilt temple, without establishing a precise completion day.",
+    "architecture": "Six substantial plinth stages carry a tall, articulated brick shikhara. The broad stair-and-platform composition is central to its identity and contrasts with the former dome-roofed replacement described in the conservation reports.",
+    "significance": "The Shiva dedication and the recovery of a pre-1934 architectural form connect the site's religious continuity with repeated earthquake reconstruction. The present superstructure is not described as untouched original fabric.",
+    "images": [
+      {
+        "src": "/heritage/silu-mahadev/reference.jpg",
+        "alt": "Restored Silu Mahadev / Fasi Dega and its tall stepped plinth, photographed in 2024.",
+        "caption": "Restored Silu Mahadev / Fasi Dega and its tall stepped plinth, photographed in 2024.",
+        "credit": "Goutam1962",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bhaktapur_Durbar_Square_Nepal_2024_13.jpg",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Bhaktapur_Durbar_Square_Nepal_2024_13.jpg",
+        "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/Bhaktapur_Durbar_Square_Nepal_2024_13.jpg/1280px-Bhaktapur_Durbar_Square_Nepal_2024_13.jpg",
+        "sourceDate": "2024-12-04 13:06:22",
+        "attributionRequired": "true",
+        "bytes": 1067841,
+        "modifications": "Commons web-sized rendition; no architectural or visual alterations."
+      }
+    ],
+    "sources": [
+      {
+        "id": "doa19",
+        "title": "State of Conservation Report 2019: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/171737",
+        "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+      },
+      {
+        "id": "doa22",
+        "title": "State of Conservation Report 2022: Kathmandu Valley",
+        "organization": "Department of Archaeology, Nepal / UNESCO",
+        "url": "https://whc.unesco.org/document/191662",
+        "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+      },
+      {
+        "id": "photo:silu-mahadev",
+        "title": "Restored Silu Mahadev / Fasi Dega and its tall stepped plinth, photographed in 2024.",
+        "organization": "Wikimedia Commons / Goutam1962",
+        "url": "https://commons.wikimedia.org/wiki/File:Bhaktapur_Durbar_Square_Nepal_2024_13.jpg",
+        "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      }
+    ],
+    "reconstruction": {
+      "identity": "PHOTO_INFERRED",
+      "placement": "APPROXIMATE",
+      "architecture": "PHOTO_INFERRED",
+      "dimensions": "APPROXIMATE",
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+    },
+    "research": {
+      "reviewed": "2026-10-18",
+      "claims": [
+        {
+          "id": "silu-mahadev:overview",
+          "field": "overview",
+          "statement": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the monumental stepped base at the eastern end of the square. It is distinguished by its broad, stepped-plinth site and restored tower.",
+          "sourceIds": [
+            "doa19",
+            "doa22",
+            "photo:silu-mahadev"
+          ],
+          "locator": "DoA 2019 section 1.1, p28; DoA 2022 project 17, p59; licensed 2024 photograph."
+        },
+        {
+          "id": "silu-mahadev:history",
+          "field": "history",
+          "statement": "The 1934 earthquake damaged the earlier temple; a dome-roofed replacement subsequently occupied the surviving stepped base. The 2015 earthquake destroyed that upper building. DoA's 2022 report describes reconstruction of the pre-1934 form in its final phase. The licensed 2024 photograph shows the standing rebuilt temple, without establishing a precise completion day.",
+          "sourceIds": [
+            "doa19",
+            "doa22",
+            "photo:silu-mahadev"
+          ],
+          "locator": "2019 section 1.1; 2022 project 17; dated 2024 photograph."
+        },
+        {
+          "id": "silu-mahadev:architecture",
+          "field": "architecture",
+          "statement": "Six substantial plinth stages carry a tall, articulated brick shikhara. The broad stair-and-platform composition is central to its identity and contrasts with the former dome-roofed replacement described in the conservation reports.",
+          "sourceIds": [
+            "doa19",
+            "photo:silu-mahadev"
+          ],
+          "locator": "DoA six-stage plinth and former dome account; restored-form photograph."
+        },
+        {
+          "id": "silu-mahadev:significance",
+          "field": "significance",
+          "statement": "The Shiva dedication and the recovery of a pre-1934 architectural form connect the site's religious continuity with repeated earthquake reconstruction. The present superstructure is not described as untouched original fabric.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "Dedication, 1934/2015 damage and reconstruction project."
+        }
+      ],
+      "conflicts": [
+        "The 2019 English report calls the site western; mapped project evidence and photographs place this stepped-plinth monument in the east. That compass wording is not adopted."
+      ],
+      "unresolved": [
+        "Original construction year and patron UNKNOWN.",
+        "Do not transfer this identity to the separately relocated shikhara assemblies."
+      ]
+    }
+  }
+}

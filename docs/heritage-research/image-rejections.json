@@ -1,0 +1,36 @@
+{
+  "chyasilin": {
+    "src": "/heritage/chyasilin/reference.jpg",
+    "alt": "chyasilin at Bhaktapur Durbar Square",
+    "caption": "Chyasilin Mandap, Bhaktapur Durbar Square",
+    "credit": "Shadow Ayush",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Chyasilin_Mandap,_Bhaktapur_Durbar_Square.jpg",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/3/3a/Chyasilin_Mandap%2C_Bhaktapur_Durbar_Square.jpg",
+    "downloadUrl": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Chyasilin_Mandap%2C_Bhaktapur_Durbar_Square.jpg/1280px-Chyasilin_Mandap%2C_Bhaktapur_Durbar_Square.jpg",
+    "attributionRequired": "true",
+    "restrictions": "",
+    "sourceDescription": "Chyasilin Mandap - 'Chyasilin' refers to the eight-cornered roof of this pavilion. It was used to receive royal guests &amp; the upper floor used as a viewing platform during festivals.",
+    "sourceDate": "2018-09-19 14:57:00",
+    "bytes": 548543,
+    "rejection": "Wrong three-tier pavilion despite file label"
+  },
+  "yaksheshwar": {
+    "src": "/heritage/yaksheshwar/reference.jpg",
+    "alt": "yaksheshwar at Bhaktapur Durbar Square",
+    "caption": "Le temple de Pashupatinath (Bhaktapur) (8566946238)",
+    "credit": "Jean-Pierre Dalbéra from Paris, France",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Le_temple_de_Pashupatinath_(Bhaktapur)_(8566946238).jpg",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/Le_temple_de_Pashupatinath_%28Bhaktapur%29_%288566946238%29.jpg",
+    "downloadUrl": "https://upload.wikimedia.org/wikipedia/commons/5/58/Le_temple_de_Pashupatinath_%28Bhaktapur%29_%288566946238%29.jpg",
+    "attributionRequired": "true",
+    "restrictions": "",
+    "sourceDescription": "Vue du temple de Pashupatinath dédié à Shiva sous la forme archaïque de Pashupati\nSelon l'article de Wikipedia, Pashupati (पशुपति) désigne Shiva sous la forme du \"Maître des créatures\" ou du \"Maître du troupeau\".\nfr.wikipedia.org/wiki/Pashupati\nCe temple a été initialement construit en 1475 (ou 1482) sous le règne du roi Yaksha Malla. C'est le plus ancien bâtiment de la place. Les sculptures des étais de la toiture comportent des scènes du culte tantrique.\nArticle de Wikipedia sur Bhaktapur\nen.wikipedia.org/wiki/Bhaktapur\nBhaktapur sur Insecula\n\nwww.insecula.com/musee/M0373.html",
+    "sourceDate": "2013-01-21 13:51",
+    "bytes": 1017171,
+    "rejection": "Alternative attribution not independently secured; replaced with identified 2016 view showing adjacent Vatsala ruins"
+  }
+}

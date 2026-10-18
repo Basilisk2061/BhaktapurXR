@@ -1,0 +1,100 @@
+{
+  "doa19": {
+    "id": "doa19",
+    "title": "State of Conservation Report 2019: Kathmandu Valley",
+    "organization": "Department of Archaeology, Nepal / UNESCO",
+    "url": "https://whc.unesco.org/document/171737",
+    "note": "Monument-specific restoration entries; PDF page numbers are one-based."
+  },
+  "doa22": {
+    "id": "doa22",
+    "title": "State of Conservation Report 2022: Kathmandu Valley",
+    "organization": "Department of Archaeology, Nepal / UNESCO",
+    "url": "https://whc.unesco.org/document/191662",
+    "note": "Monument-specific conservation project reports; PDF page numbers are one-based."
+  },
+  "cambridge": {
+    "id": "cambridge",
+    "title": "Continuity and change in the Durbar Square at Bhaktapur, Nepal",
+    "organization": "University of Cambridge Museums",
+    "url": "https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/",
+    "note": "Institutional interpretation and identified photographs."
+  },
+  "palace06": {
+    "id": "palace06",
+    "title": "Conservation of Fifty-Five Window Palace, Bhaktapur",
+    "organization": "Ram Govinda Shrestha / Lund University, 2006",
+    "url": "https://www.lth.se/fileadmin/hdm/alumni/papers/cmhb2005/cmhb2005-27.pdf",
+    "note": "Conservation report; proposals are not evidence of later completion."
+  },
+  "ntb-bhaktapur": {
+    "id": "ntb-bhaktapur",
+    "title": "Bhaktapur",
+    "organization": "Nepal Tourism Board",
+    "url": "https://ntb.gov.np/en/bhaktapur",
+    "note": "General palace chronology differs from the specific conservation report."
+  },
+  "ntb-museum": {
+    "id": "ntb-museum",
+    "title": "Museums in Bhaktapur",
+    "organization": "Nepal Tourism Board",
+    "url": "https://ntb.gov.np/en/museums-in-bhaktapur",
+    "note": "Institutional establishment and collection information; internally inconsistent inscription chronology excluded."
+  },
+  "ntb-cultural": {
+    "id": "ntb-cultural",
+    "title": "Cultural Treasures of Nepal",
+    "organization": "Nepal Tourism Board",
+    "url": "https://trade.ntb.gov.np/wp-content/uploads/2023/04/cultural-treasures-of-nepal-inside.pdf",
+    "note": "Search-index corroboration only: direct PDF retrieval failed. Not the sole source for published claims."
+  },
+  "mandap": {
+    "id": "mandap",
+    "title": "The Chyasilin Mandap: reconstruction and the 2015 earthquake",
+    "organization": "Götz Hagmüller and Suresh Shrestha / Asianart.com",
+    "url": "https://www.asianart.com/articles/mandap/",
+    "note": "First-hand reconstruction account, 2015, expanded from Kapil Bisht, 2014."
+  },
+  "local-gopi": {
+    "id": "local-gopi",
+    "title": "Radhakrishna Temple",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/radhakrishna-temple/",
+    "note": "Secondary local account; deity list differs from DoA."
+  },
+  "local-museum": {
+    "id": "local-museum",
+    "title": "The National Art Museum",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/the-national-art-museum/",
+    "note": "Secondary local building-name evidence, distinguished from museum founding date."
+  },
+  "local-vatsala": {
+    "id": "local-vatsala",
+    "title": "Vatsala Durga Temple",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/vatsala-durga-temple/",
+    "note": "Secondary chronology conflicts with DoA; not silently reconciled."
+  },
+  "local-yak": {
+    "id": "local-yak",
+    "title": "Pashupatinath Temple",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/pashupatinath-temple/",
+    "note": "Bhaktapur monument, not the Kathmandu temple complex."
+  },
+  "local-bell": {
+    "id": "local-bell",
+    "title": "Taleju Bell (Big Bell)",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/taleju-bell-big-bell/",
+    "note": "Secondary local attribution and reported inscription; exact day not independently epigraphically checked."
+  },
+  "local-column": {
+    "id": "local-column",
+    "title": "Statue of King Bhupatindra Malla",
+    "organization": "Bhaktapur.com",
+    "url": "https://www.bhaktapur.com/discover/statue-of-king-bhupatindra-malla/",
+    "note": "Secondary interpretation checked against the supplied licensed detail photograph; sensational anecdotes omitted."
+  }
+}

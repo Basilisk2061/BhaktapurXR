@@ -1,18 +1,29 @@
 import {Vector3} from "three";
-import {spatialCorrections} from "../../data/reconstruction/khauma-spatial-audit";
-import {westSpecificationById} from "../../data/reconstruction/architecture/west-specifications";
-import {transformMatrix,type TransformOverrides} from "../../features/world-editor/transforms";
+import {buildCompletedSquareModels} from "../architecture/square-completion";
+import {museumEntranceCentre} from "../architecture/museum-entrance";
+import {transformMatrix,type ManualTransform,type TransformOverrides} from "../../features/world-editor/transforms";
 import {playerConfig} from "../player/player-config";
+import {heritageLandmarks} from "./landmarks";
+import {heritageZoneSpecifications} from "./zone-specifications";
 import type {HeritageInteractionZone} from "./types";
-/** Use the same corrected assembly frame as the scene, then its saved parent override.
- * Local +Z is the entrance. 8.2 m is outside the current central stair foot (8.05 m).
- * The zone is not geometry and never changes the landmark's placement. */
+// Read the renderer's final correction pipeline once on demand. Retain only frames,
+// not architectural model arrays. No extra GPU geometry is created.
+let frames:Map<string,{source:ManualTransform;doorX:number}>|undefined;
+function sourceFrames(){
+ if(!frames)frames=new Map(buildCompletedSquareModels().filter(m=>heritageZoneSpecifications[m.id]).map(m=>[m.id,{
+  source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]} satisfies ManualTransform,
+  doorX:m.id==="gallery-frontage"?museumEntranceCentre(m):0,
+ }]));
+ return frames;
+}
+/** Zones follow final source frames and full saved parent Euler/scale overrides. */
 export function heritageInteractionZones(overrides:TransformOverrides={}):HeritageInteractionZone[]{
- const id="gopinath-krishna",spec=westSpecificationById[id],correction=spatialCorrections[id];
- const origin=correction?.coordinate??spec.position,yaw=correction?.yaw??spec.workingYaw;
- const source={position:[origin[0],0,origin[1]] as [number,number,number],rotation:[0,yaw,0] as [number,number,number],scale:[1,1,1] as [number,number,number]};
- const position=new Vector3(0,playerConfig.height/2,8.2).applyMatrix4(transformMatrix(overrides[id]??source)).toArray() as [number,number,number];
- return [{landmarkId:id,heritageId:id,position,radius:4.5,label:"Explore Gopinath Temple"}];
+ return Object.entries(heritageZoneSpecifications).flatMap(([id,spec])=>{
+  const frame=sourceFrames().get(id),record=heritageLandmarks[id];
+  if(!frame||!record)return [];
+  const position=new Vector3(spec.offset[0]+frame.doorX,playerConfig.height/2,spec.offset[1]).applyMatrix4(transformMatrix(overrides[id]??frame.source)).toArray() as [number,number,number];
+  return [{landmarkId:id,heritageId:id,position,radius:spec.radius,label:`Explore ${record.name}`}];
+ });
 }
 export function nearestHeritageZone(position:{x:number;y:number;z:number},zones:readonly HeritageInteractionZone[],valid:(id:string)=>boolean){
  let nearest:HeritageInteractionZone|null=null,best=Infinity;
