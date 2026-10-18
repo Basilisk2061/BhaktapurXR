@@ -2,7 +2,7 @@ import savedEditorState from "../../features/bhaktapur/data/world-editor-state.j
 import {Euler,Matrix4,Vector3} from "three";
 import legacyOverrides from "../../features/bhaktapur/data/manual-transform-overrides.json" with {type:"json"};
 import {khaumaGateDimensions} from "./khauma-entrance-model.ts";
-import {overrideMatrix,type TransformOverrides} from "../../features/world-editor/transforms.ts";
+import {overrideMatrix,validateTransform,type TransformOverrides} from "../../features/world-editor/transforms.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import polygonClipping from "polygon-clipping";
 import {contextColliders} from "./urban-occupancy.ts";
@@ -44,7 +44,10 @@ function relief(m:CentralModel,x:number,y:number,z:number,left:boolean){
  box(m,x,y+.93,z,.95,1.9,.35,"stone",role+"-collision",true);
 }
 const guardianId="edge:khauma-north-flank:1158762014";
-const currentOverrides=()=>((savedEditorState as {transforms?:TransformOverrides}).transforms??legacyOverrides) as TransformOverrides;
+// Validate the JSON boundary and copy its unchanged numeric components into Triple tuples.
+const currentOverrides=():TransformOverrides=>Object.fromEntries(
+ Object.entries(savedEditorState.transforms??legacyOverrides).map(([id,transform])=>[id,validateTransform(transform)])
+);
 function editedMatrix(m:CentralModel){const source={position:[m.origin[0],0,m.origin[1]] as [number,number,number],rotation:[0,m.yaw,0] as [number,number,number],scale:[1,1,1] as [number,number,number]};return overrideMatrix(source,currentOverrides()[m.id]??source);}
 function gateBoundary(){
  const gate=currentOverrides()['khauma-gate'],rotation=new Matrix4().makeRotationFromEuler(new Euler(...gate.rotation));
@@ -127,7 +130,7 @@ function guardianMuseumEnclosure(models:CentralModel[],museum:CentralModel):Cent
  // Conservatively put C in front of the full occupied outline of the house AND tower.
  // Solve its required front offset with its museum endpoint fixed; never move a building.
  let qB=aEnd.dot(square);
- for(const building of models.filter(m=>[guardianEnclosureEvidence.houseModel,guardianEnclosureEvidence.towerModel].includes(m.id))){
+ for(const building of models.filter(m=>m.id===guardianEnclosureEvidence.houseModel||m.id===guardianEnclosureEvidence.towerModel)){
   const delta=editedMatrix(building);
   for(const volume of building.volumes??[])for(const [x,z]of volume.rings[0]){
    const point=new Vector3(x,0,z).applyMatrix4(delta),alpha=(point.dot(along)-tB)/(tE-tB);
