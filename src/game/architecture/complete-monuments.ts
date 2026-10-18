@@ -1,3 +1,4 @@
+import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 import {buildPhase9Models,connectedStrut} from "./west-models.ts";
 import {box,doorway,profile,pinnacle} from "./remaining-models.ts";
 import type {CentralModel} from "./central-model.ts";
@@ -35,8 +36,48 @@ export function buildCompleteYaksheshwar():CentralModel{
  pagodaRoof(m,9.82,7.2,7.2,1.6,3.93,3.93,9.45,"yak-complete-smaller-upper-roof");
  profile(m,0,11.42,0,[[.26,0],[.34,.23],[.16,.43],[0,.56]],"gold","yak-complete-gilded-roof-crown",12);pinnacle(m,0,11.98,0,.32,"yak-complete-summit");return m;
 }
+export const entrancePagodaPhotoEvidence={id:"gopinath-krishna",identity:"Gopinath / Dwarika (existing provisional binding)",identityConfidence:"PROVISIONALLY_IDENTIFIED",form:"PHOTO_INFERRED",dimensions:"APPROXIMATE",reference:"Screenshot 2026-10-18 205945.png",platformTop:.9,lowerSupportHeight:2.45,lowerRoof:{width:11.6,depth:10.2,eave:3.95,rise:1},upperPavilion:{width:3,depth:2.7,height:1.15},upperRoof:{width:5.8,depth:5.4,eave:6,rise:.8},overallTop:7.5,limitations:"Single oblique view: exact support count, rear/core layout, carvings and metre dimensions remain approximate. Existing identity/anchor retained; no newly verified dimensions."} as const;
+function entrancePagoda(source:CentralModel):CentralModel{
+ // Replace, rather than cover, the old enclosed shrine, giant portals and upper tower.
+ const m:CentralModel={...source,accuracy:"PHOTO_INFERRED",boxes:[],profiles:[],shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]};
+ Object.assign(m,{editorPartSources:Object.fromEntries(partitionArchitecturalParts(source).map(p=>[p.id,p.source]))});
+ // Small masonry core behind an open timber perimeter. Front bays remain genuinely clear.
+ box(m,0,1.99,-.72,2.2,2.18,1.9,"agedBrick","entrance-pagoda-recessed-inner-core",true);
+ box(m,0,1.92,.25,1.26,1.94,.05,"recess","entrance-pagoda-core-door-shadow");
+ for(const x of [-.72,.72])box(m,x,1.94,.32,.16,2.08,.19,"carvedTimber","entrance-pagoda-core-door-jamb");
+ box(m,0,3.05,.34,1.72,.2,.25,"carvedTimber","entrance-pagoda-core-door-head");
+ for(const z of [-2.35,2.35])for(const x of [-2.8,-.95,.95,2.8]){
+  box(m,x,2.125,z,.24,2.45,.24,"carvedTimber","entrance-pagoda-open-bay-post",true);
+  box(m,x,1.02,z,.39,.24,.39,"agedBrick","entrance-pagoda-post-foot",true);
+  box(m,x,3.27,z,.55,.18,.43,"carvedTimber","entrance-pagoda-post-capital");
+ }
+ for(const x of [-2.8,2.8])box(m,x,2.125,0,.24,2.45,.24,"carvedTimber","entrance-pagoda-side-post",true);
+ for(const z of [-2.35,2.35])box(m,0,3.4,z,6.2,.3,.38,"carvedTimber","entrance-pagoda-continuous-head-beam");
+ for(const x of [-2.8,2.8])box(m,x,3.4,0,.38,.3,5.1,"carvedTimber","entrance-pagoda-side-head-beam");
+ for(let face=0;face<4;face++){
+  const saved=m.yaw;m.yaw+=face*Math.PI/2;
+  const depth=face%2?5.6:4.7,span=face%2?4.7:5.6,outer=(face%2?11.6:10.2)/2-.24;
+  for(let i=0;i<7;i++)connectedStrut(m,-span/2+i*span/6,3.22,depth/2,3.84,outer,"entrance-pagoda-lower-connected-strut");
+  m.yaw=saved;
+ }
+ pagodaRoof(m,3.95,11.6,10.2,1,6.2,5.1,3.5,"entrance-pagoda-dominant-lower-roof");
+ // Compact pavilion emerges from the lower roof; no extra full-height brick storey.
+ box(m,0,4.935,0,3,.32,2.7,"agedBrick","entrance-pagoda-upper-low-apron",true);
+ box(m,0,5.47,0,2.48,.75,2.18,"recess","entrance-pagoda-upper-shadowed-core",true);
+ for(const x of [-1.4,1.4])for(const z of [-1.25,1.25])box(m,x,5.49,z,.18,1.15,.18,"carvedTimber","entrance-pagoda-upper-pavilion-post",true);
+ for(let face=0;face<4;face++){
+  const saved=m.yaw;m.yaw+=face*Math.PI/2;const d=face%2?3:2.7;
+  box(m,0,5.91,d/2,face%2?2.85:3.15,.2,.23,"carvedTimber","entrance-pagoda-upper-head-band");
+  for(const x of [-.82,0,.82])connectedStrut(m,x,5.73,d/2,5.9,(face%2?5.8:5.4)/2-.15,"entrance-pagoda-upper-connected-strut");
+  m.yaw=saved;
+ }
+ pagodaRoof(m,6,5.8,5.4,.8,3.15,2.85,5.9,"entrance-pagoda-smaller-upper-roof");
+ pinnacle(m,0,6.8,0,.7,"entrance-pagoda-restrained-finial");
+ return m;
+}
 export function buildPhase9a1Models(){return buildPhase9Models().filter(m=>m.id!=="khauma-adjoining-fabric").map(m=>{
  if(m.id==="yaksheshwar")return buildCompleteYaksheshwar();
+ if(m.id==="gopinath-krishna")return entrancePagoda(m);
  if(!["gopinath-krishna","jagannath"].includes(m.id))return m;
  const complete=structuredClone(m),originalRoofs=complete.roofs;complete.roofs=[];
  complete.boxes=complete.boxes.filter(b=>!b.role.endsWith("-eave"));

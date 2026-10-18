@@ -6,7 +6,7 @@ import {rectangle} from "./urban-model.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import {partitionArchitecturalParts} from "../../features/world-editor/parts.ts";
 
-export const terraceVerticalChanges:Record<string,number>={"gopinath-krishna":.4,rameshwar:1.5,"entrance:khauma-raised-veranda":1.87};
+export const terraceVerticalChanges:Record<string,number>={rameshwar:1.5,"entrance:khauma-raised-veranda":1.87};
 const obsolete=(id:string,role:string)=>id==="gopinath-krishna"?/^west-pagoda-(stepped-plinth|front-access)$/.test(role):id==="rameshwar"?/^rameshwar-(brick-platform|stone-platform-cap|inferred-platform-access)$/.test(role):/^veranda-platform/.test(role);
 const signature=(p:{position:number[],size:number[],yaw:number})=>JSON.stringify([p.position,p.size,p.yaw]);
 export function integrateRaisedPavilion(model:CentralModel):CentralModel{
@@ -24,18 +24,15 @@ export function buildRaisedPavilionTerraces(context:CentralModel[],pagoda:Centra
  const cut=(rings:Polygon):MultiPolygon=>exclusions.length?polygonClipping.difference(rings,...exclusions):[rings];
  const add=(pieces:MultiPolygon,base:number,height:number,material:"brick"|"stone",role:string)=>{for(const rings of pieces){m.volumes!.push({rings,baseY:base,height,material,role});for(const c of walkableFloorColliders(rings,height)){c.position[1]+=base;m.colliders.push(c);m.boxes.push({...c,position:[...c.position],size:[...c.size],material,role:role+"-collision"});}}};
  const localPagoda=(z:number):[number,number]=>[pagoda.origin[0]+Math.sin(pagoda.yaw)*z,pagoda.origin[1]+Math.cos(pagoda.yaw)*z];
- const upperAccess:Polygon[]=[],lowerAccess:Polygon[]=[];
+ // Entrance pagoda only: one broad low platform, five frontal .18 m treads.
+ // The separate white-pavilion and veranda platforms below remain unchanged.
  for(let i=0;i<5;i++){
-  const upper:Polygon=[rectangle(localPagoda(5.75-i*.35),3.6,.35,pagoda.yaw)],lower:Polygon=[rectangle(localPagoda(7.5-i*.35),3.6,.35,pagoda.yaw)];
-  upperAccess.push(upper);lowerAccess.push(lower);
-  add(cut(upper),.9,(i+1)*.18,"brick","pagoda-platform-access");add(cut(lower),0,(i+1)*.18,"brick","pagoda-platform-access");
+  const tread:Polygon=[rectangle(localPagoda(6.16-i*.33),3.2,.33,pagoda.yaw)];
+  add(cut(tread),0,(i+1)*.18,"brick","pagoda-platform-access");
  }
- const low=polygonClipping.union([rectangle(pagoda.origin,10.8,9.8,pagoda.yaw)],[rectangle(localPagoda(5.55),3.6,1.6,pagoda.yaw)]);
- add(polygonClipping.difference(low,...exclusions,...lowerAccess),0,.9,"brick","pagoda-platform");
- const upper=polygonClipping.difference(cut([rectangle(pagoda.origin,10,9,pagoda.yaw)]),...upperAccess);
- add(upper,.9,.74,"brick","pagoda-platform");
- const coping=polygonClipping.intersection(upper,[rectangle(localPagoda(4.3),10,.4,pagoda.yaw)]);
- add(polygonClipping.difference(upper,coping),1.64,.16,"brick","pagoda-platform");add(coping,1.64,.16,"stone","pagoda-platform-coping");
+ add(cut([rectangle(pagoda.origin,10.8,9.8,pagoda.yaw)]),0,.25,"brick","pagoda-platform");
+ add(cut([rectangle(pagoda.origin,10.35,9.35,pagoda.yaw)]),.25,.55,"brick","pagoda-platform");
+ add(cut([rectangle(pagoda.origin,10.35,9.35,pagoda.yaw)]),.8,.1,"brick","pagoda-platform-coping");
  // A single masonry block and structural cap; no front stair or shared terrace.
  const pavilion:[number,number]=[-108.55344866743314,-23.32638554145715];
  add(cut([rectangle(pavilion,5.9,5.9,0)]),0,1.9,"brick","pavilion-platform");
