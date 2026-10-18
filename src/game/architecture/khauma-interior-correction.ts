@@ -1,3 +1,6 @@
+import savedEditorState from "../../features/bhaktapur/data/world-editor-state.json" with {type:"json"};
+import {Vector3} from "three";
+import {overrideMatrix,type TransformOverrides} from "../../features/world-editor/transforms.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import polygonClipping from "polygon-clipping";
 import {contextColliders} from "./urban-occupancy.ts";
@@ -7,6 +10,7 @@ import {buildCarvedMuseumLion,buildCarvedMuseumRelief} from "./museum-sculptures
 import frames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
 const fresh=(id:string,origin:[number,number],yaw=0):CentralModel=>({id,anchorId:"PHOTO_RELATIVE_KHAUMA",origin,yaw,accuracy:"PHOTO_INFERRED",neutral:false,boxes:[],shapes:[],profiles:[],roofs:[],colliders:[]});
 export const khaumaInteriorAudit=[
+ {id:"entrance:khauma-guardian-enclosure",classification:"PHOTO_INFERRED",action:"close the compound behind the guardian entrance and continue its east wall into existing palace/museum compound 18962138",binding:"Supplied 2026-10-18 screenshots 192706/192647/192539; wall height 2.65 m, thickness .45 m, cap and final return are APPROXIMATE; hidden rear enclosure is an unsurveyed closure, not a public plaza"},
  {id:"entrance:khauma-near-shed",classification:"REMOVE_UNSUPPORTED_DUPLICATE",action:"remove cloned polygon house and its colliders; extend existing adjacent low building instead",binding:"2026-10-18 supplied real interior screenshots 190542/190558 versus game screenshots 190652/190700; manual position retained in saved data but no duplicate rendered"},
  {id:"entrance:KhaumaExterior_LeftTraditional",classification:"PHOTO_INFERRED",action:"extend only the interior range toward the school wall, with one continuous low roof and a clear passage",binding:"Supplied interior photographs support horizontal massing/openings/plinth; dimensions APPROXIMATE, not survey-derived"},
  {id:"context:9c:1159393579",classification:"REMOVE_AS_OPEN_SPACE",action:"withdraw guessed house; retain low terrace/threshold at recorded footprint",binding:"Photo-supported open sattal apron; individual source-object correspondence unresolved"},
@@ -53,7 +57,10 @@ export function schoolEntrance(source:CentralModel){
   }
  } for(const side of [-1,1]){pedestal(m,side*5.25,3.2,1.9,2.1,1.1);guardian(m,side*5.25,1.1,3.2,side<0);pedestal(m,side*2.2,2.75,1.35,1.35,1.3);relief(m,side*2.2,1.3,2.75,side<0);}
  // Low enclosure and roofline only behind the wall, not a guessed residential facade.
- for(const side of [-1,1])box(m,side*5.2,1.15,-.8,.35,2.3,5.4,"brick","school-wall-return",true);
+ for(const side of [-1,1])box(m,side*5.2,1.325,-.8,.35,2.65,5.4,"brick","school-wall-return",true);
+ // Compound closure behind, never through the existing central entrance or the sculptures.
+ box(m,0,1.325,-3.5,10.75,2.65,.45,"agedBrick","school-compound-rear-enclosure",true);
+ box(m,0,2.69,-3.5,10.88,.08,.58,"agedBrick","school-compound-rear-cap");
  m.roofs.push({position:[m.origin[0],2.64,m.origin[1]-1],width:10.6,depth:4.8,rise:.9,yaw:0,material:"roof",role:"school-roof-rear-context"});
   // Slide only this reconstructed wall composition east to clear the frozen Khauma masonry.
  for(const p of [...m.boxes,...m.profiles,...m.shapes,...m.roofs,...m.colliders])p.position[0]+=14;
@@ -83,9 +90,43 @@ export function correctPavilion(source:CentralModel){
  for(const p of m.profiles){if(p.role==="rameshwar-low-lotus-dome")p.profile=[[0,0],[1.56,0],[1.48,.14],[1.39,.5],[1.12,.99],[.76,1.32],[.24,1.47],[0,1.5]];if(p.role.includes("post"))p.material="museumStone";}
  pinnacle(m,0,5.67,0,.48,"rameshwar-photo-dome-crown");return m;
 }
+export const guardianEnclosureEvidence={form:"PHOTO_INFERRED",dimensions:"APPROXIMATE",height:2.65,thickness:.45,museumModel:"context:9c:18962138",sources:["Screenshot 2026-10-18 192706.png","Screenshot 2026-10-18 192647.png","Screenshot 2026-10-18 192539.png","existing mapped palace compound footprint 18962138"],assumptions:"Exact cap profile, wall thickness/height, last 5 m return and hidden rear closure are unsurveyed. Existing low-range passage is retained; no wall is placed across the guardian portal."} as const;
+/** Follow the actual edited guardian endpoint and occupied museum geometry, not a screen-space line. */
+function guardianMuseumEnclosure(models:CentralModel[]):CentralModel|null{
+ const guardian=models.find(m=>m.id==="edge:khauma-north-flank:1158762014"),museum=models.find(m=>m.id==="context:9c:18962138");
+ if(!guardian||!museum)return null;
+ const overrides=savedEditorState.transforms as unknown as TransformOverrides;
+ const currentPoint=(m:CentralModel,p:[number,number,number])=>{
+  const source={position:[m.origin[0],0,m.origin[1]] as [number,number,number],rotation:[0,m.yaw,0] as [number,number,number],scale:[1,1,1] as [number,number,number]};
+  return new Vector3(...p).applyMatrix4(overrideMatrix(source,overrides[m.id]??source));
+ };
+ const front=guardian.boxes.filter(b=>b.role==="school-wall").sort((a,b)=>b.position[0]-a.position[0])[0];
+ const start=currentPoint(guardian,[front.position[0]+front.size[0]/2,0,front.position[2]]);
+ // Only outer edges of occupied volumes: never a courtyard hole or the centre of a wing.
+ let end:Vector3|null=null,best=Infinity;
+ for(const volume of museum.volumes??[]){if(volume.height<2||volume.baseY>1)continue;const ring=volume.rings[0];
+  for(let i=0;i<ring.length-1;i++){
+   const a=currentPoint(museum,[ring[i][0],0,ring[i][1]]),b=currentPoint(museum,[ring[i+1][0],0,ring[i+1][1]]),edge=b.clone().sub(a);
+   const t=Math.max(0,Math.min(1,start.clone().sub(a).dot(edge)/Math.max(edge.lengthSq(),.0001))),point=a.clone().addScaledVector(edge,t),distance=point.distanceToSquared(start);
+   if(distance<best){best=distance;end=point;}
+  }
+ }
+ if(!end)return null;
+ const m=fresh("entrance:khauma-guardian-enclosure",[0,0]);
+ const direction=end.clone().sub(start).normalize();
+ // Follow the side boundary first; a short, shallow return meets the existing compound corner.
+ const bend=new Vector3(end.x-direction.x*5,0,start.z),tip=end.clone().addScaledVector(direction,.12);
+ const wall=(a:Vector3,b:Vector3)=>{const dx=b.x-a.x,dz=b.z-a.z,length=Math.hypot(dx,dz);if(length<.05)return;const yaw=-Math.atan2(dz,dx),x=(a.x+b.x)/2,z=(a.z+b.z)/2;
+  box(m,x,1.325,z,length,2.65,.45,"agedBrick","guardian-museum-continuous-enclosure",true,yaw);
+  box(m,x,2.71,z,length,.12,.58,"agedBrick","guardian-museum-simple-brick-cap",false,yaw);
+  box(m,x,.11,z,length,.22,.57,"brick","guardian-museum-low-masonry-foot",false,yaw);
+ };
+ wall(start,bend);wall(bend,tip);
+ return m;
+}
 export function correctKhaumaContext(models:CentralModel[]){
  const auditIds=new Set(khaumaInteriorAudit.filter(a=>a.classification==="FOOTPRINT_ONLY_CONTEXT").map(a=>a.id));
-  return [...models.map(m=>{
+  const corrected=[...models.map(m=>{
  if(m.id==="context:9c:1159393579"){
   const r=structuredClone(m);r.accuracy="PHOTO_INFERRED";r.boxes=[];r.profiles=[];r.shapes=[];r.roofs=[];r.polygonRoofs=[];
   r.volumes=(r.volumes??[]).filter(v=>v.baseY===0).map(v=>({...v,height:.3,material:"brick" as const,role:"sattal-photo-apron-low-platform"}));r.colliders=r.volumes.flatMap(v=>walkableFloorColliders(v.rings,v.height));for(const c of r.colliders)r.boxes.push({...c,material:"brick",role:"sattal-photo-apron-low-platform-collision"});return r;
@@ -103,4 +144,6 @@ export function correctKhaumaContext(models:CentralModel[]){
  for(const c of r.colliders){c.position[1]*=3.2/oldTop;c.size[1]*=3.2/oldTop;}
  for(const roof of r.roofs)roof.position[1]=3.2;for(const roof of r.polygonRoofs??[])roof.baseY=3.2;
  r.boxes=r.boxes.filter(b=>b.position[1]+b.size[1]/2<=3.2);return r;}),raisedVeranda()];
+ const enclosure=guardianMuseumEnclosure(corrected);
+ return enclosure?[...corrected,enclosure]:corrected;
 }
