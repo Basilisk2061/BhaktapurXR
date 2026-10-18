@@ -3,9 +3,10 @@
 .main-menu{--menu-ink:#ece5da;--menu-muted:#aca39c;--menu-red:#932c40;--menu-border:#632230;position:relative;isolation:isolate;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px max(120px,env(safe-area-inset-right)) 30px max(120px,env(safe-area-inset-left));background:#111010;color:var(--menu-ink);font:16px/1.6 'General Sans',Arial,sans-serif;color-scheme:dark}
 .main-menu *{box-sizing:border-box}
 .main-menu p,.main-menu h1,.main-menu h2,.main-menu h3{margin:0}
-.menu-textile{position:absolute;inset-block:0;width:88px;pointer-events:none;opacity:.76}
+.menu-textile{position:absolute;inset-block:0;width:88px;pointer-events:none;opacity:.76;overflow:hidden}
 .menu-textile svg{position:absolute;inset:0;display:block;overflow:hidden}
-.menu-textile .textile-compact{display:none}
+.menu-textile .textile-full{width:88px;left:50%;right:auto;transform:translateX(-50%)}
+.menu-textile .textile-compact{display:none;width:14px}
 .menu-textile-left{left:clamp(12px,2vw,38px)}
 .menu-textile-right{right:clamp(12px,2vw,38px);transform:scaleX(-1)}
 .menu-content{width:100%;max-width:650px;text-align:center}

@@ -1,24 +1,26 @@
 function WovenStrip({side,compact=false}:{side:string;compact?:boolean}){
  const id=`menu-weave-${side}-${compact?'compact':'full'}`;
- return <svg className={compact?'textile-compact':'textile-full'} width="100%" height="100%" aria-hidden="true" focusable="false">
-  <defs><pattern id={id} width="100%" height="160" patternUnits="userSpaceOnUse" viewBox={compact?'0 0 18 160':'0 0 96 160'} preserveAspectRatio="none">
+ return <svg className={compact?'textile-compact':'textile-full'} width={compact?14:88} height="100%" aria-hidden="true" focusable="false">
+  {/* Numeric user-space units: a taller container reveals more repeats, never taller symbols. */}
+  <defs><pattern id={id} width={compact?14:88} height={compact?96:120} patternUnits="userSpaceOnUse" patternContentUnits="userSpaceOnUse">
    {compact?<>
-    <path d="M1 0V160M17 0V160" stroke="#3f7475" strokeWidth="1"/>
-    <path d="M9 0V20M9 60V100M9 140V160" stroke="#927747" strokeWidth="1"/>
-    <path d="M9 20L15 40 9 60 3 40ZM9 100L15 120 9 140 3 120Z" fill="none" stroke="#ac4c60" strokeWidth="1.4"/>
+    <path d="M1 0V96M13 0V96" stroke="#3f7475" strokeWidth="1"/>
+    <path d="M7 0V14M7 34V62M7 82V96" stroke="#927747" strokeWidth="1"/>
+    <path d="M7 14L12 24 7 34 2 24ZM7 62L12 72 7 82 2 72Z" fill="none" stroke="#ac4c60" strokeWidth="1.4"/>
    </>:<>
-    <path d="M3 0V160M93 0V160" stroke="#aa8a4e" strokeWidth=".9"/>
-    <path d="M9 0V160M87 0V160" stroke="#3d797b" strokeWidth="1.8"/>
-    <path d="M24 0V10M24 70V90M24 150V160M72 0V10M72 70V90M72 150V160" stroke="#743348" strokeWidth="1.5"/>
-    <path d="M24 10L35 40 24 70 13 40ZM24 90L35 120 24 150 13 120ZM72 10L83 40 72 70 61 40ZM72 90L83 120 72 150 61 120Z" fill="none" stroke="#a94b60" strokeWidth="2.2"/>
-    <path d="M24 30L28 40 24 50 20 40ZM72 30L76 40 72 50 68 40Z" fill="#733042"/>
-    <path d="M39 0L45 20 39 40 45 60 39 80 45 100 39 120 45 140 39 160M57 0L51 20 57 40 51 60 57 80 51 100 57 120 51 140 57 160" fill="none" stroke="#d4c9b5" strokeWidth="1.5" strokeDasharray="4 3"/>
-    <path d="M48 0L54 40 48 80 42 40ZM48 80L54 120 48 160 42 120Z" fill="none" stroke="#b4824a" strokeWidth="1.7"/>
-    <path d="M22 80H26M70 80H74M47 0H49M47 80H49M47 160H49" stroke="#d8cdbb" strokeWidth="2"/>
+    <path d="M3 0V120M85 0V120" stroke="#aa8a4e" strokeWidth=".9"/>
+    <path d="M9 0V120M79 0V120" stroke="#3d797b" strokeWidth="1.8"/>
+    <path d="M20 0V15M20 45V75M20 105V120M68 0V15M68 45V75M68 105V120" stroke="#743348" strokeWidth="1.5"/>
+    <path d="M20 15L28 30 20 45 12 30ZM20 75L28 90 20 105 12 90ZM68 15L76 30 68 45 60 30ZM68 75L76 90 68 105 60 90Z" fill="none" stroke="#a94b60" strokeWidth="2.2"/>
+    <path d="M20 25L23 30 20 35 17 30ZM68 25L71 30 68 35 65 30Z" fill="#733042"/>
+    <path d="M32 0L37 15 32 30 37 45 32 60 37 75 32 90 37 105 32 120M56 0L51 15 56 30 51 45 56 60 51 75 56 90 51 105 56 120" fill="none" stroke="#d4c9b5" strokeWidth="1.5" strokeDasharray="4 3"/>
+    <path d="M44 0V16M44 44V76M44 104V120" stroke="#b4824a" strokeWidth="1"/>
+    <path d="M44 16L50 30 44 44 38 30ZM44 76L50 90 44 104 38 90Z" fill="none" stroke="#b4824a" strokeWidth="1.7"/>
+    <path d="M18 60H22M66 60H70M43 0H45M43 60H45M43 120H45" stroke="#d8cdbb" strokeWidth="2"/>
    </>}
   </pattern></defs>
   <rect width="100%" height="100%" fill={`url(#${id})`}/>
  </svg>;
 }
-/** One uninterrupted SVG surface per edge; only its internal woven lanes repeat. */
+/** One continuous surface per side, filled with fixed-size, seamless motif units. */
 export function TextileBorders(){return <>{['left','right'].map(side=><div className={`menu-textile menu-textile-${side}`} key={side} aria-hidden="true"><WovenStrip side={side}/><WovenStrip side={side} compact/></div>)}</>;}
