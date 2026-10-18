@@ -50,6 +50,11 @@ function SceneReady({ onReady }: Pick<ExperienceCanvasProps, "onReady">) {
   return null;
 }
 
+function CanvasUnavailable({onUnavailable}:Pick<ExperienceCanvasProps,"onUnavailable">){
+  useEffect(()=>{onUnavailable();},[onUnavailable]);
+  return null;
+}
+
 function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavailable">) {
   const canvas = useThree((state) => state.gl.domElement);
   useEffect(() => {
@@ -70,7 +75,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       dpr={renderingConfig.dpr}
       camera={{ fov: reviewCamera ? 55 : camera.fov, near: camera.near, far: camera.far }}
       gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: renderingConfig.exposure, outputColorSpace: SRGBColorSpace }}
-      fallback={<p>This experience requires a browser with WebGL support.</p>}
+      fallback={<CanvasUnavailable onUnavailable={onUnavailable}/> }
       aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />
