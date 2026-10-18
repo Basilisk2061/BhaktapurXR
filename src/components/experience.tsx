@@ -1,9 +1,8 @@
 "use client";
 
-import {startupMark,startupError} from "../game/startup-diagnostics";
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import {MobileControls,useTouchDevice} from "./mobile-controls";
 import {GameHud} from "./game-hud";
 import { ExperienceLoading } from "./experience-loading";
@@ -17,10 +16,7 @@ const WorldDataDiagnostics=dynamic(()=>import("./world-data-diagnostics").then(m
 import { developmentConfig } from "@/lib/development-config";
 import { FlyModeIndicator, PlayerDiagnostics } from "./player-diagnostics";
 
-const ExperienceCanvas = dynamic(() => {
-  startupMark("Canvas requested");
-  return import("@/game/experience-canvas").then(module=>{startupMark("Canvas module loaded");return module;}).catch(error=>{startupMark("Canvas module loaded","ERROR");startupError(error,"Canvas import");throw error;});
-}, {
+const ExperienceCanvas = dynamic(() => import("@/game/experience-canvas"), {
   ssr: false,
   loading: () => null,
 });
@@ -32,15 +28,13 @@ function createExperienceInput(mode:WorldMode,review:string|null) {
 }
 
 function ExperienceContent({ mode, review, architecturalDebug, silhouette, manualOverrides,developmentUI }: { mode: WorldMode; review:string|null; architecturalDebug:boolean;silhouette:boolean;manualOverrides?:TransformOverrides;developmentUI:boolean }) {
-  useEffect(()=>{startupMark("Experience mounted");},[]);
   const touch=useTouchDevice();
   const [ready, setReady] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
   const [pointerStatus, setPointerStatus] = useState<PointerStatus>("inactive");
   const input = useRef(createExperienceInput(mode,review));
   const runtime = useRef(createPlayerRuntime());
-  const onReady = useCallback(() => {startupMark("Readiness callback");setReady(true);}, []);
-  useEffect(()=>{if(ready)startupMark("Loading overlay dismissed");},[ready]);
+  const onReady = useCallback(() => setReady(true), []);
   const onUnavailable = useCallback(() => setUnavailable(true), []);
   const onPointerStatus = useCallback((status: PointerStatus) => setPointerStatus(status), []);
 
@@ -63,6 +57,5 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
 }
 
 export function Experience({ mode, review=null, architecturalDebug=false, silhouette=false,manualOverrides,developmentUI=false }: { mode: WorldMode; review?:string|null; architecturalDebug?:boolean;silhouette?:boolean;manualOverrides?:TransformOverrides;developmentUI?:boolean }) {
-  startupMark("Experience render attempted");
   return <ExperienceErrorBoundary><ExperienceContent developmentUI={developmentUI} key={mode+review} manualOverrides={manualOverrides} mode={mode} review={review} architecturalDebug={architecturalDebug} silhouette={silhouette} /></ExperienceErrorBoundary>;
 }
