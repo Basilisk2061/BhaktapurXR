@@ -26,6 +26,7 @@ import { type WorldMode } from "./world/world-mode";
 import type { SpawnPoint } from "@/types/world";
 
 interface ExperienceCanvasProps {
+  touchControls?:boolean;
   editorSession?:EditorSession;
   manualOverrides?:TransformOverrides;
   spawn:SpawnPoint;
@@ -50,11 +51,6 @@ function SceneReady({ onReady }: Pick<ExperienceCanvasProps, "onReady">) {
   return null;
 }
 
-function CanvasUnavailable({onUnavailable}:Pick<ExperienceCanvasProps,"onUnavailable">){
-  useEffect(()=>{onUnavailable();},[onUnavailable]);
-  return null;
-}
-
 function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavailable">) {
   const canvas = useThree((state) => state.gl.domElement);
   useEffect(() => {
@@ -65,17 +61,18 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,touchControls=false }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   const [started,setStarted]=useState(false);
   const initialReady=()=>{setStarted(true);onReady();};
   return (
     <Canvas
+      style={touchControls?{touchAction:"none"}:undefined}
       shadows={{ type: PCFShadowMap }}
       dpr={renderingConfig.dpr}
       camera={{ fov: reviewCamera ? 55 : camera.fov, near: camera.near, far: camera.far }}
       gl={{ toneMapping: ACESFilmicToneMapping, toneMappingExposure: renderingConfig.exposure, outputColorSpace: SRGBColorSpace }}
-      fallback={<CanvasUnavailable onUnavailable={onUnavailable}/> }
+      fallback={<p>This experience requires a browser with WebGL support.</p>}
       aria-label="Third-person spatial experience. Click to control camera; WASD move, Shift run, Space jump, Escape releases mouse."
     >
       <ContextGuard onUnavailable={onUnavailable} />

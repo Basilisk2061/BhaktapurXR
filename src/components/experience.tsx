@@ -41,8 +41,8 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
   if (unavailable) return <ExperienceFailure />;
 
   return (
-    <div className={touch?"touch-gameplay-viewport":"desktop-gameplay-viewport"}>
-      <ExperienceCanvas manualOverrides={manualOverrides} review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+    <>
+      <ExperienceCanvas touchControls={touch} manualOverrides={manualOverrides} review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
       <ExperienceLoading ready={ready} />
       {touch&&ready&&<MobileControls input={input} runtime={runtime}/>}
       {!touch&&!developmentUI&&<GameHud ready={ready} pointerStatus={pointerStatus}/>}
@@ -52,7 +52,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
       {developmentUI&&developmentConfig.worldData && <WorldDataDiagnostics mode={mode} />}
       {developmentUI&&process.env.NODE_ENV === "development" && <FlyModeIndicator input={input} />}
       {developmentUI&&developmentConfig.playerDebug && <PlayerDiagnostics input={input} runtime={runtime} />}
-    </div>
+    </>
   );
 }
 

@@ -3,7 +3,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import Link from "next/link";
 
-export function ExperienceFailure({ message = "The 3D experience could not start. Check that WebGL is enabled, then try again." }: { message?: string }) {
+export function ExperienceFailure({ message = "The experience encountered a startup or rendering error. Reload to try again." }: { message?: string }) {
   return (
     <div className="absolute inset-0 z-20 flex items-center justify-center bg-[#f5f2eb] px-6" role="alert">
       <div className="max-w-md text-center">
