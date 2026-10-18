@@ -83,10 +83,11 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       motion.grounded = false;
     }
     const keys = controls.keys;
-    const forward = controls.active ? Number(keys.has("KeyW")) - Number(keys.has("KeyS")) : 0;
-    const right = controls.active ? Number(keys.has("KeyD")) - Number(keys.has("KeyA")) : 0;
-    const running = controls.active && (keys.has("ShiftLeft") || keys.has("ShiftRight"));
-    const speed = running ? playerConfig.runSpeed : playerConfig.walkSpeed;
+    const touch=controls.touchMode?controls.touchMovement:undefined;
+    const forward = controls.active ? touch?.forward ?? (Number(keys.has("KeyW")) - Number(keys.has("KeyS"))) : 0;
+    const right = controls.active ? touch?.right ?? (Number(keys.has("KeyD")) - Number(keys.has("KeyA"))) : 0;
+    const running = controls.active && (touch?.running ?? (keys.has("ShiftLeft") || keys.has("ShiftRight")));
+    const speed = (running ? playerConfig.runSpeed : playerConfig.walkSpeed) * (touch ? Math.min(1,Math.hypot(forward,right)) : 1);
     cameraRelativeDirection(forward, right, controls.yaw, direction);
     const slowing = (forward === 0 && right === 0) || Math.hypot(motion.velocity.x, motion.velocity.z) > speed;
     approachVelocity(motion.velocity, direction, speed, slowing ? playerConfig.deceleration : playerConfig.acceleration, delta);
@@ -113,7 +114,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
         <CapsuleCollider args={[playerConfig.capsuleHalfSegment, playerConfig.radius]} />
         <PlayerCharacter visualRef={visual} runtime={runtimeRef} />
       </RigidBody>
-      {sittingEnabled&&<ArcadeSittingPrompt runtime={runtimeRef}/>}
+      {sittingEnabled&&<ArcadeSittingPrompt runtime={runtimeRef} input={inputRef}/>}
       <ThirdPersonCamera reviewCamera={reviewCamera} bodyRef={body} visualRef={visual} input={inputRef} runtime={runtimeRef} />
     </>
   );

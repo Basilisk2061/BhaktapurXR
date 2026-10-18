@@ -19,8 +19,9 @@ export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runt
   if(!enabled)return;const audio=new GameAudioEngine();engine.current=audio;
   const pointer=(event:PointerEvent)=>{if(event.isTrusted)void audio.unlock();};
   const key=(event:KeyboardEvent)=>{if(event.isTrusted&&input.current.active&&gameplayCodes.has(event.code)&&(document.pointerLockElement===canvas||document.activeElement===canvas))void audio.unlock();};
-  canvas.addEventListener('pointerdown',pointer);window.addEventListener('keydown',key);
-  return ()=>{canvas.removeEventListener('pointerdown',pointer);window.removeEventListener('keydown',key);audio.dispose();engine.current=null;};
+  const touch=(event:PointerEvent)=>{if(input.current.touchMode&&event.target instanceof Element&&event.target.closest('[data-touch-controls]'))pointer(event);};
+  canvas.addEventListener('pointerdown',pointer);window.addEventListener('pointerdown',touch);window.addEventListener('keydown',key);
+  return ()=>{window.removeEventListener('pointerdown',touch);canvas.removeEventListener('pointerdown',pointer);window.removeEventListener('keydown',key);audio.dispose();engine.current=null;};
  },[enabled,canvas,input]);
  const surfaceAt=(position:Vector3)=>{
   const hit=world.castRay(new rapier.Ray({x:position.x,y:position.y+.15,z:position.z},{x:0,y:-1,z:0}),.65,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,c=>!c.parent()||c.parent()!.isFixed());

@@ -2,6 +2,9 @@ export type PointerStatus = "inactive" | "locked" | "fallback";
 
 export interface PlayerInput {
   keys: Set<string>;
+  touchMode?: boolean;
+  inputBlocked?: boolean;
+  touchMovement?: {forward:number;right:number;running:boolean};
   jumpRequested: boolean;
   interactRequested: boolean;
   sitting: boolean;
