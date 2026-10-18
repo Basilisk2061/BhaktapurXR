@@ -188,7 +188,7 @@ export function buildCompletedSquareEdge(){
  for(const b of approach.boxes){b.position=[(outside[0]+approach.origin[0])/2,b.position[1],(outside[1]+approach.origin[1])/2];b.size[2]=Math.hypot(outside[0]-approach.origin[0],outside[1]-approach.origin[1]);}
  // Suppress only the four assemblies whose masonry/roof bounds intersect the relocated platform.
  const removedIds=new Set([...templeConflictingContextIds,"context:9c:1159393578"]);
- const correctedModels=correctKhaumaContext(models).filter(m=>!removedIds.has(m.id)).map(m=>m.id==="edge:yetachapari:1160027594"?finishMuseumSittingFrontage(m):m);
+ const correctedModels=correctKhaumaContext(models,heritage.find(m=>m.id==="gallery-frontage")!).filter(m=>!removedIds.has(m.id)).map(m=>m.id==="edge:yetachapari:1160027594"?finishMuseumSittingFrontage(m):m);
  for(const row of inventory)if(removedIds.has(row.id)){row.action=row.id==="context:9c:1159393578"?"restore pre-Phase-9C open/unmodeled footprint":"suppress intersecting temple-context instance";row.area=0;}
  correctedModels.push(buildRaisedPavilionTerraces(correctedModels,heritage.find(m=>m.id==="gopinath-krishna")!));
  const raisedContext=correctedModels.map(integrateRaisedPavilion);
