@@ -15,29 +15,39 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-The large bell is a separate assembly in the royal forecourt near the Golden Gate and Fifty-Five Window Palace. It must not be confused with the smaller bell beside Vatsala.
+This is the large ritual bell of the royal forecourt, commonly called the Taleju Bell or Big Bell. It stands as an independent assembly near the palace frontage, rather than as a small ornament attached to Vatsala. Its documented association is with worship of Taleju, the goddess connected with the royal court. The bell's size, its hanging metal body and the substantial structure carrying it are the features to notice. It must be distinguished from the smaller bell assembly beside Vatsala, whose historical identity is not securely resolved here.
 
-Claim ID: `large-bell:overview`. Source IDs: `local-bell`, `photo:large-bell`. Locator: Local Taleju Bell location account; identified licensed 2015 palace-square photograph.
+Claim ID: `large-bell:overview`. Source IDs: `local-bell`, `photo:large-bell`. Locator: Local location and Taleju association; licensed forecourt photograph.
 
 ### History
 
-NTB's Cultural Treasures publication and the local bell account attribute the large bell to Ranjit Malla in 1737. The local account reports an inscription date of 6 January, but that precise day has not been independently checked against an epigraphic transcription.
+Nepal Tourism Board's Cultural Treasures publication and a local heritage account attribute the bell to Ranjit Malla in 1737. The local account reports an inscription dated 6 January, but that exact day has not been independently checked against a published transcription. The year and royal attribution are therefore presented with their sources, without claiming an epigraphic certainty that this research has not established.
 
-Claim ID: `large-bell:history`. Source IDs: `ntb-cultural`, `local-bell`. Locator: NTB Big Bell indexed entry; local Taleju Bell patronage and reported inscription.
+Its place beside the royal buildings and its association with Taleju connect it to the devotional life of the court. No unsupported account of a particular daily ringing schedule, ceremony or present-day access practice is added.
+
+Claim ID: `large-bell:history`. Source IDs: `ntb-cultural`, `local-bell`. Locator: 1737/Ranjit attribution; locally reported inscription day, not independently transcribed.
 
 ### Architecture
 
-A substantial hanging metal bell is carried on an independent raised support assembly. The 2015 photograph shows its scale and separation from the pavilion and palace. This image includes earthquake damage elsewhere in the forecourt and must not be read as a present-day view.
+The hanging metal bell is large enough to be read as the focus of its own architectural assembly. Its supports and raised base establish a separate footprint within the forecourt. The licensed photograph helps distinguish its scale and location from the nearby pavilion and palace.
 
-Claim ID: `large-bell:architecture`. Source IDs: `photo:large-bell`, `local-bell`. Locator: Licensed 2015 image; local independent platform/support description.
+Claim ID: `large-bell:architecture`. Source IDs: `photo:large-bell`, `local-bell`. Locator: Visible independent bell assembly; differing support account.
 
 ### Significance
 
-The documented bell is associated with worship of Taleju, the royal protective goddess. No modern ringing schedule or visitor access practice is asserted here.
+The bell is associated in the consulted sources with worship of Taleju. Its royal patronage links a ritual object to the Malla court, while its independent position makes it a recognizable monument within the square. The large bell and the smaller Vatsala-associated bell should retain separate histories.
 
-Claim ID: `large-bell:significance`. Source IDs: `ntb-cultural`, `local-bell`. Locator: NTB Big Bell worship reference; local Taleju association.
+Claim ID: `large-bell:significance`. Source IDs: `ntb-cultural`, `local-bell`. Locator: Taleju worship and royal attribution.
+
+### Damage & restoration
+
+The included photograph was taken in 2015 and shows earthquake damage elsewhere in the forecourt. It is historical visual evidence, not a current-condition photograph. A secure conservation chronology for this exact bell and all its supports remains unavailable.
+
+Claim ID: `large-bell:restoration`. Source IDs: `photo:large-bell`. Locator: Dated 2015 photograph; no independently established bell restoration chronology.
 
 ## Conflicts
 

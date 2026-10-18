@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-Khauma is the principal western entrance gate to Bhaktapur Durbar Square. Its city-entry role is distinct from the gilded Golden Gate in the royal palace frontage.
+Khauma Gate is the main western entrance to Bhaktapur Durbar Square. It marks the passage from the streets outside into the square, a different role from the Golden Gate, which leads into the royal palace precinct. The central pointed opening, substantial side masonry and curved ornamental crown make it recognizable as a city-entry gateway. Reliable information about its original construction is sparse. Its founding ruler and exact date are not established by the sources used here, so the gateway is introduced through its documented location and purpose rather than an invented origin story.
 
-Claim ID: `khauma-gate:overview`. Source IDs: `doa19`, `cambridge`. Locator: DoA 2019 section 1.14, p32; Cambridge entrance and royal frontage distinction.
+Claim ID: `khauma-gate:overview`. Source IDs: `doa19`, `photo:khauma-gate`. Locator: Section 1.14 p32: main western entrance; licensed gate photograph.
 
 ### History
 
-DoA records collapse of the southern portion and cracking of upper masonry in the 2015 earthquake. Damaged work was dismantled down to the foundations and restored using traditional techniques, including Sal posts and timber ties. The consulted report does not establish the gate's original date or patron.
+The Department of Archaeology identifies Khauma as the principal western gateway of the square. That establishes its place in the city's approach routes, but the consulted monument entry does not explain who first commissioned it or when. The history of the palace's gilded entrance cannot be borrowed to fill those gaps: the two gateways are separate structures.
 
-Claim ID: `khauma-gate:history`. Source IDs: `doa19`. Locator: Section 1.14, PDF p32.
+Khauma's importance is therefore clearest as a threshold. It frames an arrival into Durbar Square and helps distinguish the surrounding streets from the historic square beyond. Details of original ceremonies, tolls or administrative use remain unknown in this research.
+
+Claim ID: `khauma-gate:history`. Source IDs: `doa19`. Locator: Khauma location/function; original date/patron absent from consulted entry.
 
 ### Architecture
 
-The entrance is a masonry gateway with a pointed central opening, articulated side masses and an ornamental curved crown. These visible forms are documented by the licensed photograph.
+The masonry gateway is organized around a pointed central opening. Articulated side masses and a curved crown give the entrance a recognizable silhouette, with ornamental elements rising above the main wall. The photograph shows how those parts frame a passage rather than close it.
 
-Claim ID: `khauma-gate:architecture`. Source IDs: `photo:khauma-gate`, `doa19`. Locator: Licensed western entrance photograph; DoA masonry and timber conservation account.
+The conservation account also records timber within the masonry system. This is a reminder that a gateway appearing to be entirely brick can depend on structural woodwork as well.
+
+Claim ID: `khauma-gate:architecture`. Source IDs: `photo:khauma-gate`, `doa19`. Locator: Visible opening/crown/side masses; documented structural timber.
 
 ### Significance
 
-The gateway marks the transition from the western streets into the heritage square. Its post-earthquake repair is documented independently of the more elaborate royal Golden Gate.
+As the western entrance, Khauma is part of how people reach and recognize the square. Its civic importance lies in that documented role. No unsupported religious dedication or association with a particular ruler is assigned to it.
 
-Claim ID: `khauma-gate:significance`. Source IDs: `doa19`. Locator: Khauma main-western-entrance and conservation entry.
+Claim ID: `khauma-gate:significance`. Source IDs: `doa19`. Locator: Documented main-western-entrance role; no additional ritual claims.
+
+### Damage & restoration
+
+DoA records collapse of the southern portion and cracking in the upper work in 2015. Damaged masonry was dismantled to the foundations and restored using traditional methods, including Sal posts and timber ties.
+
+Claim ID: `khauma-gate:restoration`. Source IDs: `doa19`. Locator: Section 1.14 p32, 2015 damage and traditional restoration.
 
 ## Conflicts
 

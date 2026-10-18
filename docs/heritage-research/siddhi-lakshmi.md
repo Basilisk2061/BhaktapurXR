@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-The stone shikhara temple near the southeastern side of the Fifty-Five Window Palace is identified by DoA as Siddhi Lakshmi. Its elevated stair approach and paired guardians distinguish it from the nearby brick shikhara.
+Siddhi Lakshmi is a Hindu temple with a stone shikhara and a high, guardian-lined stair approach. It stands near the southeastern side of the Fifty-Five Window Palace. The Department of Archaeology dates it to the seventeenth century, although the consulted evidence does not securely name a founding ruler or a precise year. Its distinctive character begins at the base: the stepped platform and paired sculptures make the ascent a major part of the monument. The compact stone tower above should be read together with that approach, rather than as an isolated spire.
 
-Claim ID: `siddhi-lakshmi:overview`. Source IDs: `doa19`, `photo:siddhi-lakshmi`. Locator: DoA 2019 section 1.2, PDF pp28-29; licensed 2021 photograph.
+Claim ID: `siddhi-lakshmi:overview`. Source IDs: `doa19`, `photo:siddhi-lakshmi`. Locator: Section 1.2 pp28-29: location, 17th century and stone shikhara; stair photograph.
 
 ### History
 
-DoA dates the temple to the 17th century. It was damaged, but did not collapse, in 2015. Conservation retained the foundation and plinth, numbered and reused dismantled stone elements, and renewed damaged timber structure and the gilded pinnacle.
+The temple is dedicated to Siddhi Lakshmi and belongs to the seventeenth-century religious architecture of the square. Beyond that period and dedication, the founding history remains incompletely established in the sources used here. An exact patron or construction date is therefore omitted rather than supplied from an unsupported attribution.
 
-Claim ID: `siddhi-lakshmi:history`. Source IDs: `doa19`, `doa22`. Locator: DoA 2019 section 1.2; DoA 2022 project 5, PDF p47.
+The temple's stone construction and elevated stair approach distinguish it within the palace setting. Its history includes later repair, but the surviving base and reused architectural stones are also evidence that the building's story did not begin anew with the most recent conservation campaign.
+
+Claim ID: `siddhi-lakshmi:history`. Source IDs: `doa19`, `doa22`. Locator: Historical period/dedication; project 5 retained base and reused stone.
 
 ### Architecture
 
-An axial staircase climbs a high stepped plinth to a compact stone shikhara. Paired sculptural guardians flank successive levels of the approach. Moulded courses and a crowned tapering tower give the stone mass a strong vertical silhouette.
+An axial staircase climbs a series of substantial terraces to the stone shrine. Paired sculptural guardians accompany the ascent at successive levels. Their placement helps organize the approach, although individual identities are not assigned from appearance alone.
 
-Claim ID: `siddhi-lakshmi:architecture`. Source IDs: `photo:siddhi-lakshmi`, `doa19`. Locator: Licensed stairs/guardian photograph; DoA stone-shikhara identification.
+Above the platform, moulded courses, projections and niches articulate a tapering stone tower with an ornamental summit. Compared with the broad, spreading roofs of nearby timber temples, its stepped base and upright shikhara produce a strongly vertical composition.
+
+Claim ID: `siddhi-lakshmi:architecture`. Source IDs: `photo:siddhi-lakshmi`, `doa19`. Locator: Visible terraces, paired guardians, tower courses and summit; stone-shikhara description.
 
 ### Significance
 
-The temple is dedicated to Siddhi Lakshmi. Its repaired fabric illustrates a conservation approach that retained the historic base and reused identifiable stone members rather than treating the whole monument as a new replica.
+The dedication to Siddhi Lakshmi identifies the monument as a place of Hindu worship. Its stone architecture adds to the variety of religious buildings surrounding the former palace. The carefully composed stair and guardian setting are central to its distinct identity within that group.
 
-Claim ID: `siddhi-lakshmi:significance`. Source IDs: `doa19`, `doa22`. Locator: Dedication in section 1.2; project 5 retained fabric account.
+Claim ID: `siddhi-lakshmi:significance`. Source IDs: `doa19`. Locator: Siddhi Lakshmi dedication and palace-square setting; no invented ritual programme.
+
+### Damage & restoration
+
+The temple was damaged but did not collapse in 2015. Conservation retained the foundation and plinth, numbered and reused stone elements, and renewed damaged timber structure and the gilded pinnacle. These details are documented in DoA's 2019 and 2022 reports.
+
+Claim ID: `siddhi-lakshmi:restoration`. Source IDs: `doa19`, `doa22`. Locator: 2019 section 1.2; 2022 project 5 p47.
 
 ## Conflicts
 

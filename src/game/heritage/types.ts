@@ -6,7 +6,7 @@ export interface HeritageReconstructionEvidence {identity?:HeritageEvidence;plac
 export interface HeritageLandmark {
  id:string;name:string;localName?:string;alternateNames?:string[];
  category:"TEMPLE"|"PALACE"|"GATE"|"MONUMENT"|"PAVILION"|"MUSEUM"|"OTHER";
- developmentSample?:boolean;period?:string;overview?:string;history?:string;architecture?:string;significance?:string;
+ developmentSample?:boolean;period?:string;overview?:string;history?:string;architecture?:string;significance?:string;restoration?:string;
  images?:HeritageImage[];sources?:HeritageSource[];reconstruction?:HeritageReconstructionEvidence;research?:HeritageResearch;
 }
 export interface HeritageInteractionZone {landmarkId:string;heritageId:string;position:[number,number,number];radius:number;label?:string}

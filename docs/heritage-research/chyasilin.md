@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-Chyasilin is the octagonal pavilion beside the palace forecourt. Its present form is a documented modern reconstruction of the pavilion lost in the 1934 earthquake, not wholly surviving Malla-period fabric.
+Chyasilin Mandap is an octagonal pavilion beside the royal palace forecourt. It provided a place for royal reception and for viewing festivals, making it a building concerned with gathering and looking outward rather than with enclosing a temple sanctum. Its two roofs and eight-sided plan distinguish it from the surrounding rectangular buildings. The pavilion seen today is a modern reconstruction of an earlier building. That distinction matters, but its story begins with the social and royal uses of the historical pavilion, not only with the earthquake that destroyed it.
 
-Claim ID: `chyasilin:overview`. Source IDs: `mandap`. Locator: First-hand Chyasilin reconstruction account, historical and structural sections.
+Claim ID: `chyasilin:overview`. Source IDs: `mandap`. Locator: Historical royal reception, viewing function, octagonal form and modern reconstruction.
 
 ### History
 
-The reconstruction account describes royal reception and festival viewing, an inscribed record of a poetry competition, and later use as a tax office. After the 1934 collapse, a reconstruction was proposed in 1987 by Götz Hagmüller and Niels Gutschow. Historic photographs and surviving carved posts informed the design. Dated 1990 bolt heads identify the modern intervention; the authors report that the pavilion survived the 2015 earthquake without damage.
+The first-hand reconstruction account describes royal reception and festival viewing as uses of the pavilion. An inscription records a poetry competition, adding a literary episode to its history. In the later Rana period, the building also served as a tax office: its function changed as political life changed.
 
-Claim ID: `chyasilin:history`. Source IDs: `mandap`. Locator: Historical uses; 1987 proposal; photographic reconstruction; 1990 bolt marks; 2015 performance.
+The historical pavilion was lost in 1934. Decades later, the proposal to reconstruct it brought old photographs and surviving carved posts into a new architectural project. The present building therefore connects evidence of earlier use with a deliberately documented modern intervention. An original founding patron or exact founding date is not asserted where the evidence remains uncertain.
+
+Claim ID: `chyasilin:history`. Source IDs: `mandap`. Locator: Historical uses, poetry inscription, Rana-period tax office and photographic reconstruction.
 
 ### Architecture
 
-Two roofs cover an octagonal timber pavilion. Traditional carved elements coexist with modern steel trusses, foundations and an inner supporting system. That structural distinction is explicitly described by the reconstruction authors. The two included photographs show lower carved posts and the whole pavilion in the forecourt.
+Two roofs shelter an octagonal timber pavilion. Carved posts and open edges give the building a different relationship to the square from an enclosed masonry temple. The included photographs show both the lower carved supports and its place in the wider forecourt.
 
-Claim ID: `chyasilin:architecture`. Source IDs: `mandap`, `photo:chyasilin`, `photo:large-bell`. Locator: First-hand structural description; two licensed photographs.
+The modern structure combines traditional carved elements with steel reinforcement and modern foundations. The reconstruction authors explain these interventions openly; the pavilion should not be described as a wholly surviving ancient timber structure.
+
+Claim ID: `chyasilin:architecture`. Source IDs: `mandap`, `photo:chyasilin`, `photo:large-bell`. Locator: Octagonal two-roof form and documented modern structure; licensed views.
 
 ### Significance
 
-The pavilion served royal and public viewing functions and is an important example of an openly documented reconstruction. Its survival in 2015 should be understood alongside its modern structural reinforcement.
+The pavilion's recorded uses connect it with royal hospitality, festivals and poetry, as well as later administration. Its reconstruction adds another chapter: historical images and surviving components were used to recover an architectural presence in the square. Chyasilin is important both for what the earlier pavilion hosted and for the documented decisions behind its modern form.
 
-Claim ID: `chyasilin:significance`. Source IDs: `mandap`. Locator: Original viewing function and modern structural performance.
+Claim ID: `chyasilin:significance`. Source IDs: `mandap`. Locator: Recorded reception, viewing, poetry and administration; explicit reconstruction account.
+
+### Damage & restoration
+
+After the 1934 collapse, Götz Hagmüller and Niels Gutschow proposed reconstruction in 1987. Surviving posts and historic photographs informed the work; 1990 marks identify modern bolts. Steel reinforcement and modern foundations were incorporated. The authors report that the pavilion survived the 2015 earthquake without damage. An exact completion year remains unresolved here.
+
+Claim ID: `chyasilin:restoration`. Source IDs: `mandap`. Locator: 1934 loss, 1987 proposal, 1990 marks, steel/foundations and reported 2015 survival.
 
 ## Conflicts
 

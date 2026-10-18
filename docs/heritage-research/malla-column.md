@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-A seated royal figure rises above the plaza on a slender stone column. The documented identification is King Bhupatindra Malla, shown with joined hands facing toward the Golden Gate and Taleju precinct.
+Above the plaza, King Bhupatindra Malla sits with joined hands on an ornamented capital. A slender stone column lifts the figure above the surrounding activity, while a small parasol completes the silhouette. This is a royal monument rather than a shrine or a decorative pillar. A local heritage account describes the king facing toward the Golden Gate and Taleju precinct in devotion. The posture is the key to understanding the sculpture: royal presence is expressed through a seated figure in prayer, not through a standing military portrait.
 
-Claim ID: `malla-column:overview`. Source IDs: `local-column`, `photo:malla-column`. Locator: Local column identity and orientation; licensed statue detail.
+Claim ID: `malla-column:overview`. Source IDs: `local-column`, `photo:malla-column`. Locator: Local identification, prayer posture and orientation; licensed statue detail.
 
 ### History
 
-A local heritage account interprets the column as an expression of Bhupatindra Malla's royal devotion. The consulted evidence does not securely establish an installation year, so no exact year or unsupported story about damage is presented.
+The monument represents Bhupatindra Malla. Its devotional interpretation connects the king with Taleju and the palace entrance. The sources used here do not securely establish the installation year, so a frequently repeated exact date is not presented as settled history. Nor is an uncorroborated story about damage treated as fact.
 
-Claim ID: `malla-column:history`. Source IDs: `local-column`. Locator: Royal devotion account; precise installation and damage stories excluded from publication.
+The important historical relationship is between the ruler, his posture and the sacred royal setting. The statue belongs to the same forecourt as the Golden Gate, but it remains an independent monument with its own form and viewpoint.
+
+Claim ID: `malla-column:history`. Source IDs: `local-column`. Locator: Bhupatindra identification and Taleju devotion; installation date remains unknown.
 
 ### Architecture
 
-The stone shaft supports a broad ornamented lotus-like capital and a seated metal figure. The folded legs, joined hands, seat, thin supporting pole and parasol are important parts of its silhouette. The licensed close photograph is the primary evidence for these visible details.
+The tall stone shaft carries a broad, decorated lotus-like capital and a seated metal figure. Folded legs establish the seated pose; the torso and joined hands make the human silhouette legible. Above the head, a thin pole supports the parasol.
 
-Claim ID: `malla-column:architecture`. Source IDs: `photo:malla-column`, `local-column`. Locator: Statue/capital detail photograph; local lotus, seat and devotional-posture description.
+The contrast between the long, restrained shaft and the concentrated ornament at its summit is especially distinctive. The licensed close photograph makes the capital, seat and canopy easier to study than they are from the ground.
+
+Claim ID: `malla-column:architecture`. Source IDs: `photo:malla-column`, `local-column`. Locator: Capital, seated figure, folded legs, hands, pole and parasol.
 
 ### Significance
 
-The ruler's prayerful posture connects royal authority with devotion to Taleju. The column is a forecourt monument, not a temple and not a generic decorative pillar.
+The image presents a ruler in an attitude of devotion. In the local account, the direction toward the Golden Gate reinforces the connection with Taleju. It is a reminder that royal representation in the square can take a religious form as well as an architectural one. Exact meanings beyond this documented devotional relationship are not assigned to individual ornaments.
 
-Claim ID: `malla-column:significance`. Source IDs: `local-column`. Locator: Devotional interpretation and Golden Gate orientation.
+Claim ID: `malla-column:significance`. Source IDs: `local-column`. Locator: Attributed devotional interpretation and Golden Gate orientation.
+
+### Damage & restoration
+
+A securely sourced repair or earthquake history for this exact column has not been established in the consulted material. An unsupported bullet-damage anecdote is omitted.
+
+Claim ID: `malla-column:restoration`. Source IDs: `local-column`. Locator: Research limitation: damage anecdote not corroborated; no repair chronology asserted.
 
 ## Conflicts
 

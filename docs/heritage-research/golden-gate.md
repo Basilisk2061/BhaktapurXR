@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-The gilded entrance in the royal palace frontage leads toward the palace courtyards and the Taleju sanctuary. It is distinct from Khauma, the western entrance to the square.
+The Golden Gate is the ceremonial entrance in Bhaktapur's royal palace frontage. Its gilded surface marks the passage from the public square toward the palace courtyards and the sanctuary of Taleju, a goddess closely associated with the royal court. Also known as Sun Dokha, it belongs to a different part of the city's history from Khauma Gate, the western entrance to the square. Look closely at the contrast between the red brick surround and the crowded metalwork: this is a gateway whose religious imagery is as important as its practical role as an entrance.
 
-Claim ID: `golden-gate:overview`. Source IDs: `cambridge`. Locator: Golden Gate / Sun Dokha discussion and palace frontage photographs.
+Claim ID: `golden-gate:overview`. Source IDs: `cambridge`. Locator: Golden Gate / Sun Dokha and palace courtyard relationship.
 
 ### History
 
-Cambridge Museums describes the gate as begun under Bhupatindra Malla and completed under Ranjit Malla in 1754. Tourism Board publications differ between 1753 and 1754; the completion year is therefore not treated as uncontested.
+Cambridge Museums describes a royal project begun under Bhupatindra Malla and completed by Ranjit Malla in 1754. A Nepal Tourism Board publication instead gives 1753, so the precise completion year remains disputed. Both place the gate within the later Malla palace tradition.
 
-Claim ID: `golden-gate:history`. Source IDs: `cambridge`, `ntb-cultural`. Locator: Cambridge Golden Gate discussion; NTB Cultural Treasures Golden Gate entry (indexed text).
+Its position joins the palace of fifty-five windows to the inner royal courts and Taleju precinct. The entrance therefore brings together two aspects of the court: royal residence and religious devotion. It should be read as a threshold within the palace complex, rather than as the main gateway of Bhaktapur's old city.
+
+Claim ID: `golden-gate:history`. Source IDs: `cambridge`, `ntb-cultural`. Locator: Cambridge patronage and 1754 completion; NTB indexed 1753 discrepancy.
 
 ### Architecture
 
-Gilded copper ornament contrasts with the surrounding red brick. The torana includes Garuda and a multi-headed, multi-armed representation of Taleju; inscriptions flank the portal. The metalwork frames a ceremonial threshold rather than a freestanding city gate.
+The gate's ornament is worked in gilded copper against red brick. The arched ornamental frame, or torana, carries Garuda and a four-headed, ten-armed figure of Taleju. Metal inscriptions in Newar flank the opening.
 
-Claim ID: `golden-gate:architecture`. Source IDs: `cambridge`. Locator: Golden Gate iconography and inscriptions discussion.
+These details reward a slower look: the entrance is organized around a relatively small opening, while its metal figures and framing give that threshold an exceptionally rich presence. The surrounding brickwork makes the gilded relief easier to distinguish.
+
+Claim ID: `golden-gate:architecture`. Source IDs: `cambridge`. Locator: Metal inscriptions and gilded copper torana iconography.
 
 ### Significance
 
-The gate expresses the relationship between Malla kingship, the royal palace and Taleju. Its religious setting should not be confused with unrestricted public access to every inner court.
+The Golden Gate makes the connection between Malla kingship and devotion to Taleju visible in the public square. It is also an example of the metalworking skill supported by the court. Cambridge's account places the gate within Bhaktapur's living religious landscape, where architectural heritage continues to be understood through worship as well as craftsmanship.
 
-Claim ID: `golden-gate:significance`. Source IDs: `cambridge`. Locator: Royal palace and Taleju context.
+Claim ID: `golden-gate:significance`. Source IDs: `cambridge`. Locator: Living heritage section and royal Taleju relationship.
+
+### Damage & restoration
+
+An independently established restoration chronology for this exact portal is not available in the sources used here.
+
+Claim ID: `golden-gate:restoration`. Source IDs: `cambridge`. Locator: Research limitation: consulted gate account does not establish a restoration chronology.
 
 ## Conflicts
 

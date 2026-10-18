@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the monumental stepped base at the eastern end of the square. It is distinguished by its broad, stepped-plinth site and restored tower.
+Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the great stepped base at the eastern end of Durbar Square. The broad terraces are as important to its identity as the tower rising above them. Together they give the monument a scale and profile quite different from the smaller shrines nearby. Its name and Shiva dedication are documented, but an original construction year and founding patron are not securely established in the material used here. The present temple also reflects a deliberate return to an architectural form lost in the twentieth century.
 
-Claim ID: `silu-mahadev:overview`. Source IDs: `doa19`, `doa22`, `photo:silu-mahadev`. Locator: DoA 2019 section 1.1, p28; DoA 2022 project 17, p59; licensed 2024 photograph.
+Claim ID: `silu-mahadev:overview`. Source IDs: `doa19`, `doa22`, `photo:silu-mahadev`. Locator: 2019 section 1.1 p28; 2022 project 17 p59; identified eastern stepped-plinth photograph.
 
 ### History
 
-The 1934 earthquake damaged the earlier temple; a dome-roofed replacement subsequently occupied the surviving stepped base. The 2015 earthquake destroyed that upper building. DoA's 2022 report describes reconstruction of the pre-1934 form in its final phase. The licensed 2024 photograph shows the standing rebuilt temple, without establishing a precise completion day.
+The site's longer religious identity is that of a Shiva shrine. The Department of Archaeology records a sequence of different upper buildings above its stepped base. After damage in the 1934 earthquake, a dome-roofed replacement occupied the site. Following the loss of that replacement in 2015, reconstruction sought to recover the earlier, pre-1934 form.
 
-Claim ID: `silu-mahadev:history`. Source IDs: `doa19`, `doa22`, `photo:silu-mahadev`. Locator: 2019 section 1.1; 2022 project 17; dated 2024 photograph.
+This sequence matters when looking at photographs from different decades: a dome and a tall shikhara can appear at the same site without representing two different temples. The history of those changing forms is better established here than the date or patron of the original foundation.
+
+Claim ID: `silu-mahadev:history`. Source IDs: `doa19`, `doa22`. Locator: Shiva dedication; 1934 damage, dome replacement and return to earlier form.
 
 ### Architecture
 
-Six substantial plinth stages carry a tall, articulated brick shikhara. The broad stair-and-platform composition is central to its identity and contrasts with the former dome-roofed replacement described in the conservation reports.
+Six substantial plinth stages support a tall brick shikhara. The wide stair-and-platform composition establishes the monumental base, while the upper tower is divided by ribs, projections and subsidiary architectural forms. The licensed 2024 photograph shows the restored silhouette.
 
-Claim ID: `silu-mahadev:architecture`. Source IDs: `doa19`, `photo:silu-mahadev`. Locator: DoA six-stage plinth and former dome account; restored-form photograph.
+The stepped mass below and the narrow vertical movement above work together. This is not the dome-roofed version described in the twentieth-century history, and photographs of that earlier replacement should not be used as if they showed today's form.
+
+Claim ID: `silu-mahadev:architecture`. Source IDs: `doa19`, `photo:silu-mahadev`. Locator: Six plinth stages; licensed 2024 restored brick-shikhara appearance.
 
 ### Significance
 
-The Shiva dedication and the recovery of a pre-1934 architectural form connect the site's religious continuity with repeated earthquake reconstruction. The present superstructure is not described as untouched original fabric.
+The temple preserves the identity of a Shiva shrine through repeated changes to its architecture. Its recovered tower also illustrates a particular reconstruction decision: returning to a form predating the 1934 earthquake, rather than reproducing the later dome. Both the religious dedication and that architectural sequence are part of how the site can be understood.
 
-Claim ID: `silu-mahadev:significance`. Source IDs: `doa19`, `doa22`. Locator: Dedication, 1934/2015 damage and reconstruction project.
+Claim ID: `silu-mahadev:significance`. Source IDs: `doa19`, `doa22`. Locator: Religious identity and documented pre-1934-form reconstruction decision.
+
+### Damage & restoration
+
+The 2015 earthquake destroyed the dome-roofed upper building. DoA reported reconstruction of the pre-1934 form in its final phase in 2022. The included 2024 photograph shows the rebuilt temple standing; an exact completion date is not established here.
+
+Claim ID: `silu-mahadev:restoration`. Source IDs: `doa22`, `photo:silu-mahadev`. Locator: 2022 project 17 p59 final-phase status; dated 2024 standing-form photograph.
 
 ## Conflicts
 

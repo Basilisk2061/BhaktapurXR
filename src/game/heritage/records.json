@@ -8,10 +8,10 @@
       "Swarna Dwar"
     ],
     "period": "Mid-18th century",
-    "overview": "The gilded entrance in the royal palace frontage leads toward the palace courtyards and the Taleju sanctuary. It is distinct from Khauma, the western entrance to the square.",
-    "history": "Cambridge Museums describes the gate as begun under Bhupatindra Malla and completed under Ranjit Malla in 1754. Tourism Board publications differ between 1753 and 1754; the completion year is therefore not treated as uncontested.",
-    "architecture": "Gilded copper ornament contrasts with the surrounding red brick. The torana includes Garuda and a multi-headed, multi-armed representation of Taleju; inscriptions flank the portal. The metalwork frames a ceremonial threshold rather than a freestanding city gate.",
-    "significance": "The gate expresses the relationship between Malla kingship, the royal palace and Taleju. Its religious setting should not be confused with unrestricted public access to every inner court.",
+    "overview": "The Golden Gate is the ceremonial entrance in Bhaktapur's royal palace frontage. Its gilded surface marks the passage from the public square toward the palace courtyards and the sanctuary of Taleju, a goddess closely associated with the royal court. Also known as Sun Dokha, it belongs to a different part of the city's history from Khauma Gate, the western entrance to the square. Look closely at the contrast between the red brick surround and the crowded metalwork: this is a gateway whose religious imagery is as important as its practical role as an entrance.",
+    "history": "Cambridge Museums describes a royal project begun under Bhupatindra Malla and completed by Ranjit Malla in 1754. A Nepal Tourism Board publication instead gives 1753, so the precise completion year remains disputed. Both place the gate within the later Malla palace tradition.\n\nIts position joins the palace of fifty-five windows to the inner royal courts and Taleju precinct. The entrance therefore brings together two aspects of the court: royal residence and religious devotion. It should be read as a threshold within the palace complex, rather than as the main gateway of Bhaktapur's old city.",
+    "architecture": "The gate's ornament is worked in gilded copper against red brick. The arched ornamental frame, or torana, carries Garuda and a four-headed, ten-armed figure of Taleju. Metal inscriptions in Newar flank the opening.\n\nThese details reward a slower look: the entrance is organized around a relatively small opening, while its metal figures and framing give that threshold an exceptionally rich presence. The surrounding brickwork makes the gilded relief easier to distinguish.",
+    "significance": "The Golden Gate makes the connection between Malla kingship and devotion to Taleju visible in the public square. It is also an example of the metalworking skill supported by the court. Cambridge's account places the gate within Bhaktapur's living religious landscape, where architectural heritage continues to be understood through worship as well as craftsmanship.",
     "images": [
       {
         "src": "/heritage/golden-gate/reference.jpg",
@@ -87,39 +87,48 @@
         {
           "id": "golden-gate:overview",
           "field": "overview",
-          "statement": "The gilded entrance in the royal palace frontage leads toward the palace courtyards and the Taleju sanctuary. It is distinct from Khauma, the western entrance to the square.",
+          "statement": "The Golden Gate is the ceremonial entrance in Bhaktapur's royal palace frontage. Its gilded surface marks the passage from the public square toward the palace courtyards and the sanctuary of Taleju, a goddess closely associated with the royal court. Also known as Sun Dokha, it belongs to a different part of the city's history from Khauma Gate, the western entrance to the square. Look closely at the contrast between the red brick surround and the crowded metalwork: this is a gateway whose religious imagery is as important as its practical role as an entrance.",
           "sourceIds": [
             "cambridge"
           ],
-          "locator": "Golden Gate / Sun Dokha discussion and palace frontage photographs."
+          "locator": "Golden Gate / Sun Dokha and palace courtyard relationship."
         },
         {
           "id": "golden-gate:history",
           "field": "history",
-          "statement": "Cambridge Museums describes the gate as begun under Bhupatindra Malla and completed under Ranjit Malla in 1754. Tourism Board publications differ between 1753 and 1754; the completion year is therefore not treated as uncontested.",
+          "statement": "Cambridge Museums describes a royal project begun under Bhupatindra Malla and completed by Ranjit Malla in 1754. A Nepal Tourism Board publication instead gives 1753, so the precise completion year remains disputed. Both place the gate within the later Malla palace tradition.\n\nIts position joins the palace of fifty-five windows to the inner royal courts and Taleju precinct. The entrance therefore brings together two aspects of the court: royal residence and religious devotion. It should be read as a threshold within the palace complex, rather than as the main gateway of Bhaktapur's old city.",
           "sourceIds": [
             "cambridge",
             "ntb-cultural"
           ],
-          "locator": "Cambridge Golden Gate discussion; NTB Cultural Treasures Golden Gate entry (indexed text)."
+          "locator": "Cambridge patronage and 1754 completion; NTB indexed 1753 discrepancy."
         },
         {
           "id": "golden-gate:architecture",
           "field": "architecture",
-          "statement": "Gilded copper ornament contrasts with the surrounding red brick. The torana includes Garuda and a multi-headed, multi-armed representation of Taleju; inscriptions flank the portal. The metalwork frames a ceremonial threshold rather than a freestanding city gate.",
+          "statement": "The gate's ornament is worked in gilded copper against red brick. The arched ornamental frame, or torana, carries Garuda and a four-headed, ten-armed figure of Taleju. Metal inscriptions in Newar flank the opening.\n\nThese details reward a slower look: the entrance is organized around a relatively small opening, while its metal figures and framing give that threshold an exceptionally rich presence. The surrounding brickwork makes the gilded relief easier to distinguish.",
           "sourceIds": [
             "cambridge"
           ],
-          "locator": "Golden Gate iconography and inscriptions discussion."
+          "locator": "Metal inscriptions and gilded copper torana iconography."
         },
         {
           "id": "golden-gate:significance",
           "field": "significance",
-          "statement": "The gate expresses the relationship between Malla kingship, the royal palace and Taleju. Its religious setting should not be confused with unrestricted public access to every inner court.",
+          "statement": "The Golden Gate makes the connection between Malla kingship and devotion to Taleju visible in the public square. It is also an example of the metalworking skill supported by the court. Cambridge's account places the gate within Bhaktapur's living religious landscape, where architectural heritage continues to be understood through worship as well as craftsmanship.",
           "sourceIds": [
             "cambridge"
           ],
-          "locator": "Royal palace and Taleju context."
+          "locator": "Living heritage section and royal Taleju relationship."
+        },
+        {
+          "id": "golden-gate:restoration",
+          "field": "restoration",
+          "statement": "An independently established restoration chronology for this exact portal is not available in the sources used here.",
+          "sourceIds": [
+            "cambridge"
+          ],
+          "locator": "Research limitation: consulted gate account does not establish a restoration chronology."
         }
       ],
       "conflicts": [
@@ -129,7 +138,8 @@
         "Exact Lu Dhowka spelling/transliteration not established by the consulted institutional text; not published as an authenticated local name.",
         "No independently established conservation chronology for this exact portal."
       ]
-    }
+    },
+    "restoration": "An independently established restoration chronology for this exact portal is not available in the sources used here."
   },
   "fifty-five-frontage": {
     "id": "fifty-five-frontage",
@@ -140,10 +150,10 @@
       "Pachpanna Jhyale Durbar"
     ],
     "period": "Early-18th-century frontage; earlier palace site",
-    "overview": "The palace is distinguished by its continuous carved timber window gallery. It is part of the royal complex but has a history separate from the Golden Gate and the museum wing.",
-    "history": "The 2006 conservation report dates construction to 1702-1722 under Bhupatindra Malla and notes an attribution of the foundations to Jitamitra Malla. NTB describes a 15th-century palace origin. These accounts are not assumed to date the same surviving fabric. The 1934 earthquake badly damaged the window gallery, which was rebuilt using salvaged timbers with changes to its projecting support.",
-    "architecture": "Brick masonry, carved timber windows and structural frames, tiled roofs and painted interiors form a layered palace architecture. The conservation report records traditional ma appa and dachi appa brickwork with mud mortar, and first-floor murals including a Shiva Visvarupa composition.",
-    "significance": "The royal residence preserves evidence of Malla court culture and Newar timber craftsmanship. Its murals and window gallery preserve distinct artistic traditions within the same royal building.",
+    "overview": "This royal palace is named for its celebrated gallery of fifty-five carved timber windows. The long window facade is the feature to look for: it turns the palace frontage into a sustained display of Newar woodwork rather than a series of unrelated openings. The building belongs to Bhaktapur's former royal complex, but it should not be confused with the adjoining Golden Gate or the museum farther along the frontage. Its significance also reaches beyond the exterior. A conservation study records painted interiors as well as the windows, revealing a palace shaped by several different artistic crafts.",
+    "history": "The palace's chronology is layered. Ram Govinda Shrestha's conservation report dates construction to 1702-1722 under Bhupatindra Malla and records an attribution of the foundations to Jitamitra Malla. Nepal Tourism Board gives an earlier, fifteenth-century origin for the palace. Those accounts need not describe the same surviving phase, and no single date is used here for every part of the complex.\n\nThe royal building combined residence with an elaborate architectural and painted setting. Its timber gallery and murals are evidence of the artistic investment made in the palace. Changes to the window structure over time also mean that today's frontage cannot simply be treated as fabric preserved unchanged from one reign.",
+    "architecture": "Traditional brick masonry, timber frames and floors, tiled roofs and carved windows form the palace's main architectural vocabulary. The conservation report identifies ma appa and dachi appa brickwork with mud mortar. It also documents first-floor murals, including a Shiva Visvarupa composition.\n\nThe continuous upper window gallery gives the building its best-known identity. Its projecting timber construction matters as much as the ornament: joinery, support and carving work together to make the facade.",
+    "significance": "The palace brings together the history of the Malla court and the work of Newar builders, woodcarvers and painters. Looking at the windows alone reveals one artistic tradition; considering the murals and structure alongside them gives a fuller picture of the royal building. Its importance lies in this combination of courtly setting and skilled craft.",
     "images": [
       {
         "src": "/heritage/fifty-five-frontage/reference.jpg",
@@ -198,40 +208,48 @@
         {
           "id": "fifty-five-frontage:overview",
           "field": "overview",
-          "statement": "The palace is distinguished by its continuous carved timber window gallery. It is part of the royal complex but has a history separate from the Golden Gate and the museum wing.",
+          "statement": "This royal palace is named for its celebrated gallery of fifty-five carved timber windows. The long window facade is the feature to look for: it turns the palace frontage into a sustained display of Newar woodwork rather than a series of unrelated openings. The building belongs to Bhaktapur's former royal complex, but it should not be confused with the adjoining Golden Gate or the museum farther along the frontage. Its significance also reaches beyond the exterior. A conservation study records painted interiors as well as the windows, revealing a palace shaped by several different artistic crafts.",
           "sourceIds": [
-            "palace06",
-            "ntb-bhaktapur"
+            "palace06"
           ],
-          "locator": "Conservation report introduction / building description; NTB Bhaktapur palace entry."
+          "locator": "Introduction, palace identity, window gallery and murals."
         },
         {
           "id": "fifty-five-frontage:history",
           "field": "history",
-          "statement": "The 2006 conservation report dates construction to 1702-1722 under Bhupatindra Malla and notes an attribution of the foundations to Jitamitra Malla. NTB describes a 15th-century palace origin. These accounts are not assumed to date the same surviving fabric. The 1934 earthquake badly damaged the window gallery, which was rebuilt using salvaged timbers with changes to its projecting support.",
+          "statement": "The palace's chronology is layered. Ram Govinda Shrestha's conservation report dates construction to 1702-1722 under Bhupatindra Malla and records an attribution of the foundations to Jitamitra Malla. Nepal Tourism Board gives an earlier, fifteenth-century origin for the palace. Those accounts need not describe the same surviving phase, and no single date is used here for every part of the complex.\n\nThe royal building combined residence with an elaborate architectural and painted setting. Its timber gallery and murals are evidence of the artistic investment made in the palace. Changes to the window structure over time also mean that today's frontage cannot simply be treated as fabric preserved unchanged from one reign.",
           "sourceIds": [
             "palace06",
             "ntb-bhaktapur"
           ],
-          "locator": "Report introduction, historical background, earthquake damage and window-gallery conservation discussion."
+          "locator": "Report construction chronology and foundations; NTB earlier palace origin."
         },
         {
           "id": "fifty-five-frontage:architecture",
           "field": "architecture",
-          "statement": "Brick masonry, carved timber windows and structural frames, tiled roofs and painted interiors form a layered palace architecture. The conservation report records traditional ma appa and dachi appa brickwork with mud mortar, and first-floor murals including a Shiva Visvarupa composition.",
+          "statement": "Traditional brick masonry, timber frames and floors, tiled roofs and carved windows form the palace's main architectural vocabulary. The conservation report identifies ma appa and dachi appa brickwork with mud mortar. It also documents first-floor murals, including a Shiva Visvarupa composition.\n\nThe continuous upper window gallery gives the building its best-known identity. Its projecting timber construction matters as much as the ornament: joinery, support and carving work together to make the facade.",
           "sourceIds": [
             "palace06"
           ],
-          "locator": "Building materials, structural description and mural documentation."
+          "locator": "Materials, timber construction and first-floor mural documentation."
         },
         {
           "id": "fifty-five-frontage:significance",
           "field": "significance",
-          "statement": "The royal residence preserves evidence of Malla court culture and Newar timber craftsmanship. Its murals and window gallery preserve distinct artistic traditions within the same royal building.",
+          "statement": "The palace brings together the history of the Malla court and the work of Newar builders, woodcarvers and painters. Looking at the windows alone reveals one artistic tradition; considering the murals and structure alongside them gives a fuller picture of the royal building. Its importance lies in this combination of courtly setting and skilled craft.",
           "sourceIds": [
             "palace06"
           ],
-          "locator": "Palace significance and conservation objectives."
+          "locator": "Royal building, artistic fabric and conservation significance."
+        },
+        {
+          "id": "fifty-five-frontage:restoration",
+          "field": "restoration",
+          "statement": "The 1934 earthquake severely damaged the window gallery. Rebuilding reused salvaged timbers and altered its projecting support. The 2006 conservation report documents these changes; its proposals are not proof that all later work was completed in that year.",
+          "sourceIds": [
+            "palace06"
+          ],
+          "locator": "1934 damage, salvaged timbers, projecting gallery support; report/proposal distinction."
         }
       ],
       "conflicts": [
@@ -242,7 +260,8 @@
         "Nge Nyapa Jhya Laaykoo spelling not verified sufficiently to publish.",
         "The 2006 conservation proposal is not evidence of a completed restoration in 2006; present access not established."
       ]
-    }
+    },
+    "restoration": "The 1934 earthquake severely damaged the window gallery. Rebuilding reused salvaged timbers and altered its projecting support. The 2006 conservation report documents these changes; its proposals are not proof that all later work was completed in that year."
   },
   "gallery-frontage": {
     "id": "gallery-frontage",
@@ -252,10 +271,10 @@
       "National Art Museum"
     ],
     "period": "Museum established 1960",
-    "overview": "The National Art Gallery occupies part of Bhaktapur's former royal palace. It is distinct from the Fifty-Five Window Palace farther east along the frontage.",
-    "history": "NTB dates the museum's establishment to 1960 under the Department of Archaeology. The palace wing is older: local accounts associate its lion entrance with Simhadhwaka Durbar. The Department of Archaeology's 2022 report documents conservation of the western gallery wing after the 2015 earthquake, using lime-based masonry work and Sal timber.",
-    "architecture": "The brick entrance has carved timber openings and prominent guardian sculpture. The adjoining white, Rana-period remodelled frontage is architecturally distinct. The local name of the lion-gate palace must not be applied indiscriminately to every section of the modern museum complex.",
-    "significance": "The museum preserves painting, manuscripts and stone sculpture associated with Hindu and Buddhist traditions. NTB highlights paubha painting among its collections. The historical palace building and the museum institution therefore have different chronologies.",
+    "overview": "The National Art Gallery is a museum housed in part of Bhaktapur's former royal palace. Its entrance is recognizable by the guardian sculptures and carved timber work in the brick frontage. The museum preserves paintings, manuscripts and stone sculpture, making this a place to encounter objects as well as architecture. The institution and its building have different histories: the gallery opened in 1960, while the palace structure is older. The neighboring white wing and the Fifty-Five Window Palace should not be folded into one undifferentiated building story.",
+    "history": "Nepal Tourism Board dates the establishment of the gallery to 1960 under the Department of Archaeology. Its collections include paubha paintings and works associated with both Hindu and Buddhist traditions. The palace was thus given a new public role as a place for preserving and presenting art.\n\nLocal accounts connect the lion entrance with the name Simhadhwaka Durbar. Cambridge Museums distinguishes this entrance from the adjoining palace wing remodelled during Rana rule. These different architectural phases are part of the frontage's history; a date associated with one section should not be applied to the whole museum complex.",
+    "architecture": "Brick masonry and carved timber openings frame a prominent sculptural entrance. Cambridge identifies the guardian figures as Hanumanta-Bhairava and NarSimha, alongside stone lions.\n\nThe adjacent white facade reflects another period of the palace's development. Reading the two together reveals a complex that changed over time rather than a palace built all at once in one uniform style.",
+    "significance": "The gallery connects Bhaktapur's royal architectural history with the preservation of its artistic traditions. Paubha painting, manuscripts and stone sculpture allow visitors to consider religious art across media and across Hindu and Buddhist collections. The historic palace is both the setting for this work and an important object of heritage in its own right.",
     "images": [
       {
         "src": "/heritage/gallery-frontage/reference.jpg",
@@ -345,42 +364,50 @@
         {
           "id": "gallery-frontage:overview",
           "field": "overview",
-          "statement": "The National Art Gallery occupies part of Bhaktapur's former royal palace. It is distinct from the Fifty-Five Window Palace farther east along the frontage.",
+          "statement": "The National Art Gallery is a museum housed in part of Bhaktapur's former royal palace. Its entrance is recognizable by the guardian sculptures and carved timber work in the brick frontage. The museum preserves paintings, manuscripts and stone sculpture, making this a place to encounter objects as well as architecture. The institution and its building have different histories: the gallery opened in 1960, while the palace structure is older. The neighboring white wing and the Fifty-Five Window Palace should not be folded into one undifferentiated building story.",
           "sourceIds": [
             "ntb-museum",
             "cambridge"
           ],
-          "locator": "NTB National Art Gallery entry; Cambridge museum entrance and palace photographs."
+          "locator": "NTB gallery establishment/collections; Cambridge entrance identification."
         },
         {
           "id": "gallery-frontage:history",
           "field": "history",
-          "statement": "NTB dates the museum's establishment to 1960 under the Department of Archaeology. The palace wing is older: local accounts associate its lion entrance with Simhadhwaka Durbar. The Department of Archaeology's 2022 report documents conservation of the western gallery wing after the 2015 earthquake, using lime-based masonry work and Sal timber.",
+          "statement": "Nepal Tourism Board dates the establishment of the gallery to 1960 under the Department of Archaeology. Its collections include paubha paintings and works associated with both Hindu and Buddhist traditions. The palace was thus given a new public role as a place for preserving and presenting art.\n\nLocal accounts connect the lion entrance with the name Simhadhwaka Durbar. Cambridge Museums distinguishes this entrance from the adjoining palace wing remodelled during Rana rule. These different architectural phases are part of the frontage's history; a date associated with one section should not be applied to the whole museum complex.",
           "sourceIds": [
             "ntb-museum",
             "local-museum",
-            "doa22"
+            "cambridge"
           ],
-          "locator": "NTB gallery entry; local museum building identity; DoA 2022 project 6, PDF p48."
+          "locator": "1960 museum establishment; local Simhadhwaka name; Cambridge Rana-remodelled wing."
         },
         {
           "id": "gallery-frontage:architecture",
           "field": "architecture",
-          "statement": "The brick entrance has carved timber openings and prominent guardian sculpture. The adjoining white, Rana-period remodelled frontage is architecturally distinct. The local name of the lion-gate palace must not be applied indiscriminately to every section of the modern museum complex.",
+          "statement": "Brick masonry and carved timber openings frame a prominent sculptural entrance. Cambridge identifies the guardian figures as Hanumanta-Bhairava and NarSimha, alongside stone lions.\n\nThe adjacent white facade reflects another period of the palace's development. Reading the two together reveals a complex that changed over time rather than a palace built all at once in one uniform style.",
           "sourceIds": [
-            "cambridge",
-            "local-museum"
+            "cambridge"
           ],
-          "locator": "Cambridge lion entrance and white wing discussion; local Simhadhwaka building account."
+          "locator": "Guardian entrance identities and distinct white palace wing."
         },
         {
           "id": "gallery-frontage:significance",
           "field": "significance",
-          "statement": "The museum preserves painting, manuscripts and stone sculpture associated with Hindu and Buddhist traditions. NTB highlights paubha painting among its collections. The historical palace building and the museum institution therefore have different chronologies.",
+          "statement": "The gallery connects Bhaktapur's royal architectural history with the preservation of its artistic traditions. Paubha painting, manuscripts and stone sculpture allow visitors to consider religious art across media and across Hindu and Buddhist collections. The historic palace is both the setting for this work and an important object of heritage in its own right.",
           "sourceIds": [
             "ntb-museum"
           ],
-          "locator": "National Art Gallery collection and establishment entry."
+          "locator": "Paubha, manuscripts and Hindu/Buddhist stone sculpture collections."
+        },
+        {
+          "id": "gallery-frontage:restoration",
+          "field": "restoration",
+          "statement": "The Department of Archaeology's 2022 report records conservation of the western gallery wing following the 2015 earthquake, including lime-based masonry work and Sal timber. It is a restoration account for the palace fabric, not the founding date of the museum.",
+          "sourceIds": [
+            "doa22"
+          ],
+          "locator": "Project 6, PDF p48."
         }
       ],
       "conflicts": [
@@ -390,7 +417,8 @@
       "unresolved": [
         "Precise construction phases of every white and brick facade section remain unverified."
       ]
-    }
+    },
+    "restoration": "The Department of Archaeology's 2022 report records conservation of the western gallery wing following the 2015 earthquake, including lime-based masonry work and Sal timber. It is a restoration account for the palace fabric, not the founding date of the museum."
   },
   "gopinath-krishna": {
     "id": "gopinath-krishna",
@@ -403,10 +431,10 @@
       "Radhakrishna Temple"
     ],
     "period": "Original construction date unknown",
-    "overview": "This two-roof temple belongs to the western Durbar Square entrance cluster. The Department of Archaeology identifies Gopi Nath with Dwarika or Krishna Temple; the local Radhakrishna name is also documented.",
-    "history": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, replacement of deteriorated ground-floor Sal timber and use of lime mortar in conservation. Its 2022 report describes repair without wholesale dismantling, with the project completed in fiscal year 2076-77 BS. These reports do not establish an original construction year or patron.",
-    "architecture": "The documented form is a two-roof Nepalese temple with brick masonry and important structural timber. Photographs show a broad lower roof, a smaller upper roof and carved timber entrance work.",
-    "significance": "The temple is dedicated to Krishna. DoA lists Satyabhama, Krishna and Radha in its sanctum, while a local account supplies a different accompanying deity list. The Krishna dedication is secure; the conflicting subsidiary identifications are not silently merged.",
+    "overview": "This two-roof Hindu temple belongs to the western entrance cluster of Durbar Square. The Department of Archaeology calls it Gopi Nath and also identifies it as Dwarika or Krishna Temple; Radhakrishna is another documented local name. These names point to its Krishna dedication rather than to several different buildings. The broad tiled roofs and carved timber entrance give it a markedly different character from the square's stone shikhara temples. Its original construction date and founding patron are not securely established by the sources used here.",
+    "history": "The clearest historical identification comes from the Department of Archaeology's Bhaktapur monument entry. It describes a Krishna shrine in the western square and records Satyabhama, Krishna and Radha within the sanctum. A local account instead names Balram with Krishna and Radha. The disagreement concerns the accompanying figures, not the central Krishna dedication.\n\nThe temple also belongs to the square's continuing public life. Cambridge Museums documents a traditional dance performed in front of Gopinath Krishna Temple during Gai Jatra in 2022. That observation connects the building to a particular recorded celebration without establishing a fixed ritual timetable for the temple.",
+    "architecture": "Two spreading roofs cover a brick and timber temple. The lower roof is broader, while the smaller upper roof preserves the same strong overhang. Carved timber openings and structural woodwork give the facade depth beneath the eaves.\n\nThe Department of Archaeology identifies it as a two-roof Nepalese temple. Its masonry and timber should be understood together: the brick body establishes the enclosure, while the roofs, entrance and supporting woodwork shape much of what a visitor sees.",
+    "significance": "The Krishna dedication places the temple within the religious landscape of the western square. Its several documented names are part of that identity, although accounts do not agree on every subsidiary deity. The recorded Gai Jatra performance outside it also shows how a temple facade can form a setting for communal cultural activity.",
     "images": [
       {
         "src": "/heritage/gopinath-krishna/reference.jpg",
@@ -453,6 +481,13 @@
         "organization": "Wikimedia Commons / Sushilagrg",
         "url": "https://commons.wikimedia.org/wiki/File:A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg",
         "note": "Photographic form evidence only; not authority for construction dates or patronage."
+      },
+      {
+        "id": "cambridge",
+        "title": "Continuity and change in the Durbar Square at Bhaktapur, Nepal",
+        "organization": "University of Cambridge Museums",
+        "url": "https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/",
+        "note": "Institutional interpretation and identified photographs."
       }
     ],
     "reconstruction": {
@@ -468,42 +503,54 @@
         {
           "id": "gopinath-krishna:overview",
           "field": "overview",
-          "statement": "This two-roof temple belongs to the western Durbar Square entrance cluster. The Department of Archaeology identifies Gopi Nath with Dwarika or Krishna Temple; the local Radhakrishna name is also documented.",
+          "statement": "This two-roof Hindu temple belongs to the western entrance cluster of Durbar Square. The Department of Archaeology calls it Gopi Nath and also identifies it as Dwarika or Krishna Temple; Radhakrishna is another documented local name. These names point to its Krishna dedication rather than to several different buildings. The broad tiled roofs and carved timber entrance give it a markedly different character from the square's stone shikhara temples. Its original construction date and founding patron are not securely established by the sources used here.",
           "sourceIds": [
             "doa19",
             "local-gopi"
           ],
-          "locator": "DoA 2019 section 1.13, PDF p32; local Radhakrishna identity account."
+          "locator": "DoA section 1.13 p32; local Radhakrishna name."
         },
         {
           "id": "gopinath-krishna:history",
           "field": "history",
-          "statement": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, replacement of deteriorated ground-floor Sal timber and use of lime mortar in conservation. Its 2022 report describes repair without wholesale dismantling, with the project completed in fiscal year 2076-77 BS. These reports do not establish an original construction year or patron.",
+          "statement": "The clearest historical identification comes from the Department of Archaeology's Bhaktapur monument entry. It describes a Krishna shrine in the western square and records Satyabhama, Krishna and Radha within the sanctum. A local account instead names Balram with Krishna and Radha. The disagreement concerns the accompanying figures, not the central Krishna dedication.\n\nThe temple also belongs to the square's continuing public life. Cambridge Museums documents a traditional dance performed in front of Gopinath Krishna Temple during Gai Jatra in 2022. That observation connects the building to a particular recorded celebration without establishing a fixed ritual timetable for the temple.",
           "sourceIds": [
             "doa19",
-            "doa22"
+            "local-gopi",
+            "cambridge"
           ],
-          "locator": "DoA 2019 section 1.13, p32; DoA 2022 project 2, p44."
+          "locator": "DoA sanctum figures; differing local deity list; Cambridge 2022 Gai Jatra photograph caption."
         },
         {
           "id": "gopinath-krishna:architecture",
           "field": "architecture",
-          "statement": "The documented form is a two-roof Nepalese temple with brick masonry and important structural timber. Photographs show a broad lower roof, a smaller upper roof and carved timber entrance work.",
+          "statement": "Two spreading roofs cover a brick and timber temple. The lower roof is broader, while the smaller upper roof preserves the same strong overhang. Carved timber openings and structural woodwork give the facade depth beneath the eaves.\n\nThe Department of Archaeology identifies it as a two-roof Nepalese temple. Its masonry and timber should be understood together: the brick body establishes the enclosure, while the roofs, entrance and supporting woodwork shape much of what a visitor sees.",
           "sourceIds": [
             "doa19",
             "photo:gopinath-krishna"
           ],
-          "locator": "DoA section 1.13 and licensed entrance-cluster photograph."
+          "locator": "DoA two-roof form and identified licensed photograph."
         },
         {
           "id": "gopinath-krishna:significance",
           "field": "significance",
-          "statement": "The temple is dedicated to Krishna. DoA lists Satyabhama, Krishna and Radha in its sanctum, while a local account supplies a different accompanying deity list. The Krishna dedication is secure; the conflicting subsidiary identifications are not silently merged.",
+          "statement": "The Krishna dedication places the temple within the religious landscape of the western square. Its several documented names are part of that identity, although accounts do not agree on every subsidiary deity. The recorded Gai Jatra performance outside it also shows how a temple facade can form a setting for communal cultural activity.",
           "sourceIds": [
             "doa19",
-            "local-gopi"
+            "local-gopi",
+            "cambridge"
           ],
-          "locator": "DoA 2019 section 1.13; local deity discussion."
+          "locator": "Krishna dedication and documented 2022 public performance."
+        },
+        {
+          "id": "gopinath-krishna:restoration",
+          "field": "restoration",
+          "statement": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, repair of masonry and replacement of deteriorated ground-floor Sal timber. Its 2022 account describes conservation without wholesale dismantling, completed in fiscal year 2076-77 BS.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "2019 section 1.13 p32; 2022 project 2 p44."
         }
       ],
       "conflicts": [
@@ -513,7 +560,8 @@
         "Original construction date and patron UNKNOWN.",
         "Project footprint-to-identity binding remains PROVISIONAL, despite supported real-world name equivalences."
       ]
-    }
+    },
+    "restoration": "The 2015 earthquake damaged the sanctum walls. DoA records shoring, repair of masonry and replacement of deteriorated ground-floor Sal timber. Its 2022 account describes conservation without wholesale dismantling, completed in fiscal year 2076-77 BS."
   },
   "vatsala-durga": {
     "id": "vatsala-durga",
@@ -523,10 +571,10 @@
       "Vatsala Temple"
     ],
     "period": "Malla period; original chronology disputed",
-    "overview": "Vatsala Durga is the stone shikhara temple in the central palace forecourt. Its Durga dedication and three-stage plinth are documented by the Department of Archaeology. It is distinct from the nearby two-roof Yaksheshwar temple and from other Vatsala-named shrines.",
-    "history": "DoA gives an initial construction under Jitamitra Malla in 1696 and rebuilding under Bhupatindra Malla around the turn of the 18th century. A local account instead gives 1672 and 1674. The 2015 earthquake destroyed the temple. Foundation investigations involved DoA, UNESCO and Durham University, followed by municipal reconstruction on the retained foundation. The 2019 report describes work still in progress.",
-    "architecture": "The sandstone temple combines a substantial stepped base, axial stairs, guardians and a deeply articulated lower level beneath a tapering shikhara. Secondary projections, niches, cornices and an ornamental crown break up the stone tower. The licensed 2026 photograph documents the standing rebuilt form rather than proving an exact completion date.",
-    "significance": "Its dedication to Durga places the shrine within the palace square's religious ensemble. The reconstructed building also records the substantial conservation response to the 2015 earthquake.",
+    "overview": "Vatsala Durga is a Hindu temple dedicated to Durga in the royal forecourt. Its stone shikhara rises from a substantial stepped base, setting it apart from the brick-and-timber temples with spreading tiled roofs. The main stair, guardian sculptures and richly divided lower level are important parts of its identity, not simply a pedestal beneath the tower. It belongs to the religious setting of the palace square, but it is a separate shrine from the nearby two-roof Yaksheshwar temple and from other temples bearing the Vatsala name.",
+    "history": "Sources disagree about the temple's beginnings. The Department of Archaeology records construction under Jitamitra Malla in 1696, followed by rebuilding under Bhupatindra Malla around the turn of the eighteenth century. A local account instead associates an earlier phase with Jagat Prakash Malla in 1672 and Jitamitra Malla in 1674. These competing accounts are retained rather than combined into a false single chronology.\n\nWhat is clear is the temple's Durga dedication and its place among the Malla-period shrines of the palace forecourt. Its history should begin with that religious and royal setting, even though the building visible today also carries the story of more recent reconstruction.",
+    "architecture": "The temple is described by DoA as a sandstone shikhara on a three-stage plinth. Its stair approach leads toward a strongly articulated entrance. Guardians, columns, projecting mouldings and recessed areas establish a sequence of light and shadow before the eye reaches the main tower.\n\nAbove, the tapering shikhara is broken into architectural zones, with secondary projections, niches and an ornamental crown. The stone surface gives the temple a different weight and texture from the broad-roofed timber temples nearby.",
+    "significance": "The dedication to Durga is central to the shrine's identity. Its position in the palace forecourt brings that religious role into close relationship with the former royal complex. For visitors, the contrast between its stone tower and the surrounding roofed temples also reveals the range of architectural traditions represented within one square.",
     "images": [
       {
         "src": "/heritage/vatsala-durga/reference.jpg",
@@ -581,40 +629,51 @@
         {
           "id": "vatsala-durga:overview",
           "field": "overview",
-          "statement": "Vatsala Durga is the stone shikhara temple in the central palace forecourt. Its Durga dedication and three-stage plinth are documented by the Department of Archaeology. It is distinct from the nearby two-roof Yaksheshwar temple and from other Vatsala-named shrines.",
-          "sourceIds": [
-            "doa19"
-          ],
-          "locator": "DoA 2019 section 1.15, PDF pp32-33; compare separate Yantra Vatsala entry 1.12."
-        },
-        {
-          "id": "vatsala-durga:history",
-          "field": "history",
-          "statement": "DoA gives an initial construction under Jitamitra Malla in 1696 and rebuilding under Bhupatindra Malla around the turn of the 18th century. A local account instead gives 1672 and 1674. The 2015 earthquake destroyed the temple. Foundation investigations involved DoA, UNESCO and Durham University, followed by municipal reconstruction on the retained foundation. The 2019 report describes work still in progress.",
-          "sourceIds": [
-            "doa19",
-            "local-vatsala"
-          ],
-          "locator": "DoA section 1.15, pp32-33; local Vatsala chronology."
-        },
-        {
-          "id": "vatsala-durga:architecture",
-          "field": "architecture",
-          "statement": "The sandstone temple combines a substantial stepped base, axial stairs, guardians and a deeply articulated lower level beneath a tapering shikhara. Secondary projections, niches, cornices and an ornamental crown break up the stone tower. The licensed 2026 photograph documents the standing rebuilt form rather than proving an exact completion date.",
+          "statement": "Vatsala Durga is a Hindu temple dedicated to Durga in the royal forecourt. Its stone shikhara rises from a substantial stepped base, setting it apart from the brick-and-timber temples with spreading tiled roofs. The main stair, guardian sculptures and richly divided lower level are important parts of its identity, not simply a pedestal beneath the tower. It belongs to the religious setting of the palace square, but it is a separate shrine from the nearby two-roof Yaksheshwar temple and from other temples bearing the Vatsala name.",
           "sourceIds": [
             "doa19",
             "photo:vatsala-durga"
           ],
-          "locator": "DoA three-stage plinth and sandstone description; licensed 2026 forecourt photograph."
+          "locator": "Section 1.15 pp32-33, dedication/form; licensed forecourt photo."
+        },
+        {
+          "id": "vatsala-durga:history",
+          "field": "history",
+          "statement": "Sources disagree about the temple's beginnings. The Department of Archaeology records construction under Jitamitra Malla in 1696, followed by rebuilding under Bhupatindra Malla around the turn of the eighteenth century. A local account instead associates an earlier phase with Jagat Prakash Malla in 1672 and Jitamitra Malla in 1674. These competing accounts are retained rather than combined into a false single chronology.\n\nWhat is clear is the temple's Durga dedication and its place among the Malla-period shrines of the palace forecourt. Its history should begin with that religious and royal setting, even though the building visible today also carries the story of more recent reconstruction.",
+          "sourceIds": [
+            "doa19",
+            "local-vatsala"
+          ],
+          "locator": "DoA 1696/Jitamitra and Bhupatindra account versus local 1672/1674 chronology."
+        },
+        {
+          "id": "vatsala-durga:architecture",
+          "field": "architecture",
+          "statement": "The temple is described by DoA as a sandstone shikhara on a three-stage plinth. Its stair approach leads toward a strongly articulated entrance. Guardians, columns, projecting mouldings and recessed areas establish a sequence of light and shadow before the eye reaches the main tower.\n\nAbove, the tapering shikhara is broken into architectural zones, with secondary projections, niches and an ornamental crown. The stone surface gives the temple a different weight and texture from the broad-roofed timber temples nearby.",
+          "sourceIds": [
+            "doa19",
+            "photo:vatsala-durga"
+          ],
+          "locator": "Sandstone, three-stage plinth; visible stairs, guardians and tower articulation."
         },
         {
           "id": "vatsala-durga:significance",
           "field": "significance",
-          "statement": "Its dedication to Durga places the shrine within the palace square's religious ensemble. The reconstructed building also records the substantial conservation response to the 2015 earthquake.",
+          "statement": "The dedication to Durga is central to the shrine's identity. Its position in the palace forecourt brings that religious role into close relationship with the former royal complex. For visitors, the contrast between its stone tower and the surrounding roofed temples also reveals the range of architectural traditions represented within one square.",
           "sourceIds": [
             "doa19"
           ],
-          "locator": "DoA dedication and post-earthquake reconstruction account."
+          "locator": "Durga dedication and palace-square monument context; architectural comparison is visible form."
+        },
+        {
+          "id": "vatsala-durga:restoration",
+          "field": "restoration",
+          "statement": "The temple collapsed in the 2015 earthquake. DoA, UNESCO and Durham University investigated the foundations, and municipal reconstruction proceeded on the retained base. Work was ongoing in the 2019 report. The included 2026 photograph shows the rebuilt temple standing; it does not establish an exact completion date.",
+          "sourceIds": [
+            "doa19",
+            "photo:vatsala-durga"
+          ],
+          "locator": "Section 1.15 foundation investigation/reconstruction progress; dated 2026 photograph."
         }
       ],
       "conflicts": [
@@ -624,7 +683,8 @@
         "Exact modern reconstruction completion date not established here.",
         "The smaller adjacent bell is not assigned the Barking Bell story or a date without secure object binding."
       ]
-    }
+    },
+    "restoration": "The temple collapsed in the 2015 earthquake. DoA, UNESCO and Durham University investigated the foundations, and municipal reconstruction proceeded on the retained base. Work was ongoing in the 2019 report. The included 2026 photograph shows the rebuilt temple standing; it does not establish an exact completion date."
   },
   "large-bell": {
     "id": "large-bell",
@@ -635,10 +695,10 @@
       "Big Bell"
     ],
     "period": "1737 attribution",
-    "overview": "The large bell is a separate assembly in the royal forecourt near the Golden Gate and Fifty-Five Window Palace. It must not be confused with the smaller bell beside Vatsala.",
-    "history": "NTB's Cultural Treasures publication and the local bell account attribute the large bell to Ranjit Malla in 1737. The local account reports an inscription date of 6 January, but that precise day has not been independently checked against an epigraphic transcription.",
-    "architecture": "A substantial hanging metal bell is carried on an independent raised support assembly. The 2015 photograph shows its scale and separation from the pavilion and palace. This image includes earthquake damage elsewhere in the forecourt and must not be read as a present-day view.",
-    "significance": "The documented bell is associated with worship of Taleju, the royal protective goddess. No modern ringing schedule or visitor access practice is asserted here.",
+    "overview": "This is the large ritual bell of the royal forecourt, commonly called the Taleju Bell or Big Bell. It stands as an independent assembly near the palace frontage, rather than as a small ornament attached to Vatsala. Its documented association is with worship of Taleju, the goddess connected with the royal court. The bell's size, its hanging metal body and the substantial structure carrying it are the features to notice. It must be distinguished from the smaller bell assembly beside Vatsala, whose historical identity is not securely resolved here.",
+    "history": "Nepal Tourism Board's Cultural Treasures publication and a local heritage account attribute the bell to Ranjit Malla in 1737. The local account reports an inscription dated 6 January, but that exact day has not been independently checked against a published transcription. The year and royal attribution are therefore presented with their sources, without claiming an epigraphic certainty that this research has not established.\n\nIts place beside the royal buildings and its association with Taleju connect it to the devotional life of the court. No unsupported account of a particular daily ringing schedule, ceremony or present-day access practice is added.",
+    "architecture": "The hanging metal bell is large enough to be read as the focus of its own architectural assembly. Its supports and raised base establish a separate footprint within the forecourt. The licensed photograph helps distinguish its scale and location from the nearby pavilion and palace.",
+    "significance": "The bell is associated in the consulted sources with worship of Taleju. Its royal patronage links a ritual object to the Malla court, while its independent position makes it a recognizable monument within the square. The large bell and the smaller Vatsala-associated bell should retain separate histories.",
     "images": [
       {
         "src": "/heritage/large-bell/reference.jpg",
@@ -685,7 +745,7 @@
       "placement": "APPROXIMATE",
       "architecture": "PHOTO_INFERRED",
       "dimensions": "APPROXIMATE",
-      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged."
+      "note": "Identity refers to the represented monument, not surveyed placement or exact fabric. Existing source geometry, correction layers and saved editor transforms are unchanged. The local four-support description and the photograph-led two-pier modeled form remain unreconciled; the support assembly is not a surveyed as-built record."
     },
     "research": {
       "reviewed": "2026-10-18",
@@ -693,42 +753,51 @@
         {
           "id": "large-bell:overview",
           "field": "overview",
-          "statement": "The large bell is a separate assembly in the royal forecourt near the Golden Gate and Fifty-Five Window Palace. It must not be confused with the smaller bell beside Vatsala.",
+          "statement": "This is the large ritual bell of the royal forecourt, commonly called the Taleju Bell or Big Bell. It stands as an independent assembly near the palace frontage, rather than as a small ornament attached to Vatsala. Its documented association is with worship of Taleju, the goddess connected with the royal court. The bell's size, its hanging metal body and the substantial structure carrying it are the features to notice. It must be distinguished from the smaller bell assembly beside Vatsala, whose historical identity is not securely resolved here.",
           "sourceIds": [
             "local-bell",
             "photo:large-bell"
           ],
-          "locator": "Local Taleju Bell location account; identified licensed 2015 palace-square photograph."
+          "locator": "Local location and Taleju association; licensed forecourt photograph."
         },
         {
           "id": "large-bell:history",
           "field": "history",
-          "statement": "NTB's Cultural Treasures publication and the local bell account attribute the large bell to Ranjit Malla in 1737. The local account reports an inscription date of 6 January, but that precise day has not been independently checked against an epigraphic transcription.",
+          "statement": "Nepal Tourism Board's Cultural Treasures publication and a local heritage account attribute the bell to Ranjit Malla in 1737. The local account reports an inscription dated 6 January, but that exact day has not been independently checked against a published transcription. The year and royal attribution are therefore presented with their sources, without claiming an epigraphic certainty that this research has not established.\n\nIts place beside the royal buildings and its association with Taleju connect it to the devotional life of the court. No unsupported account of a particular daily ringing schedule, ceremony or present-day access practice is added.",
           "sourceIds": [
             "ntb-cultural",
             "local-bell"
           ],
-          "locator": "NTB Big Bell indexed entry; local Taleju Bell patronage and reported inscription."
+          "locator": "1737/Ranjit attribution; locally reported inscription day, not independently transcribed."
         },
         {
           "id": "large-bell:architecture",
           "field": "architecture",
-          "statement": "A substantial hanging metal bell is carried on an independent raised support assembly. The 2015 photograph shows its scale and separation from the pavilion and palace. This image includes earthquake damage elsewhere in the forecourt and must not be read as a present-day view.",
+          "statement": "The hanging metal bell is large enough to be read as the focus of its own architectural assembly. Its supports and raised base establish a separate footprint within the forecourt. The licensed photograph helps distinguish its scale and location from the nearby pavilion and palace.",
           "sourceIds": [
             "photo:large-bell",
             "local-bell"
           ],
-          "locator": "Licensed 2015 image; local independent platform/support description."
+          "locator": "Visible independent bell assembly; differing support account."
         },
         {
           "id": "large-bell:significance",
           "field": "significance",
-          "statement": "The documented bell is associated with worship of Taleju, the royal protective goddess. No modern ringing schedule or visitor access practice is asserted here.",
+          "statement": "The bell is associated in the consulted sources with worship of Taleju. Its royal patronage links a ritual object to the Malla court, while its independent position makes it a recognizable monument within the square. The large bell and the smaller Vatsala-associated bell should retain separate histories.",
           "sourceIds": [
             "ntb-cultural",
             "local-bell"
           ],
-          "locator": "NTB Big Bell worship reference; local Taleju association."
+          "locator": "Taleju worship and royal attribution."
+        },
+        {
+          "id": "large-bell:restoration",
+          "field": "restoration",
+          "statement": "The included photograph was taken in 2015 and shows earthquake damage elsewhere in the forecourt. It is historical visual evidence, not a current-condition photograph. A secure conservation chronology for this exact bell and all its supports remains unavailable.",
+          "sourceIds": [
+            "photo:large-bell"
+          ],
+          "locator": "Dated 2015 photograph; no independently established bell restoration chronology."
         }
       ],
       "conflicts": [
@@ -738,7 +807,8 @@
         "Exact casting workshop, dimensions and support reconstruction chronology UNKNOWN.",
         "Small-bell/Taleju/Barking Bell identities must remain separate."
       ]
-    }
+    },
+    "restoration": "The included photograph was taken in 2015 and shows earthquake damage elsewhere in the forecourt. It is historical visual evidence, not a current-condition photograph. A secure conservation chronology for this exact bell and all its supports remains unavailable."
   },
   "malla-column": {
     "id": "malla-column",
@@ -748,10 +818,10 @@
       "Statue of King Bhupatindra Malla"
     ],
     "period": "Malla royal monument; installation year unresolved",
-    "overview": "A seated royal figure rises above the plaza on a slender stone column. The documented identification is King Bhupatindra Malla, shown with joined hands facing toward the Golden Gate and Taleju precinct.",
-    "history": "A local heritage account interprets the column as an expression of Bhupatindra Malla's royal devotion. The consulted evidence does not securely establish an installation year, so no exact year or unsupported story about damage is presented.",
-    "architecture": "The stone shaft supports a broad ornamented lotus-like capital and a seated metal figure. The folded legs, joined hands, seat, thin supporting pole and parasol are important parts of its silhouette. The licensed close photograph is the primary evidence for these visible details.",
-    "significance": "The ruler's prayerful posture connects royal authority with devotion to Taleju. The column is a forecourt monument, not a temple and not a generic decorative pillar.",
+    "overview": "Above the plaza, King Bhupatindra Malla sits with joined hands on an ornamented capital. A slender stone column lifts the figure above the surrounding activity, while a small parasol completes the silhouette. This is a royal monument rather than a shrine or a decorative pillar. A local heritage account describes the king facing toward the Golden Gate and Taleju precinct in devotion. The posture is the key to understanding the sculpture: royal presence is expressed through a seated figure in prayer, not through a standing military portrait.",
+    "history": "The monument represents Bhupatindra Malla. Its devotional interpretation connects the king with Taleju and the palace entrance. The sources used here do not securely establish the installation year, so a frequently repeated exact date is not presented as settled history. Nor is an uncorroborated story about damage treated as fact.\n\nThe important historical relationship is between the ruler, his posture and the sacred royal setting. The statue belongs to the same forecourt as the Golden Gate, but it remains an independent monument with its own form and viewpoint.",
+    "architecture": "The tall stone shaft carries a broad, decorated lotus-like capital and a seated metal figure. Folded legs establish the seated pose; the torso and joined hands make the human silhouette legible. Above the head, a thin pole supports the parasol.\n\nThe contrast between the long, restrained shaft and the concentrated ornament at its summit is especially distinctive. The licensed close photograph makes the capital, seat and canopy easier to study than they are from the ground.",
+    "significance": "The image presents a ruler in an attitude of devotion. In the local account, the direction toward the Golden Gate reinforces the connection with Taleju. It is a reminder that royal representation in the square can take a religious form as well as an architectural one. Exact meanings beyond this documented devotional relationship are not assigned to individual ornaments.",
     "images": [
       {
         "src": "/heritage/malla-column/reference.jpg",
@@ -799,40 +869,49 @@
         {
           "id": "malla-column:overview",
           "field": "overview",
-          "statement": "A seated royal figure rises above the plaza on a slender stone column. The documented identification is King Bhupatindra Malla, shown with joined hands facing toward the Golden Gate and Taleju precinct.",
+          "statement": "Above the plaza, King Bhupatindra Malla sits with joined hands on an ornamented capital. A slender stone column lifts the figure above the surrounding activity, while a small parasol completes the silhouette. This is a royal monument rather than a shrine or a decorative pillar. A local heritage account describes the king facing toward the Golden Gate and Taleju precinct in devotion. The posture is the key to understanding the sculpture: royal presence is expressed through a seated figure in prayer, not through a standing military portrait.",
           "sourceIds": [
             "local-column",
             "photo:malla-column"
           ],
-          "locator": "Local column identity and orientation; licensed statue detail."
+          "locator": "Local identification, prayer posture and orientation; licensed statue detail."
         },
         {
           "id": "malla-column:history",
           "field": "history",
-          "statement": "A local heritage account interprets the column as an expression of Bhupatindra Malla's royal devotion. The consulted evidence does not securely establish an installation year, so no exact year or unsupported story about damage is presented.",
+          "statement": "The monument represents Bhupatindra Malla. Its devotional interpretation connects the king with Taleju and the palace entrance. The sources used here do not securely establish the installation year, so a frequently repeated exact date is not presented as settled history. Nor is an uncorroborated story about damage treated as fact.\n\nThe important historical relationship is between the ruler, his posture and the sacred royal setting. The statue belongs to the same forecourt as the Golden Gate, but it remains an independent monument with its own form and viewpoint.",
           "sourceIds": [
             "local-column"
           ],
-          "locator": "Royal devotion account; precise installation and damage stories excluded from publication."
+          "locator": "Bhupatindra identification and Taleju devotion; installation date remains unknown."
         },
         {
           "id": "malla-column:architecture",
           "field": "architecture",
-          "statement": "The stone shaft supports a broad ornamented lotus-like capital and a seated metal figure. The folded legs, joined hands, seat, thin supporting pole and parasol are important parts of its silhouette. The licensed close photograph is the primary evidence for these visible details.",
+          "statement": "The tall stone shaft carries a broad, decorated lotus-like capital and a seated metal figure. Folded legs establish the seated pose; the torso and joined hands make the human silhouette legible. Above the head, a thin pole supports the parasol.\n\nThe contrast between the long, restrained shaft and the concentrated ornament at its summit is especially distinctive. The licensed close photograph makes the capital, seat and canopy easier to study than they are from the ground.",
           "sourceIds": [
             "photo:malla-column",
             "local-column"
           ],
-          "locator": "Statue/capital detail photograph; local lotus, seat and devotional-posture description."
+          "locator": "Capital, seated figure, folded legs, hands, pole and parasol."
         },
         {
           "id": "malla-column:significance",
           "field": "significance",
-          "statement": "The ruler's prayerful posture connects royal authority with devotion to Taleju. The column is a forecourt monument, not a temple and not a generic decorative pillar.",
+          "statement": "The image presents a ruler in an attitude of devotion. In the local account, the direction toward the Golden Gate reinforces the connection with Taleju. It is a reminder that royal representation in the square can take a religious form as well as an architectural one. Exact meanings beyond this documented devotional relationship are not assigned to individual ornaments.",
           "sourceIds": [
             "local-column"
           ],
-          "locator": "Devotional interpretation and Golden Gate orientation."
+          "locator": "Attributed devotional interpretation and Golden Gate orientation."
+        },
+        {
+          "id": "malla-column:restoration",
+          "field": "restoration",
+          "statement": "A securely sourced repair or earthquake history for this exact column has not been established in the consulted material. An unsupported bullet-damage anecdote is omitted.",
+          "sourceIds": [
+            "local-column"
+          ],
+          "locator": "Research limitation: damage anecdote not corroborated; no repair chronology asserted."
         }
       ],
       "conflicts": [
@@ -842,7 +921,8 @@
         "Installation year, workshop and securely sourced repair chronology UNKNOWN.",
         "Local bullet-damage anecdote omitted for lack of corroboration."
       ]
-    }
+    },
+    "restoration": "A securely sourced repair or earthquake history for this exact column has not been established in the consulted material. An unsupported bullet-damage anecdote is omitted."
   },
   "chyasilin": {
     "id": "chyasilin",
@@ -853,10 +933,10 @@
       "Chyasalin Mandap"
     ],
     "period": "Historical pavilion; modern reconstruction project from 1987",
-    "overview": "Chyasilin is the octagonal pavilion beside the palace forecourt. Its present form is a documented modern reconstruction of the pavilion lost in the 1934 earthquake, not wholly surviving Malla-period fabric.",
-    "history": "The reconstruction account describes royal reception and festival viewing, an inscribed record of a poetry competition, and later use as a tax office. After the 1934 collapse, a reconstruction was proposed in 1987 by Götz Hagmüller and Niels Gutschow. Historic photographs and surviving carved posts informed the design. Dated 1990 bolt heads identify the modern intervention; the authors report that the pavilion survived the 2015 earthquake without damage.",
-    "architecture": "Two roofs cover an octagonal timber pavilion. Traditional carved elements coexist with modern steel trusses, foundations and an inner supporting system. That structural distinction is explicitly described by the reconstruction authors. The two included photographs show lower carved posts and the whole pavilion in the forecourt.",
-    "significance": "The pavilion served royal and public viewing functions and is an important example of an openly documented reconstruction. Its survival in 2015 should be understood alongside its modern structural reinforcement.",
+    "overview": "Chyasilin Mandap is an octagonal pavilion beside the royal palace forecourt. It provided a place for royal reception and for viewing festivals, making it a building concerned with gathering and looking outward rather than with enclosing a temple sanctum. Its two roofs and eight-sided plan distinguish it from the surrounding rectangular buildings. The pavilion seen today is a modern reconstruction of an earlier building. That distinction matters, but its story begins with the social and royal uses of the historical pavilion, not only with the earthquake that destroyed it.",
+    "history": "The first-hand reconstruction account describes royal reception and festival viewing as uses of the pavilion. An inscription records a poetry competition, adding a literary episode to its history. In the later Rana period, the building also served as a tax office: its function changed as political life changed.\n\nThe historical pavilion was lost in 1934. Decades later, the proposal to reconstruct it brought old photographs and surviving carved posts into a new architectural project. The present building therefore connects evidence of earlier use with a deliberately documented modern intervention. An original founding patron or exact founding date is not asserted where the evidence remains uncertain.",
+    "architecture": "Two roofs shelter an octagonal timber pavilion. Carved posts and open edges give the building a different relationship to the square from an enclosed masonry temple. The included photographs show both the lower carved supports and its place in the wider forecourt.\n\nThe modern structure combines traditional carved elements with steel reinforcement and modern foundations. The reconstruction authors explain these interventions openly; the pavilion should not be described as a wholly surviving ancient timber structure.",
+    "significance": "The pavilion's recorded uses connect it with royal hospitality, festivals and poetry, as well as later administration. Its reconstruction adds another chapter: historical images and surviving components were used to recover an architectural presence in the square. Chyasilin is important both for what the earlier pavilion hosted and for the documented decisions behind its modern form.",
     "images": [
       {
         "src": "/heritage/chyasilin/reference.jpg",
@@ -926,40 +1006,49 @@
         {
           "id": "chyasilin:overview",
           "field": "overview",
-          "statement": "Chyasilin is the octagonal pavilion beside the palace forecourt. Its present form is a documented modern reconstruction of the pavilion lost in the 1934 earthquake, not wholly surviving Malla-period fabric.",
+          "statement": "Chyasilin Mandap is an octagonal pavilion beside the royal palace forecourt. It provided a place for royal reception and for viewing festivals, making it a building concerned with gathering and looking outward rather than with enclosing a temple sanctum. Its two roofs and eight-sided plan distinguish it from the surrounding rectangular buildings. The pavilion seen today is a modern reconstruction of an earlier building. That distinction matters, but its story begins with the social and royal uses of the historical pavilion, not only with the earthquake that destroyed it.",
           "sourceIds": [
             "mandap"
           ],
-          "locator": "First-hand Chyasilin reconstruction account, historical and structural sections."
+          "locator": "Historical royal reception, viewing function, octagonal form and modern reconstruction."
         },
         {
           "id": "chyasilin:history",
           "field": "history",
-          "statement": "The reconstruction account describes royal reception and festival viewing, an inscribed record of a poetry competition, and later use as a tax office. After the 1934 collapse, a reconstruction was proposed in 1987 by Götz Hagmüller and Niels Gutschow. Historic photographs and surviving carved posts informed the design. Dated 1990 bolt heads identify the modern intervention; the authors report that the pavilion survived the 2015 earthquake without damage.",
+          "statement": "The first-hand reconstruction account describes royal reception and festival viewing as uses of the pavilion. An inscription records a poetry competition, adding a literary episode to its history. In the later Rana period, the building also served as a tax office: its function changed as political life changed.\n\nThe historical pavilion was lost in 1934. Decades later, the proposal to reconstruct it brought old photographs and surviving carved posts into a new architectural project. The present building therefore connects evidence of earlier use with a deliberately documented modern intervention. An original founding patron or exact founding date is not asserted where the evidence remains uncertain.",
           "sourceIds": [
             "mandap"
           ],
-          "locator": "Historical uses; 1987 proposal; photographic reconstruction; 1990 bolt marks; 2015 performance."
+          "locator": "Historical uses, poetry inscription, Rana-period tax office and photographic reconstruction."
         },
         {
           "id": "chyasilin:architecture",
           "field": "architecture",
-          "statement": "Two roofs cover an octagonal timber pavilion. Traditional carved elements coexist with modern steel trusses, foundations and an inner supporting system. That structural distinction is explicitly described by the reconstruction authors. The two included photographs show lower carved posts and the whole pavilion in the forecourt.",
+          "statement": "Two roofs shelter an octagonal timber pavilion. Carved posts and open edges give the building a different relationship to the square from an enclosed masonry temple. The included photographs show both the lower carved supports and its place in the wider forecourt.\n\nThe modern structure combines traditional carved elements with steel reinforcement and modern foundations. The reconstruction authors explain these interventions openly; the pavilion should not be described as a wholly surviving ancient timber structure.",
           "sourceIds": [
             "mandap",
             "photo:chyasilin",
             "photo:large-bell"
           ],
-          "locator": "First-hand structural description; two licensed photographs."
+          "locator": "Octagonal two-roof form and documented modern structure; licensed views."
         },
         {
           "id": "chyasilin:significance",
           "field": "significance",
-          "statement": "The pavilion served royal and public viewing functions and is an important example of an openly documented reconstruction. Its survival in 2015 should be understood alongside its modern structural reinforcement.",
+          "statement": "The pavilion's recorded uses connect it with royal hospitality, festivals and poetry, as well as later administration. Its reconstruction adds another chapter: historical images and surviving components were used to recover an architectural presence in the square. Chyasilin is important both for what the earlier pavilion hosted and for the documented decisions behind its modern form.",
           "sourceIds": [
             "mandap"
           ],
-          "locator": "Original viewing function and modern structural performance."
+          "locator": "Recorded reception, viewing, poetry and administration; explicit reconstruction account."
+        },
+        {
+          "id": "chyasilin:restoration",
+          "field": "restoration",
+          "statement": "After the 1934 collapse, Götz Hagmüller and Niels Gutschow proposed reconstruction in 1987. Surviving posts and historic photographs informed the work; 1990 marks identify modern bolts. Steel reinforcement and modern foundations were incorporated. The authors report that the pavilion survived the 2015 earthquake without damage. An exact completion year remains unresolved here.",
+          "sourceIds": [
+            "mandap"
+          ],
+          "locator": "1934 loss, 1987 proposal, 1990 marks, steel/foundations and reported 2015 survival."
         }
       ],
       "conflicts": [
@@ -969,7 +1058,8 @@
         "Original founding patron/date not established without conflicting attribution.",
         "Protective local legends are not presented as historical causes."
       ]
-    }
+    },
+    "restoration": "After the 1934 collapse, Götz Hagmüller and Niels Gutschow proposed reconstruction in 1987. Surviving posts and historic photographs informed the work; 1990 marks identify modern bolts. Steel reinforcement and modern foundations were incorporated. The authors report that the pavilion survived the 2015 earthquake without damage. An exact completion year remains unresolved here."
   },
   "khauma-gate": {
     "id": "khauma-gate",
@@ -979,10 +1069,10 @@
       "Khauma Entrance Gate"
     ],
     "period": "Original construction date unknown",
-    "overview": "Khauma is the principal western entrance gate to Bhaktapur Durbar Square. Its city-entry role is distinct from the gilded Golden Gate in the royal palace frontage.",
-    "history": "DoA records collapse of the southern portion and cracking of upper masonry in the 2015 earthquake. Damaged work was dismantled down to the foundations and restored using traditional techniques, including Sal posts and timber ties. The consulted report does not establish the gate's original date or patron.",
-    "architecture": "The entrance is a masonry gateway with a pointed central opening, articulated side masses and an ornamental curved crown. These visible forms are documented by the licensed photograph.",
-    "significance": "The gateway marks the transition from the western streets into the heritage square. Its post-earthquake repair is documented independently of the more elaborate royal Golden Gate.",
+    "overview": "Khauma Gate is the main western entrance to Bhaktapur Durbar Square. It marks the passage from the streets outside into the square, a different role from the Golden Gate, which leads into the royal palace precinct. The central pointed opening, substantial side masonry and curved ornamental crown make it recognizable as a city-entry gateway. Reliable information about its original construction is sparse. Its founding ruler and exact date are not established by the sources used here, so the gateway is introduced through its documented location and purpose rather than an invented origin story.",
+    "history": "The Department of Archaeology identifies Khauma as the principal western gateway of the square. That establishes its place in the city's approach routes, but the consulted monument entry does not explain who first commissioned it or when. The history of the palace's gilded entrance cannot be borrowed to fill those gaps: the two gateways are separate structures.\n\nKhauma's importance is therefore clearest as a threshold. It frames an arrival into Durbar Square and helps distinguish the surrounding streets from the historic square beyond. Details of original ceremonies, tolls or administrative use remain unknown in this research.",
+    "architecture": "The masonry gateway is organized around a pointed central opening. Articulated side masses and a curved crown give the entrance a recognizable silhouette, with ornamental elements rising above the main wall. The photograph shows how those parts frame a passage rather than close it.\n\nThe conservation account also records timber within the masonry system. This is a reminder that a gateway appearing to be entirely brick can depend on structural woodwork as well.",
+    "significance": "As the western entrance, Khauma is part of how people reach and recognize the square. Its civic importance lies in that documented role. No unsupported religious dedication or association with a particular ruler is assigned to it.",
     "images": [
       {
         "src": "/heritage/khauma-gate/reference.jpg",
@@ -1037,40 +1127,49 @@
         {
           "id": "khauma-gate:overview",
           "field": "overview",
-          "statement": "Khauma is the principal western entrance gate to Bhaktapur Durbar Square. Its city-entry role is distinct from the gilded Golden Gate in the royal palace frontage.",
+          "statement": "Khauma Gate is the main western entrance to Bhaktapur Durbar Square. It marks the passage from the streets outside into the square, a different role from the Golden Gate, which leads into the royal palace precinct. The central pointed opening, substantial side masonry and curved ornamental crown make it recognizable as a city-entry gateway. Reliable information about its original construction is sparse. Its founding ruler and exact date are not established by the sources used here, so the gateway is introduced through its documented location and purpose rather than an invented origin story.",
           "sourceIds": [
             "doa19",
-            "cambridge"
+            "photo:khauma-gate"
           ],
-          "locator": "DoA 2019 section 1.14, p32; Cambridge entrance and royal frontage distinction."
+          "locator": "Section 1.14 p32: main western entrance; licensed gate photograph."
         },
         {
           "id": "khauma-gate:history",
           "field": "history",
-          "statement": "DoA records collapse of the southern portion and cracking of upper masonry in the 2015 earthquake. Damaged work was dismantled down to the foundations and restored using traditional techniques, including Sal posts and timber ties. The consulted report does not establish the gate's original date or patron.",
+          "statement": "The Department of Archaeology identifies Khauma as the principal western gateway of the square. That establishes its place in the city's approach routes, but the consulted monument entry does not explain who first commissioned it or when. The history of the palace's gilded entrance cannot be borrowed to fill those gaps: the two gateways are separate structures.\n\nKhauma's importance is therefore clearest as a threshold. It frames an arrival into Durbar Square and helps distinguish the surrounding streets from the historic square beyond. Details of original ceremonies, tolls or administrative use remain unknown in this research.",
           "sourceIds": [
             "doa19"
           ],
-          "locator": "Section 1.14, PDF p32."
+          "locator": "Khauma location/function; original date/patron absent from consulted entry."
         },
         {
           "id": "khauma-gate:architecture",
           "field": "architecture",
-          "statement": "The entrance is a masonry gateway with a pointed central opening, articulated side masses and an ornamental curved crown. These visible forms are documented by the licensed photograph.",
+          "statement": "The masonry gateway is organized around a pointed central opening. Articulated side masses and a curved crown give the entrance a recognizable silhouette, with ornamental elements rising above the main wall. The photograph shows how those parts frame a passage rather than close it.\n\nThe conservation account also records timber within the masonry system. This is a reminder that a gateway appearing to be entirely brick can depend on structural woodwork as well.",
           "sourceIds": [
             "photo:khauma-gate",
             "doa19"
           ],
-          "locator": "Licensed western entrance photograph; DoA masonry and timber conservation account."
+          "locator": "Visible opening/crown/side masses; documented structural timber."
         },
         {
           "id": "khauma-gate:significance",
           "field": "significance",
-          "statement": "The gateway marks the transition from the western streets into the heritage square. Its post-earthquake repair is documented independently of the more elaborate royal Golden Gate.",
+          "statement": "As the western entrance, Khauma is part of how people reach and recognize the square. Its civic importance lies in that documented role. No unsupported religious dedication or association with a particular ruler is assigned to it.",
           "sourceIds": [
             "doa19"
           ],
-          "locator": "Khauma main-western-entrance and conservation entry."
+          "locator": "Documented main-western-entrance role; no additional ritual claims."
+        },
+        {
+          "id": "khauma-gate:restoration",
+          "field": "restoration",
+          "statement": "DoA records collapse of the southern portion and cracking in the upper work in 2015. Damaged masonry was dismantled to the foundations and restored using traditional methods, including Sal posts and timber ties.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "Section 1.14 p32, 2015 damage and traditional restoration."
         }
       ],
       "conflicts": [],
@@ -1078,7 +1177,8 @@
         "Original date, founding patron and authenticated local spelling variants UNKNOWN.",
         "No current ticketing or ritual schedule asserted."
       ]
-    }
+    },
+    "restoration": "DoA records collapse of the southern portion and cracking in the upper work in 2015. Damaged masonry was dismantled to the foundations and restored using traditional methods, including Sal posts and timber ties."
   },
   "yaksheshwar": {
     "id": "yaksheshwar",
@@ -1089,10 +1189,10 @@
       "Pashupatinath of Bhaktapur"
     ],
     "period": "15th century",
-    "overview": "This two-roof Shiva temple stands south of Vatsala in the central square. DoA identifies Yakshyashwor as a 15th-century monument; local documentation also calls it Pashupatinath. It is not the similarly named Kathmandu temple complex.",
-    "history": "The 2022 DoA report records partial damage in the 2015 earthquake and conservation without wholesale dismantling, still under way at the time of reporting. Local accounts associate the temple with Yaksha Malla, but their precise 1475 date is not treated as independently established.",
-    "architecture": "Two spreading tiled roofs shelter a brick and carved-timber temple. Carved struts and entrance work are important parts of its Shaiva imagery. The included post-earthquake photograph locates it beside the then-damaged Vatsala site.",
-    "significance": "The Shiva/Pashupati dedication belongs to Bhaktapur's own religious landscape. Shared divine names do not make its history interchangeable with Kathmandu's Pashupatinath.",
+    "overview": "Yaksheshwar is a two-roof Hindu temple dedicated to Shiva, also known locally as Pashupatinath of Bhaktapur. It stands south of Vatsala in the central square. The broad tiled roofs, brick body and carved timber work make it easy to distinguish from the neighboring stone shikhara. The shared Pashupatinath name should not lead visitors to borrow the history of the much larger Kathmandu temple complex. This is Bhaktapur's own shrine, with its own position in the religious and architectural life of Durbar Square.",
+    "history": "The Department of Archaeology identifies Yakshyashwor as a fifteenth-century temple. A local account associates it with Yaksha Malla and gives 1475, but that exact year has not been independently established here. The broader fifteenth-century date is therefore preferred, with royal patronage presented as an attributed local account.\n\nIts Shiva dedication explains the Pashupatinath name. The temple belongs to a square containing several different shrines and architectural types; sharing a deity or a familiar sacred name does not make those monuments interchangeable. Its older history is considered separately from the conservation work undertaken after 2015.",
+    "architecture": "Two spreading tiled roofs shelter a brick temple enriched with carved timber. The broad lower eaves and smaller upper roof give the building a layered profile. Doorways, carved entrance work and roof struts establish much of its visual character.\n\nLocal documentation discusses Shaiva imagery in the carved timber. These details connect the shrine's religious identity with its architecture, while the large overhangs provide a strong contrast to the exposed stone tower of Vatsala nearby.",
+    "significance": "The shrine represents worship of Shiva within Bhaktapur's own palace-square setting. Its alternate Pashupatinath name expresses that dedication, while its brick-and-timber form demonstrates another architectural approach beside the square's stone temples. Its identity should remain distinct from both neighboring monuments and the Kathmandu Pashupatinath complex.",
     "images": [
       {
         "src": "/heritage/yaksheshwar/reference.jpg",
@@ -1146,42 +1246,52 @@
         {
           "id": "yaksheshwar:overview",
           "field": "overview",
-          "statement": "This two-roof Shiva temple stands south of Vatsala in the central square. DoA identifies Yakshyashwor as a 15th-century monument; local documentation also calls it Pashupatinath. It is not the similarly named Kathmandu temple complex.",
+          "statement": "Yaksheshwar is a two-roof Hindu temple dedicated to Shiva, also known locally as Pashupatinath of Bhaktapur. It stands south of Vatsala in the central square. The broad tiled roofs, brick body and carved timber work make it easy to distinguish from the neighboring stone shikhara. The shared Pashupatinath name should not lead visitors to borrow the history of the much larger Kathmandu temple complex. This is Bhaktapur's own shrine, with its own position in the religious and architectural life of Durbar Square.",
           "sourceIds": [
             "doa22",
-            "local-yak"
+            "local-yak",
+            "photo:yaksheshwar"
           ],
-          "locator": "DoA 2022 project 23, PDF p65; local Bhaktapur Pashupatinath location and identity."
+          "locator": "DoA project 23 p65; local Bhaktapur Shiva/Pashupatinath identity and location; photograph."
         },
         {
           "id": "yaksheshwar:history",
           "field": "history",
-          "statement": "The 2022 DoA report records partial damage in the 2015 earthquake and conservation without wholesale dismantling, still under way at the time of reporting. Local accounts associate the temple with Yaksha Malla, but their precise 1475 date is not treated as independently established.",
+          "statement": "The Department of Archaeology identifies Yakshyashwor as a fifteenth-century temple. A local account associates it with Yaksha Malla and gives 1475, but that exact year has not been independently established here. The broader fifteenth-century date is therefore preferred, with royal patronage presented as an attributed local account.\n\nIts Shiva dedication explains the Pashupatinath name. The temple belongs to a square containing several different shrines and architectural types; sharing a deity or a familiar sacred name does not make those monuments interchangeable. Its older history is considered separately from the conservation work undertaken after 2015.",
           "sourceIds": [
             "doa22",
             "local-yak"
           ],
-          "locator": "Project 23, p65; local patronage account."
+          "locator": "DoA 15th century; locally attributed Yaksha/1475 chronology not independently confirmed."
         },
         {
           "id": "yaksheshwar:architecture",
           "field": "architecture",
-          "statement": "Two spreading tiled roofs shelter a brick and carved-timber temple. Carved struts and entrance work are important parts of its Shaiva imagery. The included post-earthquake photograph locates it beside the then-damaged Vatsala site.",
+          "statement": "Two spreading tiled roofs shelter a brick temple enriched with carved timber. The broad lower eaves and smaller upper roof give the building a layered profile. Doorways, carved entrance work and roof struts establish much of its visual character.\n\nLocal documentation discusses Shaiva imagery in the carved timber. These details connect the shrine's religious identity with its architecture, while the large overhangs provide a strong contrast to the exposed stone tower of Vatsala nearby.",
           "sourceIds": [
             "local-yak",
             "photo:yaksheshwar"
           ],
-          "locator": "Local architectural description; identified two-roof temple photograph."
+          "locator": "Two roofs, brick/timber, carved struts and Shaiva imagery."
         },
         {
           "id": "yaksheshwar:significance",
           "field": "significance",
-          "statement": "The Shiva/Pashupati dedication belongs to Bhaktapur's own religious landscape. Shared divine names do not make its history interchangeable with Kathmandu's Pashupatinath.",
+          "statement": "The shrine represents worship of Shiva within Bhaktapur's own palace-square setting. Its alternate Pashupatinath name expresses that dedication, while its brick-and-timber form demonstrates another architectural approach beside the square's stone temples. Its identity should remain distinct from both neighboring monuments and the Kathmandu Pashupatinath complex.",
           "sourceIds": [
             "local-yak",
             "doa22"
           ],
-          "locator": "Bhaktapur-specific monument accounts."
+          "locator": "Bhaktapur-specific Shiva shrine; no Kathmandu history transferred."
+        },
+        {
+          "id": "yaksheshwar:restoration",
+          "field": "restoration",
+          "statement": "The 2015 earthquake partially damaged the temple. DoA's 2022 report describes conservation without wholesale dismantling, with work still ongoing at that time. The report does not establish a later completion date.",
+          "sourceIds": [
+            "doa22"
+          ],
+          "locator": "Project 23 p65: partial damage and conservation progress in 2022."
         }
       ],
       "conflicts": [],
@@ -1189,7 +1299,8 @@
         "Precise original year and independently corroborated patronage remain unresolved.",
         "Exact completion date of post-2015 conservation not established by the 2022 progress report."
       ]
-    }
+    },
+    "restoration": "The 2015 earthquake partially damaged the temple. DoA's 2022 report describes conservation without wholesale dismantling, with work still ongoing at that time. The report does not establish a later completion date."
   },
   "siddhi-lakshmi": {
     "id": "siddhi-lakshmi",
@@ -1199,10 +1310,10 @@
       "Siddhi Laxmi Temple"
     ],
     "period": "17th century",
-    "overview": "The stone shikhara temple near the southeastern side of the Fifty-Five Window Palace is identified by DoA as Siddhi Lakshmi. Its elevated stair approach and paired guardians distinguish it from the nearby brick shikhara.",
-    "history": "DoA dates the temple to the 17th century. It was damaged, but did not collapse, in 2015. Conservation retained the foundation and plinth, numbered and reused dismantled stone elements, and renewed damaged timber structure and the gilded pinnacle.",
-    "architecture": "An axial staircase climbs a high stepped plinth to a compact stone shikhara. Paired sculptural guardians flank successive levels of the approach. Moulded courses and a crowned tapering tower give the stone mass a strong vertical silhouette.",
-    "significance": "The temple is dedicated to Siddhi Lakshmi. Its repaired fabric illustrates a conservation approach that retained the historic base and reused identifiable stone members rather than treating the whole monument as a new replica.",
+    "overview": "Siddhi Lakshmi is a Hindu temple with a stone shikhara and a high, guardian-lined stair approach. It stands near the southeastern side of the Fifty-Five Window Palace. The Department of Archaeology dates it to the seventeenth century, although the consulted evidence does not securely name a founding ruler or a precise year. Its distinctive character begins at the base: the stepped platform and paired sculptures make the ascent a major part of the monument. The compact stone tower above should be read together with that approach, rather than as an isolated spire.",
+    "history": "The temple is dedicated to Siddhi Lakshmi and belongs to the seventeenth-century religious architecture of the square. Beyond that period and dedication, the founding history remains incompletely established in the sources used here. An exact patron or construction date is therefore omitted rather than supplied from an unsupported attribution.\n\nThe temple's stone construction and elevated stair approach distinguish it within the palace setting. Its history includes later repair, but the surviving base and reused architectural stones are also evidence that the building's story did not begin anew with the most recent conservation campaign.",
+    "architecture": "An axial staircase climbs a series of substantial terraces to the stone shrine. Paired sculptural guardians accompany the ascent at successive levels. Their placement helps organize the approach, although individual identities are not assigned from appearance alone.\n\nAbove the platform, moulded courses, projections and niches articulate a tapering stone tower with an ornamental summit. Compared with the broad, spreading roofs of nearby timber temples, its stepped base and upright shikhara produce a strongly vertical composition.",
+    "significance": "The dedication to Siddhi Lakshmi identifies the monument as a place of Hindu worship. Its stone architecture adds to the variety of religious buildings surrounding the former palace. The carefully composed stair and guardian setting are central to its distinct identity within that group.",
     "images": [
       {
         "src": "/heritage/siddhi-lakshmi/reference.jpg",
@@ -1256,42 +1367,51 @@
         {
           "id": "siddhi-lakshmi:overview",
           "field": "overview",
-          "statement": "The stone shikhara temple near the southeastern side of the Fifty-Five Window Palace is identified by DoA as Siddhi Lakshmi. Its elevated stair approach and paired guardians distinguish it from the nearby brick shikhara.",
+          "statement": "Siddhi Lakshmi is a Hindu temple with a stone shikhara and a high, guardian-lined stair approach. It stands near the southeastern side of the Fifty-Five Window Palace. The Department of Archaeology dates it to the seventeenth century, although the consulted evidence does not securely name a founding ruler or a precise year. Its distinctive character begins at the base: the stepped platform and paired sculptures make the ascent a major part of the monument. The compact stone tower above should be read together with that approach, rather than as an isolated spire.",
           "sourceIds": [
             "doa19",
             "photo:siddhi-lakshmi"
           ],
-          "locator": "DoA 2019 section 1.2, PDF pp28-29; licensed 2021 photograph."
+          "locator": "Section 1.2 pp28-29: location, 17th century and stone shikhara; stair photograph."
         },
         {
           "id": "siddhi-lakshmi:history",
           "field": "history",
-          "statement": "DoA dates the temple to the 17th century. It was damaged, but did not collapse, in 2015. Conservation retained the foundation and plinth, numbered and reused dismantled stone elements, and renewed damaged timber structure and the gilded pinnacle.",
+          "statement": "The temple is dedicated to Siddhi Lakshmi and belongs to the seventeenth-century religious architecture of the square. Beyond that period and dedication, the founding history remains incompletely established in the sources used here. An exact patron or construction date is therefore omitted rather than supplied from an unsupported attribution.\n\nThe temple's stone construction and elevated stair approach distinguish it within the palace setting. Its history includes later repair, but the surviving base and reused architectural stones are also evidence that the building's story did not begin anew with the most recent conservation campaign.",
           "sourceIds": [
             "doa19",
             "doa22"
           ],
-          "locator": "DoA 2019 section 1.2; DoA 2022 project 5, PDF p47."
+          "locator": "Historical period/dedication; project 5 retained base and reused stone."
         },
         {
           "id": "siddhi-lakshmi:architecture",
           "field": "architecture",
-          "statement": "An axial staircase climbs a high stepped plinth to a compact stone shikhara. Paired sculptural guardians flank successive levels of the approach. Moulded courses and a crowned tapering tower give the stone mass a strong vertical silhouette.",
+          "statement": "An axial staircase climbs a series of substantial terraces to the stone shrine. Paired sculptural guardians accompany the ascent at successive levels. Their placement helps organize the approach, although individual identities are not assigned from appearance alone.\n\nAbove the platform, moulded courses, projections and niches articulate a tapering stone tower with an ornamental summit. Compared with the broad, spreading roofs of nearby timber temples, its stepped base and upright shikhara produce a strongly vertical composition.",
           "sourceIds": [
             "photo:siddhi-lakshmi",
             "doa19"
           ],
-          "locator": "Licensed stairs/guardian photograph; DoA stone-shikhara identification."
+          "locator": "Visible terraces, paired guardians, tower courses and summit; stone-shikhara description."
         },
         {
           "id": "siddhi-lakshmi:significance",
           "field": "significance",
-          "statement": "The temple is dedicated to Siddhi Lakshmi. Its repaired fabric illustrates a conservation approach that retained the historic base and reused identifiable stone members rather than treating the whole monument as a new replica.",
+          "statement": "The dedication to Siddhi Lakshmi identifies the monument as a place of Hindu worship. Its stone architecture adds to the variety of religious buildings surrounding the former palace. The carefully composed stair and guardian setting are central to its distinct identity within that group.",
+          "sourceIds": [
+            "doa19"
+          ],
+          "locator": "Siddhi Lakshmi dedication and palace-square setting; no invented ritual programme."
+        },
+        {
+          "id": "siddhi-lakshmi:restoration",
+          "field": "restoration",
+          "statement": "The temple was damaged but did not collapse in 2015. Conservation retained the foundation and plinth, numbered and reused stone elements, and renewed damaged timber structure and the gilded pinnacle. These details are documented in DoA's 2019 and 2022 reports.",
           "sourceIds": [
             "doa19",
             "doa22"
           ],
-          "locator": "Dedication in section 1.2; project 5 retained fabric account."
+          "locator": "2019 section 1.2; 2022 project 5 p47."
         }
       ],
       "conflicts": [],
@@ -1299,7 +1419,8 @@
         "Exact founding year and patron UNKNOWN in the sources used here.",
         "Guardian identities are not assigned from appearance alone."
       ]
-    }
+    },
+    "restoration": "The temple was damaged but did not collapse in 2015. Conservation retained the foundation and plinth, numbered and reused stone elements, and renewed damaged timber structure and the gilded pinnacle. These details are documented in DoA's 2019 and 2022 reports."
   },
   "silu-mahadev": {
     "id": "silu-mahadev",
@@ -1309,10 +1430,10 @@
       "Silu Mahadev / Fasi Dega"
     ],
     "period": "Historic Shiva shrine; present form reconstructed",
-    "overview": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the monumental stepped base at the eastern end of the square. It is distinguished by its broad, stepped-plinth site and restored tower.",
-    "history": "The 1934 earthquake damaged the earlier temple; a dome-roofed replacement subsequently occupied the surviving stepped base. The 2015 earthquake destroyed that upper building. DoA's 2022 report describes reconstruction of the pre-1934 form in its final phase. The licensed 2024 photograph shows the standing rebuilt temple, without establishing a precise completion day.",
-    "architecture": "Six substantial plinth stages carry a tall, articulated brick shikhara. The broad stair-and-platform composition is central to its identity and contrasts with the former dome-roofed replacement described in the conservation reports.",
-    "significance": "The Shiva dedication and the recovery of a pre-1934 architectural form connect the site's religious continuity with repeated earthquake reconstruction. The present superstructure is not described as untouched original fabric.",
+    "overview": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the great stepped base at the eastern end of Durbar Square. The broad terraces are as important to its identity as the tower rising above them. Together they give the monument a scale and profile quite different from the smaller shrines nearby. Its name and Shiva dedication are documented, but an original construction year and founding patron are not securely established in the material used here. The present temple also reflects a deliberate return to an architectural form lost in the twentieth century.",
+    "history": "The site's longer religious identity is that of a Shiva shrine. The Department of Archaeology records a sequence of different upper buildings above its stepped base. After damage in the 1934 earthquake, a dome-roofed replacement occupied the site. Following the loss of that replacement in 2015, reconstruction sought to recover the earlier, pre-1934 form.\n\nThis sequence matters when looking at photographs from different decades: a dome and a tall shikhara can appear at the same site without representing two different temples. The history of those changing forms is better established here than the date or patron of the original foundation.",
+    "architecture": "Six substantial plinth stages support a tall brick shikhara. The wide stair-and-platform composition establishes the monumental base, while the upper tower is divided by ribs, projections and subsidiary architectural forms. The licensed 2024 photograph shows the restored silhouette.\n\nThe stepped mass below and the narrow vertical movement above work together. This is not the dome-roofed version described in the twentieth-century history, and photographs of that earlier replacement should not be used as if they showed today's form.",
+    "significance": "The temple preserves the identity of a Shiva shrine through repeated changes to its architecture. Its recovered tower also illustrates a particular reconstruction decision: returning to a form predating the 1934 earthquake, rather than reproducing the later dome. Both the religious dedication and that architectural sequence are part of how the site can be understood.",
     "images": [
       {
         "src": "/heritage/silu-mahadev/reference.jpg",
@@ -1366,44 +1487,53 @@
         {
           "id": "silu-mahadev:overview",
           "field": "overview",
-          "statement": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the monumental stepped base at the eastern end of the square. It is distinguished by its broad, stepped-plinth site and restored tower.",
+          "statement": "Silu Mahadev, also called Fasi Dega, is the tall Shiva temple on the great stepped base at the eastern end of Durbar Square. The broad terraces are as important to its identity as the tower rising above them. Together they give the monument a scale and profile quite different from the smaller shrines nearby. Its name and Shiva dedication are documented, but an original construction year and founding patron are not securely established in the material used here. The present temple also reflects a deliberate return to an architectural form lost in the twentieth century.",
           "sourceIds": [
             "doa19",
             "doa22",
             "photo:silu-mahadev"
           ],
-          "locator": "DoA 2019 section 1.1, p28; DoA 2022 project 17, p59; licensed 2024 photograph."
+          "locator": "2019 section 1.1 p28; 2022 project 17 p59; identified eastern stepped-plinth photograph."
         },
         {
           "id": "silu-mahadev:history",
           "field": "history",
-          "statement": "The 1934 earthquake damaged the earlier temple; a dome-roofed replacement subsequently occupied the surviving stepped base. The 2015 earthquake destroyed that upper building. DoA's 2022 report describes reconstruction of the pre-1934 form in its final phase. The licensed 2024 photograph shows the standing rebuilt temple, without establishing a precise completion day.",
-          "sourceIds": [
-            "doa19",
-            "doa22",
-            "photo:silu-mahadev"
-          ],
-          "locator": "2019 section 1.1; 2022 project 17; dated 2024 photograph."
-        },
-        {
-          "id": "silu-mahadev:architecture",
-          "field": "architecture",
-          "statement": "Six substantial plinth stages carry a tall, articulated brick shikhara. The broad stair-and-platform composition is central to its identity and contrasts with the former dome-roofed replacement described in the conservation reports.",
-          "sourceIds": [
-            "doa19",
-            "photo:silu-mahadev"
-          ],
-          "locator": "DoA six-stage plinth and former dome account; restored-form photograph."
-        },
-        {
-          "id": "silu-mahadev:significance",
-          "field": "significance",
-          "statement": "The Shiva dedication and the recovery of a pre-1934 architectural form connect the site's religious continuity with repeated earthquake reconstruction. The present superstructure is not described as untouched original fabric.",
+          "statement": "The site's longer religious identity is that of a Shiva shrine. The Department of Archaeology records a sequence of different upper buildings above its stepped base. After damage in the 1934 earthquake, a dome-roofed replacement occupied the site. Following the loss of that replacement in 2015, reconstruction sought to recover the earlier, pre-1934 form.\n\nThis sequence matters when looking at photographs from different decades: a dome and a tall shikhara can appear at the same site without representing two different temples. The history of those changing forms is better established here than the date or patron of the original foundation.",
           "sourceIds": [
             "doa19",
             "doa22"
           ],
-          "locator": "Dedication, 1934/2015 damage and reconstruction project."
+          "locator": "Shiva dedication; 1934 damage, dome replacement and return to earlier form."
+        },
+        {
+          "id": "silu-mahadev:architecture",
+          "field": "architecture",
+          "statement": "Six substantial plinth stages support a tall brick shikhara. The wide stair-and-platform composition establishes the monumental base, while the upper tower is divided by ribs, projections and subsidiary architectural forms. The licensed 2024 photograph shows the restored silhouette.\n\nThe stepped mass below and the narrow vertical movement above work together. This is not the dome-roofed version described in the twentieth-century history, and photographs of that earlier replacement should not be used as if they showed today's form.",
+          "sourceIds": [
+            "doa19",
+            "photo:silu-mahadev"
+          ],
+          "locator": "Six plinth stages; licensed 2024 restored brick-shikhara appearance."
+        },
+        {
+          "id": "silu-mahadev:significance",
+          "field": "significance",
+          "statement": "The temple preserves the identity of a Shiva shrine through repeated changes to its architecture. Its recovered tower also illustrates a particular reconstruction decision: returning to a form predating the 1934 earthquake, rather than reproducing the later dome. Both the religious dedication and that architectural sequence are part of how the site can be understood.",
+          "sourceIds": [
+            "doa19",
+            "doa22"
+          ],
+          "locator": "Religious identity and documented pre-1934-form reconstruction decision."
+        },
+        {
+          "id": "silu-mahadev:restoration",
+          "field": "restoration",
+          "statement": "The 2015 earthquake destroyed the dome-roofed upper building. DoA reported reconstruction of the pre-1934 form in its final phase in 2022. The included 2024 photograph shows the rebuilt temple standing; an exact completion date is not established here.",
+          "sourceIds": [
+            "doa22",
+            "photo:silu-mahadev"
+          ],
+          "locator": "2022 project 17 p59 final-phase status; dated 2024 standing-form photograph."
         }
       ],
       "conflicts": [
@@ -1413,6 +1543,7 @@
         "Original construction year and patron UNKNOWN.",
         "Do not transfer this identity to the separately relocated shikhara assemblies."
       ]
-    }
+    },
+    "restoration": "The 2015 earthquake destroyed the dome-roofed upper building. DoA reported reconstruction of the pre-1934 form in its final phase in 2022. The included 2024 photograph shows the rebuilt temple standing; an exact completion date is not established here."
   }
 }

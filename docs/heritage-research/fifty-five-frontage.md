@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-The palace is distinguished by its continuous carved timber window gallery. It is part of the royal complex but has a history separate from the Golden Gate and the museum wing.
+This royal palace is named for its celebrated gallery of fifty-five carved timber windows. The long window facade is the feature to look for: it turns the palace frontage into a sustained display of Newar woodwork rather than a series of unrelated openings. The building belongs to Bhaktapur's former royal complex, but it should not be confused with the adjoining Golden Gate or the museum farther along the frontage. Its significance also reaches beyond the exterior. A conservation study records painted interiors as well as the windows, revealing a palace shaped by several different artistic crafts.
 
-Claim ID: `fifty-five-frontage:overview`. Source IDs: `palace06`, `ntb-bhaktapur`. Locator: Conservation report introduction / building description; NTB Bhaktapur palace entry.
+Claim ID: `fifty-five-frontage:overview`. Source IDs: `palace06`. Locator: Introduction, palace identity, window gallery and murals.
 
 ### History
 
-The 2006 conservation report dates construction to 1702-1722 under Bhupatindra Malla and notes an attribution of the foundations to Jitamitra Malla. NTB describes a 15th-century palace origin. These accounts are not assumed to date the same surviving fabric. The 1934 earthquake badly damaged the window gallery, which was rebuilt using salvaged timbers with changes to its projecting support.
+The palace's chronology is layered. Ram Govinda Shrestha's conservation report dates construction to 1702-1722 under Bhupatindra Malla and records an attribution of the foundations to Jitamitra Malla. Nepal Tourism Board gives an earlier, fifteenth-century origin for the palace. Those accounts need not describe the same surviving phase, and no single date is used here for every part of the complex.
 
-Claim ID: `fifty-five-frontage:history`. Source IDs: `palace06`, `ntb-bhaktapur`. Locator: Report introduction, historical background, earthquake damage and window-gallery conservation discussion.
+The royal building combined residence with an elaborate architectural and painted setting. Its timber gallery and murals are evidence of the artistic investment made in the palace. Changes to the window structure over time also mean that today's frontage cannot simply be treated as fabric preserved unchanged from one reign.
+
+Claim ID: `fifty-five-frontage:history`. Source IDs: `palace06`, `ntb-bhaktapur`. Locator: Report construction chronology and foundations; NTB earlier palace origin.
 
 ### Architecture
 
-Brick masonry, carved timber windows and structural frames, tiled roofs and painted interiors form a layered palace architecture. The conservation report records traditional ma appa and dachi appa brickwork with mud mortar, and first-floor murals including a Shiva Visvarupa composition.
+Traditional brick masonry, timber frames and floors, tiled roofs and carved windows form the palace's main architectural vocabulary. The conservation report identifies ma appa and dachi appa brickwork with mud mortar. It also documents first-floor murals, including a Shiva Visvarupa composition.
 
-Claim ID: `fifty-five-frontage:architecture`. Source IDs: `palace06`. Locator: Building materials, structural description and mural documentation.
+The continuous upper window gallery gives the building its best-known identity. Its projecting timber construction matters as much as the ornament: joinery, support and carving work together to make the facade.
+
+Claim ID: `fifty-five-frontage:architecture`. Source IDs: `palace06`. Locator: Materials, timber construction and first-floor mural documentation.
 
 ### Significance
 
-The royal residence preserves evidence of Malla court culture and Newar timber craftsmanship. Its murals and window gallery preserve distinct artistic traditions within the same royal building.
+The palace brings together the history of the Malla court and the work of Newar builders, woodcarvers and painters. Looking at the windows alone reveals one artistic tradition; considering the murals and structure alongside them gives a fuller picture of the royal building. Its importance lies in this combination of courtly setting and skilled craft.
 
-Claim ID: `fifty-five-frontage:significance`. Source IDs: `palace06`. Locator: Palace significance and conservation objectives.
+Claim ID: `fifty-five-frontage:significance`. Source IDs: `palace06`. Locator: Royal building, artistic fabric and conservation significance.
+
+### Damage & restoration
+
+The 1934 earthquake severely damaged the window gallery. Rebuilding reused salvaged timbers and altered its projecting support. The 2006 conservation report documents these changes; its proposals are not proof that all later work was completed in that year.
+
+Claim ID: `fifty-five-frontage:restoration`. Source IDs: `palace06`. Locator: 1934 damage, salvaged timbers, projecting gallery support; report/proposal distinction.
 
 ## Conflicts
 

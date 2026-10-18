@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-The National Art Gallery occupies part of Bhaktapur's former royal palace. It is distinct from the Fifty-Five Window Palace farther east along the frontage.
+The National Art Gallery is a museum housed in part of Bhaktapur's former royal palace. Its entrance is recognizable by the guardian sculptures and carved timber work in the brick frontage. The museum preserves paintings, manuscripts and stone sculpture, making this a place to encounter objects as well as architecture. The institution and its building have different histories: the gallery opened in 1960, while the palace structure is older. The neighboring white wing and the Fifty-Five Window Palace should not be folded into one undifferentiated building story.
 
-Claim ID: `gallery-frontage:overview`. Source IDs: `ntb-museum`, `cambridge`. Locator: NTB National Art Gallery entry; Cambridge museum entrance and palace photographs.
+Claim ID: `gallery-frontage:overview`. Source IDs: `ntb-museum`, `cambridge`. Locator: NTB gallery establishment/collections; Cambridge entrance identification.
 
 ### History
 
-NTB dates the museum's establishment to 1960 under the Department of Archaeology. The palace wing is older: local accounts associate its lion entrance with Simhadhwaka Durbar. The Department of Archaeology's 2022 report documents conservation of the western gallery wing after the 2015 earthquake, using lime-based masonry work and Sal timber.
+Nepal Tourism Board dates the establishment of the gallery to 1960 under the Department of Archaeology. Its collections include paubha paintings and works associated with both Hindu and Buddhist traditions. The palace was thus given a new public role as a place for preserving and presenting art.
 
-Claim ID: `gallery-frontage:history`. Source IDs: `ntb-museum`, `local-museum`, `doa22`. Locator: NTB gallery entry; local museum building identity; DoA 2022 project 6, PDF p48.
+Local accounts connect the lion entrance with the name Simhadhwaka Durbar. Cambridge Museums distinguishes this entrance from the adjoining palace wing remodelled during Rana rule. These different architectural phases are part of the frontage's history; a date associated with one section should not be applied to the whole museum complex.
+
+Claim ID: `gallery-frontage:history`. Source IDs: `ntb-museum`, `local-museum`, `cambridge`. Locator: 1960 museum establishment; local Simhadhwaka name; Cambridge Rana-remodelled wing.
 
 ### Architecture
 
-The brick entrance has carved timber openings and prominent guardian sculpture. The adjoining white, Rana-period remodelled frontage is architecturally distinct. The local name of the lion-gate palace must not be applied indiscriminately to every section of the modern museum complex.
+Brick masonry and carved timber openings frame a prominent sculptural entrance. Cambridge identifies the guardian figures as Hanumanta-Bhairava and NarSimha, alongside stone lions.
 
-Claim ID: `gallery-frontage:architecture`. Source IDs: `cambridge`, `local-museum`. Locator: Cambridge lion entrance and white wing discussion; local Simhadhwaka building account.
+The adjacent white facade reflects another period of the palace's development. Reading the two together reveals a complex that changed over time rather than a palace built all at once in one uniform style.
+
+Claim ID: `gallery-frontage:architecture`. Source IDs: `cambridge`. Locator: Guardian entrance identities and distinct white palace wing.
 
 ### Significance
 
-The museum preserves painting, manuscripts and stone sculpture associated with Hindu and Buddhist traditions. NTB highlights paubha painting among its collections. The historical palace building and the museum institution therefore have different chronologies.
+The gallery connects Bhaktapur's royal architectural history with the preservation of its artistic traditions. Paubha painting, manuscripts and stone sculpture allow visitors to consider religious art across media and across Hindu and Buddhist collections. The historic palace is both the setting for this work and an important object of heritage in its own right.
 
-Claim ID: `gallery-frontage:significance`. Source IDs: `ntb-museum`. Locator: National Art Gallery collection and establishment entry.
+Claim ID: `gallery-frontage:significance`. Source IDs: `ntb-museum`. Locator: Paubha, manuscripts and Hindu/Buddhist stone sculpture collections.
+
+### Damage & restoration
+
+The Department of Archaeology's 2022 report records conservation of the western gallery wing following the 2015 earthquake, including lime-based masonry work and Sal timber. It is a restoration account for the palace fabric, not the founding date of the museum.
+
+Claim ID: `gallery-frontage:restoration`. Source IDs: `doa22`. Locator: Project 6, PDF p48.
 
 ## Conflicts
 

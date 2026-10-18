@@ -15,29 +15,41 @@ Historical identity: source-supported; rendered binding: PHOTO_INFERRED. Researc
 
 ## Historical content and claim traceability
 
+Phase 10B.1: visitor-first rewrite; restoration is a separate, secondary chapter. Existing evidence states, photos, zones and conflicts are preserved.
+
 ### Overview
 
-Vatsala Durga is the stone shikhara temple in the central palace forecourt. Its Durga dedication and three-stage plinth are documented by the Department of Archaeology. It is distinct from the nearby two-roof Yaksheshwar temple and from other Vatsala-named shrines.
+Vatsala Durga is a Hindu temple dedicated to Durga in the royal forecourt. Its stone shikhara rises from a substantial stepped base, setting it apart from the brick-and-timber temples with spreading tiled roofs. The main stair, guardian sculptures and richly divided lower level are important parts of its identity, not simply a pedestal beneath the tower. It belongs to the religious setting of the palace square, but it is a separate shrine from the nearby two-roof Yaksheshwar temple and from other temples bearing the Vatsala name.
 
-Claim ID: `vatsala-durga:overview`. Source IDs: `doa19`. Locator: DoA 2019 section 1.15, PDF pp32-33; compare separate Yantra Vatsala entry 1.12.
+Claim ID: `vatsala-durga:overview`. Source IDs: `doa19`, `photo:vatsala-durga`. Locator: Section 1.15 pp32-33, dedication/form; licensed forecourt photo.
 
 ### History
 
-DoA gives an initial construction under Jitamitra Malla in 1696 and rebuilding under Bhupatindra Malla around the turn of the 18th century. A local account instead gives 1672 and 1674. The 2015 earthquake destroyed the temple. Foundation investigations involved DoA, UNESCO and Durham University, followed by municipal reconstruction on the retained foundation. The 2019 report describes work still in progress.
+Sources disagree about the temple's beginnings. The Department of Archaeology records construction under Jitamitra Malla in 1696, followed by rebuilding under Bhupatindra Malla around the turn of the eighteenth century. A local account instead associates an earlier phase with Jagat Prakash Malla in 1672 and Jitamitra Malla in 1674. These competing accounts are retained rather than combined into a false single chronology.
 
-Claim ID: `vatsala-durga:history`. Source IDs: `doa19`, `local-vatsala`. Locator: DoA section 1.15, pp32-33; local Vatsala chronology.
+What is clear is the temple's Durga dedication and its place among the Malla-period shrines of the palace forecourt. Its history should begin with that religious and royal setting, even though the building visible today also carries the story of more recent reconstruction.
+
+Claim ID: `vatsala-durga:history`. Source IDs: `doa19`, `local-vatsala`. Locator: DoA 1696/Jitamitra and Bhupatindra account versus local 1672/1674 chronology.
 
 ### Architecture
 
-The sandstone temple combines a substantial stepped base, axial stairs, guardians and a deeply articulated lower level beneath a tapering shikhara. Secondary projections, niches, cornices and an ornamental crown break up the stone tower. The licensed 2026 photograph documents the standing rebuilt form rather than proving an exact completion date.
+The temple is described by DoA as a sandstone shikhara on a three-stage plinth. Its stair approach leads toward a strongly articulated entrance. Guardians, columns, projecting mouldings and recessed areas establish a sequence of light and shadow before the eye reaches the main tower.
 
-Claim ID: `vatsala-durga:architecture`. Source IDs: `doa19`, `photo:vatsala-durga`. Locator: DoA three-stage plinth and sandstone description; licensed 2026 forecourt photograph.
+Above, the tapering shikhara is broken into architectural zones, with secondary projections, niches and an ornamental crown. The stone surface gives the temple a different weight and texture from the broad-roofed timber temples nearby.
+
+Claim ID: `vatsala-durga:architecture`. Source IDs: `doa19`, `photo:vatsala-durga`. Locator: Sandstone, three-stage plinth; visible stairs, guardians and tower articulation.
 
 ### Significance
 
-Its dedication to Durga places the shrine within the palace square's religious ensemble. The reconstructed building also records the substantial conservation response to the 2015 earthquake.
+The dedication to Durga is central to the shrine's identity. Its position in the palace forecourt brings that religious role into close relationship with the former royal complex. For visitors, the contrast between its stone tower and the surrounding roofed temples also reveals the range of architectural traditions represented within one square.
 
-Claim ID: `vatsala-durga:significance`. Source IDs: `doa19`. Locator: DoA dedication and post-earthquake reconstruction account.
+Claim ID: `vatsala-durga:significance`. Source IDs: `doa19`. Locator: Durga dedication and palace-square monument context; architectural comparison is visible form.
+
+### Damage & restoration
+
+The temple collapsed in the 2015 earthquake. DoA, UNESCO and Durham University investigated the foundations, and municipal reconstruction proceeded on the retained base. Work was ongoing in the 2019 report. The included 2026 photograph shows the rebuilt temple standing; it does not establish an exact completion date.
+
+Claim ID: `vatsala-durga:restoration`. Source IDs: `doa19`, `photo:vatsala-durga`. Locator: Section 1.15 foundation investigation/reconstruction progress; dated 2026 photograph.
 
 ## Conflicts
 

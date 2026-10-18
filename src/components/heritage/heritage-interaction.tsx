@@ -62,7 +62,7 @@ export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}
  useEffect(()=>{if(openId&&!dialog.current?.open)dialog.current?.showModal();},[openId]);
  const record=openId?heritageLandmarks[openId]:null;
  return <>
-  {!openId&&nearest&&<button type="button" className={`heritage-prompt${touch?' heritage-prompt-touch':''}`} aria-label={nearest.label??"Discover history"} aria-haspopup="dialog" aria-controls="heritage-panel" onClick={()=>actions.current.open()}>{!touch&&<kbd>E</kbd>}<span>{touch?'Explore':nearest.label??'Discover history'}</span></button>}
+  {!openId&&nearest&&<button type="button" className={`heritage-prompt${touch?' heritage-prompt-touch':''}`} aria-label={`Explore history: ${heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}`} aria-haspopup="dialog" aria-controls="heritage-panel" onClick={()=>actions.current.open()}>{!touch&&<kbd>E</kbd>}<span className="heritage-prompt-copy"><span>Explore History</span><strong>{heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}</strong></span></button>}
   <dialog ref={dialog} id="heritage-panel" className="heritage-dialog" aria-labelledby="heritage-title" onCancel={event=>{event.preventDefault();actions.current.close();}} onClose={()=>actions.current.close()}>
    <div className="heritage-toolbar"><span>BhaktapurXR / Heritage</span><button type="button" aria-label="Close heritage information" onClick={()=>actions.current.close()}>Close <span aria-hidden="true">&#215;</span></button></div>
    {record&&<HeritagePanel key={record.id} record={record}/>}
