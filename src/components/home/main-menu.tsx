@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import {enterMobilePresentation,isTouchPresentation} from '../../lib/mobile-presentation';
 import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
 import {MouseSensitivitySettings} from '../mouse-sensitivity-settings';
@@ -23,7 +24,10 @@ export function MainMenu(){
    <p className="menu-subtitle">3D HERITAGE EXPLORATION</p>
    <p className="menu-intro">An evolving digital interpretation of<br className="menu-desktop-break"/> Bhaktapur Durbar Square, Nepal.</p>
    <div className="menu-primary">
-    <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false}><strong>PLAY</strong><span>Explore Bhaktapur</span></Link>
+    <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false} onClick={event=>{
+     if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!isTouchPresentation())return;
+     event.preventDefault();void enterMobilePresentation().finally(()=>router.push(PUBLIC_EXPLORE_HREF));
+    }}><strong>PLAY</strong><span>Explore Bhaktapur</span></Link>
     <button className="menu-settings" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}>Settings</button>
    </div>
    <nav className="menu-options" aria-label="Information">
