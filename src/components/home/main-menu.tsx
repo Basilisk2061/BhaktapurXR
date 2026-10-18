@@ -1,5 +1,6 @@
 "use client";
 import Link from 'next/link';
+import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
 import {MouseSensitivitySettings} from '../mouse-sensitivity-settings';
 import {PUBLIC_EXPLORE_HREF} from '../../game/world/world-mode';
@@ -8,20 +9,29 @@ const panels={about:'About the Reconstruction',heritage:'Heritage & History',set
 type Panel=keyof typeof panels;
 export function MainMenu(){
  const [panel,setPanel]=useState<Panel|null>(null);
- const dialog=useRef<HTMLDialogElement>(null);
+ const dialog=useRef<HTMLDialogElement>(null),router=useRouter();
+ useEffect(()=>{
+  const prefetch=()=>router.prefetch(PUBLIC_EXPLORE_HREF);
+  if(window.requestIdleCallback){const idle=window.requestIdleCallback(prefetch,{timeout:1800});return()=>window.cancelIdleCallback(idle);}
+  const timer=setTimeout(prefetch,900);return()=>clearTimeout(timer);
+ },[router]);
  useEffect(()=>{if(panel&&!dialog.current?.open)dialog.current?.showModal();},[panel]);
  return <>
   <section className="menu-content" aria-labelledby="menu-title">
-   <h1 id="menu-title">BHAKTAPURXR</h1>
+   <svg className="menu-ornament" width="110" height="24" viewBox="0 0 110 24" aria-hidden="true"><path d="M0 12H31L37 6 43 12 37 18 31 12M79 12H110M67 12L73 6 79 12 73 18Z" fill="none" stroke="currentColor"/><path d="M55 2L65 12 55 22 45 12Z" fill="none" stroke="currentColor"/><path d="M55 8L59 12 55 16 51 12Z" fill="currentColor"/></svg>
+   <h1 id="menu-title">BHAKTAPUR<span>XR</span></h1>
    <p className="menu-subtitle">3D HERITAGE EXPLORATION</p>
-   <p className="menu-intro">Explore an evolving digital interpretation<br className="menu-desktop-break"/> of Bhaktapur Durbar Square, Nepal.</p>
-   <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false}>Explore Bhaktapur <span aria-hidden="true">?</span></Link>
-   <nav className="menu-options" aria-label="Main menu">
-    {(Object.entries(panels) as [Panel,string][]).map(([key,label])=><button key={key} type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel(key)}><span aria-hidden="true" className="menu-marker">?</span>{label}</button>)}
+   <p className="menu-intro">An evolving digital interpretation of<br className="menu-desktop-break"/> Bhaktapur Durbar Square, Nepal.</p>
+   <div className="menu-primary">
+    <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false}><strong>PLAY</strong><span>Explore Bhaktapur</span></Link>
+    <button className="menu-settings" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}>Settings</button>
+   </div>
+   <nav className="menu-options" aria-label="Information">
+    {(Object.entries(panels) as [Panel,string][]).filter(([key])=>key!=='settings').map(([key,label])=><button key={key} type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel(key)}>{label}</button>)}
    </nav>
   </section>
   <dialog id="menu-panel" ref={dialog} className="menu-dialog" aria-labelledby="menu-panel-title" onClose={()=>setPanel(null)} onClick={event=>{if(event.target===dialog.current){const rect=event.currentTarget.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.current.close();}}}>
-   <header className="menu-dialog-header"><p>BhaktapurXR</p><form method="dialog"><button type="submit" aria-label="Close panel">Close <span aria-hidden="true">?</span></button></form></header>
+   <header className="menu-dialog-header"><p>BhaktapurXR</p><form method="dialog"><button type="submit" aria-label="Close panel">Close <span aria-hidden="true">&times;</span></button></form></header>
    <div className="menu-dialog-content">
     <h2 id="menu-panel-title">{panel?panels[panel]:''}</h2>
     {panel==='about'&&<>
@@ -37,9 +47,9 @@ export function MainMenu(){
     {panel==='settings'&&<><MouseSensitivitySettings/><p className="menu-panel-note">Your preference stays in this browser.</p></>}
     {panel==='credits'&&<>
      <p>BhaktapurXR<br/>Independent digital heritage reconstruction project</p>
-     <h3>Built with</h3><p>Next.js ? React ? Three.js<br/>React Three Fiber ? React Three Rapier</p>
+     <h3>Built with</h3><p>Next.js &middot; React &middot; Three.js<br/>React Three Fiber &middot; React Three Rapier</p>
      <h3>Reference acknowledgement</h3><p>Publicly available maps, photographs and heritage documentation inform the reconstruction. Reference use does not imply participation or endorsement.</p>
-     <p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map data ? OpenStreetMap contributors <span aria-hidden="true">?</span></a></p>
+     <p><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">Map data &copy; OpenStreetMap contributors <span aria-hidden="true">&#8599;</span></a></p>
     </>}
    </div>
   </dialog>
