@@ -59,6 +59,41 @@ function reframe(m:CentralModel,from:[number,number],to:[number,number],turn:num
  for(const p of m.roofs.filter(p=>include(p.role))){p.position=point(p.position);p.yaw+=turn;p.width*=stretch;}
  if(updateYaw)m.yaw+=turn;
 }
+/** Interior correction from supplied Street View screenshots 190542/190558, 2026-10-18.
+ * PHOTO_INFERRED form; APPROXIMATE dimensions. Gate registration and saved edits stay intact.
+ * The old cloned shed was a separate polygon house, not this low gate-side building.
+ * Gate-local -Z points into the square: extend this axis, never scale the exterior facade.
+ */
+export const khaumaInteriorRangeEvidence={classification:"PHOTO_INFERRED",dimensions:"APPROXIMATE",oldBodyZ:[-3.1,2.3],newBodyZ:[-12.1,2.3],oldRoofZ:[-3.65,2.85],newRoofZ:[-12.65,2.85],references:["Screenshot 2026-10-18 190542.png","Screenshot 2026-10-18 190558.png"],limitations:"Photo-relative extension; exact passage width, depth, opening census and hidden rear elevation are not surveyed."} as const;
+function extendInteriorRange(m:CentralModel){
+ // Keep the outside-facing carved facade, height, eave level, roof rise and original vent.
+ // Replace only the main roof with a single longer envelope: no overlapping old hip beneath it.
+ const main=m.roofs.find(r=>r.role==="exterior-tile-roof")!;
+ main.position=exteriorPoint(-10.05,3.55,-4.9);main.depth=15.5;
+ for(const b of m.boxes)if(b.role==="exterior-deep-eave"&&b.position[1]<4){b.position=exteriorPoint(-10.05,3.47,-4.9);b.size[2]=15.5;}
+ // Original body ends at -3.1. These three walls continue it; the south/plaza face has
+ // a real shallow doorway recess rather than another row of arbitrary red shutters.
+ box(m,-13.1,1.83,-7.6,.3,3.3,9,"agedBrick","interior-low-range-back-wall",true);
+ box(m,-10.05,1.83,-11.95,6.4,3.3,.3,"agedBrick","interior-low-range-end-wall",true);
+ for(const [a,b]of [[-12.1,-6.675],[-5.125,-3.1]])box(m,-6.85,1.83,(a+b)/2,.3,3.3,b-a,"agedBrick","interior-low-range-front-wall",true);
+ box(m,-6.85,3.04,-5.9,.3,.88,1.55,"agedBrick","interior-door-lintel-masonry",true);
+ box(m,-7.25,1.43,-5.9,.08,2.5,1.55,"recess","interior-recessed-door-backing",true);
+ for(const z of [-6.75,-5.05])box(m,-6.64,1.4,z,.2,2.5,.16,"carvedTimber","interior-door-timber-jamb");
+ box(m,-6.62,2.7,-5.9,.25,.22,2.02,"carvedTimber","interior-door-timber-lintel");
+ for(const z of [-10.4,-8.1,-1.5,.75]){
+  box(m,-6.66,1.85,z,.04,.94,1.04,"recess","interior-small-window-recess");
+  for(const side of [-1,1])box(m,-6.58,1.85,z+side*.56,.16,1.13,.12,"carvedTimber","interior-window-jamb");
+  for(const y of [1.3,2.4])box(m,-6.55,y,z,.26,.14,1.42,"carvedTimber","interior-window-sill-head");
+  for(let j=-2;j<=2;j++)box(m,-6.54,1.85,z+j*.18,.06,.92,.035,"carvedTimber","interior-window-timber-bars");
+ }
+ // Continuous low masonry edge, not a tall white platform. Existing exterior steps remain.
+ box(m,-10.05,.14,-7.7,6.9,.28,9.1,"agedBrick","interior-range-supporting-plinth",true);
+ box(m,-6.6,.22,-4.9,.55,.44,14.4,"agedBrick","interior-continuous-raised-edge",true);
+ box(m,-6.17,.075,-4.9,.35,.15,14.4,"agedBrick","interior-low-access-step",true);
+ box(m,-6.37,.46,-4.9,.14,.08,14.4,"timber","interior-plinth-edge-cap");
+ box(m,-6.36,3.31,-4.9,.13,.32,15.3,"carvedTimber","interior-long-eave-shadow-band");
+ box(m,-6.3,3.32,-4.9,.07,.16,15.3,"exteriorWine","interior-restrained-red-eave-trim");
+}
 export function buildKhaumaExterior(){
  const left=model("LeftTraditional");
  box(left,-10.05,1.83,-.4,6.4,3.3,5.4,"agedBrick","exterior-traditional-masonry",true);
@@ -67,6 +102,7 @@ export function buildKhaumaExterior(){
  box(left,-10.05,.8,2.4,3.8,.15,.3,"carvedTimber","exterior-carved-window-sill");tiledRoof(left,-10.05,-.4,3.55,7.45,6.5,1.5);
  box(left,-10.05,3.43,2.9,7.3,.18,.07,"exteriorWine","exterior-red-eave-fringe");
  box(left,-10.05,4.65,-.4,1.4,.5,1.25,"agedBrick","exterior-roof-vent");tiledRoof(left,-10.05,-.4,4.96,1.9,1.7,.5);
+ extendInteriorRange(left);
  const shops=model("LeftShops");
  shop(shops,-16.1,-1,5.3,2.7,"redMasonry");
  // Compact shop shell carries the terrace; only a shallow street-facing roof remains.

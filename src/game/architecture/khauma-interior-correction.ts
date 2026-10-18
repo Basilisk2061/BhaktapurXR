@@ -7,9 +7,11 @@ import {buildCarvedMuseumLion,buildCarvedMuseumRelief} from "./museum-sculptures
 import frames from "../../data/reconstruction/eastern-editor-frames.json" with {type:"json"};
 const fresh=(id:string,origin:[number,number],yaw=0):CentralModel=>({id,anchorId:"PHOTO_RELATIVE_KHAUMA",origin,yaw,accuracy:"PHOTO_INFERRED",neutral:false,boxes:[],shapes:[],profiles:[],roofs:[],colliders:[]});
 export const khaumaInteriorAudit=[
+ {id:"entrance:khauma-near-shed",classification:"REMOVE_UNSUPPORTED_DUPLICATE",action:"remove cloned polygon house and its colliders; extend existing adjacent low building instead",binding:"2026-10-18 supplied real interior screenshots 190542/190558 versus game screenshots 190652/190700; manual position retained in saved data but no duplicate rendered"},
+ {id:"entrance:KhaumaExterior_LeftTraditional",classification:"PHOTO_INFERRED",action:"extend only the interior range toward the school wall, with one continuous low roof and a clear passage",binding:"Supplied interior photographs support horizontal massing/openings/plinth; dimensions APPROXIMATE, not survey-derived"},
  {id:"context:9c:1159393579",classification:"REMOVE_AS_OPEN_SPACE",action:"withdraw guessed house; retain low terrace/threshold at recorded footprint",binding:"Photo-supported open sattal apron; individual source-object correspondence unresolved"},
  {id:"context:9c:1159393576",classification:"PLAN/PHOTO_INFERRED",action:"withdraw generic east-apron extrusion; approved palace facade untouched",binding:"Photo-supported open foreground of continuous arcade; render interpretation only, no source trace changed"},
- {id:"edge:khauma-north-flank:1158762014",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"retain wall/gate/guardians beyond restored entrance shed",binding:"Mapped northern frontage; photographic gate-to-school adjacency, working dimensions approximate"},
+ {id:"edge:khauma-north-flank:1158762014",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"retain wall/gate/guardians beyond the continuous low entrance range",binding:"Mapped northern frontage; photographic gate-to-school adjacency, working dimensions approximate"},
  {id:"entrance:khauma-raised-veranda",classification:"DIRECT_PHOTO_RECONSTRUCTION",action:"retain plastered frontage on low plinth without stair flight",binding:"PHOTO_RELATIVE_KHAUMA; not a surveyed individual footprint"},
  ...["context:9c:1158762012","context:9c:1158762013","context:9c:1158762016","context:9c:1159393574","context:9c:1159393575","edge:western-cluster-south:1159633450","edge:western-cluster-south:1159633451","edge:western-cluster-east-link:211076664"].map(id=>({id,classification:"FOOTPRINT_ONLY_CONTEXT",action:"withdraw unsupported residential facade; retain modest occupied footprint/roof",binding:"Occupancy source-derived; individual architecture UNRESOLVED"})),
  ...["edge:khauma-south-flank:1159661606","edge:western-approach-low-roofs:1159672142","edge:western-approach-low-roofs:1159672143"].map(id=>({id,classification:"PLAN/PHOTO_INFERRED",action:"retain exterior approach roofs",binding:"Outside/through gate photographs; rear details approximate"})),
@@ -82,7 +84,6 @@ export function correctPavilion(source:CentralModel){
  pinnacle(m,0,5.67,0,.48,"rameshwar-photo-dome-crown");return m;
 }
 export function correctKhaumaContext(models:CentralModel[]){
- const shed=structuredClone(models.find(m=>m.id==="edge:khauma-north-flank:1158762014")!);shed.id="entrance:khauma-near-shed";
  const auditIds=new Set(khaumaInteriorAudit.filter(a=>a.classification==="FOOTPRINT_ONLY_CONTEXT").map(a=>a.id));
   return [...models.map(m=>{
  if(m.id==="context:9c:1159393579"){
@@ -101,5 +102,5 @@ export function correctKhaumaContext(models:CentralModel[]){
  for(const v of r.volumes??[])if(v.baseY+v.height>3.2)v.height=3.2-v.baseY;
  for(const c of r.colliders){c.position[1]*=3.2/oldTop;c.size[1]*=3.2/oldTop;}
  for(const roof of r.roofs)roof.position[1]=3.2;for(const roof of r.polygonRoofs??[])roof.baseY=3.2;
- r.boxes=r.boxes.filter(b=>b.position[1]+b.size[1]/2<=3.2);return r;}),shed,raisedVeranda()];
+ r.boxes=r.boxes.filter(b=>b.position[1]+b.size[1]/2<=3.2);return r;}),raisedVeranda()];
 }
