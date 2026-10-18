@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {enterMobilePresentation,leaveMobilePresentation} from '../lib/mobile-presentation';
-import {useEffect,useRef,useState,type RefObject,type PointerEvent as ReactPointerEvent} from 'react';
+import {useCallback,useEffect,useRef,useState,type RefObject,type PointerEvent as ReactPointerEvent} from 'react';
 import type {PlayerInput} from '../game/input/player-input';
 import type {PlayerRuntime} from '../game/player/player-runtime';
 import {readMouseSensitivity} from '../game/input/mouse-sensitivity';
@@ -15,11 +15,12 @@ export function useTouchDevice(){
  useEffect(()=>{const coarse=matchMedia('(pointer: coarse)'),noHover=matchMedia('(hover: none)');const update=()=>setTouch(coarse.matches||(navigator.maxTouchPoints>0&&noHover.matches));update();coarse.addEventListener('change',update);noHover.addEventListener('change',update);return()=>{coarse.removeEventListener('change',update);noHover.removeEventListener('change',update);};},[]);
  return touch;
 }
-export function MobileControls({input,runtime}:{input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>}){
+export function MobileControls({input,runtime,disabled=false}:{input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>;disabled?:boolean}){
  const router=useRouter();
  const joystick=useRef<{id:number;x:number;y:number;radius:number}|null>(null),look=useRef<{id:number;x:number;y:number}|null>(null),thumb=useRef<HTMLSpanElement>(null),dialog=useRef<HTMLDialogElement>(null);
  const [prompt,setPrompt]=useState<PlayerRuntime['sitPrompt']>(null),[menu,setMenu]=useState(false),[settings,setSettings]=useState(false),[fullscreen,setFullscreen]=useState(false);
- const reset=()=>{joystick.current=null;look.current=null;input.current.touchMovement={forward:0,right:0,running:false};input.current.jumpRequested=false;input.current.interactRequested=false;input.current.keys.clear();input.current.active=false;if(thumb.current)thumb.current.style.transform='translate(0px,0px)';};
+ const reset=useCallback(()=>{joystick.current=null;look.current=null;input.current.touchMovement={forward:0,right:0,running:false};input.current.jumpRequested=false;input.current.interactRequested=false;input.current.keys.clear();input.current.active=false;if(thumb.current)thumb.current.style.transform='translate(0px,0px)';},[input]);
+ useEffect(()=>{if(disabled)reset();},[disabled,reset]);
  useEffect(()=>{
   input.current.touchMode=true;input.current.touchMovement={forward:0,right:0,running:false};
   setFullscreen(!!document.fullscreenEnabled&&typeof document.documentElement.requestFullscreen==='function');
@@ -28,7 +29,7 @@ export function MobileControls({input,runtime}:{input:RefObject<PlayerInput>;run
   window.addEventListener('blur',reset);document.addEventListener('visibilitychange',hide);
   return()=>{clearInterval(timer);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hide);reset();input.current.touchMode=false;input.current.inputBlocked=false;};
   // Input/runtime refs belong to this Explore session; the reset closure only uses refs.
- },[input,runtime]);
+ },[input,runtime,reset]);
  useEffect(()=>{if(menu&&!dialog.current?.open)dialog.current?.showModal();},[menu]);
  const activate=()=>{if(input.current.inputBlocked)return false;input.current.active=true;return true;};
  const moveStick=(event:ReactPointerEvent<HTMLDivElement>)=>{
@@ -40,7 +41,7 @@ export function MobileControls({input,runtime}:{input:RefObject<PlayerInput>;run
  const releaseStick=(event:ReactPointerEvent<HTMLDivElement>)=>{if(joystick.current?.id!==event.pointerId)return;joystick.current=null;input.current.touchMovement={forward:0,right:0,running:false};if(thumb.current)thumb.current.style.transform='translate(0px,0px)';};
  const releaseLook=(event:ReactPointerEvent<HTMLDivElement>)=>{if(look.current?.id===event.pointerId)look.current=null;};
  const openMenu=()=>{reset();input.current.inputBlocked=true;setSettings(false);setMenu(true);};
- return <div className="touch-controls" data-touch-controls>
+ return <div className="touch-controls" data-touch-controls hidden={disabled} inert={disabled}>
   <div className="touch-look" aria-hidden="true" onPointerDown={event=>{if(event.pointerType==='mouse'||look.current||!activate())return;event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);look.current={id:event.pointerId,x:event.clientX,y:event.clientY};}} onPointerMove={event=>{
    const last=look.current;if(!last||last.id!==event.pointerId||input.current.inputBlocked)return;event.preventDefault();
    const sensitivity=readMouseSensitivity()*4,camera=playerConfig.camera,dx=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientX-last.x)),dy=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientY-last.y));
