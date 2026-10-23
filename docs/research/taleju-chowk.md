@@ -266,3 +266,106 @@ Open `/explore?world=bhaktapur`; use existing fly mode or World Editor navigatio
 | 8 | Closed sacred exterior threshold | `[-33.679,1.8,-48.213]` | `[-33.981,2.8,-43.848]` |
 
 Manual inspection should check the complete route in order, threshold clearance, ramp/steps, absence of old invisible closures, roof corners, distinct four facades, sacred closure, World Editor selection/overrides and all graphics modes. **Visual match and gameplay traversal remain unapproved until that inspection.**
+
+
+## GOLDEN GATE INNER ENTRANCE COURT ? photographic correction
+
+### Correction status and scope
+
+The first implementation's entrance court was rejected by manual visual review. Its two `range()` instances applied Beko-like exposed-brick assumptions to a different space. The earlier Mul plan research remains useful and the 19.55 x 19.75 m downstream Mul reconstruction is retained. The sections above record the first implementation; the entrance-court dimensions/elevations and route description below supersede their earlier entrance-specific assumptions.
+
+**PHOTO LOCATION = Jamdwar / Yama Dwar Chowk, immediately inside Golden Gate.** Confidence is high for matching this physical court and moderate/high for the spelling equivalence. The 2024 festival guide explicitly puts Jamdwar before Beko and Mul. Backpack and Snorkel independently captions the matching court as Yama Dwar Chowk. The complex schematic agrees topologically. Some general descriptions call the whole Golden Gate destination Taleju or Bhairab Chowk; those broad labels do not relocate this photographed court into Mul.
+
+### Photo-evidence map (recorded before geometry changes)
+
+| Photo | Provenance / date / status | Estimated camera and direction | Visible features established | Limits |
+|---|---|---|---|---|
+| A | User-supplied video frame; overlay Wanderlust.Nepal, 2022-11-26; original audio/video credit wanderlust961 (TikTok) | Just inside Golden Gate, looking approximately north into the small court | Light forward and left facades; red/dark right facade; forward tall window, red/pale upper gallery, projecting cornice, dark doorway, paving and stacked metal object | Frame is not a measured plan; publication overlay does not establish recording date; no exact coordinates derived |
+| B | Backpack and Snorkel, image captioned Yama Dwar Chowk; capture date not supplied; copyrighted research-only | Near entrance, slightly left of A, looking toward forward doorway | Same central window, two flanking small apertures, tall shutter near left corner, closed lower-left door, ramp into forward opening, left blind plaster panels, right carved galleries, corner/eave relationship | Public image is 500 x 376; no metric calibration or hidden interior coverage |
+| C | Ganesh Paudel, Commons `Bhaktapur Durbar GP (37).JPG`; 14 September 2013, CC BY-SA 3.0; research only | From the forward doorway, looking back south toward Golden Gate | Gate offset within reverse frame; exposed brick on the gallery side; carved timber edge; actual intervening court, threshold and return relationship | Confirms reverse topology, not all elevations; older condition/material patches may differ |
+| D | Peter Theill, B64 ?The back side of the Palace?; capture date not stated (filename suggests 2011, not treated as confirmed); all rights reserved | Close oblique/elevation view of palace carved gallery, exact bay position not georeferenced | Arched lattice lights, deep jambs/columns, projecting lower carved panels, multiple relief bands and struts | Used for carving/structural vocabulary corroborating B, not as proof of exact bay count or deity subjects |
+
+Photo B: [walking-tour page](https://backpackandsnorkel.com/Nepal/Day4/BhaktapurDurbarSquare/), [public image](https://backpackandsnorkel.com/images8/Kathmandu-Bhaktapur-DurbarSquare-YamaDwarChowk.webp).
+Photo C: [Commons source](https://commons.wikimedia.org/wiki/File:Bhaktapur_Durbar_GP_(37).JPG).
+Photo D: [photographer's gallery](https://www.peter-theill.com/bhaktapur).
+All accessed 2026-10-23. No source imagery is shipped, staged or used as a runtime texture. Local research copies/contact sheets are under `tmp/pdfs/taleju/entrance-correction/` only.
+
+Searches also located Galdieri's 1997 palace wall-painting publication, whose indexed captions describe a palace/Golden Gate/roofed-balcony plan. Direct PDF retrieval failed, so it is **not** treated as an inspected measured entrance-court plan. Tourism photographs from other cities and hotel courtyards were rejected. The previous source ledger was reviewed: S1 concerns the deeper Mul court; S6/S7 concern the later Beko/Mul entrance; S8 concerns the south shrine. None establishes the first court's elevation. This is the important separation the initial implementation missed.
+
+### Geometry/source audit
+
+- `taleju:GoldenGateInteriorTransition`: formerly one brick floor, 4.8 m wide. It did not represent the visible mixed stone paving or raised perimeter.
+- `taleju:YamWestRange` and `taleju:YamEastRange`: the same generic `range()` helper with brick bodies, regular repeated windows, 5.65 m eaves and grey/brick plinths. These are completely replaced, not decorated in place.
+- `taleju:Passageways`: first low connector wall provided the apparent forward boundary, with no photographed white palace elevation. It is replaced at that location by a real forward range/doorway; the first connector floor and junction are adjusted to that doorway.
+- `context:9c:1159393576`: source has a coarse rear-closure arm from roughly X -20.8 to -8, Z -28 to -20.7, intersecting the first court/side ranges. The old narrow masks could leave visible fragments and old windows beside the new ranges. Only its overlapping interior portions are clipped with a fuller entrance-envelope mask, including matching colliders.
+- `context:9c:18962138`: royal compound proxy starts farther north, around Z -33 and beyond; the established Mul/Beko replacement masks stay intact. No wholesale compound deletion.
+- `fifty-five-frontage`: already includes a frozen 8.19 m west-return body centered approximately `[-10.4663,4.45,-19.6561]`, with its own gallery and roof. It is **not deleted or changed**. New entrance-facing architecture is placed on the court side, starts behind the frozen gate roof and uses visible projection/height separation rather than coplanar skins. The fixed exterior return constrains exact original corner registration; this remains an integration uncertainty.
+- `golden-gate`: origin `[-16.156550051310745,0,-16.95862251971981]`, yaw `-0.038935676459550594`. Rear roof is centered 1.35 m behind the gate with 4.4 m depth. New side roofs begin 3.5 m behind the gate, after its rear roof edge; the transition is a stepped roof join, not a gate modification.
+- `gallery-frontage`: fixed pale wing/body and roof remain untouched. New left interior work meets its rear region; no exterior facade or original part frame is altered.
+
+No saved JSON transform/hidden entry matched the Taleju entrance assemblies or these two context IDs. Browser-local overrides were not inspected. No override file is rewritten; old entrance IDs are retained where their ownership remains meaningful.
+
+### Facade analysis and proposed construction
+
+**Forward/north facade ? A/B:** aged warm off-white plaster, exposed masonry foot, lower closed door left of the open route, dominant tall central carved timber window in a plaster arched surround, two small flanking windows/brackets, strong projected cornice, muted red/pale frieze and upper timber-divided gallery. The tall left shutter is separate from the central window. The main lower opening is a real through-door with raised ramp, not a black rectangle over a solid collider. Exact carvings, painted emblems and inscriptions are not legible and are not invented.
+
+**Right/east facade ? A/B/D:** aged brick lower/middle fields; small middle lattice windows with projecting heads; dense upper dark timber gallery with arched lattice lights, substantial mullions, relief panel depth, carved cornices, real brackets/struts and deep eaves. The gallery is narrower-bayed than the forward upper treatment. Medium relief uses geometric bands/rosettes, not invented deity identities. Fine carving likeness remains simplified.
+
+**Left/west facade ? A/B:** plaster above a worn brick foot, stepped horizontal plaster courses, blind arched/pilastered lower panels, unequal tall timber shutters above, simpler roof supports. It is not a mirror of the right side. The visible panel rhythms are followed approximately, not forced into the right gallery grid.
+
+**Ground ? A/B:** mixed warm stone flags with brick edges, not a uniform grey or red plane. Use a continuous collision floor with a limited number of instanced flag surfaces, small restrained tonal differences and staggered joints. No random debris, trip hazards or noise shader.
+
+**Roofline/corners ? A/B/C:** enclosing palace-height eaves with dark undersides. Three roof ranges meet with mitered north corners, a stepped south abutment to the untouched Golden Gate/public frontage and structural fascia/struts. The new upper layers produce depth geometrically in VERY LOW as well as HIGH.
+
+### Dimensions and placement ? all APPROXIMATE
+
+No measured first-court survey was recovered. People, door proportions and the two matching forward photographs support a narrow, approximately three-level enclosure. The following are explicit reconstruction choices, not survey claims:
+
+| Quantity | Correction value |
+|---|---|
+| Clear court width | 5.90 m, gate-local X -2.80 to +3.10 |
+| Clear court depth behind frozen roof | 8.55 m, gate-local Z -3.65 to -12.20 |
+| Court center | gate-local `[0.15,-7.925]`, world approximately `[-15.698,0.08,-24.872]` |
+| Side/forward range nominal depth | 2.20 m |
+| Eave / ridge height | 8.90 / 10.00 m |
+| Forward plaster body top | about 6.90 m; upper gallery above |
+| Main forward opening | 1.60 m wide, 2.25 m high above threshold |
+| Main forward window | approximately 0.72 x 1.62 m, with deeper surround |
+| Main gallery projection | about 0.55 m; eave projection 0.75 m |
+| Court floor / threshold | 0.08 / 0.32 m |
+| Ramp | 2.10 m run, 1.75 m wide, 0.24 m rise |
+
+The initial 6.60 m width estimate was narrowed to 5.90 m after tracing the frozen gallery roof: the west edge shifts 0.70 m inward so the existing pale-wing roof does not protrude through the new court facade. Both estimates are photo-inferred, not measured. The narrower proportion remains consistent with the doorway/human scale in A/B. The right edge and Golden Gate remain fixed. The deeper Mul dimensions, center, yaw, wings and shrine are unchanged. No project origin, world scale or exterior anchor moves.
+
+### Onward route and sacred boundary
+
+The immediate view now ends in the photographed **open forward doorway**, rather than requiring the user to turn through an unexplained gap beside blank low walls. Pass through its covered lower range, then turn right/east toward Beko; later turn west through Mul's east range as before. This refines the previous oversimplified ?right turn in the first court?: the first visible doorway must come first. The inside turn is an approximate connection constrained by fixed exterior/compound geometry, not a fully surveyed room plan.
+
+The first connector remains about 2.20 m clear and is raised to meet the forward threshold; shallow visible treads descend into Beko. No full ground-level masonry block crosses the forward door or eastward route. Ordinary side-room openings are visibly closed. The south shrine's sacred boundary in Mul stays closed.
+
+### Ritual object
+
+A and B show a metal, bell-shaped/conical base with stacked rounded finial near the right wall. Targeted research did **not** securely establish its name, date or ritual purpose. The exterior Taleju Bell is a different assembly and is untouched. A restrained, photo-inferred silhouette may be modeled at the observed corner relationship, explicitly named **unidentified courtyard metal feature**. No clapper, deity, inscription, invented ritual function or additional random prop is added. Dimensions/placement remain approximate; identity UNKNOWN.
+
+### Evidence classes and manual approval
+
+- **PHOTO_CONFIRMED:** plaster/brick contrast; forward central tall window, flanking small apertures, left shutter and lower closed door; upper red/pale division; right timber gallery; left blind plaster panels; ramp and forward opening; flag paving; stacked metal silhouette.
+- **PLAN_DERIVED:** first court before Beko/Mul; retained deeper court topology. The old measured Mul drawing does not measure this court.
+- **PHOTO_INFERRED:** window and relief profiles, number/spacing of partly visible gallery bays, range depth, paving reconstruction, roof junction geometry and metal feature silhouette.
+- **APPROXIMATE:** all new entrance coordinates, dimensions, levels and exact interior turn arrangement.
+- **UNKNOWN:** complete reverse elevation, hidden rooms, fine carving/painted emblems, artifact identity, precise historical alteration dates, current access permissions.
+
+Preserve complete-owner batching and existing materials/graphics systems. No global material recoloring, preset changes, streaming or player/NPC/camera changes. Manual reference comparison remains required; no app rendering, build, tests or typecheck are performed in this phase.
+
+
+### Final implementation notes for this correction
+
+`entrance-plan.ts`, `entrance-details.ts` and `entrance-court.ts` separate approximate spatial choices, photographic detail families and the three actual elevations. `transition.ts` now calls this builder in place of the two generic Yam instances; Beko's downstream ranges retain their prior form. `legacy-integration.ts` expands only the entrance mask over the two already-audited coarse interior context sources. `wings.ts`, Mul's spatial configuration, its courtyard and shrine remain unchanged.
+
+Four complete entrance owners replace the former three: `GoldenGateInteriorTransition`, `YamWestRange`, `YamEastRange`, `YamForwardRange`. Thus the precinct now has 14 complete owners. The right-side metal feature belongs to the right range; the doorway/ramp/forward roof belong to the forward range. Existing per-owner material merging and box instancing apply; no world-wide batching, new texture allocations or graphics-system changes are introduced. Roughly seventy-five shallow stone flag meshes are instanced, with one continuous hidden ground collider. Their joint bed is lower than their top faces to avoid coplanar duplicates. No performance figures were measured.
+
+The first connector floor now meets the 0.32 m threshold and descends into Beko with three 0.08 m treads. The east corner under the forward roof is an open covered passage, **not** a full-height corner-room collider. Lower closed doors have explicit solid backing; no sacred interior is opened. The metal feature uses a small tapered hull matching its base rather than a visible block. Entrance-mask clipping removes both obsolete surfaces and matching colliders. All collision conclusions are from geometry/source inspection; manual traversal is still required.
+
+Source-level composition comparison against A/B: the main view now has the pale three-level forward elevation, single tall focal window and smaller flanking apertures, red/pale upper rhythm, open forward doorway/ramp, brick right side with five arched gallery bays and major projection, and a different plaster/shutter left side. Roof corners share miter edges; dark wall plates/struts support eaves. The frozen exterior rear roof remains lower and joins by a stepped abutment. Fine carvings, exact condition, full reverse architecture and measured first-court dimensions remain unresolved. This is **not** a declaration of manual visual approval.
+
+Suggested manual eye view: gate-local `[0,1.8,-4.4]`, looking toward gate-local `[0.30,4.5,-12.2]`; use the existing game/editor navigation rather than a new review system. The later Mul review points above remain valid. No tests, typecheck, build, dev server, application browser, gameplay screenshots or benchmarks were run. Read-only source-factory geometry inventory was used solely to identify old mass/return IDs and extents.

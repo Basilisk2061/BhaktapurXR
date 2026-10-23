@@ -4,13 +4,17 @@ import type {CentralModel} from '../central-model.ts';
 import type {SolidBox} from '../geometry.ts';
 import {partitionArchitecturalParts} from '../../../features/world-editor/parts.ts';
 import {rectangle,talejuPlan,gatePoint,type TalejuPlacement} from './spatial.ts';
+import {entranceCourt} from './entrance-plan.ts';
 
 const area=(p:MultiPolygon)=>p.reduce((sum,rings)=>sum+rings.reduce((n,ring,i)=>n+(i?-1:1)*Math.abs(ring.reduce((a,p,j)=>{const q=ring[(j+1)%ring.length];return a+p[0]*q[1]-q[0]*p[1];},0)/2),0),0);
 function cutMasks(p:TalejuPlacement):Polygon[]{
- const yam=gatePoint(p.gate,0,-9.9),south=p.yamNorth[1],north=p.entry[1];
+ const south=p.yamNorth[1],north=p.entry[1];
+ // Replace the complete photo-derived entrance envelope, not just the previous narrow alley.
+ const entranceBack=entranceCourt.front+entranceCourt.rangeDepth+.5;
+ const yam=gatePoint(p.gate,entranceCourt.centreX,-(entranceCourt.start+entranceBack)/2);
  return [
   [rectangle(...p.centre,talejuPlan.outerWidth+.08,talejuPlan.outerDepth+.08,talejuPlan.yaw)],
-  [rectangle(...yam,10.0,8.0,p.gate.yaw)],
+  [rectangle(...yam,entranceCourt.width+2*entranceCourt.rangeDepth+1,entranceBack-entranceCourt.start,p.gate.yaw)],
   [rectangle(...gatePoint(p.gate,0,-3.5),4.8,5,p.gate.yaw)],
   [rectangle(p.bekoX,(south+north)/2,10.5,south-north+2.3)],
   [rectangle((p.yamNorth[0]+p.bekoX)/2,south,p.bekoX-p.yamNorth[0]+.2,3.0)],
