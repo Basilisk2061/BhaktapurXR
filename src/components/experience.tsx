@@ -48,7 +48,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
       <ExperienceLoading ready={ready} />
       {touch&&ready&&<MobileControls input={input} runtime={runtime} disabled={heritageOpen}/>}
       {ready&&mode==="BHAKTAPUR"&&<HeritageInteraction input={input} runtime={runtime} overrides={manualOverrides} touch={touch} onOpenChange={setHeritageOpen}/>}
-      {!touch&&!developmentUI&&!heritageOpen&&<GameHud ready={ready} pointerStatus={pointerStatus}/>}
+      {!touch&&!heritageOpen&&<GameHud input={input} ready={ready} pointerStatus={pointerStatus}/>}
       {!touch&&developmentUI&&ready && <p className="pointer-events-none absolute bottom-4 left-4 rounded-sm bg-stone-100/90 px-4 py-2 text-xs text-stone-600" aria-live="polite">
         {pointerStatus === "locked" ? "WASD move · Shift run · Space jump · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump · Esc release" : "Click to control camera · WASD move · Shift run · Space jump · Esc release mouse"}
       </p>}

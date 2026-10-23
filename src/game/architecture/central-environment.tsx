@@ -1,3 +1,5 @@
+import {useGraphicsQuality} from "../../lib/graphics-quality";
+import {graphicsPresets} from "../../lib/graphics-presets";
 import {polishDaylightPalette} from "./daylight-palette";
 import savedEditorScene from "../../features/bhaktapur/data/world-editor-state.json";
 const persistedHidden:Record<string,boolean>=Object.fromEntries(savedEditorScene.hiddenObjects.map(id=>[id,true]));
@@ -25,7 +27,23 @@ import {urbanVolumeGeometry,urbanRoofGeometry} from "./urban-surface-geometry";
 import {remainingSpecificationById} from "../../data/reconstruction/architecture/remaining-specifications";
 import {createCentralMaterials,profileGeometry,shapeGeometry,roofGeometry} from "./central-visual-assets";
 export {createCentralMaterials,centralMaterialDefinitions} from "./central-visual-assets";
-function Instances({boxes,material,geometry,name,basis,partIds}:{partIds?:string[];basis?:Matrix4;boxes:CentralBox[];material:MeshStandardMaterial;geometry:BoxGeometry;name:string}){const ref=useRef<InstancedMesh>(null);useLayoutEffect(()=>{if(!ref.current)return;const matrix=new Matrix4(),q=new Quaternion(),tilt=new Quaternion(),axis=new Vector3(0,1,0),xaxis=new Vector3(1,0,0),position=new Vector3(),scale=new Vector3();boxes.forEach((b,i)=>{q.setFromAxisAngle(axis,b.yaw);if(b.tilt)q.multiply(tilt.setFromAxisAngle(xaxis,b.tilt));matrix.compose(position.fromArray(b.position),q,scale.fromArray(b.size));if(basis)matrix.premultiply(basis);ref.current!.setMatrixAt(i,matrix)});ref.current.instanceMatrix.needsUpdate=true;ref.current.computeBoundingSphere();},[boxes,basis]);return boxes.length?<instancedMesh ref={ref} name={name} userData={partIds?{partIds}:undefined} args={[geometry,material,boxes.length]} castShadow={!material.userData.exteriorGround} receiveShadow dispose={null}/>:null;}
+function InstanceBatch({boxes,material,geometry,name,basis,partIds,shadow,receive}:{shadow:boolean;receive:boolean;partIds?:string[];basis?:Matrix4;boxes:CentralBox[];material:MeshStandardMaterial;geometry:BoxGeometry;name:string}){const ref=useRef<InstancedMesh>(null);useLayoutEffect(()=>{if(!ref.current)return;const matrix=new Matrix4(),q=new Quaternion(),tilt=new Quaternion(),axis=new Vector3(0,1,0),xaxis=new Vector3(1,0,0),position=new Vector3(),scale=new Vector3();boxes.forEach((b,i)=>{q.setFromAxisAngle(axis,b.yaw);if(b.tilt)q.multiply(tilt.setFromAxisAngle(xaxis,b.tilt));matrix.compose(position.fromArray(b.position),q,scale.fromArray(b.size));if(basis)matrix.premultiply(basis);ref.current!.setMatrixAt(i,matrix)});ref.current.instanceMatrix.needsUpdate=true;ref.current.computeBoundingSphere();},[boxes,basis]);return boxes.length?<instancedMesh ref={ref} name={name} userData={{graphicsShadowManaged:true,...(partIds?{partIds}:{})}} args={[geometry,material,boxes.length]} castShadow={shadow&&!material.userData.exteriorGround} receiveShadow={receive} dispose={null}/>:null;}
+// Shadow-only presentation budget: every architectural box remains visible and
+// keeps its original transform/part ID. Small details simply skip the shadow pass.
+function Instances(props:{partIds?:string[];basis?:Matrix4;boxes:CentralBox[];material:MeshStandardMaterial;geometry:BoxGeometry;name:string}){
+ const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
+ const batches=useMemo(()=>{
+  const casting:CentralBox[]=[],details:CentralBox[]=[],castingIds:string[]=[],detailIds:string[]=[];
+  props.boxes.forEach((box,i)=>{
+   const dimensions=[...box.size].sort((a,b)=>b-a);
+   const casts=budget.shadows&&dimensions[0]>=budget.shadowMinRadius&&dimensions[0]*dimensions[1]>=budget.shadowMinRadius*.6&&!/lattice|woven|window-division/.test(box.role);
+   (casts?casting:details).push(box);
+   if(props.partIds)(casts?castingIds:detailIds).push(props.partIds[i]);
+  });
+  return {casting,details,castingIds,detailIds};
+ },[props.boxes,props.partIds,budget]);
+ return <><InstanceBatch {...props} name={props.name+":shadow"} boxes={batches.casting} partIds={props.partIds?batches.castingIds:undefined} shadow={budget.shadows} receive={budget.shadows}/><InstanceBatch {...props} name={props.name+":detail"} boxes={batches.details} partIds={props.partIds?batches.detailIds:undefined} shadow={false} receive={budget.shadows}/></>;
+}
 function GeometryBatches({model,owner,materials,box,basis,selectable}:{model:CentralModel;owner:CentralModel;materials:Record<CentralMaterial,MeshStandardMaterial>;box:BoxGeometry;basis:Matrix4;selectable:boolean}){
  const pieces=useMemo(()=>Object.keys(materials).flatMap(key=>{const material=key as CentralMaterial,items=[...model.profiles.filter(p=>p.material===material).map(p=>({p,g:profileGeometry(p)})),...model.shapes.filter(p=>p.material===material).map(p=>({p,g:shapeGeometry(p)})),...model.roofs.filter(p=>p.material===material).map(p=>({p,g:roofGeometry(p)})),...(model.volumes??[]).filter(p=>p.material===material).map(p=>({p,g:urbanVolumeGeometry(p)})),...(model.polygonRoofs??[]).filter(p=>p.material===material).map(p=>({p,g:urbanRoofGeometry(p)}))];if(!items.length)return [];const flat=items.map(({g})=>g.index?g.toNonIndexed():g);const geometry=mergeGeometries(flat,false)!.applyMatrix4(basis);if(selectable){let end=0;geometry.userData.partRanges=flat.map((g,i)=>({end:end+=g.getAttribute("position").count/3,id:architecturalPartId(owner,architecturalPartKey(owner,items[i].p))}));}new Set([...items.map(i=>i.g),...flat]).forEach(g=>g.dispose());return [{material,geometry}];}),[model,owner,materials,basis,selectable]);
  const batches=useMemo(()=>Object.keys(materials).map(key=>{const boxes=model.boxes.filter(b=>b.material===key&&!b.role.includes("collision"));return {material:key as CentralMaterial,boxes,partIds:selectable?boxes.map(b=>architecturalPartId(owner,architecturalPartKey(owner,b))):undefined};}),[model,owner,materials,selectable]);
