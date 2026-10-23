@@ -3,12 +3,18 @@ import {useSyncExternalStore} from 'react';
 import type {QualityPreset} from '../types/quality';
 import {graphicsSetting} from './graphics-presets';
 let current:QualityPreset|null=null;
-const valid=(value:unknown):value is QualityPreset=>value==='LOW'||value==='MEDIUM'||value==='HIGH';
+const valid=(value:unknown):value is QualityPreset=>value==='VERY LOW'||value==='LOW'||value==='MEDIUM'||value==='HIGH';
 function automaticQuality():QualityPreset{
  const device=navigator as Navigator&{deviceMemory?:number};
  const mobile=matchMedia('(pointer:coarse)').matches||/Android|iPhone|iPad/i.test(navigator.userAgent);
- const weak=(device.deviceMemory!==undefined&&device.deviceMemory<=4)||(device.hardwareConcurrency>0&&device.hardwareConcurrency<=4);
- return weak||(mobile&&(!device.deviceMemory||device.deviceMemory<=4))?'LOW':'MEDIUM';
+ const memory=device.deviceMemory,cores=device.hardwareConcurrency||0;
+ const smallCpu=cores>0&&cores<=4,verySmallCpu=cores>0&&cores<=2;
+ const denseScreen=window.devicePixelRatio>=2&&Math.max(screen.width,screen.height)>=800;
+ if(memory!==undefined&&memory<=4&&(mobile||smallCpu))return 'VERY LOW';
+ if(memory!==undefined&&memory<=6&&smallCpu&&(mobile||verySmallCpu))return 'VERY LOW';
+ if(verySmallCpu&&(mobile||denseScreen))return 'VERY LOW';
+ if(mobile||smallCpu||(memory!==undefined&&memory<=6))return 'LOW';
+ return 'MEDIUM';
 }
 export function readGraphicsQuality():QualityPreset{
  if(typeof window==='undefined')return 'MEDIUM';

@@ -1,3 +1,5 @@
+import {useGraphicsQuality} from '../../lib/graphics-quality';
+import {characterAsset} from '../rendering/character-asset';
 import {useFootContactAudio} from "../audio/game-audio";
 import {contactCrossings,footContacts} from "../audio/foot-contacts";
 import {Vector3} from "three";
@@ -15,7 +17,8 @@ class CharacterBoundary extends Component<{children:ReactNode},{failed:boolean}>
   render(){return this.state.failed?(process.env.NODE_ENV==="development"?<Html center><span role="alert">Player character failed to load. Check character assets.</span></Html>:null):this.props.children;}
 }
 function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
-  const {scene,animations}=useGLTF("/assets/characters/player/player.glb",false,false);
+  const quality=useGraphicsQuality();
+  const {scene,animations}=useGLTF(characterAsset("/assets/characters/player/player.glb",quality),false,false);
   const model=useMemo(()=>{const model=clone(scene);model.traverse(object=>{object.castShadow=true;object.receiveShadow=true;});return model;},[scene]);
   const mixer=useMemo(()=>new AnimationMixer(model),[model]);
   const actions=useMemo(()=>Object.fromEntries(animations.map(clip=>{const action=mixer.clipAction(clip);action.setLoop(clip.name==="Jump"?LoopOnce:LoopRepeat,clip.name==="Jump"?1:Infinity);action.clampWhenFinished=clip.name==="Jump";return [clip.name,action];})),[animations,mixer]);

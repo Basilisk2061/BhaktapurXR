@@ -24,11 +24,26 @@ function DaylightSky(){
     }`}/>
  </mesh>;
 }
+/** VERY LOW: one low-poly sky draw, no sun, HDR or environment. */
+function CheapSky(){
+ return <mesh name="very-low-sky" renderOrder={-1000} frustumCulled={false}>
+  <sphereGeometry args={[1,8,4]}/>
+  <shaderMaterial side={BackSide} depthWrite={false} depthTest={false}
+   vertexShader={`varying float skyHeight;void main(){skyHeight=position.y;
+    vec4 clip=projectionMatrix*mat4(mat3(viewMatrix))*vec4(position,1.0);gl_Position=clip.xyww;}`}
+   fragmentShader={`varying float skyHeight;void main(){
+    gl_FragColor=vec4(mix(vec3(0.434,0.638,0.815),vec3(0.074,0.314,0.624),clamp(skyHeight,0.0,1.0)),1.0);
+    #include <tonemapping_fragment>
+    #include <colorspace_fragment>
+   }`}/>
+ </mesh>;
+}
 export function HeritageDaylight() {
  const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
  const target=useMemo(()=>{const value=new Object3D();value.position.set(-48,0,-10);return value;},[]),sun=useRef<DirectionalLight>(null),elapsed=useRef(1);
  const lightOffset=useMemo(()=>quality==='HIGH'?highSunOffset.clone():new Vector3(...daylightSunOffset),[quality]);
  const direction=useMemo(()=>new Vector3(),[]),focus=useMemo(()=>new Vector3(-48,0,-10),[]);
+ useEffect(()=>{sun.current?.position.copy(target.position).add(lightOffset);},[target,lightOffset]);
  useEffect(()=>{if(!sun.current)return;sun.current.shadow.map?.dispose();sun.current.shadow.map=null;sun.current.shadow.needsUpdate=true;},[budget.shadowSize]);
  useFrame(({camera},delta)=>{
   if(!budget.shadows)return;elapsed.current+=delta;if(elapsed.current<.1)return;elapsed.current=0;
@@ -40,11 +55,12 @@ export function HeritageDaylight() {
  return <>
   <primitive object={target}/>
   <color attach="background" args={["#b0d1e9"]}/>
+  {budget.sky==='cheap'&&<CheapSky/>}
   {budget.sky==='gradient'&&<DaylightSky/>}
   {budget.sky==='hdr'&&<Suspense fallback={null}><HighDaylightSky/></Suspense>}
   <fog attach="fog" args={[quality==='HIGH'?highDaylightHorizon:"#b0d1e9",110,360]}/>
   <hemisphereLight args={["#d1e2fa","#aba99f",budget.hemisphere]}/>
-  <ambientLight color="#f4f6f8" intensity={budget.ambient}/>
+  {budget.ambient>0&&<ambientLight color="#f4f6f8" intensity={budget.ambient}/>}
   <directionalLight ref={sun} name="heritage-sun" position={[-93,65,25]} target={target} color={quality==='HIGH'?"#fff7eb":"#fff8ed"} intensity={budget.sun} castShadow={budget.shadows} shadow-mapSize={[budget.shadowSize,budget.shadowSize]}
    shadow-camera-left={-budget.shadowExtent} shadow-camera-right={budget.shadowExtent} shadow-camera-top={budget.shadowExtent} shadow-camera-bottom={-budget.shadowExtent} shadow-camera-near={1} shadow-camera-far={180}
    shadow-normalBias={quality==='HIGH'?.012:.02} shadow-bias={-.00004} shadow-radius={quality==='HIGH'?2:1}/>

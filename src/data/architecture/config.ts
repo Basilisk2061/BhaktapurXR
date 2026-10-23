@@ -13,6 +13,7 @@ export const architectureParameters = {
 } as const;
 
 export const architectureQuality: Record<QualityPreset, { shadowSize: number; bayStride: number; contextStride: number; lattice: boolean }> = {
+  "VERY LOW": { shadowSize: 0, bayStride: 2, contextStride: 2, lattice: false },
   LOW: { shadowSize: 1024, bayStride: 2, contextStride: 2, lattice: false },
   MEDIUM: { shadowSize: 2048, bayStride: 1, contextStride: 1, lattice: true },
   HIGH: { shadowSize: 4096, bayStride: 1, contextStride: 1, lattice: true },

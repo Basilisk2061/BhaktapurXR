@@ -1,7 +1,8 @@
+import {useGraphicsQuality} from '../../lib/graphics-quality';
 import {createContext,useContext,useEffect,useMemo,useRef,type ReactNode,type RefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {useRapier} from '@react-three/rapier';
-import {Vector3} from 'three';
+import {Vector3,type Object3D} from 'three';
 import type {PlayerRuntime} from '../player/player-runtime';
 import type {PlayerInput} from '../input/player-input';
 import {gameplayCodes} from '../input/player-input';
@@ -12,6 +13,8 @@ import {colliderAudioSurface} from './audio-surfaces';
 const ContactAudio=createContext<((position:Vector3,running:boolean)=>void)|null>(null);
 export const useFootContactAudio=()=>useContext(ContactAudio);
 export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;children:ReactNode}){
+ const quality=useGraphicsQuality();
+ const actorsCache=useMemo(()=>['old-a','old-b','female-a','female-b'].map(id=>({id,actor:null as Object3D|null,head:null as Object3D|null,elapsed:1,lookup:1})),[]);
  const voiceVectors=useMemo(()=>({position:new Vector3(),forward:new Vector3(),up:new Vector3(),heads:Array.from({length:4},()=>new Vector3()),landing:new Vector3()}),[]);
  const landingGate=useMemo(()=>new LandingAudioGate(),[]);
  const canvas=useThree(state=>state.gl.domElement),{world,rapier}=useRapier(),engine=useRef<GameAudioEngine|null>(null);
@@ -31,15 +34,24 @@ export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runt
   if(!enabled||!input.current.active||!canPlayFootstep(runtime.current)||!landingGate.canFootstep(performance.now()/1000))return;
   engine.current?.footstep(surfaceAt(position),running);
  };
- useFrame(({scene,camera})=>{
+ useFrame(({scene,camera},delta)=>{
   const motion=runtime.current;
   const landed=landingGate.update(motion,performance.now()/1000,enabled&&input.current.active);
   if(!input.current.active||!canPlayFootstep(runtime.current))engine.current?.stopSteps();
   if(!enabled||!engine.current)return;
   if(landed){voiceVectors.landing.set(motion.nextPosition.x,motion.nextPosition.y-.875+.03,motion.nextPosition.z);engine.current.landing(surfaceAt(voiceVectors.landing));}
-  const actors=['old-a','old-b','female-a','female-b'].flatMap((id,i)=>{
-   const actor=scene.getObjectByName('npc:'+id),head=actor?.getObjectByName('mixamorigHead');
-   return actor&&head?[{id,state:actor.userData.state as string,position:head.getWorldPosition(voiceVectors.heads[i])}]:[];
+  const actors=actorsCache.flatMap((entry,i)=>{
+   entry.elapsed+=delta;entry.lookup+=delta;
+   if(entry.lookup>=.5){
+    entry.actor=scene.getObjectByName('npc:'+entry.id)??null;
+    entry.head=entry.actor?.getObjectByName('mixamorigHead')??null;
+    entry.lookup=0;
+   }
+   if(!entry.actor||!entry.head)return [];
+   const far=voiceVectors.heads[i].distanceToSquared(motion.nextPosition)>18*18;
+   // Keep nearby voices and all scheduling/reactions full rate. Only distant head transforms throttle.
+   if(quality!=='VERY LOW'||!far||entry.elapsed>=.25){entry.head.getWorldPosition(voiceVectors.heads[i]);entry.elapsed=0;}
+   return [{id:entry.id,state:entry.actor.userData.state as string,position:voiceVectors.heads[i]}];
   });
   camera.getWorldPosition(voiceVectors.position);camera.getWorldDirection(voiceVectors.forward);voiceVectors.up.set(0,1,0).applyQuaternion(camera.quaternion);
   engine.current.updateOldManVoices(actors.filter(a=>a.id.startsWith('old-')),voiceVectors.position,voiceVectors.forward,voiceVectors.up,{position:runtime.current.nextPosition,running:runtime.current.grounded&&!runtime.current.flying&&!runtime.current.seat&&runtime.current.movement==='RUN',landed,flying:runtime.current.flying},actors.filter(a=>a.id.startsWith('female-')));

@@ -15,6 +15,7 @@ import { developmentConfig } from "@/lib/development-config";
 import {graphicsPresets} from "../lib/graphics-presets";
 import {useGraphicsQuality} from "../lib/graphics-quality";
 import {RendererQuality} from "./rendering/renderer-quality";
+import {VeryLowResolution} from "./rendering/very-low-resolution";
 const HighQualityEffects=lazy(()=>import("./rendering/high-quality-effects"));
 import { World } from "@/game/world/world";
 import { worldConfig } from "@/game/world/world-config";
@@ -67,7 +68,7 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
 export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,touchControls=false }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
-  const dpr:[number,number]=[budget.dpr[0],touchControls?budget.mobileDpr:budget.dpr[1]];
+  const dpr:[number,number]=[quality==='VERY LOW'&&touchControls?.5:budget.dpr[0],touchControls?budget.mobileDpr:budget.dpr[1]];
   const [started,setStarted]=useState(false);
   const initialReady=()=>{setStarted(true);onReady();};
   return (
@@ -82,6 +83,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
     >
       <ContextGuard onUnavailable={onUnavailable} />
       <RendererQuality/>
+      {quality==='VERY LOW'&&<VeryLowResolution mobile={touchControls}/>}
       {budget.post&&<Suspense fallback={null}><HighQualityEffects/></Suspense>}
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>

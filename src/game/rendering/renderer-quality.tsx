@@ -5,7 +5,7 @@ import {useGraphicsQuality} from '../../lib/graphics-quality';
 import {graphicsPresets} from '../../lib/graphics-presets';
 import type {HighTimberMaps} from './high-material-assets';
 const HighMaterialAssets=lazy(()=>import('./high-material-assets'));
-interface MaterialState {bump:Texture|null;normal:Texture|null;roughness:number;bumpScale:number;roughnessMap:Texture|null;aoMap:Texture|null;aoIntensity:number;normalScale:Vector2;quality:string}
+interface MaterialState {bump:Texture|null;normal:Texture|null;roughness:number;bumpScale:number;roughnessMap:Texture|null;aoMap:Texture|null;aoIntensity:number;normalScale:Vector2;metalnessMap:Texture|null;envMap:Texture|null;envIntensity:number;quality:string}
 /** Presentation only. No geometry, visibility, animation, audio or physics budgets change. */
 export function RendererQuality(){
  const quality=useGraphicsQuality(),budget=graphicsPresets[quality],{gl,scene}=useThree();
@@ -27,7 +27,7 @@ export function RendererQuality(){
    for(const material of Array.isArray(object.material)?object.material:[object.material]){
     if(!(material instanceof MeshStandardMaterial))continue;
     let saved=originals.materials.get(material);
-    if(!saved){saved={bump:material.bumpMap,normal:material.normalMap,roughness:material.roughness,bumpScale:material.bumpScale,roughnessMap:material.roughnessMap,aoMap:material.aoMap,aoIntensity:material.aoMapIntensity,normalScale:material.normalScale.clone(),quality:''};originals.materials.set(material,saved);}
+    if(!saved){saved={bump:material.bumpMap,normal:material.normalMap,roughness:material.roughness,bumpScale:material.bumpScale,roughnessMap:material.roughnessMap,aoMap:material.aoMap,aoIntensity:material.aoMapIntensity,normalScale:material.normalScale.clone(),metalnessMap:material.metalnessMap,envMap:material.envMap,envIntensity:material.envMapIntensity,quality:''};originals.materials.set(material,saved);}
     if(saved.quality===materialQuality)continue;
     // Only tagged masonry/timber finishes: never character skin, clothing or metal.
     // Restore the exact original response on downgrade; colors/maps remain authoritative.
@@ -38,8 +38,11 @@ export function RendererQuality(){
     if(material.userData.highPbrDetail)material.userData.highPbrDetail.value=timber?1:0;
     material.normalMap=timber?timber.normal:budget.bump?saved.normal:null;
     material.bumpMap=timber?null:budget.bump?saved.bump:null;
-    material.roughnessMap=timber?timber.roughness:saved.roughnessMap;
-    material.aoMap=timber?timber.ao:saved.aoMap;
+    const veryLow=quality==='VERY LOW';
+    material.roughnessMap=veryLow?null:timber?timber.roughness:saved.roughnessMap;
+    material.aoMap=veryLow?null:timber?timber.ao:saved.aoMap;
+    material.metalnessMap=veryLow?null:saved.metalnessMap;
+    material.envMap=veryLow?null:saved.envMap;material.envMapIntensity=veryLow?0:saved.envIntensity;
     material.aoMapIntensity=timber?.18:saved.aoIntensity;
     if(timber)material.normalScale.set(.22,.22);else material.normalScale.copy(saved.normalScale);
     for(const map of [material.map,saved.bump,material.normalMap,material.roughnessMap,material.aoMap])if(map&&map.anisotropy!==budget.anisotropy){map.anisotropy=Math.min(budget.anisotropy,gl.capabilities.getMaxAnisotropy());map.needsUpdate=true;}

@@ -1,1 +1,1 @@
-export type QualityPreset = "LOW" | "MEDIUM" | "HIGH";
+export type QualityPreset = "VERY LOW" | "LOW" | "MEDIUM" | "HIGH";
