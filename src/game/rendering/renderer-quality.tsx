@@ -6,7 +6,7 @@ import {graphicsPresets} from '../../lib/graphics-presets';
 /** Presentation only. No geometry, visibility, animation, audio or physics budgets change. */
 export function RendererQuality(){
  const quality=useGraphicsQuality(),budget=graphicsPresets[quality],{gl,scene}=useThree();
- const originals=useMemo(()=>({meshes:new WeakMap<Mesh,{cast:boolean;receive:boolean;quality:string}>(),materials:new WeakMap<Material,{bump:Texture|null;normal:Texture|null;quality:string}>()}),[]);
+ const originals=useMemo(()=>({meshes:new WeakMap<Mesh,{cast:boolean;receive:boolean;quality:string}>(),materials:new WeakMap<Material,{bump:Texture|null;normal:Texture|null;roughness:number;bumpScale:number;quality:string}>()}),[]);
  const elapsed=useRef(0);
  const apply=()=>{
   scene.traverse(object=>{
@@ -22,9 +22,14 @@ export function RendererQuality(){
    for(const material of Array.isArray(object.material)?object.material:[object.material]){
     if(!(material instanceof MeshStandardMaterial))continue;
     let saved=originals.materials.get(material);
-    if(!saved){saved={bump:material.bumpMap,normal:material.normalMap,quality:''};originals.materials.set(material,saved);}
+    if(!saved){saved={bump:material.bumpMap,normal:material.normalMap,roughness:material.roughness,bumpScale:material.bumpScale,quality:''};originals.materials.set(material,saved);}
     if(saved.quality===quality)continue;
     material.bumpMap=budget.bump?saved.bump:null;material.normalMap=budget.bump?saved.normal:null;
+    // Only tagged masonry/timber finishes: never character skin, clothing or metal.
+    // Restore the exact original response on downgrade; colors/maps remain authoritative.
+    const surface=material.userData.heritageSurface,highSurface=quality==='HIGH'&&typeof surface==='string';
+    material.roughness=highSurface?Math.max(.82,saved.roughness-(surface==='timber'?.04:.02)):saved.roughness;
+    material.bumpScale=highSurface?saved.bumpScale*1.1:saved.bumpScale;
     for(const map of [material.map,saved.bump,saved.normal,material.roughnessMap])if(map&&map.anisotropy!==budget.anisotropy){map.anisotropy=Math.min(budget.anisotropy,gl.capabilities.getMaxAnisotropy());map.needsUpdate=true;}
     material.needsUpdate=true;saved.quality=quality;
    }

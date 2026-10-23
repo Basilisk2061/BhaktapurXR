@@ -2,6 +2,7 @@ import {useMemo,useRef,useEffect} from "react";
 import {useFrame} from "@react-three/fiber";
 import {useGraphicsQuality} from "../../lib/graphics-quality";
 import {graphicsPresets} from "../../lib/graphics-presets";
+import {HighDaylightSky,daylightSunOffset,highDaylightHorizon} from "../rendering/high-daylight-sky";
 import {Object3D,Color,Vector3,BackSide,DirectionalLight} from "three";
 
 /** Analytic sky in the existing scene pass: no HDRI, environment capture or post effects. */
@@ -25,7 +26,7 @@ function DaylightSky(){
 export function HeritageDaylight() {
  const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
  const target=useMemo(()=>{const value=new Object3D();value.position.set(-48,0,-10);return value;},[]),sun=useRef<DirectionalLight>(null),elapsed=useRef(1);
- const lightOffset=useMemo(()=>new Vector3(-45,65,35),[]);
+ const lightOffset=useMemo(()=>new Vector3(...daylightSunOffset),[]);
  const direction=useMemo(()=>new Vector3(),[]),focus=useMemo(()=>new Vector3(-48,0,-10),[]);
  useEffect(()=>{if(!sun.current)return;sun.current.shadow.map?.dispose();sun.current.shadow.map=null;sun.current.shadow.needsUpdate=true;},[budget.shadowSize]);
  useFrame(({camera},delta)=>{
@@ -39,7 +40,8 @@ export function HeritageDaylight() {
   <primitive object={target}/>
   <color attach="background" args={["#b0d1e9"]}/>
   {budget.sky==='gradient'&&<DaylightSky/>}
-  <fog attach="fog" args={["#b0d1e9",110,360]}/>
+  {budget.sky==='solar'&&<HighDaylightSky/>}
+  <fog attach="fog" args={[quality==='HIGH'?highDaylightHorizon:"#b0d1e9",110,360]}/>
   <hemisphereLight args={["#d1e2fa","#aba99f",budget.hemisphere]}/>
   <ambientLight color="#f4f6f8" intensity={budget.ambient}/>
   <directionalLight ref={sun} name="heritage-sun" position={[-93,65,25]} target={target} color={quality==='HIGH'?"#fff7eb":"#fff8ed"} intensity={budget.sun} castShadow={budget.shadows} shadow-mapSize={[budget.shadowSize,budget.shadowSize]}

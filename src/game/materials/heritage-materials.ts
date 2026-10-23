@@ -40,6 +40,7 @@ export function generatedTexture(kind:"gateBrick"|"brick"|"roof"|"paving"|"stone
 /** Surface-only variation; shared by all instances, with no extra texture or draw allocation. */
 export function applySurfaceFinish(material:MeshStandardMaterial,kind:string) {
   if(!["brick","stone","timber","paving","roof"].includes(kind))return;
+  material.userData.heritageSurface=kind;
   material.bumpMap=material.map;
   material.bumpScale=kind==="paving"?.012:kind==="brick"?.008:kind==="roof"?.012:.003;
   const previous=material.onBeforeCompile;
