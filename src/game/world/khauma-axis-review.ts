@@ -2,11 +2,15 @@ import {insideSquareReviewCamera,insideSquareReviewSpawn} from "./inside-square-
 import type {SpawnPoint} from "../../types/world.ts";
 import type {WorldMode} from "./world-mode.ts";
 import {KHAUMA_GATE_VIEW_AXIS} from "../../data/reconstruction/khauma-spatial-audit.ts";
+import {exteriorFrame} from "../architecture/khauma-exterior.ts";
 import {resolveUrbanCompleteReview,urbanCompleteExperienceSpawn,isUrbanAerialReview} from "./urban-complete-review.ts";
 const centre=KHAUMA_GATE_VIEW_AXIS.proposedCentre;
 // The former temporary gameplay start (30,35) is inside an occupied southern source lot.
 // Start on the already traversed approach; this is an operational spawn, never a monument correction.
-export const completedSquareGameplaySpawn:SpawnPoint={position:[centre[0]+Math.sin(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6,.05,centre[1]+Math.cos(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6],rotation:[0,KHAUMA_GATE_VIEW_AXIS.proposedYaw,0]};
+// Retreat another 6 m along the approved road's outside axis; leave gate/road untouched.
+const approachX=Math.sin(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6+Math.sin(exteriorFrame.yaw)*6;
+const approachZ=Math.cos(KHAUMA_GATE_VIEW_AXIS.proposedYaw)*6+Math.cos(exteriorFrame.yaw)*6;
+export const completedSquareGameplaySpawn:SpawnPoint={position:[centre[0]+approachX,.05,centre[1]+approachZ],rotation:[0,Math.atan2(approachX,approachZ),0]};
 const target=[-10.012564711790674,7.277097845494605],length=Math.hypot(target[0]-centre[0],target[1]-centre[1]);
 export const gateViewDirection:[number,number]=[(target[0]-centre[0])/length,(target[1]-centre[1])/length];
 const yaw=Math.atan2(-gateViewDirection[0],-gateViewDirection[1]);
