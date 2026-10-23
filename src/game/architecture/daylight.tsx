@@ -1,8 +1,9 @@
-import {useMemo,useRef,useEffect} from "react";
+import {useMemo,useRef,useEffect,lazy,Suspense} from "react";
 import {useFrame} from "@react-three/fiber";
 import {useGraphicsQuality} from "../../lib/graphics-quality";
 import {graphicsPresets} from "../../lib/graphics-presets";
-import {HighDaylightSky,daylightSunOffset,highDaylightHorizon} from "../rendering/high-daylight-sky";
+import {daylightSunOffset,highSunOffset,highDaylightHorizon} from "../rendering/high-environment-config";
+const HighDaylightSky=lazy(()=>import("../rendering/high-daylight-sky"));
 import {Object3D,Color,Vector3,BackSide,DirectionalLight} from "three";
 
 /** Analytic sky in the existing scene pass: no HDRI, environment capture or post effects. */
@@ -26,7 +27,7 @@ function DaylightSky(){
 export function HeritageDaylight() {
  const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
  const target=useMemo(()=>{const value=new Object3D();value.position.set(-48,0,-10);return value;},[]),sun=useRef<DirectionalLight>(null),elapsed=useRef(1);
- const lightOffset=useMemo(()=>new Vector3(...daylightSunOffset),[]);
+ const lightOffset=useMemo(()=>quality==='HIGH'?highSunOffset.clone():new Vector3(...daylightSunOffset),[quality]);
  const direction=useMemo(()=>new Vector3(),[]),focus=useMemo(()=>new Vector3(-48,0,-10),[]);
  useEffect(()=>{if(!sun.current)return;sun.current.shadow.map?.dispose();sun.current.shadow.map=null;sun.current.shadow.needsUpdate=true;},[budget.shadowSize]);
  useFrame(({camera},delta)=>{
@@ -40,7 +41,7 @@ export function HeritageDaylight() {
   <primitive object={target}/>
   <color attach="background" args={["#b0d1e9"]}/>
   {budget.sky==='gradient'&&<DaylightSky/>}
-  {budget.sky==='solar'&&<HighDaylightSky/>}
+  {budget.sky==='hdr'&&<Suspense fallback={null}><HighDaylightSky/></Suspense>}
   <fog attach="fog" args={[quality==='HIGH'?highDaylightHorizon:"#b0d1e9",110,360]}/>
   <hemisphereLight args={["#d1e2fa","#aba99f",budget.hemisphere]}/>
   <ambientLight color="#f4f6f8" intensity={budget.ambient}/>

@@ -18,6 +18,15 @@ export function createCentralMaterials(){const maps=new Map<string,ReturnType<ty
  #ifdef USE_BUMPMAP
  vBumpMapUv *= metreScale;
  #endif
+ #ifdef USE_NORMALMAP
+ vNormalMapUv *= metreScale;
+ #endif
+ #ifdef USE_ROUGHNESSMAP
+ vRoughnessMapUv *= metreScale;
+ #endif
+ #ifdef USE_AOMAP
+ vAoMapUv *= metreScale;
+ #endif
  #endif`);};applySurfaceFinish(mat,id==="exteriorRoad"?"stone":id==="exteriorPaving"?"paving":id==="gateBrick"?"brick":id==="road"?"stone":id);mat.customProgramCacheKey=()=>"central-metre-uv-v2:"+id;return [id,mat]})) as Record<keyof typeof centralMaterialDefinitions,MeshStandardMaterial>;}
 export function profileGeometry(p:CentralProfile){const sculpted=museumSculptureGeometry(p);if(sculpted)return sculpted;const g=new LatheGeometry(p.profile.map(([r,y])=>new Vector2(r,y)),p.segments);const v=g.toNonIndexed();g.dispose();
  // Metre tiling for the new large brick towers; accepted central UVs stay unchanged.

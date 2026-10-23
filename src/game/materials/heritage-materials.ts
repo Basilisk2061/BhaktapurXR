@@ -41,11 +41,13 @@ export function generatedTexture(kind:"gateBrick"|"brick"|"roof"|"paving"|"stone
 export function applySurfaceFinish(material:MeshStandardMaterial,kind:string) {
   if(!["brick","stone","timber","paving","roof"].includes(kind))return;
   material.userData.heritageSurface=kind;
+  const highPbrDetail={value:0};material.userData.highPbrDetail=highPbrDetail;
   material.bumpMap=material.map;
   material.bumpScale=kind==="paving"?.012:kind==="brick"?.008:kind==="roof"?.012:.003;
   const previous=material.onBeforeCompile;
   material.onBeforeCompile=(shader,renderer)=>{
     previous.call(material,shader,renderer);
+    shader.uniforms.heritagePbrDetail=highPbrDetail;
     shader.vertexShader="varying vec3 vHeritagePosition;\n"+shader.vertexShader;
     shader.vertexShader=shader.vertexShader.replace("#include <project_vertex>",`#include <project_vertex>
       vec4 heritagePosition=vec4(transformed,1.0);
@@ -53,12 +55,14 @@ export function applySurfaceFinish(material:MeshStandardMaterial,kind:string) {
         heritagePosition=instanceMatrix*heritagePosition;
       #endif
       vHeritagePosition=(modelMatrix*heritagePosition).xyz;`);
-    shader.fragmentShader="varying vec3 vHeritagePosition;\n"+shader.fragmentShader;
+    shader.fragmentShader="uniform float heritagePbrDetail;varying vec3 vHeritagePosition;\n"+shader.fragmentShader;
     shader.fragmentShader=shader.fragmentShader.replace("#include <color_fragment>",`#include <color_fragment>
       float age=sin(vHeritagePosition.x*0.19)*sin(vHeritagePosition.z*0.23);
       diffuseColor.rgb *= 0.98+age*0.025;
       ${kind==="brick"?"diffuseColor.rgb *= mix(0.88,1.0,smoothstep(0.0,1.8,vHeritagePosition.y));":""}`);
     shader.fragmentShader=shader.fragmentShader.replace("#include <roughnessmap_fragment>",`#include <roughnessmap_fragment>
+      // Keep photographic roughness variation inside a dry, heritage-safe range on HIGH.
+      if(heritagePbrDetail>0.5)roughnessFactor=0.80+0.18*roughnessFactor;
       roughnessFactor=clamp(roughnessFactor+age*0.02,0.8,1.0);`);
   };
   material.customProgramCacheKey=()=>`heritage-surface-${kind}-v2`;
