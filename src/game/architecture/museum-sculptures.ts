@@ -9,7 +9,7 @@ export function museumSculptureGeometry(p:CentralProfile){
  if(!p.sculptedSurface)return null;
  const g=new BufferGeometry();g.setAttribute("position",new Float32BufferAttribute(p.sculptedSurface.positions,3));g.setIndex(p.sculptedSurface.indices);g.computeVertexNormals();
  const pos=g.getAttribute("position"),uv:number[]=[];for(let i=0;i<pos.count;i++)uv.push(pos.getX(i)/2,pos.getY(i)/2);
- g.setAttribute("uv",new Float32BufferAttribute(uv,2));g.rotateY(p.yaw);g.translate(...p.position);const flat=g.toNonIndexed();g.dispose();return flat;
+ g.setAttribute("uv",new Float32BufferAttribute(p.sculptedSurface.uvs??uv,2));g.rotateY(p.yaw);g.translate(...p.position);const flat=g.toNonIndexed();g.dispose();return flat;
 }
 function surface(m:CentralModel,at:Point,positions:number[],indices:number[],material:CentralMaterial,role:string){
  const [x,y,z]=at,c=Math.cos(m.yaw),s=Math.sin(m.yaw);
