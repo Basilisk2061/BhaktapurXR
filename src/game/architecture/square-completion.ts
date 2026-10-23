@@ -1,5 +1,6 @@
 import {buildKhaumaExterior,exteriorReplacedIds} from "./khauma-exterior.ts";
 import {buildKhaumaRearBoundary} from "./khauma-rear-boundary.ts";
+import {obsoletePlaceholderMassing} from "./obsolete-placeholder-massing.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import {refineCentralStoneEnsemble} from "./central-stone-ensemble.ts";
 import {integrateRaisedPavilion,buildRaisedPavilionTerraces} from "./raised-pavilion-terraces.ts";
@@ -195,5 +196,9 @@ export function buildCompletedSquareEdge(){
  const raisedContext=correctedModels.map(integrateRaisedPavilion);
  const rawAfter=models.filter(m=>m.neutral&&(m.volumes??[]).some(v=>inRegion(v.rings))).length;
  const exterior=buildKhaumaExterior();
- return {...baseline,models:[...raisedContext.filter(m=>!exteriorReplacedIds.has(m.id)&&m.id!=="entrance:khauma-road"),...exterior,buildKhaumaRearBoundary(exterior)],buildings:buildings.filter(b=>!removedIds.has(b.id)&&!exteriorReplacedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
+ // Remove only final, still-coarse footprint masses, after detailed replacements
+ // have been resolved. Removing the whole model also removes its obsolete colliders.
+ // Static source cleanup, not streaming: every retained assembly remains mounted.
+ const obsolete=new Set(raisedContext.filter(obsoletePlaceholderMassing).map(m=>m.id));
+ return {...baseline,models:[...raisedContext.filter(m=>!obsolete.has(m.id)&&!exteriorReplacedIds.has(m.id)&&m.id!=="entrance:khauma-road"),...exterior,buildKhaumaRearBoundary(exterior)],buildings:buildings.filter(b=>!obsolete.has(b.id)&&!removedIds.has(b.id)&&!exteriorReplacedIds.has(b.id)),khaumaInteriorAudit,completionEvidence:phase9cEvidence,completionBoundary:phase9cBoundary,completionInventory:inventory,rawPlaceholdersBefore:oldRaw.length,rawPlaceholdersAfter:rawAfter,processedLegacyIds:[...rawIds],distantSourceIds:baseline.distantSourceIds.filter(id=>!oldRaw.some(m=>m.id.endsWith(":"+id))&&![...obsolete].some(modelId=>modelId.endsWith(":"+id))),westPlaceholderIds:[],completedSourceIds:inventory.filter(i=>i.area>0).map(i=>i.sourceId)};
 }

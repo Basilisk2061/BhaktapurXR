@@ -4,17 +4,17 @@ import legacyOverrides from "../../features/bhaktapur/data/manual-transform-over
 import {overrideMatrix,validateTransform,type ManualTransform} from "../../features/world-editor/transforms.ts";
 import {exteriorFrame,exteriorLocal} from "./khauma-exterior.ts";
 import {box} from "./architecture-primitives.ts";
-import type {CentralMaterial,CentralModel} from "./central-model.ts";
+import type {CentralModel} from "./central-model.ts";
 
 /** Khauma entrance rear playable-world boundary: GAMEPLAY / CONTEXTUAL BOUNDARY.
- * This market screen is not a historically verified reconstruction element.
+ * This masonry closure is not a historically verified reconstruction element.
  * Existing edited shop walls determine the joins; no building or saved edit is moved.
  */
 export const khaumaRearBoundary={
  classification:"GAMEPLAY_CONTEXTUAL_BOUNDARY",
  leftJoin:"entrance:KhaumaExterior_LeftUrbanContext",
  rightJoin:"entrance:KhaumaExterior_RightCommercial",
- rearClearance:3,height:5.3,thickness:.35,panelPitch:1.7,
+ rearClearance:3,height:7.4,thickness:.35,
 } as const;
 type Point=[number,number];
 export function buildKhaumaRearBoundary(exteriorModels:CentralModel[]):CentralModel{
@@ -50,28 +50,18 @@ export function buildKhaumaRearBoundary(exteriorModels:CentralModel[]):CentralMo
  const minX=Math.min(left[0],...corners.map(p=>p[0]))-2;
  const maxX=Math.max(right[0],...corners.map(p=>p[0]))+2;
  const path:Point[]=[left,[minX,rear],[maxX,rear],right];
- const cloth:CentralMaterial[]=["exteriorWine","exteriorTeal","exteriorOchre","exteriorBlue","plaster"];
  for(let segment=0;segment<path.length-1;segment++){
   const a=path[segment],b=path[segment+1],dx=b[0]-a[0],dz=b[1]-a[1],length=Math.hypot(dx,dz),yaw=-Math.atan2(dz,dx),nx=dz/length,nz=-dx/length;
   const point=(t:number,depth=0):Point=>[a[0]+dx*t+nx*depth,a[1]+dz*t+nz*depth];
-  // Continuous dark backing closes cloth gaps; the same piece carries solid fixed
-  // Rapier collision through the existing architecture pipeline. No debug mesh.
+  // Preserve the former backing's exact horizontal position, length and collision
+  // coverage. Only its material and vertical extent change.
   const back=point(.5,-.18);
-  box(m,back[0],config.height/2,back[1],length+.3,config.height,config.thickness,"recess","gameplay-rear-screen-backing",true,yaw);
-  for(const y of [.18,2.65,config.height]){
-   const p=point(.5,.08);box(m,p[0],y,p[1],length+.3,.12,.15,"carvedTimber","gameplay-textile-horizontal-rail",false,yaw);
-  }
-  const count=Math.ceil(length/config.panelPitch),pitch=length/count;
-  for(let i=0;i<count;i++){
-   const p=point((i+.5)/count,.18+(i%3)*.045),height=config.height-.22-(i%3)*.09,width=pitch+.025;
-   box(m,p[0],height/2+.08,p[1],width,height,.055,cloth[(i+segment)%cloth.length],"gameplay-hanging-textile",false,yaw);
-   // Shallow folds and woven bands suggest hanging cloth without animated meshes.
-   for(const offset of [-.25,.25])box(m,p[0]+dx/length*width*offset,height/2+.08,p[1]+dz/length*width*offset,.055,height,.12,cloth[(i+segment)%cloth.length],"gameplay-textile-fold",false,yaw);
-   for(const y of [.35,.46,height-.12])box(m,p[0],y,p[1],width,.035,.085,"exteriorOchre","gameplay-woven-hem",false,yaw);
-  }
-  const posts=Math.ceil(length/3.2);
+  box(m,back[0],config.height/2,back[1],length+.3,config.height,config.thickness,"agedBrick","gameplay-rear-masonry-wall",true,yaw);
+  box(m,back[0],.18,back[1],length+.35,.36,.48,"brick","gameplay-wall-masonry-foot",false,yaw);
+  box(m,back[0],config.height-.1,back[1],length+.4,.2,.53,"agedBrick","gameplay-wall-coping",false,yaw);
+  const posts=Math.ceil(length/4.8);
   for(let i=0;i<=posts;i++){
-   const p=point(i/posts,.12);box(m,p[0],config.height/2,p[1],.14,config.height+.15,.16,"carvedTimber","gameplay-timber-support",false,yaw);
+   const p=point(i/posts,-.18);box(m,p[0],config.height/2,p[1],.3,config.height,.5,"brick","gameplay-shallow-masonry-pier",false,yaw);
   }
  }
  return m;
