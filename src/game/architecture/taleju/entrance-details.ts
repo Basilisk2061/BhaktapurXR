@@ -107,9 +107,9 @@ export function entranceRamp(m:CentralModel,x:number,z:number,w:number,run:numbe
 
 /** Only the unidentified visible silhouette is reproduced; no claimed deity, bell or ritual function. */
 export function courtyardMetalFeature(m:CentralModel,x:number,z:number){
- profile(m,x,.08,z,[[0,0],[.43,0],[.47,.05],[.43,.14],[.38,.32],[.31,.66],[.26,.72],[0,.72]],'bronze','yam-unidentified-metal-base',20);
- profile(m,x,.80,z,[[.17,0],[.25,.04],[.22,.12],[.14,.18],[.10,.23],[.21,.28],[.18,.38],[.11,.43],[.07,.49],[.14,.55],[.12,.64],[.06,.69],[0,.76]],'gold','yam-unidentified-stacked-finial',16);
+ profile(m,x,.08,z,[[0,0],[.60,0],[.65,.07],[.60,.19],[.53,.44],[.43,.91],[.36,.99],[0,.99]],'bronze','yam-unidentified-metal-base',20);
+ profile(m,x,1.07,z,[[.23,0],[.34,.05],[.30,.14],[.19,.22],[.14,.28],[.29,.34],[.25,.46],[.15,.52],[.10,.59],[.19,.66],[.16,.77],[.08,.83],[0,.91]],'gold','yam-unidentified-stacked-finial',16);
  const c=Math.cos(m.yaw),s=Math.sin(m.yaw),vertices:number[]=[];
- for(const [y,r] of [[0,.47],[.72,.26]])for(let i=0;i<16;i++){const a=i*Math.PI/8;vertices.push(Math.cos(a)*r,y,Math.sin(a)*r);}
- m.colliders.push({position:[m.origin[0]+x*c+z*s,.08,m.origin[1]-x*s+z*c],size:[.94,.72,.94],yaw:0,vertices});
+ for(const [y,r] of [[0,.65],[.99,.36]])for(let i=0;i<16;i++){const a=i*Math.PI/8;vertices.push(Math.cos(a)*r,y,Math.sin(a)*r);}
+ m.colliders.push({position:[m.origin[0]+x*c+z*s,.08,m.origin[1]-x*s+z*c],size:[1.30,.99,1.30],yaw:0,vertices});
 }

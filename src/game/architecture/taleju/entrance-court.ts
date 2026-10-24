@@ -23,8 +23,8 @@ function forward(p:TalejuPlacement){
  // Corner rooms belong to this range, closing the three-range roof corners.
  box(m,-(w/2+d/2),4.49,-d/2,d,8.82,d,'plaster','yam-forward-west-corner-room',true);
  // The east corner is the onward turn: only upper rooms span it, never solid ground masonry.
- box(m,w/2+d/2,6.005,-d/2,d,5.73,d,'plaster','yam-forward-east-upper-corner-room',true);
- box(m,w/2+d/2,1.73,-.22,d,2.82,.44,'plaster','yam-forward-east-passage-front',true);
+ box(m,w/2+d/2,6.005,-d/2,d,5.73,d,'agedBrick','yam-forward-east-upper-corner-room',true);
+ box(m,w/2+d/2,1.73,-.22,d,2.82,.44,'agedBrick','yam-forward-east-passage-front',true);
  box(m,w/2+d/2,3.12,-d/2,d,.18,d,'carvedTimber','yam-forward-east-passage-ceiling',true);
  for(const side of [-1,1]){
   box(m,side*(w/2-.11),4.86,.08,.22,3.32,.22,'plaster','yam-forward-corner-pilaster');
@@ -113,7 +113,7 @@ function right(p:TalejuPlacement){
  carvedBand(m,w+.12,8.56,.62,.22);
  entranceRoof(m,w,-1);
  // A/B establish the silhouette only. It is not the exterior Taleju Bell.
- courtyardMetalFeature(m,-4.40,.89);
+ courtyardMetalFeature(m,-.60,1.10);
  m.materialTints=courtTints;return m;
 }
 
