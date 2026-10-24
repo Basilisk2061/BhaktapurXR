@@ -36,8 +36,10 @@ export const playerConfig = {
     maxMouseDelta: 300,
     followResponsiveness: 18,
     targetResponsiveness: 18,
-    collisionRadius: 0.18,
-    collisionPadding: 0.04,
+    collisionRadius: 0.22,
+    collisionPadding: 0.10,
+    minimumDistance: 0.35, // soft framing limit; obstruction always takes precedence
+    collisionRecoveryResponsiveness: 6,
     near: 0.08,
     far: 260, // Architectural context extends beyond the old engineering-course range.
     fov: 50,

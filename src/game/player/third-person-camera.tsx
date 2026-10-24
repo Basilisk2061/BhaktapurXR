@@ -16,7 +16,8 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
   const { world, rapier } = useRapier();
   const state = useMemo(() => ({
     actualTarget: new Vector3(), focus: new Vector3(), ideal: new Vector3(),
-    candidate: new Vector3(), direction: new Vector3(), sphere: new rapier.Ball(playerConfig.camera.collisionRadius),
+    candidate: new Vector3(), direction: new Vector3(), desiredBoom: new Vector3(),
+    freeOrbit: new Vector3(), lookTarget: new Vector3(), renderedDistance: 0, sphere: new rapier.Ball(playerConfig.camera.collisionRadius),
   }), [rapier]);
   const initialized = useRef(false);
   const lastReset = useRef(-1);
@@ -32,28 +33,46 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
     const reset = !initialized.current || lastReset.current !== motion.resetSequence;
     if (reset) state.focus.copy(state.actualTarget);
     else state.focus.lerp(state.actualTarget, 1 - Math.exp(-config.targetResponsiveness * delta));
-    const horizontalDistance = (reviewCamera ? 6 : config.distance) * Math.cos(controls.pitch);
-    state.ideal.set(
-      state.focus.x + Math.sin(controls.yaw) * horizontalDistance,
-      state.focus.y + Math.sin(controls.pitch) * (reviewCamera ? 6 : config.distance),
-      state.focus.z + Math.cos(controls.yaw) * horizontalDistance,
+    const desiredOrbitDistance = reviewCamera ? 6 : config.distance;
+    const horizontalDistance = desiredOrbitDistance * Math.cos(controls.pitch);
+    state.desiredBoom.set(
+      Math.sin(controls.yaw) * horizontalDistance,
+      Math.sin(controls.pitch) * desiredOrbitDistance,
+      Math.cos(controls.yaw) * horizontalDistance,
     );
-    if (reset) state.candidate.copy(state.ideal);
-    else state.candidate.lerpVectors(camera.position, state.ideal, 1 - Math.exp(-config.followResponsiveness * delta));
-
-    state.direction.subVectors(state.candidate, state.actualTarget);
-    const distance = state.direction.length();
-    if (distance > 0) {
-      state.direction.divideScalar(distance);
-      // Sweep to the smoothed candidate too, so smoothing cannot cut through corners.
-      const hit = world.castShape(state.actualTarget, identityRotation, state.direction, state.sphere, 0, distance, true,
-        rapier.QueryFilterFlags.EXCLUDE_SENSORS, undefined, undefined, body);
-      const safeDistance = hit ? Math.max(0, hit.time_of_impact - config.collisionPadding) : distance;
-      state.candidate.copy(state.actualTarget).addScaledVector(state.direction, safeDistance);
-      motion.cameraDistance = safeDistance;
+    state.ideal.copy(state.focus).add(state.desiredBoom);
+    // Preserve the existing free-camera follow smoothing independently of collision.
+    // A shortened rendered boom must never become the next orbit's starting position.
+    if (reset) state.freeOrbit.copy(state.ideal);
+    else state.freeOrbit.lerp(state.ideal, 1 - Math.exp(-config.followResponsiveness * delta));
+    state.direction.subVectors(state.freeOrbit, state.actualTarget);
+    const desiredBoomDistance = state.direction.length();
+    if (desiredBoomDistance > 0) {
+      state.direction.divideScalar(desiredBoomDistance);
+      // Fixed solid architecture only: omit the player, NPCs, dynamic bodies and sensors.
+      // Permit escape from an initial shallow overlap rather than pinning the boom at TOI=0.
+      const hit = world.castShape(state.actualTarget, identityRotation, state.direction, state.sphere, 0, desiredBoomDistance, false,
+        rapier.QueryFilterFlags.EXCLUDE_SENSORS | rapier.QueryFilterFlags.ONLY_FIXED, undefined, undefined, body);
+      const collisionLimitedDistance = hit ? Math.max(0, hit.time_of_impact - config.collisionPadding) : desiredBoomDistance;
+      if (reset || collisionLimitedDistance < state.renderedDistance) state.renderedDistance = collisionLimitedDistance;
+      else state.renderedDistance += (collisionLimitedDistance - state.renderedDistance) *
+        (1 - Math.exp(-config.collisionRecoveryResponsiveness * delta));
+      // The minimum is soft: never push through a wall to satisfy a framing preference.
+      state.renderedDistance = Math.min(collisionLimitedDistance,
+        Math.max(Math.min(config.minimumDistance, collisionLimitedDistance), state.renderedDistance));
+      state.candidate.copy(state.actualTarget).addScaledVector(state.direction, state.renderedDistance);
+      motion.cameraDistance = state.renderedDistance;
+    } else {
+      state.candidate.copy(state.actualTarget);
+      state.renderedDistance = 0;
+      motion.cameraDistance = 0;
     }
     camera.position.copy(state.candidate);
-    camera.lookAt(state.focus);
+    state.lookTarget.copy(state.focus);
+    // An exceptionally tight boom must not give lookAt a coincident/reversed target.
+    if (state.renderedDistance < config.minimumDistance)
+      state.lookTarget.copy(state.actualTarget).addScaledVector(state.desiredBoom, -1);
+    camera.lookAt(state.lookTarget);
     initialized.current = true;
     lastReset.current = motion.resetSequence;
   }, -10);
