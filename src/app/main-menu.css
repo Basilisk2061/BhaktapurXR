@@ -79,20 +79,32 @@
  .menu-status p{font-size:11px;letter-spacing:.08em}
 }
 @media(orientation:landscape) and (max-height:500px) and (max-width:1000px) and (pointer:coarse){
- .main-menu{box-sizing:border-box;min-height:100dvh;justify-content:center;padding:calc(10px + env(safe-area-inset-top)) max(42px,env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) max(42px,env(safe-area-inset-left));gap:8px}
- .menu-content{max-width:700px;display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.8fr);column-gap:24px;align-items:center}
+ .main-menu{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(min-content,1fr) auto;justify-content:normal;justify-items:center;align-items:center;height:100dvh;min-height:0;padding:calc(8px + env(safe-area-inset-top)) max(42px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(42px,env(safe-area-inset-left));gap:6px;overflow-y:auto;overscroll-behavior-y:contain}
+ .main-menu>.menu-textile{block-size:100%;max-block-size:100%}
+ .menu-content{max-width:700px;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.8fr);column-gap:24px;row-gap:4px;align-items:center}
  .menu-ornament{display:none}
- .menu-content h1{grid-column:1;font-size:clamp(26px,4.4vw,38px);letter-spacing:.02em}
- .menu-subtitle{grid-column:1;font-size:10px;margin-top:6px!important}
- .menu-intro{grid-column:1;font-size:14px;line-height:1.5;margin-top:8px!important}
- .menu-primary{grid-column:2;grid-row:1/5;margin:0;gap:0;width:100%;max-width:250px;justify-self:center}
- .menu-explore{width:230px;height:106px;padding:31px 24px 19px}
- .menu-settings{width:205px;height:88px;padding:24px 22px 15px}
- .menu-options{grid-column:1;margin-top:6px;gap:0}
- .menu-options button{min-height:44px;padding:7px 10px;font-size:13px}
- .menu-status{margin-top:0;font-size:11px;line-height:1.4}
+ .menu-content h1{grid-column:1;font-size:clamp(28px,3.8vw,34px);line-height:1.08;letter-spacing:.02em}
+ .menu-subtitle{grid-column:1;font-size:11px;line-height:1.4;margin:0!important}
+ .menu-intro{grid-column:1;font-size:14px;line-height:1.45;margin:0 auto!important;max-width:34ch}
+ .menu-primary{grid-column:2;grid-row:1/5;margin:0;gap:2px;width:100%;max-width:230px;justify-self:center;align-items:center}
+ .menu-explore{width:auto;height:clamp(88px,25dvh,100px);aspect-ratio:270/136;min-height:88px;padding:28px 22px 17px}
+ .menu-settings{width:auto;height:clamp(76px,21dvh,84px);aspect-ratio:240/124;min-height:76px;padding:22px 20px 14px;font-size:14px}
+ .menu-options{grid-column:1;margin:0;gap:0}
+ .menu-options button{min-height:44px;padding:5px 10px;font-size:14px;line-height:1.3}
+ .menu-status{max-width:100%;margin:0;font-size:11px;line-height:1.25}
  .menu-status::before{display:none}
- .menu-status p{margin:0;font-size:10px}
+ .menu-status p{margin:0;font-size:11px;line-height:1.25;letter-spacing:.06em}
+}
+/* At 300–360px height: ~220px left column, <=180px controls, ~28px footer.
+   Padding/gap add 16px plus safe areas. Extra text zoom can scroll, never clip. */
+@media(orientation:landscape) and (max-height:360px) and (max-width:1000px) and (pointer:coarse){
+ .main-menu{padding-top:calc(6px + env(safe-area-inset-top));padding-bottom:calc(6px + env(safe-area-inset-bottom));gap:4px}
+ .menu-content{row-gap:2px}
+ .menu-content h1{font-size:30px;line-height:1}
+ .menu-subtitle{line-height:1.25}
+ .menu-intro{line-height:1.3}
+ .menu-explore{height:88px}
+ .menu-settings{height:76px}
 }
 
 /* Portrait phone menu is a viewport composition, not the desktop vertical stack. */
