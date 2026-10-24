@@ -7,10 +7,10 @@ import type {PlayerInput} from '../game/input/player-input';
 import type {PlayerRuntime} from '../game/player/player-runtime';
 import {readMouseSensitivity} from '../game/input/mouse-sensitivity';
 import {playerConfig} from '../game/player/player-config';
-import {MouseSensitivitySettings} from './mouse-sensitivity-settings';
+import {GameSettings} from './game-settings';
+import {MenuWindowFrame} from './home/menu-window-frame';
 import './mobile-controls.css';
 import './exploration-menu.css';
-import {GraphicsQualitySettings} from './graphics-quality-settings';
 
 export function useTouchDevice(){
  const [touch,setTouch]=useState(false);
@@ -50,7 +50,7 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
    input.current.yaw=Math.atan2(Math.sin(input.current.yaw-dx*sensitivity),Math.cos(input.current.yaw-dx*sensitivity));input.current.pitch=Math.max(camera.minPitch,Math.min(camera.maxPitch,input.current.pitch+dy*sensitivity));last.x=event.clientX;last.y=event.clientY;
   }} onPointerUp={releaseLook} onPointerCancel={releaseLook} onLostPointerCapture={releaseLook}/>
   <div className="touch-orientation" role="status"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><rect x="22" y="12" width="22" height="40" rx="3" fill="none" stroke="currentColor" strokeWidth="2" transform="rotate(25 33 32)"/><path d="M11 28A23 23 0 0 1 35 8M29 3L36 8 30 14M53 36A23 23 0 0 1 29 56M35 61L28 56 34 50" fill="none" stroke="currentColor" strokeWidth="2"/></svg><h2>Rotate your device</h2><p>BhaktapurXR is best experienced in landscape.</p></div>
-  <button type="button" className="exploration-menu-trigger" aria-label="Open game menu" aria-haspopup="dialog" onClick={openMenu}><span aria-hidden="true">&#9776;</span> Menu</button>
+  <button type="button" className="exploration-menu-trigger carved-window-control" aria-label="Open game menu" aria-haspopup="dialog" onClick={openMenu}><MenuWindowFrame compact/><span className="menu-window-label"><span aria-hidden="true">&#9776;</span> Menu</span></button>
   <div className="touch-joystick" role="group" aria-label="Movement joystick. Push farther to run." onPointerDown={event=>{if(event.pointerType==='mouse'||joystick.current||!activate())return;event.preventDefault();const rect=event.currentTarget.getBoundingClientRect();joystick.current={id:event.pointerId,x:rect.left+rect.width/2,y:rect.top+rect.height/2,radius:rect.width*.32};event.currentTarget.setPointerCapture(event.pointerId);moveStick(event);}} onPointerMove={moveStick} onPointerUp={releaseStick} onPointerCancel={releaseStick} onLostPointerCapture={releaseStick}><span className="touch-joystick-thumb" ref={thumb}/></div>
   <div className="touch-actions">
    {prompt&&<button type="button" className="touch-action" onPointerDown={event=>{event.preventDefault();if(activate())input.current.interactRequested=true;}} onClick={event=>{if(event.detail===0&&activate())input.current.interactRequested=true;}}>{prompt==='sit'?'Sit':'Stand'}</button>}
@@ -58,7 +58,7 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
   </div>
   <dialog ref={dialog} className="touch-pause" aria-labelledby="touch-menu-title" onClose={()=>{reset();input.current.inputBlocked=false;setMenu(false);}}>
    <h2 id="touch-menu-title">{settings?'Settings':'BhaktapurXR'}</h2><p className="touch-pause-subtitle">{settings?'Preferences':'Paused'}</p>
-   {settings?<><GraphicsQualitySettings/><MouseSensitivitySettings touch/><button type="button" onClick={()=>setSettings(false)}>Back</button></>:<>
+   {settings?<><GameSettings touch/><button type="button" onClick={()=>setSettings(false)}>Back</button></>:<>
     <button type="button" className="touch-resume" onClick={()=>dialog.current?.close()}>Resume</button>
     <button type="button" onClick={()=>setSettings(true)}>Settings</button>
     {fullscreen&&<button type="button" onClick={()=>{if(document.fullscreenElement)void leaveMobilePresentation();else void enterMobilePresentation();}}>Fullscreen</button>}

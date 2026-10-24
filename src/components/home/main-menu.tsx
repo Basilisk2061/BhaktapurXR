@@ -4,7 +4,7 @@ import {MenuWindowFrame} from './menu-window-frame';
 import {enterMobilePresentation,isTouchPresentation} from '../../lib/mobile-presentation';
 import {useRouter} from 'next/navigation';
 import {useEffect,useRef,useState} from 'react';
-import {MouseSensitivitySettings} from '../mouse-sensitivity-settings';
+import {GameSettings} from '../game-settings';
 import {PUBLIC_EXPLORE_HREF} from '../../game/world/world-mode';
 
 const panels={about:'About the Reconstruction',heritage:'Heritage & History',settings:'Settings',credits:'Credits'} as const;
@@ -25,11 +25,11 @@ export function MainMenu(){
    <p className="menu-subtitle">3D HERITAGE EXPLORATION</p>
    <p className="menu-intro">An evolving digital interpretation of<br className="menu-desktop-break"/> Bhaktapur Durbar Square, Nepal.</p>
    <div className="menu-primary">
-    <Link className="menu-explore" href={PUBLIC_EXPLORE_HREF} prefetch={false} onClick={event=>{
+    <Link className="menu-explore carved-window-control" href={PUBLIC_EXPLORE_HREF} prefetch={false} onClick={event=>{
      if(event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey||!isTouchPresentation())return;
      event.preventDefault();void enterMobilePresentation().finally(()=>router.push(PUBLIC_EXPLORE_HREF));
     }}><MenuWindowFrame/><strong className="menu-window-label">PLAY</strong></Link>
-    <button className="menu-settings" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}><MenuWindowFrame/><span className="menu-window-label">Settings</span></button>
+    <button className="menu-settings carved-window-control" type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel('settings')}><MenuWindowFrame/><span className="menu-window-label">Settings</span></button>
    </div>
    <nav className="menu-options" aria-label="Information">
     {(Object.entries(panels) as [Panel,string][]).filter(([key])=>key!=='settings').map(([key,label])=><button key={key} type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel(key)}>{label}</button>)}
@@ -49,7 +49,7 @@ export function MainMenu(){
      <p>Monument and historical information will expand throughout development. This prototype focuses on exploring the reconstructed environment.</p>
      <p>Historical and cultural information in BhaktapurXR is provided for educational context. It is compiled from publicly available references and research-assisted material, including AI-assisted research, and may contain omissions or inaccuracies. Where possible, authoritative references are identified.</p>
     </>}
-    {panel==='settings'&&<><MouseSensitivitySettings/><p className="menu-panel-note">Your preference stays in this browser.</p></>}
+    {panel==='settings'&&<><GameSettings/><p className="menu-panel-note">Your preference stays in this browser.</p></>}
     {panel==='credits'&&<>
      <p>BhaktapurXR<br/>Independent digital heritage reconstruction project</p>
      <h3>Built with</h3><p>Next.js &middot; React &middot; Three.js<br/>React Three Fiber &middot; React Three Rapier</p>

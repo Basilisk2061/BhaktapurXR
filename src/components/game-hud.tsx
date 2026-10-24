@@ -2,8 +2,8 @@
 import Link from 'next/link';
 import {useEffect,useRef,useState,type RefObject} from 'react';
 import {gameplayCodes,isEditableTarget,type PlayerInput,type PointerStatus} from '../game/input/player-input';
-import {MouseSensitivitySettings} from './mouse-sensitivity-settings';
-import {GraphicsQualitySettings} from './graphics-quality-settings';
+import {GameSettings} from './game-settings';
+import {MenuWindowFrame} from './home/menu-window-frame';
 import './exploration-menu.css';
 export function GameHud({ready,pointerStatus,input}:{ready:boolean;pointerStatus:PointerStatus;input:RefObject<PlayerInput>}){
  const [hintVisible,setHintVisible]=useState(true),[menu,setMenu]=useState(false);
@@ -21,10 +21,10 @@ export function GameHud({ready,pointerStatus,input}:{ready:boolean;pointerStatus
  },[menu,input]);
  if(!ready)return null;
  return <div className="game-hud">
-  <button type="button" className="exploration-menu-trigger" aria-haspopup="dialog" aria-label="Open game menu" onClick={()=>{previousFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;clear();input.current.inputBlocked=true;if(document.pointerLockElement)void document.exitPointerLock();setMenu(true);}}><span aria-hidden="true">&#9776;</span> Menu</button>
+  <button type="button" className="exploration-menu-trigger carved-window-control" aria-haspopup="dialog" aria-label="Open game menu" onClick={()=>{previousFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;clear();input.current.inputBlocked=true;if(document.pointerLockElement)void document.exitPointerLock();setMenu(true);}}><MenuWindowFrame compact/><span className="menu-window-label"><span aria-hidden="true">&#9776;</span> Menu</span></button>
   <dialog ref={dialog} className="exploration-pause" aria-labelledby="desktop-game-menu-title" onCancel={event=>{event.preventDefault();close();}} onClose={()=>{if(menu)close();}}>
    <h2 id="desktop-game-menu-title">BhaktapurXR</h2><button type="button" onClick={close}>Resume</button>
-   <GraphicsQualitySettings/><MouseSensitivitySettings/>
+   <GameSettings/>
    <Link href="/" onClick={()=>{clear();input.current.inputBlocked=false;}}>Return to Main Menu</Link>
   </dialog>
   {hintVisible&&<p className="game-control-hint" role="status">{pointerStatus==='fallback'?'Drag to look':'Click to look'}<span>WASD &middot; Move &nbsp; Shift &middot; Run &nbsp; Space &middot; Jump &nbsp; Esc &middot; Release</span></p>}

@@ -1,0 +1,21 @@
+.menu-window-frame{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;filter:drop-shadow(2px 7px 3px #000b);transition:filter .16s}
+.window-timber{fill:#392a22}
+.window-cast-shadow{fill:#060403;opacity:.8}
+.window-bevel-light{fill:#785c46}
+.window-bevel-dark{fill:#21150f}
+.window-reveal{fill:#4c3529}
+.window-inner-shadow{fill:#030202;opacity:.85}
+.window-carved-band{fill:#1c120e}
+.window-opening{fill:#090706;stroke:#281a14;stroke-width:1;transition:stroke .16s}
+.window-cap{fill:#513b2c;stroke:var(--window-edge);stroke-width:.8;transition:stroke .16s}
+.window-post{fill:#5c4230;stroke:var(--window-edge);stroke-width:.8}
+.window-edge{fill:none;stroke:var(--window-edge);stroke-width:1;transition:stroke .16s}
+.window-carving{fill:none;stroke:var(--window-carving);stroke-width:.7}
+.window-brand{fill:none;stroke:#8e3747;stroke-width:1}
+
+.carved-window-control{--window-edge:#6b5342;--window-carving:#79614d;isolation:isolate}
+.carved-window-control .menu-window-label{position:relative;z-index:1}
+.carved-window-control:hover{--window-edge:#94745a;--window-carving:#a18569}
+.carved-window-control:hover .menu-window-frame{filter:drop-shadow(2px 8px 4px #000c)}
+.carved-window-control:active .menu-window-frame{filter:drop-shadow(1px 2px 1px #000b)}
+@media(prefers-reduced-motion:reduce){.carved-window-control,.carved-window-control .menu-window-frame{transition:none!important}}
