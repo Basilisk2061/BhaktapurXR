@@ -5,6 +5,15 @@ export interface HeritageResearch {reviewed:string;claims:{id:string;field:strin
 export interface HeritageReconstructionEvidence {identity?:HeritageEvidence;placement?:HeritageEvidence;architecture?:HeritageEvidence;dimensions?:HeritageEvidence;note?:string}
 export interface HeritageQuickFact {label:string;value:string;sourceIds:string[]}
 export interface HeritageTimelineEvent {date:string;event:string;sourceIds:string[]}
+export type HeritageLanguage="en"|"ne";
+/** Presentation only: provenance, rights and evidence classifications stay canonical. */
+export interface HeritageTranslation {
+ name:string;localName?:string;alternateNames:string[];period:string;
+ story:string;purpose:string;patron:string;culturalRole:string;architecture:string;
+ whatToNotice:string[];restoration:string;significance:string;
+ quickFacts:{label:string;value:string}[];timeline:{date:string;event:string}[];
+ reconstructionDetail?:string;
+}
 export interface HeritageLandmark {
  id:string;name:string;localName?:string;alternateNames?:string[];
  category:"TEMPLE"|"PALACE"|"GATE"|"MONUMENT"|"PAVILION"|"MUSEUM"|"OTHER";

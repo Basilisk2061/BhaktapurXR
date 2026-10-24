@@ -46,3 +46,23 @@
 @media(max-height:500px) and (min-width:761px){.heritage-dialog{width:calc(100vw - 20px);max-height:calc(100dvh - 12px)}.heritage-page-left,.heritage-content{padding:22px}.heritage-media img{max-height:48dvh}.heritage-heading h1{font-size:32px}}
 @media(max-height:500px){.heritage-prompt-touch{max-width:280px;min-height:66px;padding:9px 18px}.heritage-prompt-touch .heritage-prompt-copy strong{font-size:18px}}
 @media(prefers-reduced-motion:reduce){.heritage-dialog button{transition:none}}
+
+/* A small timber tab inset into the existing cover; page geometry is unchanged. */
+.heritage-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto auto}
+.heritage-language{display:flex;align-items:center;gap:3px;min-width:0;padding:2px;background:#170f0b;border:1px solid #634832;box-shadow:inset 0 2px 4px #0007}
+.heritage-language>span{color:#947252}
+.heritage-language button{justify-content:center;min-width:72px;min-height:48px;padding:8px 10px;border-color:transparent;background:transparent;box-shadow:none;letter-spacing:0}
+.heritage-language button[aria-pressed=true]{background:#483122;border-color:#98734e;box-shadow:inset 0 2px 0 #6b4d36,inset 0 -2px 0 #24160f;color:#f2e6d3}
+.heritage-language button[lang=ne]{font-family:'Noto Serif Devanagari','Noto Sans Devanagari','Nirmala UI',Mangal,serif;line-height:1.7}
+.heritage-dialog[lang=ne]{--heritage-ne-font:'Noto Serif Devanagari','Noto Sans Devanagari','Nirmala UI',Mangal,serif;font-family:var(--heritage-ne-font);line-height:1.95}
+.heritage-dialog[lang=ne] :is(h1,h2,p,dt,dd,summary,button,figcaption,.heritage-gallery,.heritage-sources,.heritage-evidence){font-family:var(--heritage-ne-font);letter-spacing:normal}
+.heritage-dialog[lang=ne] :is(.heritage-heading h1,.heritage-content h2,.heritage-page-left h2){line-height:1.65}
+.heritage-dialog[lang=ne] :is(.heritage-quick-facts dl,.heritage-timeline li,.heritage-reconstruction,.heritage-sources,figcaption){line-height:1.9}
+.heritage-dialog[lang=ne] :is(.heritage-page-label,.heritage-kicker,.heritage-quick-facts dt,.heritage-timeline-date,.heritage-evidence){font-size:12px;line-height:1.8;text-transform:none}
+.heritage-dialog[lang=ne] .heritage-content section:first-of-type>p:first-of-type::first-letter{float:none;font-size:inherit;line-height:inherit;padding:0;color:inherit}
+@media(max-width:760px),(pointer:coarse) and (max-height:600px){
+ .heritage-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:6px 10px}
+ .heritage-language{grid-column:1/-1;grid-row:2;justify-self:center}
+ .heritage-close{grid-column:2;grid-row:1}
+ .heritage-toolbar>span{overflow-wrap:anywhere}
+}
