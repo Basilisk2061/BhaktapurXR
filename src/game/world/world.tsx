@@ -12,12 +12,13 @@ import { worldConfig } from "./world-config";
 
 import { BhaktapurWorld } from "./bhaktapur-world";
 import { worldSpawns, type WorldMode } from "./world-mode";
+import {NightLights} from "./night-lights";
 import { HeritageDaylight } from "@/game/architecture/daylight";
 
 export function World({ mode, architecturalDebug=false, silhouette=false, assemblyEditor, manualOverrides }: { mode: WorldMode; architecturalDebug?:boolean;silhouette?:boolean;assemblyEditor?:AssemblyEditorBinding;manualOverrides?:TransformOverrides }) {
   return (
     <>
-      {mode === "BHAKTAPUR" ? <HeritageDaylight /> : <><Environment /><Ground config={worldConfig.ground} name="engineering-ground" /></>}
+      {mode === "BHAKTAPUR" ? <><HeritageDaylight /><NightLights overrides={manualOverrides}/></> : <><Environment /><Ground config={worldConfig.ground} name="engineering-ground" /></>}
       {mode === "ENGINEERING" ? <TestEnvironment /> : <BhaktapurWorld architecturalDebug={architecturalDebug} silhouette={silhouette} assemblyEditor={assemblyEditor} manualOverrides={manualOverrides} />}
       {mode==="BHAKTAPUR"&&!assemblyEditor&&<EditorPrimitives objects={savedScene.createdObjects as CreatedObject[]}/>}
       {developmentConfig.spawnMarker && <SpawnMarker spawn={worldSpawns[mode]} />}

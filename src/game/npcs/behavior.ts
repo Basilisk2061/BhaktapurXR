@@ -1,3 +1,4 @@
+import {environmentStore} from '../world/time-of-day.ts';
 import {Vector3} from 'three';
 import {nearestArcadeSeat,sittingConfig,type ArcadeSeat,type SeatSpan} from '../player/arcade-sitting.ts';
 import {seededRandom,npcDefinitions,type NpcState} from './definitions.ts';
@@ -6,7 +7,7 @@ export const oldManSitPreference=(cycles:number)=>Math.min(.85,.55+Math.min(Math
 export interface NpcAgent {restCycles:number;id:string;character:string;state:NpcState;position:Vector3;target:Vector3|null;node:number;nextNode:number|null;path:number[];seat:ArcadeSeat|null;sitUntil:number;waitUntil:number;nextSeatAt:number;random:()=>number;phase:number;speed:number;yaw:number;walked:number;actualSpeed:number;blocked:number;edge:string|null;approaching:boolean;returning:boolean}
 const flatDistance=(a:Vector3,b:Vector3)=>Math.hypot(a.x-b.x,a.z-b.z);
 export class NpcSimulation {
- agents:NpcAgent[];time=0;private claims=new Map<string,string>();private planned=new Map<string,Vector3>();
+ agents:NpcAgent[];time=0;private claims=new Map<string,string>();private planned=new Map<string,Vector3>();private override='AUTO';
  graph:WalkGraph;span:SeatSpan;probe:NavigationProbe;
  constructor(graph:WalkGraph,span:SeatSpan,probe:NavigationProbe,instances:readonly {id:string;character:string;seed:number;start:number}[]){
   this.graph=graph;this.span=span;this.probe=probe;
@@ -28,8 +29,21 @@ export class NpcSimulation {
  }
  tick(delta:number,player:Vector3,playerSeat:ArcadeSeat|null){
   this.planned.clear();this.time+=delta;
+  const override=process.env.NODE_ENV==='development'?environmentStore.getState().npcs:'AUTO';
+  if(override!==this.override){
+   for(const agent of this.agents){
+    if(override==='WALK'){
+     agent.sitUntil=this.time;
+     if(agent.state!=='SITTING'&&agent.seat){agent.seat=null;agent.approaching=false;agent.path=[];agent.returning=true;agent.target=this.node(agent.node).point.clone();}
+    }
+    if(override==='SIT')agent.waitUntil=this.time;
+    if(override==='AUTO'&&agent.state==='SITTING')agent.sitUntil=this.time+14+agent.random()*16;
+   }
+   this.override=override;
+  }
   for(const agent of this.agents){
    if(agent.state==='SITTING'){
+    if(override==='SIT')agent.sitUntil=this.time+1;
     if(agent.seat&&Math.abs(player.y-agent.seat.point.y)<2&&flatDistance(player,agent.seat.point)<.8)agent.sitUntil=this.time;
     if(this.time<agent.sitUntil||!agent.seat||!this.clearOfPeople(agent.seat.exit,agent,player,.9))continue;
     const height=this.probe.height(agent.seat.exit);if(height===null)continue;
@@ -37,16 +51,17 @@ export class NpcSimulation {
    }
    if(agent.state==='IDLE'){
     if(this.time<agent.waitUntil)continue;
-    if(this.time>=agent.nextSeatAt&&agent.random()<(agent.character==='old_man_01'?oldManSitPreference(agent.restCycles):.35))this.chooseSeat(agent,player,playerSeat);
+    if(override==='SIT')this.chooseSeat(agent,player,playerSeat);
+    if(override==='AUTO'&&this.time>=agent.nextSeatAt&&agent.random()<(agent.character==='old_man_01'?oldManSitPreference(agent.restCycles):.35))this.chooseSeat(agent,player,playerSeat);
     if(!agent.seat){const candidates=this.graph.nodes.filter(n=>n.id!==agent.node&&route(this.graph,agent.node,n.id).length>0&&this.clearOfPeople(n.point,agent,player));const destination=candidates[Math.floor(agent.random()*candidates.length)];if(!destination){agent.waitUntil=this.time+1;continue;}agent.path=route(this.graph,agent.node,destination.id);}
     agent.state='WALKING';
    }
    if(agent.target&&flatDistance(agent.position,agent.target)<.12){
     if(agent.returning){agent.returning=false;this.idle(agent);continue;}
-    if(agent.nextNode!==null){agent.node=agent.nextNode;agent.nextNode=null;this.release(agent);agent.target=null;if(agent.character==='old_man_01'&&!agent.seat){
+    if(agent.nextNode!==null){agent.node=agent.nextNode;agent.nextNode=null;this.release(agent);agent.target=null;if(override==='SIT'&&!agent.seat&&!agent.returning)this.chooseSeat(agent,player,playerSeat);if(agent.character==='old_man_01'&&!agent.seat){
       agent.restCycles++;
       // Reconsider rest at a reached route node, rather than finishing a long cross-square trip first.
-      if(agent.path.length&&this.time>=agent.nextSeatAt&&agent.random()<oldManSitPreference(agent.restCycles))this.chooseSeat(agent,player,playerSeat);
+      if(override==='AUTO'&&agent.path.length&&this.time>=agent.nextSeatAt&&agent.random()<oldManSitPreference(agent.restCycles))this.chooseSeat(agent,player,playerSeat);
      }}
     else if(agent.approaching&&agent.seat){
      if(!this.clearOfPeople(agent.seat.point,agent,player,1.1)){agent.seat=null;agent.approaching=false;agent.returning=true;agent.target=this.node(agent.node).point.clone();continue;}

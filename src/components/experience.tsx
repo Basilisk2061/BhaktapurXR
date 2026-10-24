@@ -3,6 +3,7 @@
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import dynamic from "next/dynamic";
 import { useCallback, useRef, useState } from "react";
+import {EnvironmentAdmin} from "./environment-admin";
 import {MobileControls,useTouchDevice} from "./mobile-controls";
 import {HeritageInteraction} from "./heritage/heritage-interaction";
 import {GameHud} from "./game-hud";
@@ -46,6 +47,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
     <>
       <ExperienceCanvas touchControls={touch} manualOverrides={manualOverrides} review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
       <ExperienceLoading ready={ready} />
+      {process.env.NODE_ENV==="development"&&ready&&mode==="BHAKTAPUR"&&<EnvironmentAdmin input={input}/>}
       {touch&&ready&&<MobileControls input={input} runtime={runtime} disabled={heritageOpen}/>}
       {ready&&mode==="BHAKTAPUR"&&<HeritageInteraction input={input} runtime={runtime} overrides={manualOverrides} touch={touch} onOpenChange={setHeritageOpen}/>}
       {!touch&&!heritageOpen&&<GameHud input={input} ready={ready} pointerStatus={pointerStatus}/>}
