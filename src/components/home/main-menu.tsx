@@ -35,7 +35,7 @@ export function MainMenu(){
     {(Object.entries(panels) as [Panel,string][]).filter(([key])=>key!=='settings').map(([key,label])=><button key={key} type="button" aria-haspopup="dialog" aria-controls="menu-panel" onClick={()=>setPanel(key)}>{label}</button>)}
    </nav>
   </section>
-  <dialog id="menu-panel" ref={dialog} className="menu-dialog" aria-labelledby="menu-panel-title" onClose={()=>setPanel(null)} onClick={event=>{if(event.target===dialog.current){const rect=event.currentTarget.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.current.close();}}}>
+  <dialog id="menu-panel" ref={dialog} className={`menu-dialog${panel==='settings'?' heritage-settings-dialog':''}`} aria-labelledby="menu-panel-title" onClose={()=>setPanel(null)} onClick={event=>{if(event.target===dialog.current){const rect=event.currentTarget.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)dialog.current.close();}}}>
    <header className="menu-dialog-header"><p>BhaktapurXR</p><form method="dialog"><button type="submit" aria-label="Close panel">Close <span aria-hidden="true">&times;</span></button></form></header>
    <div className="menu-dialog-content">
     <h2 id="menu-panel-title">{panel?panels[panel]:''}</h2>

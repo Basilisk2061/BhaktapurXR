@@ -56,7 +56,7 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
    {prompt&&<button type="button" className="touch-action" onPointerDown={event=>{event.preventDefault();if(activate())input.current.interactRequested=true;}} onClick={event=>{if(event.detail===0&&activate())input.current.interactRequested=true;}}>{prompt==='sit'?'Sit':'Stand'}</button>}
    <button type="button" className="touch-jump" aria-label="Jump" onPointerDown={event=>{event.preventDefault();if(activate()&&!input.current.sitting)input.current.jumpRequested=true;}} onClick={event=>{if(event.detail===0&&activate()&&!input.current.sitting)input.current.jumpRequested=true;}}>Jump</button>
   </div>
-  <dialog ref={dialog} className="touch-pause" aria-labelledby="touch-menu-title" onClose={()=>{reset();input.current.inputBlocked=false;setMenu(false);}}>
+  <dialog ref={dialog} className={`touch-pause${settings?' heritage-settings-dialog':''}`} aria-labelledby="touch-menu-title" onClose={()=>{reset();input.current.inputBlocked=false;setMenu(false);}}>
    <h2 id="touch-menu-title">{settings?'Settings':'BhaktapurXR'}</h2><p className="touch-pause-subtitle">{settings?'Preferences':'Paused'}</p>
    {settings?<><GameSettings touch/><button type="button" onClick={()=>setSettings(false)}>Back</button></>:<>
     <button type="button" className="touch-resume" onClick={()=>dialog.current?.close()}>Resume</button>

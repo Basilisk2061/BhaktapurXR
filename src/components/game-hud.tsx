@@ -22,7 +22,7 @@ export function GameHud({ready,pointerStatus,input}:{ready:boolean;pointerStatus
  if(!ready)return null;
  return <div className="game-hud">
   <button type="button" className="exploration-menu-trigger carved-window-control" aria-haspopup="dialog" aria-label="Open game menu" onClick={()=>{previousFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;clear();input.current.inputBlocked=true;if(document.pointerLockElement)void document.exitPointerLock();setMenu(true);}}><MenuWindowFrame compact/><span className="menu-window-label"><span aria-hidden="true">&#9776;</span> Menu</span></button>
-  <dialog ref={dialog} className="exploration-pause" aria-labelledby="desktop-game-menu-title" onCancel={event=>{event.preventDefault();close();}} onClose={()=>{if(menu)close();}}>
+  <dialog ref={dialog} className="exploration-pause heritage-settings-dialog" aria-labelledby="desktop-game-menu-title" onCancel={event=>{event.preventDefault();close();}} onClose={()=>{if(menu)close();}}>
    <h2 id="desktop-game-menu-title">BhaktapurXR</h2><button type="button" onClick={close}>Resume</button>
    <GameSettings/>
    <Link href="/" onClick={()=>{clear();input.current.inputBlocked=false;}}>Return to Main Menu</Link>
