@@ -14,7 +14,7 @@ A browser-based 3D exploration and experimental reconstruction of **Bhaktapur Du
 
 *Current in-development BhaktapurXR gameplay, captured locally on 24 October 2026. Visual and architectural details are subject to change. These are rendered game views, not photographs of the real square.*
 
-**[Live Development Build](https://bhaktapurxr.motioncricket.workers.dev)** · [GitHub repository](https://github.com/Basilisk2061/BhaktapurXR)
+**[Live Development Build](https://bhaktapurxr.basilisk2061.workers.dev)** · [GitHub repository](https://github.com/Basilisk2061/BhaktapurXR)
 
 The deployed build may change frequently and can differ from the local screenshots or the current repository revision.
 
