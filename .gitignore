@@ -1,14 +1,38 @@
+# Dependencies
 /node_modules/
+
+# Next.js / generated build and coverage output
 /.next/
 /out/
-/.open-next/
-/.wrangler/
+/dist/
+/build/
 /coverage/
 *.tsbuildinfo
 next-env.d.ts
+
+# Cloudflare / local deployment output
+/.open-next/
+/.wrangler/
+
+# Local development (keep the documented example)
 .env*
 !.env.example
+/src/features/bhaktapur/data/world-editor-state.json.tmp
+
+# Temporary captures and offline import sources; runtime exports live in public/.
+/tmp/
+/incoming/
+/.taste-skill/
+# Accidental root Git-log capture, not project source.
+/h
+
+# Logs
 *.log
+/logs/
+
+# IDE user state / OS metadata (shared editor settings are not excluded)
+*.suo
+*.user
 .DS_Store
 Thumbs.db
 
