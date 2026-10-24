@@ -1,5 +1,7 @@
 # Taleju Chowk / Mul Cok, Bhaktapur royal palace
 
+**24 October 2026 correction supersedes the rejected 5.90 m entrance proposal below.** Current Yama Dwar: 10.0 m wide, 14.0 m threshold-to-forward-facade distance, 12.4 m clear court depth. See [ownership audit and correction](yama-dwar-spatial-audit.md) for exact sources/bounds, photo-scale uncertainty, hidden shell cuts and current facade inventory. Mul remains unchanged. Earlier entrance sections are retained as the record of the rejected interpretation, not current specification.
+
 Research and implementation date: **23 October 2026**. Target appearance: the present/restored palace precinct, using documented surviving forms. This is an evidence-qualified reconstruction, **not a surveyed digital twin or a declaration of visual approval**. No application tests, build, typecheck, server, browser review or gameplay screenshots were run, as requested.
 
 ## Identity, terminology and function

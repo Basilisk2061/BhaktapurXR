@@ -22,6 +22,7 @@ export const talejuSources={
 } as const;
 
 export const talejuFeatures:{feature:string;evidence:TalejuEvidenceClass;sources:(keyof typeof talejuSources)[];decision:string}[]=[
+ {feature:'Yama Dwar width and hidden palace proxy separation',evidence:'PHOTO_INFERRED',sources:['entranceUser','yamaPhoto','yamaReverse'],decision:'Reject proxy-constrained 5.90 m court. Width range 8.5-11.5 m, selected 10 m; threshold-to-forward facade 14 m approximate. Preserve public exterior shells/transforms while cutting only hidden interior volumes and corresponding colliders.'},
  {feature:'Yama Dwar entrance-court mixed facades',evidence:'PHOTO_CONFIRMED',sources:['entranceUser','yamaPhoto'],decision:'Replace generic Yam ranges with plaster forward/left, taller carved brick/timber right; all metric dimensions approximate. Preserve deeper Mul.'},
  {feature:'Forward doorway before eastward turn',evidence:'PHOTO_INFERRED',sources:['entranceUser','yamaPhoto','yamaReverse','guide'],decision:'Physical raised doorway and ramp, covered lower range, then rightward connector to Beko. Exact hidden turn arrangement approximate.'},
  {feature:'Entrance carved gallery and separate window families',evidence:'PHOTO_INFERRED',sources:['yamaPhoto','palaceCarving'],decision:'Real projecting timber structure, arch/lattice silhouettes and bands; no invented figurative carvings.'},

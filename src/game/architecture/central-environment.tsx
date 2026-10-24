@@ -57,6 +57,20 @@ function AssemblyCollision({id,model,delta,unchanged,visible}:{id:string;model:C
  const hulls=useMemo(()=>unchanged?null:model.colliders.map(c=>affineCollider(c,delta)),[model,delta,unchanged]);return visible?<RigidBody type="fixed" colliders={false} name={`assembly-collision:${id}`}>{hulls?hulls.map((h,i)=><ConvexHullCollider ref={audioSurfaceRef(modelAudioSurfaces(model)[i])} key={i} args={[h.vertices]} position={h.position}/>):model.colliders.map((c,i)=>c.vertices?<ConvexHullCollider ref={audioSurfaceRef(modelAudioSurfaces(model)[i])} key={i} args={[c.vertices]} position={c.position}/>:<CuboidCollider ref={audioSurfaceRef(modelAudioSurfaces(model)[i])} key={i} args={[c.size[0]/2,c.size[1]/2,c.size[2]/2]} position={c.position} rotation={[0,c.yaw,0]}/>)}</RigidBody>:null;
 }
 function HeritageAssembly({model,materials,box,editor,overrides}:{model:CentralModel;materials:Record<CentralMaterial,MeshStandardMaterial>;box:BoxGeometry;editor?:AssemblyEditorBinding;overrides:TransformOverrides}){
+ // Owner-local colours share all existing maps and shader hooks. No global palette changes.
+ const localPalette=useMemo(()=>{
+  if(!model.materialTints)return {materials,clones:[] as MeshStandardMaterial[]};
+  const result={...materials},clones:MeshStandardMaterial[]=[];
+  const used=new Set([...model.boxes,...model.profiles,...model.shapes,...model.roofs,...(model.volumes??[]),...(model.polygonRoofs??[])].map(p=>p.material));
+  for(const [id,color] of Object.entries(model.materialTints)){
+   const key=id as CentralMaterial;if(!used.has(key))continue;
+   const base=materials[key],copy=base.clone();
+   copy.color.set(color);copy.onBeforeCompile=base.onBeforeCompile;copy.customProgramCacheKey=base.customProgramCacheKey;
+   result[key]=copy;clones.push(copy);
+  }
+  return {materials:result,clones};
+ },[materials,model]);
+ useEffect(()=>()=>localPalette.clones.forEach(m=>m.dispose()),[localPalette]);
  const source=useMemo(()=>({position:[model.origin[0],0,model.origin[1]],rotation:[0,model.yaw,0],scale:[1,1,1]} as ManualTransform),[model]),parts=useMemo(()=>partitionArchitecturalParts(model),[model]);
  const transforms=editor?.transforms??overrides,current=transforms[model.id]??source,visibilityState=editor?.state??{hidden:persistedHidden,isolateId:null},visible=isEditorEntryVisible(model.id,undefined,visibilityState);
  const active=editor?.activePartParent===model.id||parts.some(p=>p.id===editor?.state.isolateId);
@@ -67,8 +81,8 @@ function HeritageAssembly({model,materials,box,editor,overrides}:{model:CentralM
  const partAssets=useMemo(()=>bundles.split.map(p=>({...p,basis:transformMatrix(p.source).invert().multiply(transformMatrix(source).invert())})),[bundles,source]);
  return <group name={`assembly:${model.id}`}>
  <RegisteredGroup id={model.id} transform={current} visible={visible} register={editor?.register}>
- <GeometryBatches model={bundles.remainder} owner={model} materials={materials} box={box} basis={local} selectable={!!editor}/>
- {partAssets.map(p=><RegisteredGroup key={p.id} id={p.id} transform={transforms[p.id]??p.source} visible={isEditorEntryVisible(p.id,model.id,visibilityState)} register={editor?.register}><GeometryBatches model={p.model} owner={model} materials={materials} box={box} basis={p.basis} selectable={!!editor}/></RegisteredGroup>)}
+ <GeometryBatches model={bundles.remainder} owner={model} materials={localPalette.materials} box={box} basis={local} selectable={!!editor}/>
+ {partAssets.map(p=><RegisteredGroup key={p.id} id={p.id} transform={transforms[p.id]??p.source} visible={isEditorEntryVisible(p.id,model.id,visibilityState)} register={editor?.register}><GeometryBatches model={p.model} owner={model} materials={localPalette.materials} box={box} basis={p.basis} selectable={!!editor}/></RegisteredGroup>)}
  </RegisteredGroup>
  <AssemblyCollision id={model.id} model={bundles.remainder} delta={delta} unchanged={sameTransform(source,current)} visible={visible}/>
  {partAssets.map(p=><PartCollision key={p.id} part={p} source={source} current={current} transform={transforms[p.id]??p.source} visible={visible&&isEditorEntryVisible(p.id,model.id,visibilityState)}/>)}

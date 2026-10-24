@@ -47,11 +47,23 @@ export function galleryLight(m:CentralModel,x:number,y:number,w:number,h:number,
  box(m,x,y,z,w,h,.22,'recess','yam-gallery-recess');
  const arch=Array.from({length:17},(_,i)=>{const a=Math.PI-i*Math.PI/16;return [Math.cos(a)*w*.49,Math.sin(a)*.25] as [number,number]});
  shape(m,x,y+h/2-.23,z+.12,[[-w*.59,-.10],...arch.map(([a,b])=>[a,b+.07] as [number,number]),[w*.59,-.10],...arch.slice().reverse().map(([a,b])=>[a*.90,b-.05] as [number,number])],.12,'timber','yam-gallery-arched-lattice-head');
- for(let i=1;i<8;i++)box(m,x-w*.47+i*w*.94/8,y-.08,z+.16,.028,h-.28,.04,'timber','yam-gallery-lattice');
- for(let i=1;i<8;i++)box(m,x,y-h*.5+i*(h-.18)/8,z+.18,w*.94,.028,.04,'timber','yam-gallery-lattice');
+ // Diagonal open lattice, rather than a modern square grille. All strips merge per owner.
+ const hw=w*.47,bottom=-h*.5+.02,top=h*.5-.20;
+ for(const slope of [-1,1])for(let k=-12;k<=12;k++){
+  const intercept=k*.13,hits:[number,number][]=[];
+  for(const xx of [-hw,hw]){const yy=slope*xx+intercept;if(yy>=bottom&&yy<=top)hits.push([xx,yy]);}
+  for(const yy of [bottom,top]){const xx=(yy-intercept)/slope;if(xx>-hw&&xx<hw)hits.push([xx,yy]);}
+  if(hits.length===2){const [a,b]=hits,t=.012;
+   shape(m,x,y,z+.20,[[a[0]-t,a[1]],[a[0]+t,a[1]],[b[0]+t,b[1]],[b[0]-t,b[1]]],.025,'timber','yam-gallery-diagonal-lattice');
+  }
+ }
  for(const side of [-1,1]){
-  box(m,x+side*w*.55,y+.02,z+.18,.18,h+.35,.30,'carvedTimber','yam-gallery-major-pier');
+  box(m,x+side*w*.55,y+.02,z+.18,.22,h+.35,.42,'carvedTimber','yam-gallery-major-pier');
   for(let j=0;j<4;j++)box(m,x+side*w*.55,y-h*.43+j*h*.29,z+.36,.25,.075,.14,'timber','yam-gallery-pier-carved-courses');
+ }
+ for(const side of [-1,1]){
+  box(m,x+side*w*.55,y+.02,z+.40,.10,h*.72,.055,'timber','yam-gallery-pier-nested-panel');
+  box(m,x+side*w*.55,y+h*.47,z+.40,.32,.13,.24,'timber','yam-gallery-pier-capital');
  }
  // Broad lobed crest silhouette is visible; figurative carving is deliberately omitted.
  shape(m,x,y+h*.54,z+.18,[[-w*.59,0],[-w*.48,.30],[-w*.22,.42],[0,.60],[w*.22,.42],[w*.48,.30],[w*.59,0],...arch.slice().reverse().map(([a,b])=>[a,b+.025] as [number,number])],.10,'carvedTimber','yam-gallery-lobed-crest');
@@ -95,9 +107,9 @@ export function entranceRamp(m:CentralModel,x:number,z:number,w:number,run:numbe
 
 /** Only the unidentified visible silhouette is reproduced; no claimed deity, bell or ritual function. */
 export function courtyardMetalFeature(m:CentralModel,x:number,z:number){
- profile(m,x,.08,z,[[0,0],[.64,0],[.69,.06],[.64,.18],[.55,.39],[.45,.84],[.36,.92],[0,.92]],'bronze','yam-unidentified-metal-base',20);
- profile(m,x,1.0,z,[[.22,0],[.35,.05],[.31,.14],[.20,.21],[.14,.29],[.29,.34],[.26,.46],[.15,.52],[.10,.60],[.20,.67],[.17,.80],[.08,.86],[0,.97]],'gold','yam-unidentified-stacked-finial',16);
+ profile(m,x,.08,z,[[0,0],[.43,0],[.47,.05],[.43,.14],[.38,.32],[.31,.66],[.26,.72],[0,.72]],'bronze','yam-unidentified-metal-base',20);
+ profile(m,x,.80,z,[[.17,0],[.25,.04],[.22,.12],[.14,.18],[.10,.23],[.21,.28],[.18,.38],[.11,.43],[.07,.49],[.14,.55],[.12,.64],[.06,.69],[0,.76]],'gold','yam-unidentified-stacked-finial',16);
  const c=Math.cos(m.yaw),s=Math.sin(m.yaw),vertices:number[]=[];
- for(const [y,r] of [[0,.66],[.92,.36]])for(let i=0;i<16;i++){const a=i*Math.PI/8;vertices.push(Math.cos(a)*r,y,Math.sin(a)*r);}
- m.colliders.push({position:[m.origin[0]+x*c+z*s,.08,m.origin[1]-x*s+z*c],size:[1.32,.92,1.32],yaw:0,vertices});
+ for(const [y,r] of [[0,.47],[.72,.26]])for(let i=0;i<16;i++){const a=i*Math.PI/8;vertices.push(Math.cos(a)*r,y,Math.sin(a)*r);}
+ m.colliders.push({position:[m.origin[0]+x*c+z*s,.08,m.origin[1]-x*s+z*c],size:[.94,.72,.94],yaw:0,vertices});
 }
