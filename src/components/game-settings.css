@@ -41,3 +41,49 @@
 .heritage-settings-dialog :is(button,input,a):focus-visible{outline:2px solid #c5a284;outline-offset:4px}
 @media(max-width:450px){.heritage-settings-dialog:is(.menu-dialog,.exploration-pause,.touch-pause){border-width:7px;padding:14px 14px 20px;max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}.heritage-settings-dialog::before{margin-inline:-6px;margin-bottom:16px}.heritage-settings-dialog::after{margin-inline:-6px}.menu-dialog.heritage-settings-dialog:is(.menu-dialog,.exploration-pause,.touch-pause) .menu-dialog-content{padding-inline:0}.menu-dialog.heritage-settings-dialog:is(.menu-dialog,.exploration-pause,.touch-pause) .menu-dialog-header{padding-top:4px}.heritage-settings-dialog:is(.menu-dialog,.exploration-pause,.touch-pause) .graphics-choices{gap:9px}.heritage-settings-dialog:is(.menu-dialog,.exploration-pause,.touch-pause) .graphics-choices button{padding-inline:8px;min-height:80px}}
 @media(prefers-reduced-motion:reduce){.heritage-settings-dialog :is(button,input){transition:none!important}}
+
+/* Only open phone dialogs lock the document; closing restores ordinary page scrolling. */
+@media(max-width:600px),(pointer:coarse) and (max-height:500px) and (max-width:1000px){
+ html:has(:is(.menu-dialog,.touch-pause,.exploration-pause,.heritage-dialog)[open]),
+ body:has(:is(.menu-dialog,.touch-pause,.exploration-pause,.heritage-dialog)[open]){overflow:hidden;overscroll-behavior:none}
+ dialog:is(.menu-dialog,.touch-pause,.exploration-pause)[open]{position:fixed;inset:0;display:flex;flex-direction:column;box-sizing:border-box;width:100%;max-width:100%;height:100dvh;max-height:100dvh;min-height:0;margin:0;border:0;border-radius:0;padding:calc(12px + env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));overflow:hidden;box-shadow:inset 0 0 0 3px #513b2c;font-size:15px}
+ dialog[open].heritage-settings-dialog::before,dialog[open].heritage-settings-dialog::after{display:none}
+ dialog[open].menu-dialog .menu-dialog-header,
+ dialog[open].menu-dialog.heritage-settings-dialog .menu-dialog-header{position:static;flex:none;min-width:0;margin:0;padding:0 0 10px;background:#211b17;border-bottom:3px double #795a43}
+ dialog[open].menu-dialog.heritage-settings-dialog .menu-dialog-header>p{padding-left:0}
+ dialog[open].menu-dialog .menu-dialog-header button{min-height:48px}
+ dialog[open].menu-dialog .menu-dialog-content,
+ dialog[open].menu-dialog.heritage-settings-dialog .menu-dialog-content{flex:1;min-height:0;min-width:0;padding:18px 4px 12px;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-gutter:stable}
+ dialog[open].menu-dialog h2,dialog[open].menu-dialog.heritage-settings-dialog #menu-panel-title{font-size:26px;line-height:1.3;margin-bottom:18px}
+ dialog[open].menu-dialog .menu-dialog-content>p{font-size:15px;line-height:1.65}
+ dialog[open].touch-pause .touch-pause-header{flex:none;padding:4px 0 12px;border-bottom:3px double #795a43}
+ dialog[open].touch-pause .touch-pause-header h2{font-size:26px;line-height:1.2}
+ dialog[open].touch-pause .touch-pause-subtitle{margin:6px 0 0;font-size:12px;letter-spacing:.1em}
+ dialog[open].touch-pause .touch-pause-subtitle::before{display:none}
+ dialog[open].touch-pause .touch-pause-content{flex:1;min-height:0;min-width:0;padding:16px 4px;overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-gutter:stable}
+ dialog[open].touch-pause .touch-pause-actions{flex:none;padding-top:10px;border-top:1px solid #795a43}
+ dialog[open].touch-pause .touch-pause-actions>button{min-height:48px;margin:0;font-size:15px}
+ dialog[open].touch-pause .touch-pause-content>button,dialog[open].touch-pause .touch-pause-content>a{font-size:15px;min-height:48px}
+ dialog[open].exploration-pause>h2{flex:none;font-size:26px;margin:0 0 10px}
+ dialog[open].exploration-pause>button,dialog[open].exploration-pause>a{flex:none;margin-top:10px;min-height:48px}
+ dialog[open].exploration-pause .pause-settings-scroll{flex:1;min-height:0;min-width:0;padding:16px 4px;overflow:auto;overscroll-behavior:contain;touch-action:pan-y}
+ dialog[open].heritage-settings-dialog .heritage-settings section+section{margin-top:20px;padding-top:16px}
+ dialog[open].heritage-settings-dialog .heritage-settings h2{font-size:17px;margin-bottom:12px}
+ dialog[open].heritage-settings-dialog .graphics-choices{gap:10px}
+ dialog[open].heritage-settings-dialog .graphics-choices button{min-height:74px;padding:10px 8px;gap:4px;overflow-wrap:anywhere;touch-action:manipulation}
+ dialog[open].heritage-settings-dialog .graphics-choices button strong{font-size:13px;letter-spacing:.04em}
+ dialog[open].heritage-settings-dialog .graphics-choices button span{font-size:12px;line-height:1.4}
+ dialog[open].heritage-settings-dialog .sensitivity-label{font-size:15px;flex-wrap:wrap}
+ dialog[open].heritage-settings-dialog .sensitivity-label output{margin-left:auto}
+ dialog[open].heritage-settings-dialog #sensitivity-description{font-size:14px;line-height:1.6;margin:12px 0}
+ dialog[open].heritage-settings-dialog .sensitivity-control>button{min-height:48px;font-size:14px}
+ dialog[open] :is(select,input){max-width:100%;min-width:0}
+}
+@media(orientation:landscape) and (max-height:500px) and (max-width:1000px) and (pointer:coarse){
+ dialog[open].touch-pause .touch-pause-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 0 8px}
+ dialog[open].touch-pause .touch-pause-header h2{font-size:22px}
+ dialog[open].touch-pause .touch-pause-subtitle{margin:0}
+ dialog[open].touch-pause .touch-pause-content{padding-block:10px}
+ dialog[open].heritage-settings-dialog .heritage-settings{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}
+ dialog[open].heritage-settings-dialog .heritage-settings section+section{margin:0;padding:0;border:0}
+}

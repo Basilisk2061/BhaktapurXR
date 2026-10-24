@@ -66,3 +66,66 @@
  .heritage-close{grid-column:2;grid-row:1}
  .heritage-toolbar>span{overflow-wrap:anywhere}
 }
+
+/* Phones read one manuscript, not two miniature leaves. Desktop keeps its spread. */
+@media(max-width:600px),(pointer:coarse) and (max-height:500px) and (max-width:1000px){
+ .heritage-dialog[open]{display:flex;flex-direction:column;inset:0;width:100%;max-width:100%;height:100dvh;max-height:100dvh;min-height:0;margin:0;padding:0;border:0;border-radius:0;overflow:hidden;box-shadow:none;font:16px/1.65 Arial,Helvetica,sans-serif}
+ .heritage-dialog .heritage-toolbar{position:relative;top:0;flex:none;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;padding:calc(8px + env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));border-top:0;border-bottom:3px double #795a43;box-shadow:0 2px 6px #17100c55}
+ .heritage-dialog .heritage-toolbar>span{grid-column:2;grid-row:1;min-width:0;text-align:right;font-size:13px;line-height:1.4;letter-spacing:0;overflow-wrap:anywhere}
+ .heritage-dialog .heritage-close{grid-column:1;grid-row:1;min-height:48px;padding:8px 12px;font-size:14px}
+ .heritage-dialog .heritage-language{grid-column:1/-1;grid-row:2;justify-self:stretch;justify-content:center}
+ .heritage-dialog .heritage-language button{flex:1;min-width:0;min-height:44px;font-size:14px}
+ .heritage-dialog .heritage-exhibit{flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;gap:0;margin:0;padding:24px max(20px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left));overflow:auto;overscroll-behavior:contain;touch-action:pan-y;scrollbar-gutter:stable;background-color:var(--book-paper);background-image:radial-gradient(ellipse at 23% 41%,#8f79520a 0 1px,transparent 3px),radial-gradient(ellipse at 61% 73%,#fffdf429 0 1px,transparent 4px);background-size:79px 113px,127px 151px;border:0;border-left:3px solid #a97665}
+ .heritage-dialog .heritage-exhibit::before{display:none}
+ .heritage-dialog :is(.heritage-page-left,.heritage-content){display:contents;padding:0;border:0;border-radius:0;background:none;box-shadow:none}
+ .heritage-dialog :is(.heritage-page-left,.heritage-content)>*{flex:none;min-width:0;max-width:100%;overflow-wrap:anywhere}
+ .heritage-dialog .heritage-heading{order:0}
+ .heritage-dialog .heritage-heading h1{font:400 clamp(27px,7.5vw,34px)/1.25 Georgia,serif;letter-spacing:0;margin-bottom:12px}
+ .heritage-dialog .heritage-heading .heritage-page-label{font-size:11px;line-height:1.5;margin-bottom:10px}
+ .heritage-dialog .heritage-chapter-divider{margin:14px 0 18px}
+ .heritage-dialog .heritage-photo-identity{order:1;padding:0;border:0;margin:0 0 20px}
+ .heritage-dialog .heritage-kicker{font-size:12px;line-height:1.6;letter-spacing:.03em;margin-bottom:8px}
+ .heritage-dialog .heritage-period{font-size:15px;line-height:1.6}
+ .heritage-dialog .heritage-aliases{font-size:14px;line-height:1.6}
+ .heritage-dialog .heritage-page-left>.heritage-page-label,.heritage-dialog .heritage-content>.heritage-page-label,.heritage-dialog .heritage-folio{display:none}
+ .heritage-dialog .heritage-media{order:2;margin:0}
+ .heritage-dialog .heritage-media img{max-width:100%;width:100%;height:auto;max-height:min(35dvh,300px);object-fit:contain;padding:5px}
+ .heritage-dialog .heritage-media figcaption{font:13px/1.65 Arial,Helvetica,sans-serif;padding:14px 0 18px}
+ .heritage-dialog .heritage-image-note{font-size:12px;line-height:1.6}
+ .heritage-dialog .heritage-gallery{order:3;gap:12px;margin:0 0 24px;font-size:14px}
+ .heritage-dialog .heritage-gallery button{min-width:88px;min-height:48px;font-size:14px}
+ .heritage-dialog .heritage-content section{order:6;margin:24px 0 0;padding-top:0}
+ .heritage-dialog .heritage-content section:first-of-type{order:4;margin-top:8px}
+ .heritage-dialog .heritage-content section:first-of-type>p:first-of-type::first-letter{float:none;font:inherit;padding:0;color:inherit}
+ .heritage-dialog :is(.heritage-page-left,.heritage-content) h2{font:400 23px/1.35 Georgia,serif;margin-bottom:12px}
+ .heritage-dialog .heritage-content p{max-width:none;margin-bottom:16px;font-size:16px;line-height:1.65}
+ .heritage-dialog .heritage-quick-facts{order:5;margin-top:24px;padding-top:18px;border-top:3px double var(--book-rule)}
+ .heritage-dialog .heritage-quick-facts dl{font-size:15px;line-height:1.65}
+ .heritage-dialog .heritage-quick-facts dt{font-size:13px;line-height:1.5;letter-spacing:0}
+ .heritage-dialog .heritage-look-for{padding-block:18px!important}
+ .heritage-dialog .heritage-look-for ul{font-size:16px;line-height:1.65}
+ .heritage-dialog .heritage-timeline{order:7;margin-top:28px}
+ .heritage-dialog .heritage-timeline li{font-size:15px;line-height:1.65}
+ .heritage-dialog .heritage-timeline-date{font-size:13px;line-height:1.5}
+ .heritage-dialog .heritage-reconstruction dl>div{align-items:start;gap:16px}
+ .heritage-dialog .heritage-reconstruction dt{font-size:14px}
+ .heritage-dialog .heritage-reconstruction dd{min-width:0;max-width:58%;text-align:right}
+ .heritage-dialog .heritage-evidence{font-size:12px;line-height:1.65;letter-spacing:0}
+ .heritage-dialog .heritage-sources{order:8;margin-top:28px;font:14px/1.65 Arial,Helvetica,sans-serif}
+ .heritage-dialog .heritage-sources summary{min-height:48px;padding-block:12px}
+ .heritage-dialog .heritage-sources p{font-size:14px;line-height:1.65}
+ .heritage-dialog .heritage-colophon{order:9;font-size:13px}
+ .heritage-dialog[lang=ne]{font-family:var(--heritage-ne-font);line-height:1.8}
+ .heritage-dialog[lang=ne] :is(.heritage-heading h1,.heritage-content h2,.heritage-page-left h2){font-family:var(--heritage-ne-font);line-height:1.6}
+ .heritage-dialog[lang=ne] :is(.heritage-content p,.heritage-look-for ul,.heritage-quick-facts dl,.heritage-timeline li){font-family:var(--heritage-ne-font);font-size:16px;line-height:1.8}
+ .heritage-dialog[lang=ne] :is(figcaption,.heritage-gallery,.heritage-sources,.heritage-sources p){font-family:var(--heritage-ne-font);line-height:1.8}
+}
+@media(orientation:landscape) and (max-height:500px) and (max-width:1000px) and (pointer:coarse){
+ .heritage-dialog .heritage-toolbar{grid-template-columns:minmax(0,1fr) auto auto;gap:12px}
+ .heritage-dialog .heritage-toolbar>span{grid-column:1;grid-row:1;text-align:left}
+ .heritage-dialog .heritage-language{grid-column:2;grid-row:1;justify-self:end;min-width:170px}
+ .heritage-dialog .heritage-close{grid-column:3;grid-row:1}
+ .heritage-dialog .heritage-exhibit{padding-top:18px}
+ .heritage-dialog .heritage-media img{max-height:55dvh}
+ .heritage-dialog .heritage-heading h1{font-size:28px}
+}

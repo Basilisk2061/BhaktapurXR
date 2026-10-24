@@ -33,3 +33,11 @@
 @media(max-height:420px){.touch-joystick{width:110px;height:110px;bottom:max(16px,env(safe-area-inset-bottom))}.touch-actions{bottom:max(18px,env(safe-area-inset-bottom))}}
 
 .touch-pause>button,.touch-pause>a{background:#19120f;border-color:#72543e}.touch-pause .touch-resume{background:#2e2119;border-color:#795a43}.touch-pause>button:hover,.touch-pause>a:hover{background:#392a22;border-color:#ad8965}.touch-pause>button:active,.touch-pause>a:active{background:#2e2119}
+
+/* Modal layout only; the joystick, camera area and gameplay actions are unchanged. */
+.touch-pause-content{min-width:0}
+.touch-pause-content>button,.touch-pause-content>a,.touch-pause-actions>button{display:flex;align-items:center;justify-content:center;width:100%;min-height:48px;margin-top:12px;padding:12px;text-decoration:none;color:inherit;background:#19120f;border:1px solid #72543e;border-radius:4px;touch-action:manipulation}
+.touch-pause-content .touch-return{margin-top:24px}
+.touch-pause-actions{display:flex;gap:10px}
+.touch-pause-actions>button{flex:1;min-width:0}
+.touch-pause-content>button:hover,.touch-pause-content>a:hover,.touch-pause-actions>button:hover{background:#392a22;border-color:#ad8965}

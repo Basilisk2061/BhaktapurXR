@@ -57,9 +57,9 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
    <button type="button" className="touch-jump" aria-label="Jump" onPointerDown={event=>{event.preventDefault();if(activate()&&!input.current.sitting)input.current.jumpRequested=true;}} onClick={event=>{if(event.detail===0&&activate()&&!input.current.sitting)input.current.jumpRequested=true;}}>Jump</button>
   </div>
   <dialog ref={dialog} className={`touch-pause${settings?' heritage-settings-dialog':''}`} aria-labelledby="touch-menu-title" onClose={()=>{reset();input.current.inputBlocked=false;setMenu(false);}}>
-   <h2 id="touch-menu-title">{settings?'Settings':'BhaktapurXR'}</h2><p className="touch-pause-subtitle">{settings?'Preferences':'Paused'}</p>
-   {settings?<><GameSettings touch/><button type="button" onClick={()=>setSettings(false)}>Back</button></>:<>
-    <button type="button" className="touch-resume" onClick={()=>dialog.current?.close()}>Resume</button>
+   <header className="touch-pause-header"><h2 id="touch-menu-title">{settings?'Settings':'BhaktapurXR'}</h2><p className="touch-pause-subtitle">{settings?'Preferences':'Paused'}</p></header>
+   <div className="touch-pause-content">
+   {settings?<GameSettings touch/>:<>
     <button type="button" onClick={()=>setSettings(true)}>Settings</button>
     {fullscreen&&<button type="button" onClick={()=>{if(document.fullscreenElement)void leaveMobilePresentation();else void enterMobilePresentation();}}>Fullscreen</button>}
     <Link className="touch-return" href="/" onClick={event=>{
@@ -67,6 +67,11 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
      event.preventDefault();reset();void leaveMobilePresentation().finally(()=>router.push('/'));
     }}>Return to Main Menu</Link>
    </>}
+   </div>
+   <footer className="touch-pause-actions">
+    {settings&&<button type="button" onClick={()=>setSettings(false)}>Back</button>}
+    <button type="button" className="touch-resume" onClick={()=>dialog.current?.close()}>Resume</button>
+   </footer>
   </dialog>
  </div>;
 }
