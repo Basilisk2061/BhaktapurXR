@@ -12,7 +12,7 @@ export default function HighDaylightSky({day=1}:{day?:number}){
  const uniforms=useMemo(()=>({sunDirection:{value:highSunOffset.clone().normalize()},day:{value:1}}),[]);
  uniforms.day.value=day;
  return <>
-  <Environment map={texture} background backgroundIntensity={.008+.642*day} environmentIntensity={.012+.168*day}
+  <Environment map={texture} background backgroundIntensity={.008+.642*day} environmentIntensity={.065+.115*day}
    backgroundRotation={highSkyRotation} environmentRotation={highSkyRotation}/>
   {/* Halo only, not a second sun. Far-plane depth lets opaque architecture occlude it. */}
   <mesh name="high-solar-halo" frustumCulled={false} renderOrder={-1000}>

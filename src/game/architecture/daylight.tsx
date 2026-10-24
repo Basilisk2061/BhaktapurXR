@@ -76,8 +76,8 @@ export function HeritageDaylight() {
   {budget.sky==='gradient'&&<DaylightSky day={day}/>}
   {budget.sky==='hdr'&&<Suspense fallback={null}><HighDaylightSky day={day}/></Suspense>}
   <fog attach="fog" args={[sky,110,360]}/>
-  <hemisphereLight args={[new Color("#597296").lerp(new Color("#d1e2fa"),day),new Color("#262b36").lerp(new Color("#aba99f"),day),.24+(budget.hemisphere-.24)*day]}/>
-  {budget.ambient>0&&<ambientLight color="#f4f6f8" intensity={budget.ambient*day}/>}
+  <hemisphereLight args={[new Color("#9eabc0").lerp(new Color("#d1e2fa"),day),new Color("#626879").lerp(new Color("#aba99f"),day),.55+(budget.hemisphere-.55)*day]}/>
+  <ambientLight color={new Color("#b6becb").lerp(new Color("#f4f6f8"),day)} intensity={.12*(1-day)+budget.ambient*day}/>
   <directionalLight ref={sun} name="heritage-sun" position={[-93,65,25]} target={target} color={sunColor} intensity={budget.sun*day} castShadow={budget.shadows&&day>0} shadow-mapSize={[budget.shadowSize,budget.shadowSize]}
    shadow-camera-left={-budget.shadowExtent} shadow-camera-right={budget.shadowExtent} shadow-camera-top={budget.shadowExtent} shadow-camera-bottom={-budget.shadowExtent} shadow-camera-near={1} shadow-camera-far={180}
    shadow-normalBias={quality==='HIGH'?.012:.02} shadow-bias={-.00004} shadow-radius={quality==='HIGH'?2:1}/>
