@@ -78,3 +78,86 @@ Window carving, structural construction phases and interior murals are not faith
 - Local: `public/heritage/fifty-five-frontage/reference.jpg`; Carved timber window gallery of the Fifty-Five Window Palace.
   Creator: Rajesh Dhungana. [File page](https://commons.wikimedia.org/wiki/File:Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_(3).jpg). [License: CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0). Attribution required: true.
   Source date: 2021-08-20 12:38:22. [Original](https://upload.wikimedia.org/wikipedia/commons/7/77/Fiftyfive_Window_Palace_55_window_Palace_Bhaktapur_Durbar_Square_Bhaktapur_Nepal_Rajesh_Dhungana_%283%29.jpg). Commons web-sized rendition; no architectural or visual alterations.
+
+
+## Heritage book revision - 24 October 2026
+
+This revision supersedes older prose where noted. Original image credits/licenses, model bindings and interaction zones are unchanged. The opening now prioritizes the monument story; uncertainty remains explicit in facts, patronage and sources.
+
+### quickFacts
+
+- Built: 1702-1722 surviving palace phase in the conservation report [palace06]
+- Patron: Bhupatindra Malla; foundations attributed to Jitamitra [palace06]
+- Original role: Royal palace [palace06]
+- Known for: Carved timber gallery and painted interiors [palace06]
+
+Claim ID: `fifty-five-frontage:book:quickFacts`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### timeline
+
+- 1702-1722: Construction period in the conservation report. [palace06]
+- 1934: Earthquake devastated the upper window gallery. [palace06]
+- 2006: Conservation report documents fabric, alterations and proposals. [palace06]
+
+Claim ID: `fifty-five-frontage:book:timeline`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### story
+
+This royal palace is named for its celebrated gallery of fifty-five carved timber windows. The long window facade is the feature to look for: it turns the palace frontage into a sustained display of Newar woodwork rather than a series of unrelated openings. The building belongs to Bhaktapur's former royal complex, but it should not be confused with the adjoining Golden Gate or the museum farther along the frontage. Its significance also reaches beyond the exterior. A conservation study records painted interiors as well as the windows, revealing a palace shaped by several different artistic crafts.
+
+The palace's chronology is layered. Ram Govinda Shrestha's conservation report dates construction to 1702-1722 under Bhupatindra Malla and records an attribution of the foundations to Jitamitra Malla. Nepal Tourism Board gives an earlier, fifteenth-century origin for the palace. Those accounts need not describe the same surviving phase, and no single date is used here for every part of the complex.
+
+The royal building combined residence with an elaborate architectural and painted setting. Its timber gallery and murals are evidence of the artistic investment made in the palace. Changes to the window structure over time also mean that today's frontage cannot simply be treated as fabric preserved unchanged from one reign.
+
+Claim ID: `fifty-five-frontage:book:story`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### purpose
+
+A royal palace needed usable rooms, circulation, shelter and structural support. Its carefully worked public frontage also expressed the court's resources and the abilities of local craftspeople. The upper gallery made windows into a continuous architectural composition rather than a collection of isolated openings.
+
+The painted interiors give another perspective on that investment. Religious imagery and representations of social life occupied actual palace walls. Those rooms are part of the real palace's documented heritage; they are not an invitation to expect fully modeled interiors in this prototype.
+
+Claim ID: `fifty-five-frontage:book:purpose`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### patron
+
+The specific conservation study credits Bhupatindra Malla with construction and identifies local builders working with traditional materials. It treats Jitamitra's foundation work as an attribution. NTB's broader fifteenth-century palace account is retained, but it does not make every part of the current gallery fifteenth-century.
+
+The names of all the woodcarvers, painters, brickmakers and builders are not established here. Their work remains visible even where their names do not survive in this guide.
+
+Claim ID: `fifty-five-frontage:book:patron`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### culturalRole
+
+The palace supported several artistic skills at once. Timber carving provided both architectural detail and a public expression of craftsmanship; masonry and tiled roofs made the building usable; paintings created a different visual world inside. The conservation report describes divine dances, royal portraits and social scenes.
+
+These arts also require different kinds of care. Repairing a supporting beam and conserving a painted surface are not the same operation. Reading the gallery alongside the documented interiors gives a fuller view of the palace than counting windows alone.
+
+Claim ID: `fifty-five-frontage:book:culturalRole`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### whatToNotice
+
+- The continuous upper timber gallery.
+- Repeated frames and the projecting sill.
+- Brick masonry beneath the carved band.
+- Deep roof eaves above the frontage.
+
+Claim ID: `fifty-five-frontage:book:whatToNotice`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### restoration
+
+The 1934 earthquake severely damaged the window gallery. Rebuilding reused salvaged timbers and altered its projecting support. The 2006 conservation report documents these changes; its proposals are not proof that all later work was completed in that year.
+
+Claim ID: `fifty-five-frontage:book:restoration`. Source IDs: palace06, ntb-world, ntb-bhaktapur. Locator: Shrestha 2006, Introduction pp1-2 and post-1934 reconstruction pp5-7; NTB booklet p8.
+
+### Conflicts / decisions
+
+- NTB general 15th-century origin versus report 1702-1722 construction: distinguish site history and surviving frontage; do not collapse into one date.
+
+### Sources reviewed
+
+- `palace06`: Ram Govinda Shrestha / Lund University, 2006, [Conservation of Fifty-Five Window Palace, Bhaktapur](https://www.lth.se/fileadmin/hdm/alumni/papers/cmhb2005/cmhb2005-27.pdf). Conservation report; proposals are not evidence of later completion. Access/review 2026-10-24.
+- `ntb-world`: Nepal Tourism Board, [World Heritage Sites of Nepal: Bhaktapur Durbar Square](https://trade.ntb.gov.np/wp-content/uploads/2023/04/world-heritage-sites-booklet.pdf). Bhaktapur section, printed p8; general palace/site history is not the date of every surviving window. Access/review 2026-10-24.
+- `ntb-bhaktapur`: Nepal Tourism Board, [Bhaktapur](https://ntb.gov.np/en/bhaktapur). General palace chronology differs from the specific conservation report. Access/review 2026-10-24.
+
+No present-day access schedule, unnamed founding patron or precise historic date is inferred from a photograph. Search-index-only and blocked retrievals are identified in the source records.

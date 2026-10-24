@@ -96,5 +96,47 @@
     "organization": "Bhaktapur.com",
     "url": "https://www.bhaktapur.com/discover/statue-of-king-bhupatindra-malla/",
     "note": "Secondary interpretation checked against the supplied licensed detail photograph; sensational anecdotes omitted."
+  },
+  "ntb-world": {
+    "id": "ntb-world",
+    "title": "World Heritage Sites of Nepal: Bhaktapur Durbar Square",
+    "organization": "Nepal Tourism Board",
+    "url": "https://trade.ntb.gov.np/wp-content/uploads/2023/04/world-heritage-sites-booklet.pdf",
+    "note": "Bhaktapur section, printed p8; general palace/site history is not the date of every surviving window."
+  },
+  "nhdp-vatsala": {
+    "id": "nhdp-vatsala",
+    "title": "Vatsala Mandira, Bhaktapur",
+    "organization": "NHDP / Heidelberg University",
+    "url": "https://www.fid4sa.de/themen/selected-monuments/vatsala-mandira-bhaktapur",
+    "note": "Bhupatindra/1699 attribution, twelve columns, three-level base; municipal rebuilding completed in 2020."
+  },
+  "getty-vatsala": {
+    "id": "getty-vatsala",
+    "title": "Vatsala Durga temple, CONA 700008635",
+    "organization": "Getty Research Institute",
+    "url": "https://www.getty.edu/cona/CONAFullSubject.aspx?subid=700008635",
+    "note": "1696 Jitamitra patronage, early eighteenth-century rebuilding. Old ongoing-reconstruction status is not current-condition evidence."
+  },
+  "rubin-siddhi": {
+    "id": "rubin-siddhi",
+    "title": "Siddhi Lakshmi (Purnachandi): The Goddess of Miraculous Power",
+    "organization": "Kerry Lucinda Brown / Rubin Museum, Project Himalayan Art",
+    "url": "https://rubinmuseum.org/projecthimalayanart/essays/siddhi-lakshmi-purnachandi/",
+    "note": "2023 essay; Bhaktapur paragraph distinguishes the seventeenth-century shrine from Nyatapola. Patan rituals and the illustrated bronze are not transferred here."
+  },
+  "slusser82": {
+    "id": "slusser82",
+    "title": "Nepal Mandala, volume I: Courts of the Three Kingdoms",
+    "organization": "Mary Shepherd Slusser / Princeton University Press, 1982",
+    "url": "https://pahar.in/pahar/Books%20and%20Articles/Nepal/1982%20Nepal%20Mandala--Cultural%20Study%20of%20Kathmandu%20Valley%20vol%201%20Text%20by%20Slusser%20s.pdf",
+    "note": "p207 indexed excerpt inspected; scan returned 403. Column commissioning explicitly undocumented; Ranjit tradition recorded. 1737 bell and 1753 gate consecration. Ambiguous Badrinath/Gopinath passage not used as this model's founding evidence."
+  },
+  "doa-inventory": {
+    "id": "doa-inventory",
+    "title": "Bhaktapur conservation inventory",
+    "organization": "Department of Archaeology / UNESCO World Heritage Centre",
+    "url": "https://whc.unesco.org/document/223752",
+    "note": "Indexed inventory p28 inspected; full file exceeds retrieval limit. Silu/Fasi Dega marked completed, FY 2078/79 BS remark; Gopinath/Dwarika completed. Exact-day fields not reconciled or converted."
   }
 }

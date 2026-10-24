@@ -3,10 +3,13 @@ export interface HeritageImage {src:string;alt:string;caption?:string;credit?:st
 export interface HeritageSource {id?:string;title:string;organization?:string;url?:string;note?:string}
 export interface HeritageResearch {reviewed:string;claims:{id:string;field:string;statement:string;sourceIds:string[];locator:string}[];conflicts:string[];unresolved:string[]}
 export interface HeritageReconstructionEvidence {identity?:HeritageEvidence;placement?:HeritageEvidence;architecture?:HeritageEvidence;dimensions?:HeritageEvidence;note?:string}
+export interface HeritageQuickFact {label:string;value:string;sourceIds:string[]}
+export interface HeritageTimelineEvent {date:string;event:string;sourceIds:string[]}
 export interface HeritageLandmark {
  id:string;name:string;localName?:string;alternateNames?:string[];
  category:"TEMPLE"|"PALACE"|"GATE"|"MONUMENT"|"PAVILION"|"MUSEUM"|"OTHER";
  developmentSample?:boolean;period?:string;overview?:string;history?:string;architecture?:string;significance?:string;restoration?:string;
+ quickFacts?:HeritageQuickFact[];timeline?:HeritageTimelineEvent[];story?:string;purpose?:string;patron?:string;culturalRole?:string;whatToNotice?:string[];
  images?:HeritageImage[];sources?:HeritageSource[];reconstruction?:HeritageReconstructionEvidence;research?:HeritageResearch;
 }
 export interface HeritageInteractionZone {landmarkId:string;heritageId:string;position:[number,number,number];radius:number;label?:string}

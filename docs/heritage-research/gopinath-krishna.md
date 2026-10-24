@@ -79,3 +79,89 @@ Project binding remains PROVISIONALLY_IDENTIFIED despite support for the name eq
 - Local: `public/heritage/gopinath-krishna/reference.jpg`; Two-roof temple at the western entrance cluster, identified through the project plan and Department of Archaeology records as Gopinath / Dwarika.
   Creator: Sushilagrg. [File page](https://commons.wikimedia.org/wiki/File:A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg). [License: CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0). Attribution required: true.
   Source date: 2016-04-28 15:20:31. [Original](https://upload.wikimedia.org/wikipedia/commons/5/50/A_temple_at_the_Entrance_of_Bhaktapur_Durbar_Square.jpg). Commons web-sized rendition; no architectural or visual alterations.
+
+
+## Heritage book revision - 24 October 2026
+
+This revision supersedes older prose where noted. Original image credits/licenses, model bindings and interaction zones are unchanged. The opening now prioritizes the monument story; uncertainty remains explicit in facts, patronage and sources.
+
+### quickFacts
+
+- Dedication: Krishna, a form of Vishnu [doa19]
+- Official alternate names: Dwarika / Krishna Temple [doa19]
+- Form: Two-roof Nepalese temple [doa19]
+- Conservation: Completed in FY 2076-77 BS, according to DoA [doa22]
+- Foundation / patron: Not securely established in the consulted monument reports [doa19, doa22]
+
+Claim ID: `gopinath-krishna:book:quickFacts`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### timeline
+
+- 2015: Earthquake damaged the sanctum walls. [doa19]
+- FY 2076-77 BS: Conservation completed without wholesale dismantling. [doa22]
+- 2022: Cambridge records Gai Jatra dancing before the temple. [cambridge]
+
+Claim ID: `gopinath-krishna:book:timeline`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### story
+
+This two-roof Hindu temple belongs to the western entrance cluster of Durbar Square. The Department of Archaeology calls it Gopi Nath and also identifies it as Dwarika or Krishna Temple; Radhakrishna is another documented local name. These names point to its Krishna dedication rather than to several different buildings. The broad tiled roofs and carved timber entrance give it a markedly different character from the square's stone shikhara temples.
+
+The clearest historical identification comes from the Department of Archaeology's Bhaktapur monument entry. It describes a Krishna shrine in the western square and records Satyabhama, Krishna and Radha within the sanctum. A local account instead names Balram with Krishna and Radha. The disagreement concerns the accompanying figures, not the central Krishna dedication.
+
+The temple also belongs to the square's continuing public life. Cambridge Museums documents a traditional dance performed in front of Gopinath Krishna Temple during Gai Jatra in 2022. That observation connects the building to a particular recorded celebration without establishing a fixed ritual timetable for the temple.
+
+Claim ID: `gopinath-krishna:book:story`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### purpose
+
+Its documented religious purpose is worship of Krishna. The official names Gopi Nath, Dwarika and Krishna Temple provide a firm identity even where a founding inscription has not been established. The local Radhakrishna name adds another layer of naming without requiring a separate building.
+
+The space in front can host community activity. Cambridge's photograph records Gai Jatra dancing here in 2022. That is evidence of a particular public occasion, not proof of a fixed temple ritual timetable or of the original reason for choosing this site.
+
+Claim ID: `gopinath-krishna:book:purpose`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### patron
+
+The founding patron and exact year remain unconfirmed in the official monument reports consulted. Popular royal attributions should not replace that missing evidence.
+
+The recent conservation agency is better documented: Bhaktapur's Monument Conservation and Palace Management office worked under the Department of Archaeology, with engineering and archaeological supervision. An institution responsible for modern repairs is not the shrine's original founder. The later official inventory also lists Dwarika/Gopinath as completed; it supplies no missing founding date.
+
+Claim ID: `gopinath-krishna:book:patron`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### culturalRole
+
+The DoA account makes the dedication more specific than a generic Hindu-temple label. It records Satyabhama, Krishna and Radha in the sanctum. A local account names Balram instead of Satyabhama; the difference is retained rather than hidden. No sanctum interior is invented in the game.
+
+Cambridge's older photograph of building materials in front of the temple and its later festival image also show architecture within a working city. Maintenance and public gatherings are part of the site's recorded life, without explaining every episode in its earlier history.
+
+Claim ID: `gopinath-krishna:book:culturalRole`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### whatToNotice
+
+- The broad lower roof and smaller upper roof.
+- The dark timber entrance beneath deep eaves.
+- The raised brick base and central stair approach.
+- The contrast with nearby narrow tower forms.
+
+Claim ID: `gopinath-krishna:book:whatToNotice`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### restoration
+
+The 2015 earthquake damaged the sanctum walls. DoA records shoring, repair of masonry and replacement of deteriorated ground-floor Sal timber. Its 2022 account describes conservation without wholesale dismantling, completed in fiscal year 2076-77 BS.
+
+Claim ID: `gopinath-krishna:book:restoration`. Source IDs: doa19, doa22, cambridge, local-gopi, doa-inventory. Locator: DoA 2019 section 1.13 p32; 2022 project 2 p44; Cambridge Gai Jatra 2022 and archival construction-material captions; later inventory indexed p28.
+
+### Conflicts / decisions
+
+- DoA lists Satyabhama/Krishna/Radha; local account lists Balram/Krishna/Radha. Prefer the official report while retaining the disagreement.
+
+### Sources reviewed
+
+- `doa19`: Department of Archaeology, Nepal / UNESCO, [State of Conservation Report 2019: Kathmandu Valley](https://whc.unesco.org/document/171737). Monument-specific restoration entries; PDF page numbers are one-based. Access/review 2026-10-24.
+- `doa22`: Department of Archaeology, Nepal / UNESCO, [State of Conservation Report 2022: Kathmandu Valley](https://whc.unesco.org/document/191662). Monument-specific conservation project reports; PDF page numbers are one-based. Access/review 2026-10-24.
+- `cambridge`: University of Cambridge Museums, [Continuity and change in the Durbar Square at Bhaktapur, Nepal](https://museums.cam.ac.uk/story/continuity-and-change-in-the-durbar-square-at-bhaktapur-nepal/). Institutional interpretation and identified photographs. Access/review 2026-10-24.
+- `local-gopi`: Bhaktapur.com, [Radhakrishna Temple](https://www.bhaktapur.com/discover/radhakrishna-temple/). Secondary local account; deity list differs from DoA. Access/review 2026-10-24.
+- `doa-inventory`: Department of Archaeology / UNESCO World Heritage Centre, [Bhaktapur conservation inventory](https://whc.unesco.org/document/223752). Indexed inventory p28 inspected; full file exceeds retrieval limit. Silu/Fasi Dega marked completed, FY 2078/79 BS remark; Gopinath/Dwarika completed. Exact-day fields not reconciled or converted. Access/review 2026-10-24.
+
+No present-day access schedule, unnamed founding patron or precise historic date is inferred from a photograph. Search-index-only and blocked retrievals are identified in the source records.

@@ -1,4 +1,28 @@
-# Phase 10B heritage register
+# Heritage research register
+
+**Current editorial revision: 24 October 2026.** All twelve existing records now have a visitor-first book article, sourced quick facts, visible-feature notes and qualified chronology. Each individual dossier has an appended revision; it supersedes older prose where stated. Historical notes below are retained as the Phase 10B audit record, not a claim that research stopped on 18 October.
+
+The shared book reads as two paper leaves inside a timber cover on desktop, and one image/facts/story sequence on mobile. Existing photo metadata, interactions and reconstruction classifications are unchanged. No camera, world, menu, settings or rendering implementation was modified. No new dependencies or assets. No tests, typecheck, build, server, browser review or screenshots were run.
+
+## 24 October source review and decisions
+
+- All twelve records were checked against their monument-specific institutional, conservation and existing image evidence. New schema fields are quickFacts, timeline, story, purpose, patron, culturalRole and whatToNotice. Restoration, architecture and significance continue using existing fields. Field-level claims and locators remain in records.json and the dossiers.
+- Golden Gate: Cambridge/NTB 1754 versus Slusser/other NTB 1753 remains an explicit discrepancy. No day or calendar conversion invented.
+- Fifty-Five Window Palace: specific 1702-1722 surviving-palace chronology distinguished from NTB's earlier palace-site attribution. The 2006 proposal is not described as a restoration completed in 2006.
+- National Art Gallery: 1960 institution separated from older palace fabric; NTB collection interpretation checked, internally inconsistent inscription chronology excluded.
+- Gopinath: DoA 2019 identifies Krishna/Dwarika, two roofs and Satyabhama/Krishna/Radha; 2022 project 2 documents conservation without wholesale dismantling in FY 2076-77 BS. Cambridge records public dancing in 2022. Local Balram list remains qualified. No founding patron/year inferred.
+- Vatsala: DoA/Getty 1696 Jitamitra and later Bhupatindra phase preferred over unqualified local 1672/1674 claims; NHDP gives Bhupatindra/1699 and municipal reconstruction completion in 2020. Multiple Vatsala temples are not conflated.
+- Large Bell: NTB and Slusser support Ranjit/1737; historical sound/use is distinguished from a current ringing timetable. Small Vatsala bell and Yama Dwar metal object remain distinct.
+- Malla Column: Slusser calls commissioning undocumented and records the Ranjit tradition; NTB gives Ranjit/1753. Sitter/prayer identity is secure, installation date/patronage remains disputed. No timeline manufactured.
+- Chyasilin: first-hand authors name Bhupatindra and explicitly identify reconstruction year 1990; modern steel/foundations, local craftspeople and 2015 survival explained. Original founding year still unresolved; old uninspected 1992 caption not preferred.
+- Khauma: official western-entrance role and 2015 rebuilding method supported; no royal founding tale invented.
+- Yaksheshwar: DoA fifteenth-century dating supplemented by NTB Yaksha Malla attribution; local exact 1475 remains qualified. 2022 conservation is not presented as a later completed project.
+- Siddhi Lakshmi: Rubin cultural interpretation distinguishes the seventeenth-century shrine from Nyatapola and Patan examples. DoA numbered-stone reuse and retained plinth are site-specific; no Patan rites copied here.
+- Silu: changing pre-1934/domed/reconstructed forms distinguished. Later official inventory marks completion, remark FY 2078/79 BS; exact table dates not reconciled. No false precise CE conversion.
+
+Retrieval limits: Slusser p207 and the later DoA inventory p28 were inspected through indexed source text; direct full retrieval was blocked/size-limited. This is disclosed in source metadata and dossiers. Other sites and similarly named monuments were excluded where identification was not secure. No source photograph was downloaded or relicensed in this phase.
+
+## Earlier Phase 10B register
 
 Reviewed 18 October 2026. Code/source inspection and historical research only; **no tests, typecheck, build, server, browser review, screenshots or benchmarks were run**. User manual testing remains required.
 
