@@ -16,18 +16,20 @@
 .touch-orientation h2{font:400 28px Georgia,serif;margin:0 0 12px}
 .touch-orientation p{max-width:28ch;margin:0;font-size:15px;color:#bcb0a8}
 .touch-menu-button{z-index:3}
-.touch-pause{position:fixed;inset:0;margin:auto;pointer-events:auto;touch-action:pan-y;width:min(380px,calc(100% - 32px));max-height:calc(100svh - 32px);max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:1px solid #743043;background:#171314;color:#eee5dc;border-radius:8px;padding:24px;overscroll-behavior:contain}
+.touch-pause{position:fixed;inset:0;margin:auto;pointer-events:auto;touch-action:pan-y;width:min(380px,calc(100% - 32px));max-height:calc(100svh - 32px);max-height:calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));border:1px solid #513b2c;background:#211b17;color:#eee5dc;border-radius:8px;padding:24px;overscroll-behavior:contain}
 .touch-pause::backdrop{background:#090708b8}
 .touch-pause h2{font:400 28px Georgia,serif;margin:0;text-align:center}
-.touch-pause-subtitle{text-align:center;text-transform:uppercase;font-size:11px;letter-spacing:.17em;color:#bb8c94;margin:10px 0 24px}
-.touch-pause-subtitle::before{content:"";display:block;width:5px;height:5px;transform:rotate(45deg);background:#8c3447;margin:0 auto 12px}
-.touch-pause .touch-resume{background:#7c293d;border-color:#a3495c}
-.touch-pause .touch-return{margin-top:24px;border-color:#4c2c34;font-size:13px;color:#c9b9b0}
+.touch-pause-subtitle{text-align:center;text-transform:uppercase;font-size:11px;letter-spacing:.17em;color:#b49a7d;margin:10px 0 24px}
+.touch-pause-subtitle::before{content:"";display:block;width:5px;height:5px;transform:rotate(45deg);background:#956c48;margin:0 auto 12px}
+.touch-pause .touch-resume{background:#2e2119;border-color:#795a43}
+.touch-pause .touch-return{margin-top:24px;border-color:#72543e;font-size:13px;color:#c9b9b0}
 .touch-pause>button,.touch-pause>a{display:flex;align-items:center;justify-content:center;width:100%;margin-top:12px;min-height:48px;text-decoration:none;color:inherit}
-.touch-pause>a{border:1px solid #803243;border-radius:8px}
-.touch-pause input{width:100%;accent-color:#a74055;min-height:48px;touch-action:pan-y}
+.touch-pause>a{border:1px solid #72543e;border-radius:8px}
+.touch-pause input{width:100%;accent-color:#886047;min-height:48px;touch-action:pan-y}
 .touch-pause .sensitivity-label,.touch-pause .range-labels{display:flex;justify-content:space-between;gap:10px}
 .touch-pause .range-labels,.touch-pause #sensitivity-description{font-size:13px;color:#b7aaa5}
 .touch-pause .settings-controls h2{font:500 16px Arial,sans-serif}
 @media(orientation:portrait){.touch-orientation{display:flex}.touch-joystick{left:max(20px,env(safe-area-inset-left));width:120px;height:120px}.touch-actions{right:max(20px,env(safe-area-inset-right));gap:10px;flex-direction:column;align-items:flex-end}}
 @media(max-height:420px){.touch-joystick{width:110px;height:110px;bottom:max(16px,env(safe-area-inset-bottom))}.touch-actions{bottom:max(18px,env(safe-area-inset-bottom))}}
+
+.touch-pause>button,.touch-pause>a{background:#19120f;border-color:#72543e}.touch-pause .touch-resume{background:#2e2119;border-color:#795a43}.touch-pause>button:hover,.touch-pause>a:hover{background:#392a22;border-color:#ad8965}.touch-pause>button:active,.touch-pause>a:active{background:#2e2119}
