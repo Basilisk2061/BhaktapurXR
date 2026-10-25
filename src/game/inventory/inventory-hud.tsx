@@ -1,4 +1,5 @@
 'use client';
+import {CameraViewfinder} from './camera-viewfinder';
 import {useEffect,useId,useRef,type RefObject} from 'react';
 import {useStore} from 'zustand';
 import {isEditableTarget,type PointerStatus,type PlayerInput} from '../input/player-input';
@@ -19,6 +20,9 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
   };
   const lowerCamera=()=>{if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
   const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99)held.using=true;}else if(item==='birdFood')session.food.request();};
+  let pendingWheel=0;
+  const openWheel=()=>{cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();};
+  const waitForLower=()=>{if(input.current.inputBlocked||document.hidden){pendingWheel=0;return;}if(input.current.cameraView)pendingWheel=requestAnimationFrame(waitForLower);else{pendingWheel=0;openWheel();}};
   const keyDown=(event:KeyboardEvent)=>{
    const expanded=session.inventory.getState().expanded;
    if(event.code==='Escape')lowerCamera();
@@ -26,11 +30,11 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    if((!expanded&&!playable())||isEditableTarget(event.target)||event.ctrlKey||event.metaKey||event.altKey)return;
    if(event.code==='Tab'){
     event.preventDefault();if(event.repeat||expanded||touch)return;
-    lowerCamera();cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();
+    lowerCamera();if(input.current.cameraView){pendingWheel=requestAnimationFrame(waitForLower);return;}openWheel();
    }
    const slot=/^Digit([1-5])$/.exec(event.code);if(slot&&!event.repeat){event.preventDefault();const index=Number(slot[1])-1;if(expanded)session.inventory.getState().highlight(index);session.inventory.getState().select(index);}
   };
-  const keyUp=(event:KeyboardEvent)=>{if(event.code==='Tab'&&session.inventory.getState().expanded){event.preventDefault();close(true);}};
+  const keyUp=(event:KeyboardEvent)=>{if(event.code==='Tab'&&pendingWheel){cancelAnimationFrame(pendingWheel);pendingWheel=0;}if(event.code==='Tab'&&session.inventory.getState().expanded){event.preventDefault();close(true);}};
   const move=(event:MouseEvent)=>{
    if(!session.inventory.getState().expanded)return;
    if(input.current.inputBlocked||modal()){close(false,false);return;}
@@ -47,7 +51,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    if(pending.eligible&&locked){useItem();pending=null;}
   };
   const up=(event:PointerEvent)=>{if(pending?.eligible&&!pending.locked&&Math.hypot(event.clientX-pending.x,event.clientY-pending.y)<5)useItem();pending=null;};
-  const reset=()=>{pending=null;lowerCamera();close(false,false);};
+  const reset=()=>{cancelAnimationFrame(pendingWheel);pendingWheel=0;pending=null;lowerCamera();close(false,false);};
   const visibility=()=>{if(document.hidden)reset();};
   const lock=()=>{if(session.inventory.getState().expanded&&document.pointerLockElement!==canvas)reset();};
   const unsubscribe=session.inventory.subscribe((next,previous)=>{if(next.selected!==previous.selected){const motion=runtime.current,item=inventorySlots[next.selected];motion.itemAction=null;
@@ -61,7 +65,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
  },[session,input,runtime,pointerStatus,touch]);
  const item=inventorySlots[state.selected],selectedItem=item?inventoryItems[item]:null,highlighted=inventorySlots[state.highlighted],details=highlighted?inventoryItems[highlighted]:null;
  return <>
-  <CameraViewfinder runtime={runtime} touch={touch}/>
+  <CameraViewfinder runtime={runtime} input={input} session={session} touch={touch}/>
   {state.expanded&&!touch&&<div className="inventory-wheel-screen" aria-label="Item selection wheel"><svg className="inventory-wheel" viewBox="-200 -200 400 400" role="group" aria-label="Five quick slots">{inventorySlots.map((item,index)=>{
    const point=(radius:number,angle:number)=>[Math.cos(angle)*radius,Math.sin(angle)*radius],angle=-Math.PI/2+index*Math.PI*2/5,start=angle-Math.PI/5+.025,end=angle+Math.PI/5-.025,a=point(180,start),b=point(180,end),c=point(85,end),d=point(85,start),label=point(132,angle),path=`M ${a} A 180 180 0 0 1 ${b} L ${c} A 85 85 0 0 0 ${d} Z`,clipId=`${wheelId}-slot-${index}`;
    return <g key={index} className={`inventory-segment${index===state.highlighted?' is-highlighted':''}${item?'':' is-empty'}`} aria-label={`Slot ${index+1}: ${item?inventoryItems[item].label:'Empty'}`}><defs><clipPath id={clipId}><path d={path}/></clipPath></defs><foreignObject x="-200" y="-200" width="400" height="400" clipPath={`url(#${clipId})`}><div className="inventory-wood"/></foreignObject><path className="inventory-segment-shadow" d={path}/><path className="inventory-segment-edge" d={path}/>{item&&<InventoryItemIcon icon={inventoryItems[item].icon} x={label[0]-12} y={label[1]-44} width={24} height={24}/>}<text x={label[0]} y={label[1]-5} textAnchor="middle">{index+1}</text><text x={label[0]} y={label[1]+15} textAnchor="middle" className="inventory-slot-label">{item?inventoryItems[item].label:'Empty'}</text></g>;
@@ -73,11 +77,4 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    {touch&&<div className="inventory-touch-actions"><button type="button" onClick={()=>{if(!input.current.inputBlocked&&!document.querySelector('dialog[open]')){input.current.active=true;state.select((state.selected+1)%5);}}}>Item</button>{item&&<button type="button" onClick={()=>{if(!input.current.inputBlocked&&!runtime.current.bellAction&&!runtime.current.seat&&!input.current.flying&&!document.querySelector('dialog[open]')){input.current.active=true;if(item==='camera'){const held=runtime.current.handheldCamera;if(held&&held.hold>=.99)held.using=!held.using;}else session.food.request();}}}>{item==='camera'?'Use / Lower Camera':'Throw grain'}</button>}</div>}
   </aside>}
  </>;
-}
-
-/** DOM overlay reads the same runtime transition without rerendering the game. */
-function CameraViewfinder({runtime,touch}:{runtime:RefObject<PlayerRuntime>;touch:boolean}){
- const panel=useRef<HTMLDivElement>(null);
- useEffect(()=>{let frame=0;const update=()=>{if(panel.current)panel.current.hidden=(runtime.current.handheldCamera?.view??0)<.95;frame=requestAnimationFrame(update);};frame=requestAnimationFrame(update);return()=>cancelAnimationFrame(frame);},[runtime]);
- return <div ref={panel} hidden className="camera-viewfinder" aria-label="Camera viewfinder"><span className="camera-viewfinder-title">Camera</span><i className="camera-focus"/><div className="camera-frame"/><p>{touch?'Touch to look | Use / Lower Camera to return':'Mouse to look | Right Click to lower camera'}</p></div>;
 }

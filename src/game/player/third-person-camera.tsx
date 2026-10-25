@@ -1,7 +1,8 @@
-import { useMemo, useRef, type RefObject } from "react";
-import { useFrame } from "@react-three/fiber";
+import {photographyExposure} from '../inventory/photography-settings';
+import { useEffect, useMemo, useRef, type RefObject } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useRapier, type RapierRigidBody } from "@react-three/rapier";
-import { Vector3, type Group } from "three";
+import { Vector3, type PerspectiveCamera, type Group } from "three";
 import type { PlayerInput } from "@/game/input/player-input";
 import { playerConfig } from "./player-config";
 import { safeDelta } from "./movement";
@@ -19,6 +20,26 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
     candidate: new Vector3(), direction: new Vector3(), desiredBoom: new Vector3(),
     freeOrbit: new Vector3(), lookTarget: new Vector3(), renderedDistance: 0, sphere: new rapier.Ball(playerConfig.camera.collisionRadius),
   }), [rapier]);
+  const {camera:renderCamera,gl}=useThree();
+  const photography=useRef({applied:false,exposure:1,fov:50,lastExposure:1});
+  useEffect(()=>()=>{const saved=photography.current;if(saved.applied){gl.toneMappingExposure=saved.exposure;const c=renderCamera as PerspectiveCamera;c.fov=saved.fov;c.updateProjectionMatrix();}},[gl,renderCamera]);
+  // Runs after camera positioning, before the existing renderer/composer. No extra render pass.
+  useFrame(({camera,gl},dt)=>{
+    const motion=runtimeRef.current,settings=motion.photography,view=motion.handheldCamera?.view??0,cameraState=photography.current,c=camera as PerspectiveCamera;
+    if(!c.isPerspectiveCamera)return;
+    if(view>0&&settings){
+      if(!cameraState.applied){cameraState.exposure=gl.toneMappingExposure;cameraState.fov=c.fov;cameraState.lastExposure=gl.toneMappingExposure;cameraState.applied=true;}
+      else if(gl.toneMappingExposure!==cameraState.lastExposure)cameraState.exposure=gl.toneMappingExposure;
+      const s=settings.getState(),weight=view*view*(3-2*view),fov=2*Math.atan(36/(2*s.focal*c.aspect))*180/Math.PI;
+      c.fov+=(cameraState.fov+(fov-cameraState.fov)*weight-c.fov)*(1-Math.exp(-12*Math.min(dt,.05)));c.updateProjectionMatrix();
+      gl.toneMappingExposure=cameraState.exposure*(1+(photographyExposure(s)-1)*weight);cameraState.lastExposure=gl.toneMappingExposure;
+      inputRef.current.cameraLookScale=Math.max(.2,24/s.focal);
+      if(s.focusRequested){camera.getWorldDirection(state.direction);const hit=world.castRay(new rapier.Ray(camera.position,state.direction),500,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS|rapier.QueryFilterFlags.ONLY_FIXED,undefined,undefined,bodyRef.current??undefined);settings.setState({focusRequested:false,...(hit?{focus:hit.timeOfImpact,manualFocus:false,focusUntil:Date.now()+850}:{focusUntil:0})});}
+    }else{
+      inputRef.current.cameraLookScale=1;
+      if(cameraState.applied){gl.toneMappingExposure=cameraState.exposure;c.fov=cameraState.fov;c.updateProjectionMatrix();cameraState.applied=false;}
+    }
+  },-1);
   const initialized = useRef(false);
   const lastReset = useRef(-1);
 
@@ -71,7 +92,7 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
     if(held){
       if(controls.flying||controls.inputBlocked||controls.inventoryOpen||!controls.active||motion.seat||motion.bellAction||!held.wanted)held.using=false;
       held.view=Math.max(0,Math.min(1,held.view+(held.using?delta/.35:-delta/.35)));
-      controls.cameraView=held.view>0;
+      controls.cameraView=held.view>0;held.pitch=controls.pitch;
       if(held.view>0){
         const blend=held.view*held.view*(3-2*held.view);
         const eye=state.ideal;
