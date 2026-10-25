@@ -1,5 +1,6 @@
 "use client";
 import {BellInteractions} from "./bells/bell-session";
+const PigeonFlocks=lazy(()=>import("./pigeons/pigeon-flocks").then(m=>({default:m.PigeonFlocks})));
 const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m.NpcPopulation})));
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
@@ -95,6 +96,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><NpcPopulation transforms={manualOverrides} player={runtime}/></Suspense>}
+          {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><PigeonFlocks player={runtime}/></Suspense>}
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={initialReady} />
