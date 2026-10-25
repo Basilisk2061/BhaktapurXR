@@ -1,3 +1,4 @@
+import {rebuildChyasilin} from "./chyasilin-model.ts";
 import type {CentralModel} from "./central-model.ts";
 import {buildSpatiallyAuditedModels} from "./spatially-audited-models.ts";
 import {buildSquareEdge} from "./square-edge-models.ts";
@@ -54,14 +55,6 @@ function golden(m:CentralModel){
  box(m,3.97,4.72,.52,.26,1.45,1.18,"plaster","gate-side-masonry-east-plaster-return");
  m.roofs.find(r=>r.role==="golden-gate-swept-canopy")!.role="phase9b-golden-gate-swept-canopy";
 }
-function chya(m:CentralModel){
- for(let i=0;i<8;i++){
-  const t=Math.PI/8+i*Math.PI/4,n=t+Math.PI/4,r=1.03,x=(Math.cos(t)+Math.cos(n))*r/2,z=(Math.sin(t)+Math.sin(n))*r/2,len=2*r*Math.sin(Math.PI/8),yaw=-t-Math.PI/8-Math.PI/2;
-  box(m,x,5.98,z,len,.7,.1,"timber","pavilion-upper-enclosed-apron",false,yaw);
-  box(m,x,6.79,z,len*.75,.86,.035,"recess","pavilion-upper-recessed-timber-screen",false,yaw);
-  box(m,x,7.3,z,len,.2,.13,"timber","pavilion-upper-screen-head",false,yaw);
- }
-}
 function cornerShrine(palace:CentralModel):CentralModel {
  const w=palace.boxes.find(b=>b.role==="palace-foundation")!.size[0],x=-w/2+.45,z=1.65,c=Math.cos(palace.yaw),s=Math.sin(palace.yaw);
  const m:CentralModel={id:"palace-corner-shrine-unresolved",anchorId:"PHOTO_RELATIVE_PALACE_CORNER",origin:[palace.origin[0]+x*c+z*s,palace.origin[1]-x*s+z*c],yaw:palace.yaw,accuracy:"PHOTO_INFERRED",neutral:false,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};
@@ -80,7 +73,7 @@ export function buildInsideSquareModels():EditableModel[]{
   if(m.id==="gallery-frontage")gallery(m);
   if(m.id==="fifty-five-frontage")palaceBase(m);
   if(m.id==="golden-gate")golden(m);
-  if(m.id==="chyasilin")chya(m);
+  if(m.id==="chyasilin")rebuildChyasilin(m);
   if(m.id==="vatsala-durga"){
    const bases=m.boxes.filter(b=>b.role==="stepped-base"),lower=[...bases[0].size],upper=[...bases[8].size];
    bases.forEach((b,i)=>{const old=JSON.stringify([b.position,b.size,b.yaw]),collider=m.colliders.find(c=>JSON.stringify([c.position,c.size,c.yaw])===old),j=Math.floor(i/3)*3;
