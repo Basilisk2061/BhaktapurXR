@@ -1,4 +1,4 @@
-import {photographyExposure} from '../inventory/photography-settings';
+import {photographyExposure,photographyLookScale} from '../inventory/photography-settings';
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRapier, type RapierRigidBody } from "@react-three/rapier";
@@ -33,8 +33,8 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
       const s=settings.getState(),weight=view*view*(3-2*view),fov=2*Math.atan(36/(2*s.focal*c.aspect))*180/Math.PI;
       c.fov+=(cameraState.fov+(fov-cameraState.fov)*weight-c.fov)*(1-Math.exp(-12*Math.min(dt,.05)));c.updateProjectionMatrix();
       gl.toneMappingExposure=cameraState.exposure*(1+(photographyExposure(s)-1)*weight);cameraState.lastExposure=gl.toneMappingExposure;
-      inputRef.current.cameraLookScale=Math.max(.2,24/s.focal);
-      if(s.focusRequested){camera.getWorldDirection(state.direction);const hit=world.castRay(new rapier.Ray(camera.position,state.direction),500,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS|rapier.QueryFilterFlags.ONLY_FIXED,undefined,undefined,bodyRef.current??undefined);settings.setState({focusRequested:false,...(hit?{focus:hit.timeOfImpact,manualFocus:false,focusUntil:Date.now()+850}:{focusUntil:0})});}
+      inputRef.current.cameraLookScale=photographyLookScale(s.focal);
+      if(s.focusRequested){camera.getWorldDirection(state.direction);const hit=world.castRay(new rapier.Ray(camera.position,state.direction),500,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS|rapier.QueryFilterFlags.ONLY_FIXED,undefined,undefined,bodyRef.current??undefined);settings.setState({focusRequested:false,...(hit?{focus:hit.timeOfImpact,manualFocus:false,focusFailed:false,focusUntil:Date.now()+850}:{focusFailed:true,focusUntil:Date.now()+850})});}
     }else{
       inputRef.current.cameraLookScale=1;
       if(cameraState.applied){gl.toneMappingExposure=cameraState.exposure;c.fov=cameraState.fov;c.updateProjectionMatrix();cameraState.applied=false;}

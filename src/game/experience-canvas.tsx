@@ -51,6 +51,13 @@ interface ExperienceCanvasProps {
   onPointerStatus: (status: PointerStatus) => void;
 }
 
+/** One render owner: existing HIGH pipeline, or camera-only DOF on LOW/MEDIUM. */
+function PhotographyEffects({runtime}:{runtime:RefObject<PlayerRuntime>}){
+ const quality=useGraphicsQuality(),[active,setActive]=useState(false),previous=useRef(false);
+ useFrame(()=>{const next=quality!=='VERY LOW'&&(runtime.current.handheldCamera?.view??0)>0;if(next!==previous.current){previous.current=next;setActive(next);}});
+ return quality==='HIGH'||(quality!=='VERY LOW'&&active)?<Suspense fallback={null}><HighQualityEffects runtime={runtime} quality={quality}/></Suspense>:null;
+}
+
 function SceneReady({ onReady }: Pick<ExperienceCanvasProps, "onReady">) {
   const frames = useRef(0);
   useFrame(() => {
@@ -89,7 +96,7 @@ export default function ExperienceCanvas({ items, onReady, onUnavailable, input,
       <ContextGuard onUnavailable={onUnavailable} />
       <RendererQuality/>
       {quality==='VERY LOW'&&<VeryLowResolution mobile={touchControls}/>}
-      {budget.post&&<Suspense fallback={null}><HighQualityEffects/></Suspense>}
+      <PhotographyEffects runtime={runtime}/>
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
