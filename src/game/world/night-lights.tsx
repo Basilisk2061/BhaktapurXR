@@ -4,6 +4,8 @@ import {Vector3,Matrix4,Quaternion,BoxGeometry,MeshStandardMaterial} from 'three
 import {useGraphicsQuality} from '../../lib/graphics-quality';
 import {transformMatrix,overrideMatrix,type ManualTransform,type TransformOverrides} from '../../features/world-editor/transforms';
 import {buildCompletedSquareModels} from '../architecture/square-completion';
+import {buildEntranceCourt} from '../architecture/taleju/entrance-court';
+import {placeTaleju} from '../architecture/taleju/spatial';
 import {museumEntranceCentre} from '../architecture/museum-entrance';
 import {environmentStore,daylightAmount} from './time-of-day';
 
@@ -15,6 +17,8 @@ const areas=[
  {id:'golden-gate',local:[4.7,4.1,2.8],name:'goldenGateEastFacade',intensity:70,range:18},
  {id:'golden-gate',local:[-4.7,4.1,2.8],name:'goldenGateWestFacade',intensity:65,range:18},
  {id:'vatsala-durga',local:[-3.4,4.5,1.7]},
+ // West range is the player's left while entering northward through Golden Gate.
+ {id:'taleju:YamWestRange',local:[-3,3.7,1.6],name:'yamInnerLeftEntranceWash',intensity:55,range:11},
  // From the plaza (+Z facing -Z), local -X is visual left of this gate.
  {id:'golden-gate',local:[-11,4.7,3.1],name:'goldenGateVisualLeftFrontage',intensity:90,range:20},
  {id:'silu-mahadev',local:[3,4.8,5.4]},
@@ -33,7 +37,7 @@ const areas=[
  {id:'rameshwar',local:[1.6,3.6,2.1],name:'rameshwarPavilionEntrance',intensity:60,range:22},
  {id:'east:small-shikhara-unresolved',local:[1.3,3.3,1.8],name:'easternSmallShrineEntrance',intensity:55,range:20},
 ] as const;
-const counts={'VERY LOW':4,LOW:8,MEDIUM:12,HIGH:19} as const;
+const counts={'VERY LOW':4,LOW:9,MEDIUM:13,HIGH:20} as const;
 // Visual interpretation: only plain straight timber edges, never carved lintels,
 // window headers, gilded ornament or full roof silhouettes.
 interface Accent {id:string;role:string;name:string;index?:number;gateEnd?:boolean;length?:number}
@@ -51,6 +55,9 @@ let frames:Map<string,{source:ManualTransform;doorX:number;strips:{name:string;m
 function sourceFrames(){
  if(!frames){
  const models=buildCompletedSquareModels(),gate=models.find(model=>model.id==='golden-gate');
+ // Reuse the same entrance builder as the rendered Taleju transition, not an
+ // outside-gate proxy. Only source frames survive this one-time construction.
+ if(gate)models.push(...buildEntranceCourt(placeTaleju(gate)));
  frames=new Map(models.filter(model=>areas.some(area=>area.id===model.id)).map(model=>[model.id,{
   source:{position:[model.origin[0],0,model.origin[1]],rotation:[0,model.yaw,0],scale:[1,1,1]} satisfies ManualTransform,
   doorX:model.id==='gallery-frontage'?museumEntranceCentre(model):0,
