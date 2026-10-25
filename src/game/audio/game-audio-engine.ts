@@ -49,7 +49,7 @@ export class GameAudioEngine {
  }
  private async loadBell(context:AudioContext){
   // Optional owner-supplied/licensed asset. A missing file never blocks game audio.
-  try{const response=await fetch('/audio/environment/bell-large.ogg',{signal:this.abort.signal});if(!response.ok)return;
+  try{const response=await fetch('/assets/audio/ambience/bell-large.wav',{signal:this.abort.signal});if(!response.ok)return;
    const buffer=await context.decodeAudioData(await response.arrayBuffer());if(!this.disposed)this.buffers.set('heritage-bell',buffer);
   }catch{/* Missing/undecodable optional sound: interaction remains silent and functional. */}
  }
