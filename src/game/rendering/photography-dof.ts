@@ -8,11 +8,20 @@ export function createPhotographyDof(samples:number){
  float distanceAt(vec2 uv){return -perspectiveDepthToViewZ(texture2D(tDepth,uv).x,nearClip,farClip);}
  void main(){float z=max(.05,distanceAt(vUv));
   float coc=focal*focal/(max(1.,fstop)*36000.)*abs(1./z-1./max(.3,focus));
-  float radius=min(maxRadius,coc*.5)*strength;
-  vec4 color=texture2D(tDiffuse,vUv)*.25;float weight=.25;
-  for(int i=0;i<TAPS;i++){float angle=float(i)*6.2831853/float(TAPS);vec2 uv=clamp(vUv+vec2(cos(angle),sin(angle)*aspect)*radius,vec2(.001),vec2(.999));
-   // Reject nearer silhouette samples to limit color bleeding over sharp foreground.
-   float depth=distanceAt(uv),w=step(z-max(.1,z*.02),depth)*(.75/float(TAPS));color+=texture2D(tDiffuse,uv)*w;weight+=w;}
+  float radius=min(maxRadius,coc*.35)*strength;
+  vec4 color=texture2D(tDiffuse,vUv)*.4;float weight=.4;
+  for(int i=0;i<TAPS;i++){
+   // Stratified disk, not a sparse ring of repeated edge ghosts.
+   float r=sqrt((float(i)+.5)/float(TAPS)),angle=float(i)*2.39996323;
+   vec2 uv=clamp(vUv+vec2(cos(angle),sin(angle)*aspect)*radius*r,vec2(.001),vec2(.999));
+   float depth=max(.05,distanceAt(uv));
+   // Symmetric bilateral rejection: neither nearer nor farther surfaces may bleed
+   // over a silhouette. Linearized distances also distinguish architecture from sky.
+   float gap=abs(depth-z)/max(.06,min(depth,z)*.018);
+   float edgeWeight=gap<3.?exp(-2.*gap*gap):0.;
+   float w=edgeWeight*exp(-r*r)*(.6/float(TAPS));
+   color+=texture2D(tDiffuse,uv)*w;weight+=w;
+  }
   gl_FragColor=color/weight;
  }`});
  pass.material.toneMapped=false;

@@ -34,7 +34,7 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
       c.fov+=(cameraState.fov+(fov-cameraState.fov)*weight-c.fov)*(1-Math.exp(-12*Math.min(dt,.05)));c.updateProjectionMatrix();
       gl.toneMappingExposure=cameraState.exposure*(1+(photographyExposure(s)-1)*weight);cameraState.lastExposure=gl.toneMappingExposure;
       inputRef.current.cameraLookScale=photographyLookScale(s.focal);
-      if(s.focusRequested){camera.getWorldDirection(state.direction);const hit=world.castRay(new rapier.Ray(camera.position,state.direction),500,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS|rapier.QueryFilterFlags.ONLY_FIXED,undefined,undefined,bodyRef.current??undefined);settings.setState({focusRequested:false,...(hit?{focus:hit.timeOfImpact,manualFocus:false,focusFailed:false,focusUntil:Date.now()+850}:{focusFailed:true,focusUntil:Date.now()+850})});}
+      if(s.focusRequested){camera.getWorldDirection(state.direction);const hit=world.castRay(new rapier.Ray(camera.position,state.direction),500,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,bodyRef.current??undefined);settings.setState({focusRequested:false,...(hit?{focus:hit.timeOfImpact,manualFocus:false,focusFailed:false,focusUntil:Date.now()+850}:{focusFailed:true,focusUntil:Date.now()+850})});}
     }else{
       inputRef.current.cameraLookScale=1;
       if(cameraState.applied){gl.toneMappingExposure=cameraState.exposure;c.fov=cameraState.fov;c.updateProjectionMatrix();cameraState.applied=false;}

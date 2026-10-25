@@ -1,4 +1,5 @@
 'use client';
+import {requestPhotograph} from './photograph';
 import {CameraViewfinder} from './camera-viewfinder';
 import {useEffect,useId,useRef,type RefObject} from 'react';
 import {useStore} from 'zustand';
@@ -19,7 +20,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    input.current.active=resume&&!input.current.inputBlocked&&!modal()&&!document.hidden&&(document.pointerLockElement===canvas||pointerStatus==='fallback');
   };
   const lowerCamera=()=>{if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
-  const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99)held.using=true;}else if(item==='birdFood')session.food.request();};
+  const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99){if(held.using&&held.view>=.999)requestPhotograph(session.photography);else held.using=true;}}else if(item==='birdFood')session.food.request();};
   let pendingWheel=0;
   const openWheel=()=>{cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();};
   const waitForLower=()=>{if(input.current.inputBlocked||document.hidden){pendingWheel=0;return;}if(input.current.cameraView)pendingWheel=requestAnimationFrame(waitForLower);else{pendingWheel=0;openWheel();}};

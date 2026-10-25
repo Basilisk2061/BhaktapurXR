@@ -30,7 +30,7 @@ export default function HighQualityEffects({runtime,quality}:{runtime:RefObject<
   const p=pipeline.current;if(!p){gl.render(scene,camera);return;}
   const motion=runtime.current,s=motion.photography?.getState(),view=motion.handheldCamera?.view??0,c=camera as PerspectiveCamera;
   p.dof.enabled=quality!=='VERY LOW'&&view>0&&!!s;
-  if(s&&p.dof.enabled){const u=p.dof.uniforms;u.nearClip.value=c.near;u.farClip.value=c.far;u.aspect.value=c.aspect;u.focus.value=s.focus;u.focal.value=s.focal;u.fstop.value=s.manual?apertures[s.aperture]:4;u.strength.value=view*view;u.maxRadius.value=quality==='HIGH'?.004:quality==='MEDIUM'?.003:.002;}
+  if(s&&p.dof.enabled){const u=p.dof.uniforms;u.nearClip.value=c.near;u.farClip.value=c.far;u.aspect.value=c.aspect;u.focus.value=s.focus;u.focal.value=s.focal;u.fstop.value=s.manual?apertures[s.aperture]:4;u.strength.value=view*view;u.maxRadius.value=(quality==='HIGH'?.0016:quality==='MEDIUM'?.0011:.0007)*Math.max(.25,Math.min(1.5,4/u.fstop.value));}
   p.composer.render(delta);
  },1);
  return null;

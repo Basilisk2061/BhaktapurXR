@@ -5,10 +5,13 @@ import type {PlayerRuntime} from '../player/player-runtime';
 import type {PlayerInput} from '../input/player-input';
 import {isEditableTarget} from '../input/player-input';
 import type {ItemSession} from './inventory-store';
+import {requestPhotograph} from './photograph';
 import {apertures,shutters,sensitivities} from './photography-settings';
 export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;session:ItemSession;touch:boolean}){
  const settings=useStore(session.photography),[active,setActive]=useState(false),[hint,setHint]=useState(false),last=useRef(false);
  useEffect(()=>{if(!active){setHint(false);return;}setHint(true);const timer=setTimeout(()=>setHint(false),5000);return()=>clearTimeout(timer);},[active]);
+ useEffect(()=>{if(!settings.shutterUntil)return;const timer=setTimeout(()=>session.photography.setState({shutterUntil:0}),Math.max(0,settings.shutterUntil-Date.now()));return()=>clearTimeout(timer);},[settings.shutterUntil,session]);
+ useEffect(()=>{if(!settings.photoUntil)return;const timer=setTimeout(()=>session.photography.setState({photoUntil:0,photoMessage:''}),Math.max(0,settings.photoUntil-Date.now()));return()=>clearTimeout(timer);},[settings.photoUntil,session]);
  useEffect(()=>{if(!settings.modeUntil)return;const timer=setTimeout(()=>session.photography.setState({modeUntil:0}),Math.max(0,settings.modeUntil-Date.now()));return()=>clearTimeout(timer);},[settings.modeUntil,session]);
  useEffect(()=>{if(!settings.focusUntil)return;const timer=setTimeout(()=>session.photography.setState({focusUntil:0}),Math.max(0,settings.focusUntil-Date.now()));return()=>clearTimeout(timer);},[settings.focusUntil,session]);
  useEffect(()=>{
@@ -43,16 +46,19 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
   return()=>{cancelAnimationFrame(frame);document.documentElement.removeAttribute('data-camera-viewfinder');document.removeEventListener('pointerdown',lower,true);document.removeEventListener('contextmenu',context,true);document.removeEventListener('keydown',key,true);document.removeEventListener('wheel',wheel,true);};
  },[runtime,input,session]);
  const f=settings.manual?apertures[settings.aperture]:4,t=settings.manual?shutters[settings.shutter]:125,iso=settings.manual?sensitivities[settings.iso]:100;
- const focus=settings.manualFocus?`MF ${settings.focus.toFixed(1)}m`:'AF',rows=[['Mode',settings.manual?'M':'AUTO'],['Focal',`${Math.round(settings.focal)}mm`],['Aperture',`F${f.toFixed(1)}`],['Shutter',`1/${t}`],['ISO',String(iso)],['EV',settings.ev.toFixed(1)],['Focus',focus],['Grid',settings.grid?'Thirds':'Off']];
+ const focus=settings.manualFocus?`MF ${settings.focus.toFixed(1)}m`:'AF',rows=[['Mode',settings.manual?'M':'AUTO'],['Focal Length',`${Math.round(settings.focal)}mm`],['Aperture',`F${f.toFixed(1)}`],['Shutter',`1/${t}`],['ISO',String(iso)],['EV',settings.ev.toFixed(1)],['Focus',focus],['Grid',settings.grid?'Thirds':'Off']];
  return <div hidden={!active} className="camera-viewfinder" aria-label="Photography viewfinder">
-  <span className="camera-mode-label">{settings.manual?'M':'AUTO'} <small>{Math.round(settings.focal)}mm</small></span>
-  <i className={`camera-focus${settings.focusUntil>Date.now()?(settings.focusFailed?' is-focus-failed':' is-focused'):''}`}/>
+  <span className="camera-mode-label"><b>{settings.manual?'M':'AUTO'}</b><small>{Math.round(settings.focal)}mm</small></span>
+  <i className={`camera-focus${settings.focusUntil>Date.now()?(settings.focusFailed?' is-focus-failed':' is-focused'):''}`}><b/><b/><b/><b/></i>
   {settings.grid&&<div className="camera-thirds" aria-label="Rule of thirds grid"><i/><i/><i/><i/></div>}
   <div className="camera-exposure-strip"><span>1/{t}</span><span>F{f.toFixed(1)}</span><span>ISO {iso}</span><span>EV {settings.ev>=0?'+':''}{settings.ev.toFixed(1)}</span><span>{focus}</span></div>
-  <button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>CTRL{touch?'':' [C]'}</button>
+  <div className="camera-status-area"><span className="camera-battery" aria-label="Decorative battery indicator" title="Decorative status only"><i/><i/><i/></span><button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>C Settings</button></div>
   {settings.panel&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera settings"><strong>CAMERA SETTINGS</strong><ul>{rows.map(([label,value],i)=><li key={label} className={i===settings.row+2?'is-current':''}><span>{label}</span><span>{value}</span></li>)}</ul><small>Up/Down Select | Left/Right Adjust</small>{touch&&<div><button onClick={()=>session.photography.setState({grid:!settings.grid})}>Grid</button><button onClick={()=>session.photography.setState({focusRequested:true})}>Focus</button></div>}</section>}
-  {(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Focus</b></span><span>M <b>Auto / Manual</b></span><span>G <b>Grid</b></span><span>C <b>Settings</b></span><span>RMB <b>Lower Camera</b></span></div>}
+  {(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Focus</b></span><span>M <b>Auto / Manual</b></span><span>G <b>Grid</b></span><span>C <b>Settings</b></span><span>LMB <b>Shutter</b></span><span>RMB <b>Lower Camera</b></span></div>}
   {settings.modeUntil>Date.now()&&<span className="camera-mode-feedback" role="status">{settings.manual?'MANUAL':'AUTO'}</span>}
+  {settings.shutterUntil>Date.now()&&<div className="camera-shutter-feedback" aria-hidden="true"/>}
+  {settings.photoUntil>Date.now()&&<span className="camera-photo-toast" role="status">{settings.photoMessage}</span>}
+  {touch&&<button type="button" className="camera-shutter-button" onPointerDown={event=>event.preventDefault()} onClick={()=>{if((runtime.current.handheldCamera?.view??0)>=.999&&!input.current.inputBlocked)requestPhotograph(session.photography);}}>Shutter</button>}
   {touch&&<button type="button" className="camera-lower" onPointerDown={event=>event.preventDefault()} onClick={()=>{if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;}}>Lower Camera</button>}
  </div>;
 }

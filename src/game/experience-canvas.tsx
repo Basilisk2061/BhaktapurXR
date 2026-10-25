@@ -1,4 +1,5 @@
 "use client";
+import {PhotographyCapture} from './rendering/photography-capture';
 import type {ItemSession} from "./inventory/inventory-store";
 import {BirdFood} from "./food/bird-food";
 import {BellInteractions} from "./bells/bell-session";
@@ -97,6 +98,7 @@ export default function ExperienceCanvas({ items, onReady, onUnavailable, input,
       <RendererQuality/>
       {quality==='VERY LOW'&&<VeryLowResolution mobile={touchControls}/>}
       <PhotographyEffects runtime={runtime}/>
+      <PhotographyCapture runtime={runtime}/>
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
