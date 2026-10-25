@@ -2,7 +2,6 @@ import {Vector3} from "three";
 import {buildTalejuWorldData} from "../architecture/taleju/precinct";
 import savedScene from "../../features/bhaktapur/data/world-editor-state.json";
 import {heritageSpatialGeometry,heritageAreaTarget} from "./spatial-zones";
-import {museumEntranceCentre} from "../architecture/museum-entrance";
 import {transformMatrix,type ManualTransform,type TransformOverrides} from "../../features/world-editor/transforms";
 import {playerConfig} from "../player/player-config";
 import {heritageLandmarks} from "./landmarks";
@@ -13,10 +12,24 @@ import type {HeritageInteractionZone} from "./types";
 let frames:Map<string,{source:ManualTransform;doorX:number}>|undefined;
 let spatial:ReturnType<typeof heritageSpatialGeometry>;
 function sourceFrames(){
- if(!frames){const data=buildTalejuWorldData(),models=[...data.models,...data.urban.models];spatial=heritageSpatialGeometry(models,savedScene.hiddenObjects);frames=new Map(models.filter(m=>heritageZoneSpecifications[m.id]).map(m=>[m.id,{
-  source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]} satisfies ManualTransform,
-  doorX:m.id==="gallery-frontage"?museumEntranceCentre(m):0,
- }]));}
+ if(!frames){
+  const data=buildTalejuWorldData(),models=[...data.models,...data.urban.models];
+  spatial=heritageSpatialGeometry(models,savedScene.hiddenObjects);
+  const next=new Map<string,{source:ManualTransform;doorX:number}>();
+  for(const m of models){
+   if(!heritageZoneSpecifications[m.id])continue;
+   let doorX=0;
+   if(m.id==="gallery-frontage"){
+    // Interior clipping removes the construction-time foundation box. The public
+    // doorway survives, and gives the same local entrance X without that contract.
+    const threshold=m.boxes.find(box=>box.role==="museum-entrance-door-threshold");
+    if(!threshold)continue; // No real doorway: skip the museum zone, never invent an anchor.
+    doorX=(threshold.position[0]-m.origin[0])*Math.cos(m.yaw)-(threshold.position[2]-m.origin[1])*Math.sin(m.yaw);
+   }
+   next.set(m.id,{source:{position:[m.origin[0],0,m.origin[1]],rotation:[0,m.yaw,0],scale:[1,1,1]},doorX});
+  }
+  frames=next;
+ }
  return frames;
 }
 /** Zones follow final source frames and full saved parent Euler/scale overrides. */

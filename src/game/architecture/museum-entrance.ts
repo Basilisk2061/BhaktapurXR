@@ -5,7 +5,12 @@ import {box,profile,shape} from "./remaining-models.ts";
 // Photo-proportioned entrance details only: not a survey or named deity reconstruction.
 import {museumEntrance} from "./museum-entrance-data.ts";
 export {museumEntrance} from "./museum-entrance-data.ts";
-export function museumEntranceCentre(m:CentralModel){return m.boxes.find(b=>b.role==="palace-foundation")!.size[0]*(.5-.38)-4.1;}
+/** Construction-time helper: call before palace interior clipping. */
+export function museumEntranceCentre(m:CentralModel){
+ const foundation=m.boxes.find(b=>b.role==="palace-foundation");
+ if(!foundation)throw new Error(`museumEntranceCentre requires a pre-clipping palace-foundation box (model: ${m.id})`);
+ return foundation.size[0]*(.5-.38)-4.1;
+}
 const signature=(b:{position:number[];size:number[];yaw:number})=>JSON.stringify([b.position,b.size,b.yaw]);
 function remove(m:CentralModel,test:(b:CentralBox)=>boolean){const gone=new Set(m.boxes.filter(test).map(signature));m.boxes=m.boxes.filter(b=>!test(b));m.colliders=m.colliders.filter(c=>!gone.has(signature(c)));}
 function localX(m:CentralModel,p:[number,number,number]){return (p[0]-m.origin[0])*Math.cos(m.yaw)-(p[2]-m.origin[1])*Math.sin(m.yaw);}
