@@ -1,4 +1,5 @@
 import {useMemo} from 'react';
+import {HighNightSky} from './high-night-sky';
 import {useLoader} from '@react-three/fiber';
 import {Environment} from '@react-three/drei';
 import {AdditiveBlending,BackSide,EquirectangularReflectionMapping} from 'three';
@@ -14,6 +15,7 @@ export default function HighDaylightSky({day=1}:{day?:number}){
  return <>
   <Environment map={texture} background backgroundIntensity={.008+.642*day} environmentIntensity={.065+.115*day}
    backgroundRotation={highSkyRotation} environmentRotation={highSkyRotation}/>
+  <HighNightSky day={day}/>
   {/* Halo only, not a second sun. Far-plane depth lets opaque architecture occlude it. */}
   <mesh name="high-solar-halo" frustumCulled={false} renderOrder={-1000}>
    <sphereGeometry args={[1,24,12]}/>
