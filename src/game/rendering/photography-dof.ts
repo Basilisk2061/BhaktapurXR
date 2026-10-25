@@ -8,8 +8,8 @@ export function createPhotographyDof(samples:number){
  float distanceAt(vec2 uv){return -perspectiveDepthToViewZ(texture2D(tDepth,uv).x,nearClip,farClip);}
  void main(){float z=max(.05,distanceAt(vUv));
   float coc=focal*focal/(max(1.,fstop)*36000.)*abs(1./z-1./max(.3,focus));
-  float radius=min(maxRadius,coc*.35)*strength;
-  vec4 color=texture2D(tDiffuse,vUv)*.4;float weight=.4;
+  float radius=min(maxRadius,coc*.65)*strength;
+  vec4 color=texture2D(tDiffuse,vUv)*.18;float weight=.18;
   for(int i=0;i<TAPS;i++){
    // Stratified disk, not a sparse ring of repeated edge ghosts.
    float r=sqrt((float(i)+.5)/float(TAPS)),angle=float(i)*2.39996323;
@@ -17,9 +17,9 @@ export function createPhotographyDof(samples:number){
    float depth=max(.05,distanceAt(uv));
    // Symmetric bilateral rejection: neither nearer nor farther surfaces may bleed
    // over a silhouette. Linearized distances also distinguish architecture from sky.
-   float gap=abs(depth-z)/max(.06,min(depth,z)*.018);
-   float edgeWeight=gap<3.?exp(-2.*gap*gap):0.;
-   float w=edgeWeight*exp(-r*r)*(.6/float(TAPS));
+   float gap=abs(depth-z)/max(.1,min(depth,z)*.04);
+   float edgeWeight=gap<3.?exp(-gap*gap):0.;
+   float w=edgeWeight*exp(-.5*r*r)*(.82/float(TAPS));
    color+=texture2D(tDiffuse,uv)*w;weight+=w;
   }
   gl_FragColor=color/weight;

@@ -19,7 +19,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    input.current.inventoryOpen=false;session.inventory.getState().close(commit);
    input.current.active=resume&&!input.current.inputBlocked&&!modal()&&!document.hidden&&(document.pointerLockElement===canvas||pointerStatus==='fallback');
   };
-  const lowerCamera=()=>{if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
+  const lowerCamera=()=>{if(session.photography.getState().preview)return;if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
   const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99){if(held.using&&held.view>=.999)requestPhotograph(session.photography);else held.using=true;}}else if(item==='birdFood')session.food.request();};
   let pendingWheel=0;
   const openWheel=()=>{cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();};
@@ -62,7 +62,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
   const context=(event:MouseEvent)=>{if(input.current.cameraView)event.preventDefault();};
   canvas.addEventListener('contextmenu',context);
   document.addEventListener('keydown',keyDown);document.addEventListener('keyup',keyUp);document.addEventListener('mousemove',move);canvas.addEventListener('pointerdown',down,true);document.addEventListener('pointerup',up);window.addEventListener('blur',reset);document.addEventListener('visibilitychange',visibility);document.addEventListener('pointerlockchange',lock);
-  return()=>{canvas.removeEventListener('contextmenu',context);document.removeEventListener('keydown',keyDown);document.removeEventListener('keyup',keyUp);document.removeEventListener('mousemove',move);canvas.removeEventListener('pointerdown',down,true);document.removeEventListener('pointerup',up);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('pointerlockchange',lock);unsubscribe();reset();input.current.inventoryOpen=false;};
+  return()=>{canvas.removeEventListener('contextmenu',context);document.removeEventListener('keydown',keyDown);document.removeEventListener('keyup',keyUp);document.removeEventListener('mousemove',move);canvas.removeEventListener('pointerdown',down,true);document.removeEventListener('pointerup',up);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('pointerlockchange',lock);unsubscribe();pending=null;cancelAnimationFrame(pendingWheel);close(false,false);input.current.inventoryOpen=false;};
  },[session,input,runtime,pointerStatus,touch]);
  const item=inventorySlots[state.selected],selectedItem=item?inventoryItems[item]:null,highlighted=inventorySlots[state.highlighted],details=highlighted?inventoryItems[highlighted]:null;
  return <>

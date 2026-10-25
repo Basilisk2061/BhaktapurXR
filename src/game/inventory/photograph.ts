@@ -5,12 +5,13 @@ export interface PhotographMetadata {
  cameraPosition:[number,number,number];cameraQuaternion:[number,number,number,number];cameraDirection:[number,number,number];
  gameHour:number;timeMode:string;rendererExposure:number;width:number;height:number;sequence:number;
 }
+export interface CapturedPhotograph {blob:Blob;metadata:PhotographMetadata}
 export function requestPhotograph(settings:PhotographySettings){
- const s=settings.getState(),now=Date.now();if(s.shutterBusy||s.shutterRequested||now<s.nextShutterAt)return;
+ const s=settings.getState(),now=Date.now();if(s.preview||s.shutterBusy||s.shutterRequested||now<s.nextShutterAt)return;
  settings.setState({shutterRequested:true,shutterBusy:true,photoMessage:"",photoUntil:0,nextShutterAt:now+650,shutterUntil:now+85,photoSequence:s.photoSequence+1});
 }
 /** Call immediately after the normal WebGL render, before the drawing buffer is discarded. */
-export function capturePhotograph(canvas:HTMLCanvasElement,metadata:PhotographMetadata):Promise<{blob:Blob;metadata:PhotographMetadata}>{
+export function capturePhotograph(canvas:HTMLCanvasElement,metadata:PhotographMetadata):Promise<CapturedPhotograph>{
  return new Promise((resolve,reject)=>{try{canvas.toBlob(blob=>blob?resolve({blob,metadata}):reject(new Error('Canvas returned no image data')),'image/png');}catch(error){reject(error);}});
 }
 export function downloadPhotograph({blob,metadata}:{blob:Blob;metadata:PhotographMetadata}){
