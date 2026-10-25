@@ -1,5 +1,5 @@
 'use client';
-import {useEffect,useRef,type RefObject} from 'react';
+import {useEffect,useId,useRef,type RefObject} from 'react';
 import {useStore} from 'zustand';
 import {isEditableTarget,type PointerStatus,type PlayerInput} from '../input/player-input';
 import type {PlayerRuntime} from '../player/player-runtime';
@@ -7,7 +7,7 @@ import {inventoryItems,inventorySlots,type ItemSession} from './inventory-store'
 import {InventoryItemIcon} from './inventory-item-icon';
 import './inventory.css';
 export function InventoryHud({session,input,runtime,touch,pointerStatus}:{session:ItemSession;input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>;touch:boolean;pointerStatus:PointerStatus}){
- const state=useStore(session.inventory),cursor=useRef({x:0,y:0});
+ const state=useStore(session.inventory),cursor=useRef({x:0,y:0}),wheelId=useId();
  useEffect(()=>{
   const canvas=document.querySelector('canvas');if(!canvas)return;
   const modal=()=>!!document.querySelector('dialog[open],.game-menu[open]');
@@ -34,7 +34,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    if(input.current.inputBlocked||modal()){close(false,false);return;}
    if(document.pointerLockElement===canvas){cursor.current.x+=event.movementX;cursor.current.y+=event.movementY;const length=Math.hypot(cursor.current.x,cursor.current.y);if(length>140){cursor.current.x*=140/length;cursor.current.y*=140/length;}}
    else{cursor.current.x=event.clientX-window.innerWidth/2;cursor.current.y=event.clientY-window.innerHeight/2;}
-   if(Math.hypot(cursor.current.x,cursor.current.y)>24){const angle=(Math.atan2(cursor.current.y,cursor.current.x)+Math.PI/2+Math.PI*2)%(Math.PI*2);session.inventory.getState().highlight(Math.round(angle/(Math.PI*2/5))%5);}
+   if(Math.hypot(cursor.current.x,cursor.current.y)>24){const angle=(Math.atan2(cursor.current.y,cursor.current.x)+Math.PI/2+Math.PI*2)%(Math.PI*2);session.inventory.getState().highlight(Math.round(angle/(Math.PI*2/5))%5);}else session.inventory.getState().highlight(-1);
   };
   let pending:{x:number;y:number;eligible:boolean;locked:boolean}|null=null;
   const down=(event:PointerEvent)=>{
@@ -54,10 +54,10 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
  const item=inventorySlots[state.selected],selectedItem=item?inventoryItems[item]:null,highlighted=inventorySlots[state.highlighted],details=highlighted?inventoryItems[highlighted]:null;
  return <>
   {state.expanded&&!touch&&<div className="inventory-wheel-screen" aria-label="Item selection wheel"><svg className="inventory-wheel" viewBox="-200 -200 400 400" role="group" aria-label="Five quick slots">{inventorySlots.map((item,index)=>{
-   const point=(radius:number,angle:number)=>[Math.cos(angle)*radius,Math.sin(angle)*radius],angle=-Math.PI/2+index*Math.PI*2/5,start=angle-Math.PI/5+.025,end=angle+Math.PI/5-.025,a=point(180,start),b=point(180,end),c=point(85,end),d=point(85,start),label=point(132,angle);
-   return <g key={index} className={`inventory-segment${index===state.highlighted?' is-highlighted':''}`} aria-label={`Slot ${index+1}: ${item?inventoryItems[item].label:'Empty'}`}><path d={`M ${a} A 180 180 0 0 1 ${b} L ${c} A 85 85 0 0 0 ${d} Z`}/>{item&&<InventoryItemIcon icon={inventoryItems[item].icon} x={label[0]-12} y={label[1]-44} width={24} height={24}/>}<text x={label[0]} y={label[1]-5} textAnchor="middle">{index+1}</text><text x={label[0]} y={label[1]+15} textAnchor="middle" className="inventory-slot-label">{item?inventoryItems[item].label:'Empty'}</text></g>;
-  })}<circle r="79" className="inventory-wheel-center"/><foreignObject x="-73" y="-73" width="146" height="146"><div className="inventory-wheel-details" aria-live="polite">
-   {details&&<InventoryItemIcon icon={details.icon} className="inventory-detail-icon"/>}<strong>{details?.label??'Empty'}</strong><p>{details?.description??'No item assigned.'}</p>{details&&<span className="inventory-detail-action">{details.actionHint}</span>}<small>Slot {state.highlighted+1}</small>
+   const point=(radius:number,angle:number)=>[Math.cos(angle)*radius,Math.sin(angle)*radius],angle=-Math.PI/2+index*Math.PI*2/5,start=angle-Math.PI/5+.025,end=angle+Math.PI/5-.025,a=point(180,start),b=point(180,end),c=point(85,end),d=point(85,start),label=point(132,angle),path=`M ${a} A 180 180 0 0 1 ${b} L ${c} A 85 85 0 0 0 ${d} Z`,clipId=`${wheelId}-slot-${index}`;
+   return <g key={index} className={`inventory-segment${index===state.highlighted?' is-highlighted':''}${item?'':' is-empty'}`} aria-label={`Slot ${index+1}: ${item?inventoryItems[item].label:'Empty'}`}><defs><clipPath id={clipId}><path d={path}/></clipPath></defs><foreignObject x="-200" y="-200" width="400" height="400" clipPath={`url(#${clipId})`}><div className="inventory-wood"/></foreignObject><path className="inventory-segment-shadow" d={path}/><path className="inventory-segment-edge" d={path}/>{item&&<InventoryItemIcon icon={inventoryItems[item].icon} x={label[0]-12} y={label[1]-44} width={24} height={24}/>}<text x={label[0]} y={label[1]-5} textAnchor="middle">{index+1}</text><text x={label[0]} y={label[1]+15} textAnchor="middle" className="inventory-slot-label">{item?inventoryItems[item].label:'Empty'}</text></g>;
+  })}<circle r="80" className="inventory-wheel-ring"/><circle r="74" className="inventory-wheel-center"/><foreignObject x="-73" y="-73" width="146" height="146"><div className="inventory-wheel-details" aria-live="polite">
+   {details&&<InventoryItemIcon icon={details.icon} className="inventory-detail-icon"/>}<strong>{details?.label??(state.highlighted<0?'Inventory':'Empty')}</strong><p>{details?.description??(state.highlighted<0?'Move the mouse to choose an item.':'No item assigned.')}</p>{state.highlighted>=0&&<small>Slot {state.highlighted+1}</small>}{details&&<span className="inventory-detail-action">{details.actionHint}</span>}
   </div></foreignObject></svg><p>Move mouse to choose · Release Tab to equip · 1–5 select</p></div>}
   {!state.expanded&&selectedItem&&<aside className={`inventory-selected${touch?' inventory-selected-touch':''}`} aria-label="Selected item"><InventoryItemIcon icon={selectedItem.icon}/><span>{selectedItem.label}</span></aside>}
   {touch&&<aside className="inventory-hud" aria-label="Mobile inventory actions">
