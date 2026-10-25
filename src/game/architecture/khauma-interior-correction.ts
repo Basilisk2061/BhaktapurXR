@@ -1,8 +1,7 @@
-import savedEditorState from "../../features/bhaktapur/data/world-editor-state.json" with {type:"json"};
+import {currentOverrides} from "../../features/world-editor/saved-overrides.ts";
 import {Euler,Matrix4,Vector3} from "three";
-import legacyOverrides from "../../features/bhaktapur/data/manual-transform-overrides.json" with {type:"json"};
 import {khaumaGateDimensions} from "./khauma-entrance-model.ts";
-import {overrideMatrix,validateTransform,type TransformOverrides} from "../../features/world-editor/transforms.ts";
+import {overrideMatrix} from "../../features/world-editor/transforms.ts";
 import {walkableFloorColliders} from "./walkable-floor-colliders.ts";
 import polygonClipping from "polygon-clipping";
 import {contextColliders} from "./urban-occupancy.ts";
@@ -44,10 +43,6 @@ function relief(m:CentralModel,x:number,y:number,z:number,left:boolean){
  box(m,x,y+.93,z,.95,1.9,.35,"stone",role+"-collision",true);
 }
 const guardianId="edge:khauma-north-flank:1158762014";
-// Validate the JSON boundary and copy its unchanged numeric components into Triple tuples.
-const currentOverrides=():TransformOverrides=>Object.fromEntries(
- Object.entries(savedEditorState.transforms??legacyOverrides).map(([id,transform])=>[id,validateTransform(transform)])
-);
 function editedMatrix(m:CentralModel){const source={position:[m.origin[0],0,m.origin[1]] as [number,number,number],rotation:[0,m.yaw,0] as [number,number,number],scale:[1,1,1] as [number,number,number]};return overrideMatrix(source,currentOverrides()[m.id]??source);}
 function gateBoundary(){
  const gate=currentOverrides()['khauma-gate'],rotation=new Matrix4().makeRotationFromEuler(new Euler(...gate.rotation));

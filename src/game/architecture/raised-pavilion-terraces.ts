@@ -1,4 +1,4 @@
-import manualTransforms from "../../features/bhaktapur/data/manual-transform-overrides.json" with {type:"json"};
+import {currentOverrides} from "../../features/world-editor/saved-overrides.ts";
 import polygonClipping from "polygon-clipping";
 import type {MultiPolygon,Polygon} from "polygon-clipping";
 import type {CentralModel} from "./central-model.ts";
@@ -45,7 +45,7 @@ export function buildRaisedPavilionTerraces(context:CentralModel[],pagoda:Centra
  add(cut([rectangle(pavilion,6.2,6.2,0)]),1.9,.2,"stone","pavilion-stone-cap");
  // Site only the new platform to the current edited veranda position; do not alter/bake its override.
  const source=context.find(c=>c.id==="entrance:khauma-raised-veranda")!;
- const edited=(manualTransforms as Record<string,{position:number[]}>)[source.id];
+ const edited=currentOverrides()[source.id];
  const veranda:[number,number]=edited?[edited.position[0],edited.position[2]]:[...source.origin];
  const verandaAccess:Polygon[]=[];
  for(let i=0;i<6;i++){const ring:Polygon=[rectangle([veranda[0],veranda[1]-6.7+(i+.5)*.32],2.5,.32,0)];verandaAccess.push(ring);add(cut(ring),0,(i+1)*.15,"brick","veranda-platform-access");}

@@ -1,6 +1,5 @@
 import {Vector3} from "three";
-import savedState from "../../features/bhaktapur/data/world-editor-state.json" with {type:"json"};
-import legacyOverrides from "../../features/bhaktapur/data/manual-transform-overrides.json" with {type:"json"};
+import {currentOverrides} from "../../features/world-editor/saved-overrides.ts";
 import {overrideMatrix,validateTransform,type ManualTransform} from "../../features/world-editor/transforms.ts";
 import {exteriorFrame,exteriorLocal} from "./khauma-exterior.ts";
 import {box} from "./architecture-primitives.ts";
@@ -18,7 +17,7 @@ export const khaumaRearBoundary={
 } as const;
 type Point=[number,number];
 export function buildKhaumaRearBoundary(exteriorModels:CentralModel[]):CentralModel{
- const config=khaumaRearBoundary,transforms=savedState.transforms??legacyOverrides;
+ const config=khaumaRearBoundary,transforms=currentOverrides();
  const m:CentralModel={id:"entrance:khauma-rear-boundary",anchorId:"GAMEPLAY_CONTEXTUAL_BOUNDARY",origin:[...exteriorFrame.origin],yaw:exteriorFrame.yaw,accuracy:config.classification,neutral:false,boxes:[],profiles:[],shapes:[],roofs:[],colliders:[]};
  const occupied=exteriorModels.filter(model=>model.id!=="entrance:KhaumaExterior_Road"&&model.id!=="entrance:KhaumaExterior_StreetProps");
  const frames=new Map(occupied.map(model=>{

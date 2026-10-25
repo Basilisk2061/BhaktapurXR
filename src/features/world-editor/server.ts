@@ -1,3 +1,4 @@
+import {mergeTransformOverrides} from "./resolve-transforms.ts";
 import {validateScene,type SceneSnapshot} from "./scene-data.ts";
 import {readFile,writeFile,rename} from "node:fs/promises";
 import {join} from "node:path";
@@ -13,7 +14,7 @@ export function saveManualTransform(body:unknown){const execute=async()=>{if(!bo
 export const sceneFilePath="src/features/bhaktapur/data/world-editor-state.json";
 export async function readWorldEditorState():Promise<SceneSnapshot>{
  const legacy=await readLegacyOverrides();let parsed;try{parsed=JSON.parse(await readFile(join(process.cwd(),sceneFilePath),"utf8"));}catch(e){if((e as NodeJS.ErrnoException).code!=="ENOENT")throw e;parsed={};}
- return validateScene({version:1,transforms:parsed.transforms??legacy,createdObjects:parsed.createdObjects??[],hiddenObjects:parsed.hiddenObjects??[]},new Set(getEditableEntries().map(e=>e.id)));
+ return validateScene({version:1,transforms:mergeTransformOverrides(legacy,parsed.transforms),createdObjects:parsed.createdObjects??[],hiddenObjects:parsed.hiddenObjects??[]},new Set(getEditableEntries().map(e=>e.id)));
 }
 export async function readManualOverrides():Promise<TransformOverrides>{return (await readWorldEditorState()).transforms;}
 export function saveEditorSnapshot(value:unknown){const execute=async()=>{const snapshot=validateScene(value,new Set(getEditableEntries().map(e=>e.id))),target=join(process.cwd(),sceneFilePath),temp=target+".tmp";await writeFile(temp,JSON.stringify(snapshot,null,2)+"\n","utf8");await rename(temp,target);return {saved:true,snapshot};};const pending=writes.then(execute);writes=pending.catch(()=>{});return pending;}

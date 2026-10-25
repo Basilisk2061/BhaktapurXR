@@ -1,11 +1,11 @@
 import {Euler,Matrix4} from "three";
-import overrides from "../../features/bhaktapur/data/manual-transform-overrides.json" with {type:"json"};
+import {currentOverrides} from "../../features/world-editor/saved-overrides.ts";
 import type {CentralModel,CentralMaterial} from "./central-model.ts";
 import {box,profile,shape} from "./remaining-models.ts";
 
 // The approved gate is the sole registration control. Screenshots support relative
 // appearance, not surveyed dimensions. +Z is outside; +X is reference-camera right.
-const gate=overrides["khauma-gate"],matrix=new Matrix4().makeRotationFromEuler(new Euler(...gate.rotation as [number,number,number]));
+const gate=currentOverrides()["khauma-gate"],matrix=new Matrix4().makeRotationFromEuler(new Euler(...gate.rotation as [number,number,number]));
 export const exteriorFrame={origin:[gate.position[0],gate.position[2]] as [number,number],yaw:Math.atan2(matrix.elements[8],matrix.elements[10])};
 /** Gate-local coordinates; never world +Z. */
 export function exteriorLocal(p:readonly number[]):[number,number,number]{const dx=p[0]-exteriorFrame.origin[0],dz=p[2]-exteriorFrame.origin[1],a=exteriorFrame.yaw;return [dx*Math.cos(a)-dz*Math.sin(a),p[1],dx*Math.sin(a)+dz*Math.cos(a)];}
