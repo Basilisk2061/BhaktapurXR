@@ -79,33 +79,41 @@ function HeritageAssembly({model,materials,box,editor,overrides}:{model:CentralM
  // Split only inspected or modified parts; ownership metadata handles clicks on batched assemblies.
  const splitKey=parts.filter(p=>active||visibilityState.hidden[p.id]||(transforms[p.id]&&!sameTransform(p.source,transforms[p.id]))).map(p=>p.id).join("|");
  const bundles=useMemo(()=>{const ids=new Set(splitKey.split("|")),split=parts.filter(p=>ids.has(p.id)),rest=parts.filter(p=>!ids.has(p.id));const remainder={...model,boxes:rest.flatMap(p=>p.model.boxes),profiles:rest.flatMap(p=>p.model.profiles),shapes:rest.flatMap(p=>p.model.shapes),roofs:rest.flatMap(p=>p.model.roofs),colliders:rest.flatMap(p=>p.model.colliders),volumes:rest.flatMap(p=>p.model.volumes??[]),polygonRoofs:rest.flatMap(p=>p.model.polygonRoofs??[])};return {split,remainder};},[model,parts,splitKey]);
- const bellEnabled=!!bellSession&&!editor&&visible&&interactiveBellIds.includes(model.id)&&model.profiles.some(p=>p.role.endsWith('hollow-bell'))&&model.boxes.some(p=>p.role==='bell-suspension')&&!parts.some(p=>[...p.model.profiles,...p.model.boxes].some(piece=>movableBellRole(piece.role))&&(visibilityState.hidden[p.id]||transforms[p.id]&&!sameTransform(p.source,transforms[p.id])));
+ const bellEnabled=!!bellSession&&!editor&&visible&&interactiveBellIds.includes(model.id)&&model.profiles.some(p=>p.role.endsWith('hollow-bell'))&&model.boxes.some(p=>p.role==='bell-suspension')&&!parts.some(p=>[...p.model.profiles,...p.model.boxes].some(piece=>movableBellRole(piece.role))&&visibilityState.hidden[p.id]);
  const fixedRemainder=useMemo(()=>bellEnabled?withoutMovableBell(bundles.remainder):bundles.remainder,[bellEnabled,bundles]);
  const local=useMemo(()=>transformMatrix(source).invert(),[source]),delta=useMemo(()=>overrideMatrix(source,current),[source,current]);
  const partAssets=useMemo(()=>bundles.split.map(p=>({...p,basis:transformMatrix(p.source).invert().multiply(transformMatrix(source).invert())})),[bundles,source]);
  return <group name={`assembly:${model.id}`}>
  <RegisteredGroup id={model.id} transform={current} visible={visible} register={editor?.register}>
- {bellEnabled&&<MovableBell model={model} source={source} current={current} materials={localPalette.materials} box={box}/>}
+ {bellEnabled&&<MovableBell model={model} parts={parts} transforms={transforms} source={source} current={current} materials={localPalette.materials} box={box}/>}
  <GeometryBatches model={fixedRemainder} owner={model} materials={localPalette.materials} box={box} basis={local} selectable={!!editor}/>
- {partAssets.map(p=><RegisteredGroup key={p.id} id={p.id} transform={transforms[p.id]??p.source} visible={isEditorEntryVisible(p.id,model.id,visibilityState)} register={editor?.register}><GeometryBatches model={p.model} owner={model} materials={localPalette.materials} box={box} basis={p.basis} selectable={!!editor}/></RegisteredGroup>)}
+ {partAssets.map(p=><RegisteredGroup key={p.id} id={p.id} transform={transforms[p.id]??p.source} visible={isEditorEntryVisible(p.id,model.id,visibilityState)} register={editor?.register}><GeometryBatches model={bellEnabled?withoutMovableBell(p.model):p.model} owner={model} materials={localPalette.materials} box={box} basis={p.basis} selectable={!!editor}/></RegisteredGroup>)}
  </RegisteredGroup>
  <AssemblyCollision id={model.id} model={bundles.remainder} delta={delta} unchanged={sameTransform(source,current)} visible={visible}/>
  {partAssets.map(p=><PartCollision key={p.id} part={p} source={source} current={current} transform={transforms[p.id]??p.source} visible={visible&&isEditorEntryVisible(p.id,model.id,visibilityState)}/>)}
  </group>;
 }
 function withoutMovableBell(model:CentralModel):CentralModel{return {...model,boxes:model.boxes.filter(p=>!movableBellRole(p.role)),profiles:model.profiles.filter(p=>!movableBellRole(p.role))};}
-function MovableBell({model,source,current,materials,box}:{model:CentralModel;source:ManualTransform;current:ManualTransform;materials:Record<CentralMaterial,MeshStandardMaterial>;box:BoxGeometry}){
+function MovableBell({model,parts,transforms,source,current,materials,box}:{model:CentralModel;parts:ReturnType<typeof partitionArchitecturalParts>;transforms:TransformOverrides;source:ManualTransform;current:ManualTransform;materials:Record<CentralMaterial,MeshStandardMaterial>;box:BoxGeometry}){
  const session=useBellSession(),pivot=useRef<Group>(null);
  const data=useMemo(()=>{
-  const suspension=model.boxes.find(p=>p.role==="bell-suspension")!,body=model.profiles.find(p=>p.role.endsWith("hollow-bell"))!;
-  const inverse=transformMatrix(source).invert(),sourcePivot=new Vector3(...suspension.position);sourcePivot.y+=suspension.size[1]/2;
-  const localPivot=sourcePivot.applyMatrix4(inverse),bodyLocal=new Vector3(...body.position).applyMatrix4(inverse),radius=Math.max(...body.profile.map(p=>p[0]));
+  const inverse=transformMatrix(source).invert();
+  // Exactly the renderer's existing parent * currentPart * inverse(sourcePart)
+  // * inverse(sourceParent) chain; saved part overrides are never discarded.
+  const movableParts=parts.filter(p=>[...p.model.boxes,...p.model.profiles].some(piece=>movableBellRole(piece.role))).map(p=>({id:p.id,
+   model:{...p.model,boxes:p.model.boxes.filter(piece=>movableBellRole(piece.role)),profiles:p.model.profiles.filter(piece=>movableBellRole(piece.role)),shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]},
+   basis:transformMatrix(transforms[p.id]??p.source).multiply(transformMatrix(p.source).invert()).multiply(inverse)
+  }));
+  const suspensionPart=movableParts.find(p=>p.model.boxes.some(piece=>piece.role==='bell-suspension'))!,bodyPart=movableParts.find(p=>p.model.profiles.some(piece=>piece.role.endsWith('hollow-bell')))!;
+  const suspension=suspensionPart.model.boxes.find(p=>p.role==='bell-suspension')!,body=bodyPart.model.profiles.find(p=>p.role.endsWith('hollow-bell'))!;
+  const localPivot=new Vector3(...suspension.position);localPivot.y+=suspension.size[1]/2;localPivot.applyMatrix4(suspensionPart.basis);
+  const bodyLocal=new Vector3(...body.position).applyMatrix4(bodyPart.basis),radius=Math.max(...body.profile.map(p=>p[0]));
   const anchor=bodyLocal.clone().add(new Vector3(0,-1.8,radius+.5)).applyMatrix4(transformMatrix(current)),target=bodyLocal.clone().add(new Vector3(0,.35,0)).applyMatrix4(transformMatrix(current));
-  const movable={...model,boxes:model.boxes.filter(p=>movableBellRole(p.role)),profiles:model.profiles.filter(p=>movableBellRole(p.role)),shapes:[],roofs:[],colliders:[],volumes:[],polygonRoofs:[]};
-  return {localPivot,anchor,target,movable,basis:new Matrix4().makeTranslation(-localPivot.x,-localPivot.y,-localPivot.z).multiply(inverse)};
- },[model,source,current]);
- useEffect(()=>{if(!session||!pivot.current)return;return session.register({id:model.id,name:model.id==='large-bell'?'Large heritage bell':'Small Vatsala bell',anchor:data.anchor,target:data.target,radius:.45,pivot:pivot.current,angle:0,time:5,cooldown:0,amplitude:(model.id==='large-bell'?12:16)*Math.PI/180,frequency:model.id==='large-bell'?5.2:6.4});},[session,model.id,data]);
- return <group ref={pivot} name={'bell-top-pivot:'+model.id} position={data.localPivot}><GeometryBatches model={data.movable} owner={model} materials={materials} box={box} basis={data.basis} selectable={false}/></group>;
+  const relative=new Matrix4().makeTranslation(-localPivot.x,-localPivot.y,-localPivot.z);
+  return {localPivot,anchor,target,batches:movableParts.map(p=>({...p,basis:relative.clone().multiply(p.basis)}))};
+ },[model,parts,transforms,source,current]);
+ useEffect(()=>{if(!session||!pivot.current)return;return session.register({id:model.id,name:model.id==='large-bell'?'Large heritage bell':'Small Vatsala bell',anchor:data.anchor,target:data.target,radius:model.id==='large-bell'?1.9:1.6,verticalTolerance:1,pivot:pivot.current,angle:0,time:5,cooldown:0,amplitude:(model.id==='large-bell'?12:16)*Math.PI/180,frequency:model.id==='large-bell'?5.2:6.4});},[session,model.id,data]);
+ return <group ref={pivot} name={'bell-top-pivot:'+model.id} position={data.localPivot}>{data.batches.map(part=><GeometryBatches key={part.id} model={part.model} owner={model} materials={materials} box={box} basis={part.basis} selectable={false}/>)}</group>;
 }
 // Physics hulls stay outside the transformed visual parent; the exact composed affine matrix is baked once.
 function PartCollision({part,source,current,transform,visible}:{part:ReturnType<typeof partitionArchitecturalParts>[number];source:ManualTransform;current:ManualTransform;transform:ManualTransform;visible:boolean}){const delta=useMemo(()=>partWorldDelta(source,current,part.source,transform),[source,current,part,transform]);return <AssemblyCollision id={part.id} model={part.model} delta={delta} unchanged={sameTransform(source,current)&&sameTransform(part.source,transform)} visible={visible}/>;}

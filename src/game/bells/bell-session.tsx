@@ -11,7 +11,7 @@ export const interactiveBellIds=['large-bell','vatsala-bell'];
 export const movableBellRole=(role:string)=>['large-hollow-bell','small-hollow-bell','bell-relief-ring','bell-clapper','bell-crown-hanger','bell-suspension'].includes(role);
 export interface BellAction {id:string;elapsed:number;target:Vector3;impulsed:boolean;sounded:boolean}
 export interface BellPrompt {id:string;name:string;start:()=>boolean}
-export interface BellBinding {id:string;name:string;anchor:Vector3;target:Vector3;radius:number;pivot:Group;angle:number;time:number;cooldown:number;amplitude:number;frequency:number}
+export interface BellBinding {id:string;name:string;anchor:Vector3;target:Vector3;radius:number;verticalTolerance:number;pivot:Group;angle:number;time:number;cooldown:number;amplitude:number;frequency:number}
 class BellSession {
  bells=new Map<string,BellBinding>();time=0;
  constructor(readonly runtime:RefObject<PlayerRuntime>,readonly input:RefObject<PlayerInput>){}
@@ -21,7 +21,7 @@ class BellSession {
   const motion=this.runtime.current,controls=this.input.current;
   if(!controls.active||controls.inputBlocked||motion.seat||controls.flying||!motion.grounded||motion.bellAction||!motion.bellRigReady||this.time<bell.cooldown||bell.time<5)return false;
   const p=motion.nextPosition;
-  return Math.abs(p.y-playerConfig.height/2-bell.anchor.y)<.65&&Math.hypot(p.x-bell.anchor.x,p.z-bell.anchor.z)<=bell.radius&&this.clear(bell);
+  return Math.abs(p.y-playerConfig.height/2-bell.anchor.y)<=bell.verticalTolerance&&Math.hypot(p.x-bell.target.x,p.z-bell.target.z)<=bell.radius&&this.clear(bell);
  }
  start=(id:string)=>{
   const bell=this.bells.get(id);if(!bell||!this.eligible(bell))return false;
@@ -50,7 +50,7 @@ class BellSession {
   }
   let nearest:BellBinding|undefined,best=Infinity;
   for(const bell of this.bells.values())if(this.eligible(bell)){
-   const distance=Math.hypot(motion.nextPosition.x-bell.anchor.x,motion.nextPosition.z-bell.anchor.z);
+   const distance=Math.hypot(motion.nextPosition.x-bell.target.x,motion.nextPosition.z-bell.target.z);
    if(distance<best||distance===best&&bell.id<(nearest?.id??'')){nearest=bell;best=distance;}
   }
   if(nearest){if(motion.bellPrompt?.id!==nearest.id)motion.bellPrompt={id:nearest.id,name:nearest.name,start:()=>this.start(nearest!.id)};}
@@ -61,12 +61,20 @@ class BellSession {
 const BellContext=createContext<BellSession|null>(null);
 export const useBellSession=()=>useContext(BellContext);
 export function BellInteractions({runtime,input,enabled,children}:{runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;enabled:boolean;children:ReactNode}){
- const session=useMemo(()=>new BellSession(runtime,input),[runtime,input]),strike=useBellStrikeAudio(),{world,rapier}=useRapier();
+ const session=useMemo(()=>new BellSession(runtime,input),[runtime,input]),strike=useBellStrikeAudio(),{world,rapier,rigidBodyStates}=useRapier();
  const direction=useMemo(()=>new Vector3(),[]);
  session.clear=bell=>{
   const p=runtime.current.nextPosition,origin={x:p.x,y:p.y+.35,z:p.z};
-  direction.set(bell.target.x-origin.x,bell.target.y-origin.y,bell.target.z-origin.z);const distance=direction.length();direction.normalize();
-  const hit=world.castRay(new rapier.Ray(origin,direction),distance,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,c=>!c.parent()||c.parent()!.isFixed());
+  // Test intervening architecture at upper-body height, not an upward ray into
+  // the suspension. Bell-owned supports/platforms are not intervening walls.
+  direction.set(bell.target.x-origin.x,0,bell.target.z-origin.z);const distance=direction.length();
+  if(distance<.05)return true;direction.normalize();
+  const owner='assembly-collision:'+bell.id;
+  const hit=world.castRay(new rapier.Ray(origin,direction),distance,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,c=>{
+   const body=c.parent();if(!body)return true;if(!body.isFixed())return false;
+   const name=rigidBodyStates.get(body.handle)?.object.name;
+   return name!==owner&&!name?.startsWith(owner+'/');
+  });
   return !hit||hit.timeOfImpact>=distance-.15;
  };
  useEffect(()=>()=>session.dispose(),[session]);
