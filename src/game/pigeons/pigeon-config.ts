@@ -13,5 +13,5 @@ export const pigeonLimit=24;
  * horizontal architecture clearance. Cross-disc arcs require live full-path sweeps;
  * a blocked crossing falls back to circling locally, never to unchecked waypoints. */
 export const pigeonAirRegions=pigeonZones.map(zone=>({x:zone.x,z:zone.z,radius:Math.min(10,zone.clearance-1.5),minY:4,maxY:12}));
-export const pigeonAirTargets={'VERY LOW':[0,1],LOW:[2,3],MEDIUM:[4,6],HIGH:[6,10]} as const;
+export const pigeonAirTargets={'VERY LOW':[0,1],LOW:[3,4],MEDIUM:[6,8],HIGH:[9,12]} as const;
 

@@ -19,7 +19,9 @@ export class BirdFoodSystem {
   * No-nearby fallback is exactly the closest three active eligible birds. */
  chooseResponders(birds:readonly {id:number;position:Vector3;airborne:boolean}[]){
   for(const patch of this.patches){
-   if(patch.responders!==null||patch.ready>this.time)continue;
+   // Keep an empty search pending, e.g. while the last recent-scare cooldown
+   // clears. Never permanently mark a visible patch as having zero responders.
+   if(patch.responders!==null||patch.ready>this.time||birds.length===0)continue;
    const ranked=birds.map(bird=>({bird,distance:bird.position.distanceTo(patch.position)})).sort((a,b)=>a.distance-b.distance),near=ranked.filter(r=>r.distance<=16);
    const aerial=near.filter(r=>r.bird.airborne).slice(0,3);
    const local=[...aerial,...near.filter(r=>!aerial.includes(r))].slice(0,8);
