@@ -21,4 +21,5 @@ export interface HeritageLandmark {
  quickFacts?:HeritageQuickFact[];timeline?:HeritageTimelineEvent[];story?:string;purpose?:string;patron?:string;culturalRole?:string;whatToNotice?:string[];
  images?:HeritageImage[];sources?:HeritageSource[];reconstruction?:HeritageReconstructionEvidence;research?:HeritageResearch;
 }
-export interface HeritageInteractionZone {landmarkId:string;heritageId:string;position:[number,number,number];radius:number;label?:string}
+export type HeritageSpatialArea={kind:"frontage";start:[number,number,number];end:[number,number,number];front:[number,number,number];depth:number}|{kind:"footprint";vertices:[number,number,number][];margin:number};
+export interface HeritageInteractionZone {area?:HeritageSpatialArea;visibleFrom?:(position:{x:number;y:number;z:number},target:[number,number,number])=>boolean;landmarkId:string;heritageId:string;position:[number,number,number];radius:number;label?:string}

@@ -27,7 +27,7 @@ export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}
    const blocked=controls.inputBlocked||document.hidden||!!document.querySelector('dialog[open], .game-menu[open]');
    const bell=blocked||runtime.current.bellAction||runtime.current.seat?null:runtime.current.bellPrompt;
    setBellPrompt(previous=>previous?.id===bell?.id?previous:bell);
-   store.getState().setNearest(blocked||bell||runtime.current.bellAction?null:nearestHeritageZone(runtime.current.nextPosition,zones,id=>!!heritageLandmarks[id]));
+   store.getState().setNearest(blocked||bell||runtime.current.bellAction?null:nearestHeritageZone(runtime.current.nextPosition,zones,id=>!!heritageLandmarks[id],controls.yaw));
   };
   const open=()=>{
    poll();const zone=store.getState().nearest;
