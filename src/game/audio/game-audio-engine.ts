@@ -9,7 +9,7 @@ const npcVoicePaths={...oldManVoiceConfig.paths,...reactiveVoicePaths};
 export class GameAudioEngine {
  private context:AudioContext|null=null;
  private bellLoading:Promise<void>|null=null;
- private bellVoices=new Set<{source:AudioBufferSourceNode;gain:GainNode;panner:PannerNode}>();
+ private bellVoices=new Set<{source:AudioBufferSourceNode;gain:GainNode;panner:PannerNode;filters:BiquadFilterNode[]}>();
  private disposed=false;
  private loading:Promise<void>|null=null;
  private abort=new AbortController();
@@ -57,11 +57,20 @@ export class GameAudioEngine {
   const context=this.context,buffer=this.buffers.get('heritage-bell');
   if(this.disposed||!context||context.state!=='running'||!buffer)return;
   const source=context.createBufferSource(),gain=context.createGain(),panner=context.createPanner();
-  source.buffer=buffer;source.playbackRate.value=small?1.12:1;gain.gain.value=.35;
+  source.buffer=buffer;source.playbackRate.value=small?1.12:.91;
+  // Large bell gains weight spectrally, with output headroom rather than a volume jump.
+  gain.gain.value=small?.35:.24;
+  const filters:BiquadFilterNode[]=[];
+  if(!small){
+   const bass=context.createBiquadFilter();bass.type='lowshelf';bass.frequency.value=210;bass.gain.value=6.5;
+   const body=context.createBiquadFilter();body.type='peaking';body.frequency.value=340;body.Q.value=.8;body.gain.value=1.5;
+   filters.push(bass,body);
+  }
   panner.panningModel='HRTF';panner.distanceModel='linear';panner.refDistance=4;panner.maxDistance=45;panner.rolloffFactor=1;
   panner.positionX.value=position.x;panner.positionY.value=position.y;panner.positionZ.value=position.z;
-  source.connect(gain).connect(panner).connect(context.destination);const voice={source,gain,panner};this.bellVoices.add(voice);
-  source.onended=()=>{source.disconnect();gain.disconnect();panner.disconnect();this.bellVoices.delete(voice);};source.start();
+  let output:AudioNode=source;for(const filter of filters){output.connect(filter);output=filter;}
+  output.connect(gain).connect(panner).connect(context.destination);const voice={source,gain,panner,filters};this.bellVoices.add(voice);
+  source.onended=()=>{source.disconnect();filters.forEach(filter=>filter.disconnect());gain.disconnect();panner.disconnect();this.bellVoices.delete(voice);};source.start();
  }
  private async loadNpcVoices(context:AudioContext){
   await Promise.all([...Object.values(npcVoicePaths),...Object.values(femaleVoicePaths)].map(async path=>{
@@ -94,5 +103,5 @@ export class GameAudioEngine {
  }
  landing(surface:FootstepSurface){this.footstep(surface,false,true);}
  stopSteps(){for(const voice of this.voices)if(!voice.landing){voice.gain.gain.setTargetAtTime(0,this.context!.currentTime,.005);voice.source.stop(this.context!.currentTime+.02);this.voices.delete(voice);}}
- dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();for(const voice of this.bellVoices){voice.source.stop();voice.source.disconnect();voice.gain.disconnect();voice.panner.disconnect();}this.bellVoices.clear();this.npcVoice?.source.stop();this.stopSteps();for(const voice of this.voices)voice.source.stop();this.voices.clear();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
+ dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();for(const voice of this.bellVoices){voice.source.stop();voice.source.disconnect();voice.filters.forEach(filter=>filter.disconnect());voice.gain.disconnect();voice.panner.disconnect();}this.bellVoices.clear();this.npcVoice?.source.stop();this.stopSteps();for(const voice of this.voices)voice.source.stop();this.voices.clear();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
 }
