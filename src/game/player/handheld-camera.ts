@@ -5,7 +5,7 @@ export function createHandheldCamera(){
  const group=new Group();
  // Camera-local convention: right +X, top +Y, lens -Z, rear +Z.
  const anchor=(name:string,position:[number,number,number])=>{const o=new Group();o.name=name;o.position.fromArray(position);group.add(o);return o;};
- anchor('RightGripTarget',[.076,-.006,-.005]);anchor('LeftSupportTarget',[-.012,-.047,-.052]);anchor('EyeViewfinderTarget',[0,.04,.055]);
+ anchor('RightGripTarget',[.088,-.006,-.005]);anchor('LeftSupportTarget',[-.09,-.025,.005]);anchor('EyeViewfinderTarget',[0,.04,.055]);
  const box=new BoxGeometry(1,1,1),cylinder=new CylinderGeometry(1,1,1,16);
  const body=new MeshStandardMaterial({color:'#292a29',roughness:.76}),metal=new MeshStandardMaterial({color:'#41423e',roughness:.42,metalness:.55}),glass=new MeshStandardMaterial({color:'#162d34',roughness:.18,metalness:.45});
  const block=(x:number,y:number,z:number,w:number,h:number,d:number,material=body)=>{const m=new Mesh(box,material);m.position.set(x,y,z);m.scale.set(w,h,d);group.add(m);};
@@ -26,8 +26,9 @@ export function createCameraPose(model:Object3D,prop:Group){
  const q=new Quaternion(),parent=new Quaternion(),delta=new Quaternion(),orientation=new Quaternion(),basis=new Matrix4(),back=new Vector3(),fingerAxis=new Vector3(),thumbAxis=new Vector3(),normal=new Vector3();
  // Calibrate full hand frames from actual index/thumb landmarks, including palm offset.
  const grips=sides.map(s=>{const index=s.finger?.position.clone()??new Vector3(0,.06,0),thumb=s.thumb?.position.clone()??new Vector3(.03,.03,0);fingerAxis.copy(index).normalize();thumbAxis.copy(thumb).addScaledVector(fingerAxis,-thumb.dot(fingerAxis)).normalize();normal.crossVectors(thumbAxis,fingerAxis).normalize();const inverse=new Quaternion().setFromRotationMatrix(basis.makeBasis(thumbAxis,fingerAxis,normal)).invert();
-  const fingers=s.side==='Right'?new Vector3(0,1,-.12).normalize():new Vector3(1,.1,0).normalize(),across=new Vector3(0,0,1);across.addScaledVector(fingers,-across.dot(fingers)).normalize();normal.crossVectors(across,fingers).normalize();
-  const frame=new Quaternion().setFromRotationMatrix(basis.makeBasis(across,fingers,normal)).multiply(inverse),node=prop.getObjectByName(s.side==='Right'?'RightGripTarget':'LeftSupportTarget')!;node.quaternion.copy(frame);return {node,palm:index.multiplyScalar(.55)};});let applied=false;
+  // Both hands use a simple upright side grip; no twisted under-lens wrist.
+  const fingers=new Vector3(0,1,-.12).normalize(),across=new Vector3(0,0,1);across.addScaledVector(fingers,-across.dot(fingers)).normalize();normal.crossVectors(across,fingers).normalize();
+  const frame=new Quaternion().setFromRotationMatrix(basis.makeBasis(across,fingers,normal)).multiply(inverse),node=prop.getObjectByName(s.side==='Right'?'RightGripTarget':'LeftSupportTarget')!;node.quaternion.copy(frame);return {node,palm:index.multiplyScalar(s.side==='Right'?.55:.4)};});let applied=false;
  const aim=(bone:Object3D,child:Object3D,goal:Vector3,weight:number)=>{bone.getWorldPosition(a);child.getWorldPosition(b);b.sub(a).normalize();c.subVectors(goal,a).normalize();delta.setFromUnitVectors(b,c);bone.getWorldQuaternion(q);bone.parent!.getWorldQuaternion(parent).invert();q.premultiply(delta).premultiply(parent);bone.quaternion.slerp(q,weight);bone.updateWorldMatrix(true,true);};
  return {restore(){if(applied)for(const e of entries)e.b.quaternion.copy(e.q);applied=false;},apply(state:HandheldCameraState,dt:number,blocked=false){
   state.hold=Math.max(0,Math.min(1,state.hold+(state.wanted?dt/.8:-dt/.45)));state.elapsed=state.wanted?state.elapsed+dt:0;
@@ -55,9 +56,13 @@ export function createCameraPose(model:Object3D,prop:Group){
   for(const [i,s] of sides.entries()){const arm=s.arm!,fore=s.fore!,hand=s.hand!,sign=s.side==='Right'?1:-1;
    const grip=grips[i];grip.node.getWorldPosition(target);grip.node.getWorldQuaternion(orientation);const palmScale=hand.getWorldScale(temp).x;temp.copy(grip.palm).multiplyScalar(palmScale).applyQuaternion(orientation);target.sub(temp);
    arm.getWorldPosition(a);fore.getWorldPosition(b);hand.getWorldPosition(c);const upper=a.distanceTo(b),lower=b.distanceTo(c);direction.subVectors(target,a);const distance=Math.max(Math.abs(upper-lower)+.001,Math.min((upper+lower)*.97,direction.length()));direction.normalize();target.copy(a).addScaledVector(direction,distance);
-   bend.copy(right).multiplyScalar(sign*(.85-.2*raise)).addScaledVector(up,-1).addScaledVector(forward,-.35);bend.addScaledVector(direction,-bend.dot(direction)).normalize();const along=(upper*upper-lower*lower+distance*distance)/(2*distance);elbow.copy(a).addScaledVector(direction,along).addScaledVector(bend,Math.sqrt(Math.max(0,upper*upper-along*along)));
+   bend.copy(right).multiplyScalar(sign*(.85-.2*raise)).addScaledVector(up,-1).addScaledVector(forward,-.35);bend.addScaledVector(direction,-bend.dot(direction));if(bend.lengthSq()<1e-8){bend.copy(up).addScaledVector(direction,-up.dot(direction));}bend.normalize();const along=(upper*upper-lower*lower+distance*distance)/(2*distance);elbow.copy(a).addScaledVector(direction,along).addScaledVector(bend,Math.sqrt(Math.max(0,upper*upper-along*along)));
    const weight=smooth(state.hold/.35);aim(arm,fore,elbow,weight);aim(fore,hand,target,weight);
-   hand.parent!.getWorldQuaternion(parent).invert();q.copy(parent).multiply(orientation);hand.quaternion.slerp(q,weight);hand.updateWorldMatrix(true,true);
+   hand.parent!.getWorldQuaternion(parent).invert();q.copy(parent).multiply(orientation);
+   // Keep the left wrist close to its animated neutral local frame; upper arm/forearm
+   // solve the reach, rather than forcing a large wrist twist against locomotion.
+   if(sign<0){const neutral=entries.find(e=>e.b===hand)!.q,angle=neutral.angleTo(q);if(angle>1){delta.copy(q);q.copy(neutral).slerp(delta,1/angle);}}
+   hand.quaternion.slerp(q,weight);hand.updateWorldMatrix(true,true);
   }
  }};
 }

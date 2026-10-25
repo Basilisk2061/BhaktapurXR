@@ -41,14 +41,15 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
   return()=>{cancelAnimationFrame(frame);document.documentElement.removeAttribute('data-camera-viewfinder');document.removeEventListener('pointerdown',lower,true);document.removeEventListener('contextmenu',context,true);document.removeEventListener('keydown',key,true);document.removeEventListener('wheel',wheel,true);};
  },[runtime,input,session]);
  const f=settings.manual?apertures[settings.aperture]:4,t=settings.manual?shutters[settings.shutter]:125,iso=settings.manual?sensitivities[settings.iso]:100;
- const focus=`${settings.manualFocus?'MF':'AF'} ${settings.focus.toFixed(1)}m`,rows=[`Aperture  F${f.toFixed(1)}`,`Shutter  1/${t}`,`ISO  ${iso}`,`EV  ${settings.ev>=0?'+':''}${settings.ev.toFixed(1)}`,`Focus  ${focus}`];
+ const focus=`${settings.manualFocus?'MF':'AF'} ${settings.focus.toFixed(1)}m`,rows=[['Mode',settings.manual?'M':'AUTO'],['Focal',`${Math.round(settings.focal)}mm`],['Aperture',`F${f.toFixed(1)}`],['Shutter',`1/${t}`],['ISO',String(iso)],['EV',settings.ev.toFixed(1)],['Focus',focus],['Grid',settings.grid?'Thirds':'Off']];
  return <div hidden={!active} className="camera-viewfinder" aria-label="Photography viewfinder">
   <span className="camera-mode-label">{settings.manual?'M':'AUTO'} <small>{Math.round(settings.focal)}mm</small></span>
-  <i className={`camera-focus${settings.focusUntil>Date.now()?' is-focused':''}`}/><div className="camera-frame"/>
-  {settings.grid&&<div className="camera-thirds" aria-label="Rule of thirds grid"/>}
+  <i className={`camera-focus${settings.focusUntil>Date.now()?' is-focused':''}`}/>
+  {settings.grid&&<div className="camera-thirds" aria-label="Rule of thirds grid"><i/><i/><i/><i/></div>}
   <div className="camera-exposure-strip"><span>1/{t}</span><span>F{f.toFixed(1)}</span><span>ISO {iso}</span><span>EV {settings.ev.toFixed(1)}</span><span>{focus}</span></div>
-  <button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>Controls{touch?'':' [C]'}</button>
-  {settings.panel&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera controls"><strong>Camera Controls</strong><p>{settings.manual?'MANUAL':'AUTO'} | {Math.round(settings.focal)}mm | Grid {settings.grid?'Thirds':'Off'}</p><ul>{rows.map((text,i)=><li key={i} className={settings.row===i?'is-current':''}>{text}{!settings.manual&&i!==3?' | Auto':''}</li>)}</ul><p>Up/Down: Select | Left/Right: Adjust<br/>Wheel: Zoom | F: Autofocus<br/>G: Grid | M: Auto/Manual<br/>C: Controls | Right click: Lower</p><small>Focus distance stored; no depth-of-field.</small>{touch&&<div><button onClick={()=>session.photography.setState({grid:!settings.grid})}>Grid</button><button onClick={()=>session.photography.setState({focusRequested:true})}>Focus</button></div>}</section>}
+  <button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>CTRL{touch?'':' [C]'}</button>
+  {settings.panel&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera settings"><strong>CAMERA SETTINGS</strong><ul>{rows.map(([label,value],i)=><li key={label} className={i===settings.row+2?'is-current':''}><span>{label}</span><span>{value}</span></li>)}</ul><small>Up/Down Select | Left/Right Adjust</small>{touch&&<div><button onClick={()=>session.photography.setState({grid:!settings.grid})}>Grid</button><button onClick={()=>session.photography.setState({focusRequested:true})}>Focus</button></div>}</section>}
+  <span className="camera-short-hint">Wheel Zoom | F Focus | G Grid | C Settings | RMB Lower</span>
   {touch&&<button type="button" className="camera-lower" onPointerDown={event=>event.preventDefault()} onClick={()=>{if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;}}>Lower Camera</button>}
  </div>;
 }
