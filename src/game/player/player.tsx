@@ -98,7 +98,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     const touch=controls.touchMode?controls.touchMovement:undefined;
     const forward = controls.active ? touch?.forward ?? (Number(keys.has("KeyW")) - Number(keys.has("KeyS"))) : 0;
     const right = controls.active ? touch?.right ?? (Number(keys.has("KeyD")) - Number(keys.has("KeyA"))) : 0;
-    const running = controls.active && (touch?.running ?? (keys.has("ShiftLeft") || keys.has("ShiftRight")));
+    const running = !controls.cameraView && controls.active && (touch?.running ?? (keys.has("ShiftLeft") || keys.has("ShiftRight")));
     const speed = (running ? playerConfig.runSpeed : playerConfig.walkSpeed) * (touch ? Math.min(1,Math.hypot(forward,right)) : 1);
     cameraRelativeDirection(forward, right, controls.yaw, direction);
     const slowing = (forward === 0 && right === 0) || Math.hypot(motion.velocity.x, motion.velocity.z) > speed;
@@ -112,7 +112,8 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     }
     stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS, consumeJump(controls, motion.grounded));
     motion.movement = movementState(motion.grounded, motion.horizontalSpeed, running, playerConfig.movementThreshold);
-    if (motion.horizontalSpeed > playerConfig.movementThreshold) {
+    if(controls.cameraView)motion.facingYaw=controls.yaw;
+    else if (motion.horizontalSpeed > playerConfig.movementThreshold) {
       const corrected = character.computedMovement();
       motion.facingYaw = dampAngle(motion.facingYaw, Math.atan2(-corrected.x, -corrected.z), playerConfig.turnResponsiveness, delta);
     }

@@ -3,7 +3,9 @@ import type { ArcadeSeat } from "./arcade-sitting.ts";
 import type { MovementState } from "./movement";
 
 export interface ItemAction {kind:'equip'|'throw';elapsed:number;released:boolean}
+export interface HandheldCameraState {wanted:boolean;using:boolean;hold:number;view:number;elapsed:number;pendingFood:boolean}
 export interface PlayerRuntime {
+  handheldCamera?:HandheldCameraState;
   itemAction?:ItemAction|null;itemEquipRequested?:boolean;itemRigReady?:boolean;itemHand?:{x:number;y:number;z:number};
   bellAction:BellAction|null;bellPrompt:BellPrompt|null;bellRigReady:boolean;
   velocity: { x: number; y: number; z: number };

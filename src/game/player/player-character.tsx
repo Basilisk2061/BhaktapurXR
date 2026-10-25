@@ -1,3 +1,4 @@
+import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
 import {createBellPose} from "./bell-pose";
 import {useGraphicsQuality} from '../../lib/graphics-quality';
@@ -22,6 +23,10 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const quality=useGraphicsQuality();
   const {scene,animations}=useGLTF(characterAsset("/assets/characters/player/player.glb",quality),false,false);
   const model=useMemo(()=>{const model=clone(scene);model.traverse(object=>{object.castShadow=true;object.receiveShadow=true;});return model;},[scene]);
+  const cameraProp=useMemo(()=>createHandheldCamera(),[]);
+  const cameraPose=useMemo(()=>createCameraPose(model,cameraProp.group),[model,cameraProp]);
+  useEffect(()=>{model.add(cameraProp.group);return()=>{model.remove(cameraProp.group);};},[model,cameraProp]);
+  useEffect(()=>()=>cameraProp.dispose(),[cameraProp]);
   const itemPose=useMemo(()=>createItemPose(model),[model]);
   const hand=useMemo(()=>model.getObjectByName("mixamorigRightHand"),[model]);
   const handPosition=useMemo(()=>new Vector3(),[]);
@@ -44,11 +49,19 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
       previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
     const action=actions[name],before=action.time;
+    cameraPose.restore();
     itemPose.restore();
     bellPose.restore();
     mixer.update(Math.min(delta,.05));
     bellPose.apply(motion.bellAction?.elapsed);
     if(!motion.bellAction&&!motion.seat&&motion.grounded&&!motion.flying)itemPose.apply(motion.itemAction);
+    const held=motion.handheldCamera;
+    if(held){
+      cameraPose.apply(held,Math.min(delta,.05),!!motion.bellAction||!!motion.seat);
+      if(motion.bellAction||motion.seat)cameraProp.group.visible=false;
+      model.visible=held.view<.96;
+      if(!held.wanted&&held.hold===0&&held.pendingFood){held.pendingFood=false;motion.itemEquipRequested=true;}
+    }
     if(hand){model.updateWorldMatrix(true,true);hand.getWorldPosition(handPosition);motion.itemHand??={x:0,y:0,z:0};Object.assign(motion.itemHand,handPosition);}
     if(playContact&&(name==="Walk"||name==="Run")){
       const duration=action.getClip().duration,after=action.time+(action.time<before?duration:0);

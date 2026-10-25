@@ -56,7 +56,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
       const x = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementX));
       const y = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementY));
       input.yaw = Math.atan2(Math.sin(input.yaw - x * sensitivity), Math.cos(input.yaw - x * sensitivity));
-      input.pitch = Math.max(minPitch, Math.min(maxPitch, input.pitch + y * sensitivity));
+      input.pitch = Math.max(input.cameraView?-1.1:minPitch, Math.min(input.cameraView?1.1:maxPitch, input.pitch + y * sensitivity));
     };
     const keyDown = (event: KeyboardEvent) => {
       if(input.inputBlocked||input.inventoryOpen)return;

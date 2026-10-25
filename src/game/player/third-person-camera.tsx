@@ -67,6 +67,23 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
       state.renderedDistance = 0;
       motion.cameraDistance = 0;
     }
+    const held=motion.handheldCamera;
+    if(held){
+      if(controls.flying||controls.inputBlocked||controls.inventoryOpen||!controls.active||motion.seat||motion.bellAction||!held.wanted)held.using=false;
+      held.view=Math.max(0,Math.min(1,held.view+(held.using?delta/.35:-delta/.35)));
+      controls.cameraView=held.view>0;
+      if(held.view>0){
+        const blend=held.view*held.view*(3-2*held.view);
+        const eye=state.ideal;
+        visual.getWorldPosition(eye);eye.y+=playerConfig.height/2-.12;
+        state.direction.set(-Math.sin(controls.yaw)*Math.cos(controls.pitch),-Math.sin(controls.pitch),-Math.cos(controls.yaw)*Math.cos(controls.pitch));
+        eye.addScaledVector(state.direction,.08);
+        camera.position.copy(state.candidate).lerp(eye,blend);
+        state.lookTarget.copy(state.focus).lerp(state.candidate.copy(eye).add(state.direction),blend);
+        camera.lookAt(state.lookTarget);
+        initialized.current=true;lastReset.current=motion.resetSequence;return;
+      }
+    }
     camera.position.copy(state.candidate);
     state.lookTarget.copy(state.focus);
     // An exceptionally tight boom must not give lookAt a coincident/reversed target.

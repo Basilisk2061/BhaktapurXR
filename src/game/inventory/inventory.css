@@ -31,3 +31,7 @@
 .inventory-selected::before{left:-3px}.inventory-selected::after{right:-3px}
 .inventory-wheel-details small{padding-top:3px;letter-spacing:.08em;color:#ad8965}
 @media(prefers-reduced-motion:reduce){.inventory-segment>path{transition:none}}
+.camera-viewfinder{position:fixed;inset:0;z-index:24;pointer-events:none;color:#ece5da;font:12px/1.4 Georgia,serif;text-shadow:0 1px 3px #130e0b}
+.camera-viewfinder[hidden]{display:none}.camera-viewfinder-title{position:absolute;left:50%;top:max(32px,env(safe-area-inset-top));transform:translateX(-50%);padding:5px 18px;background:#21150f99;border-block:1px solid #917355;letter-spacing:.12em}
+.camera-frame{position:absolute;inset:12% 9%;background:linear-gradient(#d9c9b5,#d9c9b5) left top/25px 1px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) left top/1px 25px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) right top/25px 1px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) right top/1px 25px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) left bottom/25px 1px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) left bottom/1px 25px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) right bottom/25px 1px no-repeat,linear-gradient(#d9c9b5,#d9c9b5) right bottom/1px 25px no-repeat;opacity:.65}
+.camera-focus{position:absolute;left:50%;top:50%;width:20px;height:16px;transform:translate(-50%,-50%);border-inline:1px solid #ece5da88}.camera-viewfinder p{position:absolute;bottom:max(32px,env(safe-area-inset-bottom));left:0;right:0;text-align:center}

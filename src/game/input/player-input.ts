@@ -2,6 +2,7 @@ export type PointerStatus = "inactive" | "locked" | "fallback";
 
 export interface PlayerInput {
   inventoryOpen?:boolean;
+  cameraView?:boolean;
   keys: Set<string>;
   touchMode?: boolean;
   inputBlocked?: boolean;
@@ -32,7 +33,7 @@ export function pressGameplayKey(input: PlayerInput, code: string, repeat = fals
   if (code === "KeyE" && !repeat && !input.keys.has(code)) input.interactRequested = true;
   if (code === "Space" && input.sitting) { input.jumpRequested = false; input.lastSpacePress = null; input.keys.add(code); return; }
   if (code === "Space" && !repeat && !input.keys.has(code)) {
-    if (input.lastSpacePress !== null && now - input.lastSpacePress >= 0 && now - input.lastSpacePress <= 350) {
+    if (process.env.NODE_ENV === "development" && input.lastSpacePress !== null && now - input.lastSpacePress >= 0 && now - input.lastSpacePress <= 350) {
       input.flying = !input.flying;
       input.lastSpacePress = null;
       input.jumpRequested = false;
