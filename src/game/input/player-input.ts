@@ -1,6 +1,7 @@
 export type PointerStatus = "inactive" | "locked" | "fallback";
 
 export interface PlayerInput {
+  inventoryOpen?:boolean;
   keys: Set<string>;
   touchMode?: boolean;
   inputBlocked?: boolean;

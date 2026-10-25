@@ -2,7 +2,9 @@ import type {BellAction,BellPrompt} from "../bells/bell-session";
 import type { ArcadeSeat } from "./arcade-sitting.ts";
 import type { MovementState } from "./movement";
 
+export interface ItemAction {kind:'equip'|'throw';elapsed:number;released:boolean}
 export interface PlayerRuntime {
+  itemAction?:ItemAction|null;itemEquipRequested?:boolean;itemRigReady?:boolean;itemHand?:{x:number;y:number;z:number};
   bellAction:BellAction|null;bellPrompt:BellPrompt|null;bellRigReady:boolean;
   velocity: { x: number; y: number; z: number };
   desiredTranslation: { x: number; y: number; z: number };

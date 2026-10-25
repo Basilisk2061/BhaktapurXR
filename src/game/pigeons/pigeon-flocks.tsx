@@ -7,7 +7,7 @@ import {useGraphicsQuality} from '../../lib/graphics-quality';
 import type {PlayerRuntime} from '../player/player-runtime';
 import {daylightAmount,environmentStore} from '../world/time-of-day';
 import {PigeonSimulation,type BirdProbe} from './pigeon-behavior';
-import {pigeonCounts,pigeonZones} from './pigeon-config';
+import {pigeonCounts,pigeonZones,pigeonAirTargets} from './pigeon-config';
 import {createPigeonResources,createPigeonVisual} from './pigeon-model';
 
 /** One ambient-life owner; no bird physics bodies, input handlers or React frame state. */
@@ -50,7 +50,8 @@ export function PigeonFlocks({player,food}:{player:RefObject<PlayerRuntime>;food
   const far=pigeonZones.every(zone=>Math.hypot(zone.x-motion.nextPosition.x,zone.z-motion.nextPosition.z)>65);
   if(far&&elapsed.current<.15)return;
   point.set(motion.nextPosition.x,motion.nextPosition.y,motion.nextPosition.z);
-  simulation.update(elapsed.current,point,motion.movement==='RUN',daylightAmount(environmentStore.getState().hour),pigeonCounts[quality]);elapsed.current=0;
+  const simulationDelta=elapsed.current;
+  simulation.update(elapsed.current,point,motion.movement==='RUN',daylightAmount(environmentStore.getState().hour),pigeonCounts[quality],pigeonAirTargets[quality]);elapsed.current=0;
   for(const bird of simulation.birds){
    const visual=visuals[bird.id],visible=bird.initialized&&bird.fade>=.012;
    visual.root.visible=visible;if(!visible)continue;
@@ -60,7 +61,10 @@ export function PigeonFlocks({player,food}:{player:RefObject<PlayerRuntime>;food
    const peck=(bird.state==='GROUND_PECK'||bird.state==='FEEDING')?Math.max(0,Math.sin(bird.age*Math.PI/.325)):0;
    visual.head.position.set(0,.12,-.04);
    visual.head.rotation.set(-1.38*peck+(walking?.045*Math.sin(simulation.time*12+bird.phase):0)+(bird.state==='ALERT'?.08:0),.08*Math.sin(simulation.time*1.7+bird.phase),0);
-   const frequency=bird.state==='TAKEOFF'?45:bird.state==='LANDING'?38:31,flap=Math.sin(simulation.time*frequency+bird.phase);
+   const glide=bird.airLeg&&bird.state==='FLYING'&&Math.sin(simulation.time*1.1+bird.phase)>.9;
+   const frequency=bird.state==='TAKEOFF'?45:bird.state==='LANDING'?38:27+4*Math.sin(simulation.time*.7+bird.phase);
+   bird.wingPhase=(bird.wingPhase+frequency*simulationDelta)%(Math.PI*2);bird.glide=MathUtils.damp(bird.glide,glide?1:0,10,simulationDelta);
+   const flap=MathUtils.lerp(Math.sin(bird.wingPhase),.12,bird.glide);
    for(const wing of visual.wings){wing.hinge.rotation.y=MathUtils.lerp(-1.35,0,air);wing.hinge.rotation.z=MathUtils.lerp(-.18,flap*(bird.state==='TAKEOFF'?1.05:.8),air);}
    const index=Math.min(7,Math.max(0,Math.floor(bird.fade*8)));
    if(index!==visual.material){for(const mesh of visual.meshes)mesh.material=resources.palettes[bird.variant][index];visual.material=index;}

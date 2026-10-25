@@ -1,4 +1,5 @@
-﻿import {useEffect,useMemo,useRef,type RefObject} from 'react';
+import {grainReleaseTime,itemActionDuration} from '../player/item-pose';
+import {useEffect,useMemo,useRef,type RefObject} from 'react';
 import {useFrame} from '@react-three/fiber';
 import {useRapier} from '@react-three/rapier';
 import {BoxGeometry,InstancedMesh,MeshStandardMaterial,Object3D,Vector3} from 'three';
@@ -22,17 +23,30 @@ export function BirdFood({session,input,player}:{session:ItemSession;input:RefOb
    const y=motion.nextPosition.y+3-hit.timeOfImpact,feet=motion.nextPosition.y-playerConfig.height/2;
    return y>feet+.3||y<feet-.6?null:y;
   };
+  const eligible=()=>input.current.active&&!input.current.inputBlocked&&!input.current.inventoryOpen&&!input.current.flying&&motion.grounded&&!motion.seat&&!motion.bellAction&&motion.itemRigReady&&inventorySlots[session.inventory.getState().selected]==='birdFood';
+  const place=()=>{
+   r.direction.set(-Math.sin(motion.facingYaw),0,-Math.cos(motion.facingYaw));r.target.set(motion.nextPosition.x,0,motion.nextPosition.z).addScaledVector(r.direction,3);
+   const obstruction=world.castRay(new rapier.Ray(motion.nextPosition,r.direction),3,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,fixed),y=height(r.target.x,r.target.z);
+   if(obstruction||y===null||world.intersectionWithShape({x:r.target.x,y:y+.4,z:r.target.z},r.rotation,r.ball,rapier.QueryFilterFlags.EXCLUDE_SENSORS))return false;
+   for(const [dx,dz] of [[-.7,-.7],[-.7,.7],[.7,-.7],[.7,.7]]){const other=height(r.target.x+dx,r.target.z+dz);if(other===null||Math.abs(other-y)>.05)return false;}
+   r.target.y=y+.015;r.origin.copy(motion.itemHand??motion.nextPosition);return true;
+  };
+  if(motion.itemAction&&!eligible())motion.itemAction=null;
+  if(motion.itemEquipRequested){
+   if(eligible()&&!motion.itemAction){motion.itemAction={kind:'equip',elapsed:0,released:false};motion.itemEquipRequested=false;}
+   else if(motion.bellAction||motion.seat||input.current.inputBlocked||inventorySlots[session.inventory.getState().selected]!=='birdFood')motion.itemEquipRequested=false;
+  }
+  const action=motion.itemAction;
+  if(action){
+   action.elapsed+=Math.min(delta,.05);
+   if(action.kind==='throw'&&!action.released&&action.elapsed>=grainReleaseTime){
+    action.released=true;if(eligible()&&place())food.add(r.target,r.origin);
+   }
+   if(action.elapsed>=itemActionDuration[action.kind])motion.itemAction=null;
+  }
   if(food.requested){
    food.requested=false;
-   if(input.current.active&&!input.current.inputBlocked&&!input.current.flying&&!motion.seat&&!motion.bellAction&&inventorySlots[session.inventory.getState().selected]==='birdFood'){
-    r.direction.set(-Math.sin(motion.facingYaw),0,-Math.cos(motion.facingYaw));r.target.set(motion.nextPosition.x,0,motion.nextPosition.z).addScaledVector(r.direction,3);
-    const obstruction=world.castRay(new rapier.Ray(motion.nextPosition,r.direction),3,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,fixed),y=height(r.target.x,r.target.z);
-    if(!obstruction&&y!==null&&!world.intersectionWithShape({x:r.target.x,y:y+.4,z:r.target.z},r.rotation,r.ball,rapier.QueryFilterFlags.EXCLUDE_SENSORS)){
-     let valid=true;
-     for(const [dx,dz] of [[-.7,-.7],[-.7,.7],[.7,-.7],[.7,.7]]){const other=height(r.target.x+dx,r.target.z+dz);if(other===null||Math.abs(other-y)>.05)valid=false;}
-     if(valid){r.target.y=y+.015;r.origin.copy(motion.nextPosition);r.origin.y+=.15;food.add(r.target,r.origin);}
-    }
-   }
+   if(eligible()&&!motion.itemAction&&food.canThrow()&&place())motion.itemAction={kind:'throw',elapsed:0,released:false};
   }
   if(!mesh.current)return;let index=0;
   for(const patch of food.patches){
@@ -43,6 +57,6 @@ export function BirdFood({session,input,player}:{session:ItemSession;input:RefOb
    }
   }
   mesh.current.count=index;mesh.current.instanceMatrix.needsUpdate=true;
- });
+ },-10);
  return <instancedMesh ref={mesh} args={[resources.geometry,resources.material,84]} frustumCulled={false} dispose={null}/>;
 }

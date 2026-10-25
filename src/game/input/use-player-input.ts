@@ -28,7 +28,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
       onStatus(input.active ? "fallback" : "inactive");
     };
     const pointerDown = (event: PointerEvent) => {
-      if (event.pointerType === "touch" || input.inputBlocked || event.button !== 0) return;
+      if (event.pointerType === "touch" || input.inputBlocked || input.inventoryOpen || event.button !== 0) return;
       canvas.focus({ preventScroll: true });
       input.active = true;
       dragging = true;
@@ -51,7 +51,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
       onStatus(input.locked ? "locked" : "inactive");
     };
     const mouseMoved = (event: MouseEvent) => {
-      if (input.touchMode || input.inputBlocked || !input.active || (!input.locked && (!dragging || document.activeElement !== canvas))) return;
+      if (input.touchMode || input.inputBlocked || input.inventoryOpen || !input.active || (!input.locked && (!dragging || document.activeElement !== canvas))) return;
       const { maxMouseDelta, minPitch, maxPitch } = playerConfig.camera;
       const x = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementX));
       const y = Math.max(-maxMouseDelta, Math.min(maxMouseDelta, event.movementY));
@@ -59,7 +59,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
       input.pitch = Math.max(minPitch, Math.min(maxPitch, input.pitch + y * sensitivity));
     };
     const keyDown = (event: KeyboardEvent) => {
-      if(input.inputBlocked)return;
+      if(input.inputBlocked||input.inventoryOpen)return;
       if (event.code === "Escape") {
         resetFocus();
         return;

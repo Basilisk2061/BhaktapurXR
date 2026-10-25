@@ -1,4 +1,4 @@
-/** Ambient-life placement, not a heritage/reconstruction claim.
+﻿/** Ambient-life placement, not a heritage/reconstruction claim.
  * Inspected against final architecture + saved parent/part transforms and primitives.
  * Live ground/clearance queries still reject occupied positions. */
 export const pigeonZones=[
@@ -8,3 +8,10 @@ export const pigeonZones=[
 ] as const;
 export const pigeonCounts={'VERY LOW':3,LOW:9,MEDIUM:15,HIGH:24} as const;
 export const pigeonLimit=24;
+
+/** Air discs reuse the inspected open forecourts, staying inside their previously computed
+ * horizontal architecture clearance. Cross-disc arcs require live full-path sweeps;
+ * a blocked crossing falls back to circling locally, never to unchecked waypoints. */
+export const pigeonAirRegions=pigeonZones.map(zone=>({x:zone.x,z:zone.z,radius:Math.min(10,zone.clearance-1.5),minY:4,maxY:12}));
+export const pigeonAirTargets={'VERY LOW':[0,1],LOW:[2,3],MEDIUM:[4,6],HIGH:[6,10]} as const;
+
