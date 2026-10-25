@@ -1,6 +1,7 @@
 import {createStore} from 'zustand/vanilla';
 import {BirdFoodSystem} from '../food/bird-food-system';
-export const inventoryItems={birdFood:{label:'Bird Food',action:'throwGrain'}} as const;
+export type InventoryIcon='grain';
+export const inventoryItems={birdFood:{label:'Bird Food',description:'Small grains used to attract nearby pigeons.',actionHint:'Click to throw',icon:'grain' satisfies InventoryIcon,action:'throwGrain'}} as const;
 export const inventorySlots:readonly (keyof typeof inventoryItems|null)[]=['birdFood',null,null,null,null];
 interface InventoryState {selected:number;highlighted:number;expanded:boolean;select:(slot:number)=>void;highlight:(slot:number)=>void;open:()=>void;close:(commit:boolean)=>void}
 const valid=(slot:number)=>Number.isInteger(slot)&&slot>=0&&slot<inventorySlots.length;
