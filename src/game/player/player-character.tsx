@@ -1,3 +1,4 @@
+import {createBellPose} from "./bell-pose";
 import {useGraphicsQuality} from '../../lib/graphics-quality';
 import {characterAsset} from '../rendering/character-asset';
 import {useFootContactAudio} from "../audio/game-audio";
@@ -20,6 +21,8 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const quality=useGraphicsQuality();
   const {scene,animations}=useGLTF(characterAsset("/assets/characters/player/player.glb",quality),false,false);
   const model=useMemo(()=>{const model=clone(scene);model.traverse(object=>{object.castShadow=true;object.receiveShadow=true;});return model;},[scene]);
+  const bellPose=useMemo(()=>createBellPose(model),[model]);
+  useEffect(()=>{runtime.current.bellRigReady=bellPose.supported;return()=>{bellPose.restore();runtime.current.bellRigReady=false;runtime.current.bellAction=null;};},[bellPose,runtime]);
   const mixer=useMemo(()=>new AnimationMixer(model),[model]);
   const actions=useMemo(()=>Object.fromEntries(animations.map(clip=>{const action=mixer.clipAction(clip);action.setLoop(clip.name==="Jump"?LoopOnce:LoopRepeat,clip.name==="Jump"?1:Infinity);action.clampWhenFinished=clip.name==="Jump";return [clip.name,action];})),[animations,mixer]);
   const playContact=useFootContactAudio(),footPosition=useMemo(()=>new Vector3(),[]);
@@ -29,14 +32,16 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   useFrame((_,delta)=>{
     const motion=runtime.current;
     const airborne=!motion.flying&&!motion.grounded;
-    const name=motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15?"Run":"Walk";
+    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15?"Run":"Walk";
     if(name!==previous.current||reset.current!==motion.resetSequence){
       actions[previous.current]?.fadeOut(.18);
       actions[name].reset().fadeIn(.18).play();
       previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
     const action=actions[name],before=action.time;
+    bellPose.restore();
     mixer.update(Math.min(delta,.05));
+    bellPose.apply(motion.bellAction?.elapsed);
     if(playContact&&(name==="Walk"||name==="Run")){
       const duration=action.getClip().duration,after=action.time+(action.time<before?duration:0);
       for(const time of contactCrossings(name,before,after,duration)){

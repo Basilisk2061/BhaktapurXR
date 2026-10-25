@@ -1,7 +1,9 @@
+import type {BellAction,BellPrompt} from "../bells/bell-session";
 import type { ArcadeSeat } from "./arcade-sitting.ts";
 import type { MovementState } from "./movement";
 
 export interface PlayerRuntime {
+  bellAction:BellAction|null;bellPrompt:BellPrompt|null;bellRigReady:boolean;
   velocity: { x: number; y: number; z: number };
   desiredTranslation: { x: number; y: number; z: number };
   nextPosition: { x: number; y: number; z: number };
@@ -18,6 +20,7 @@ export interface PlayerRuntime {
 
 export function createPlayerRuntime(): PlayerRuntime {
   return {
+    bellAction:null,bellPrompt:null,bellRigReady:false,
     velocity: { x: 0, y: 0, z: 0 },
     desiredTranslation: { x: 0, y: 0, z: 0 },
     nextPosition: { x: 0, y: 0, z: 0 },

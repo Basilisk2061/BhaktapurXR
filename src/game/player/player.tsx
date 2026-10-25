@@ -48,14 +48,26 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       motion.velocity.x = 0; motion.velocity.y = 0; motion.velocity.z = 0;
       motion.grounded = false; motion.horizontalSpeed = 0; motion.movement = "FALL";
       motion.facingYaw = spawn.rotation[1]; motion.resetSequence++;
-      motion.seat=null; motion.sitPrompt=null; controls.sitting=false;
+      motion.seat=null; motion.sitPrompt=null; motion.bellAction=null;controls.sitting=false;
       controls.jumpRequested = false;
       controls.yaw = spawn.rotation[1]; controls.pitch = playerConfig.camera.initialPitch;
       return;
     }
+    if(controls.interactRequested&&motion.bellPrompt&&!motion.bellAction&&!motion.seat&&!controls.inputBlocked){
+      controls.interactRequested=false;motion.bellPrompt.start();
+    }
+    if(motion.bellAction){
+      controls.keys.clear();controls.jumpRequested=false;controls.interactRequested=false;controls.lastSpacePress=null;controls.flying=false;
+      if(controls.touchMovement)controls.touchMovement={forward:0,right:0,running:false};
+      motion.velocity.x=0;motion.velocity.z=0;motion.sitPrompt=null;motion.movement="IDLE";
+      const point=rigidBody.translation(),target=motion.bellAction.target;
+      motion.facingYaw=dampAngle(motion.facingYaw,Math.atan2(point.x-target.x,point.z-target.z),12,worldConfig.physicsTimeStep);
+      stepCharacter(rigidBody,collider,character,motion,worldConfig.physicsTimeStep,playerConfig,worldConfig.gravity[1],rapier.QueryFilterFlags.EXCLUDE_SENSORS,false);
+      return;
+    }
     const position=rigidBody.translation();
     const candidate=!controls.flying&&!motion.seat?nearestArcadeSeat({x:position.x,y:position.y-playerConfig.height/2,z:position.z},seats):null;
-    motion.sitPrompt=motion.seat?"stand":candidate?"sit":null;
+    motion.sitPrompt=motion.bellPrompt?null:motion.seat?"stand":candidate?"sit":null;
     if(controls.interactRequested){
       controls.interactRequested=false;
       if(controls.active&&motion.seat){

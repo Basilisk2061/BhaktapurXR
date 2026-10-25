@@ -1,5 +1,6 @@
 "use client";
-import {useEffect,useMemo,useRef,type RefObject} from "react";
+import type {BellPrompt} from "../../game/bells/bell-session";
+import {useEffect,useMemo,useRef,useState,type RefObject} from "react";
 import {useStore} from "zustand";
 import type {TransformOverrides} from "../../features/world-editor/transforms";
 import {gameplayCodes,isEditableTarget,type PlayerInput} from "../../game/input/player-input";
@@ -13,6 +14,7 @@ import {HeritagePanel} from "./heritage-panel";
 import "./heritage.css";
 
 export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}:{input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>;overrides?:TransformOverrides;touch:boolean;onOpenChange:(open:boolean)=>void}){
+ const [bellPrompt,setBellPrompt]=useState<BellPrompt|null>(null);
  const language=useHeritageLanguage(),labels=heritageLabels(language);
  const store=useMemo(()=>createHeritageStore(),[]),zones=useMemo(()=>heritageInteractionZones(overrides),[overrides]);
  const nearest=useStore(store,s=>s.nearest),openId=useStore(store,s=>s.openId);
@@ -23,7 +25,9 @@ export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}
   const poll=()=>{
    if(store.getState().openId)return;
    const blocked=controls.inputBlocked||document.hidden||!!document.querySelector('dialog[open], .game-menu[open]');
-   store.getState().setNearest(blocked?null:nearestHeritageZone(runtime.current.nextPosition,zones,id=>!!heritageLandmarks[id]));
+   const bell=blocked||runtime.current.bellAction||runtime.current.seat?null:runtime.current.bellPrompt;
+   setBellPrompt(previous=>previous?.id===bell?.id?previous:bell);
+   store.getState().setNearest(blocked||bell||runtime.current.bellAction?null:nearestHeritageZone(runtime.current.nextPosition,zones,id=>!!heritageLandmarks[id]));
   };
   const open=()=>{
    poll();const zone=store.getState().nearest;
@@ -53,7 +57,10 @@ export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}
     return;
    }
    if(event.code!=='KeyE'||event.repeat||event.ctrlKey||event.altKey||event.metaKey||!controls.active||isEditableTarget(event.target))return;
-   poll();if(!store.getState().nearest)return;
+   poll();
+   if(runtime.current.bellAction)return;
+   if(runtime.current.bellPrompt&&!controls.inputBlocked){event.preventDefault();event.stopImmediatePropagation();held.add(event.code);controls.interactRequested=true;return;}
+   if(!store.getState().nearest)return;
    event.preventDefault();event.stopImmediatePropagation();held.add(event.code);open();
   };
   const keyUp=(event:KeyboardEvent)=>{if(held.delete(event.code)){event.preventDefault();event.stopImmediatePropagation();controls.keys.delete(event.code);}};
@@ -65,7 +72,8 @@ export function HeritageInteraction({input,runtime,overrides,touch,onOpenChange}
  useEffect(()=>{if(openId&&!dialog.current?.open)dialog.current?.showModal();},[openId]);
  const record=openId?heritageLandmarks[openId]:null;
  return <>
-  {!openId&&nearest&&<button type="button" className={`heritage-prompt${touch?' heritage-prompt-touch':''}`} aria-label={`Explore history: ${heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}`} aria-haspopup="dialog" aria-controls="heritage-panel" onClick={()=>actions.current.open()}>{!touch&&<kbd>E</kbd>}<span className="heritage-prompt-copy"><span>Explore History</span><strong>{heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}</strong></span></button>}
+  {!openId&&bellPrompt&&<button type="button" className={`heritage-prompt${touch?' heritage-prompt-touch':''}`} aria-label="Ring Bell" onClick={()=>{if(!input.current.inputBlocked){if(!touch)document.querySelector("canvas")?.focus({preventScroll:true});input.current.active=true;input.current.interactRequested=true;}}}><span className="heritage-prompt-copy"><span>{touch?'Ring Bell':'Press E to Ring Bell'}</span><strong>{bellPrompt.name}</strong></span></button>}
+  {!openId&&!bellPrompt&&nearest&&<button type="button" className={`heritage-prompt${touch?' heritage-prompt-touch':''}`} aria-label={`Explore history: ${heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}`} aria-haspopup="dialog" aria-controls="heritage-panel" onClick={()=>actions.current.open()}>{!touch&&<kbd>E</kbd>}<span className="heritage-prompt-copy"><span>Explore History</span><strong>{heritageLandmarks[nearest.heritageId]?.name??nearest.label??'Landmark'}</strong></span></button>}
   <dialog ref={dialog} id="heritage-panel" className="heritage-dialog" lang={language} aria-labelledby="heritage-title" onCancel={event=>{event.preventDefault();actions.current.close();}} onClose={()=>actions.current.close()}>
    <div className="heritage-toolbar"><span>BhaktapurXR / {labels.heritage}</span>
     <div className="heritage-language" role="group" aria-label={labels.language}>

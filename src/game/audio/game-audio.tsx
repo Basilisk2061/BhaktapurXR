@@ -12,6 +12,8 @@ import {LandingAudioGate} from './landing-audio';
 import {colliderAudioSurface} from './audio-surfaces';
 const ContactAudio=createContext<((position:Vector3,running:boolean)=>void)|null>(null);
 export const useFootContactAudio=()=>useContext(ContactAudio);
+const BellAudio=createContext<((position:Vector3,small:boolean)=>void)|null>(null);
+export const useBellStrikeAudio=()=>useContext(BellAudio);
 export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;children:ReactNode}){
  const quality=useGraphicsQuality();
  const actorsCache=useMemo(()=>['old-a','old-b','female-a','female-b'].map(id=>({id,actor:null as Object3D|null,head:null as Object3D|null,elapsed:1,lookup:1})),[]);
@@ -56,5 +58,5 @@ export function GameAudio({enabled,runtime,input,children}:{enabled:boolean;runt
   camera.getWorldPosition(voiceVectors.position);camera.getWorldDirection(voiceVectors.forward);voiceVectors.up.set(0,1,0).applyQuaternion(camera.quaternion);
   engine.current.updateOldManVoices(actors.filter(a=>a.id.startsWith('old-')),voiceVectors.position,voiceVectors.forward,voiceVectors.up,{position:runtime.current.nextPosition,running:runtime.current.grounded&&!runtime.current.flying&&!runtime.current.seat&&runtime.current.movement==='RUN',landed,flying:runtime.current.flying},actors.filter(a=>a.id.startsWith('female-')));
  },-10);
- return <ContactAudio.Provider value={enabled?contact:null}>{children}</ContactAudio.Provider>;
+ return <ContactAudio.Provider value={enabled?contact:null}><BellAudio.Provider value={enabled?(position,small)=>engine.current?.bellStrike(position,small):null}>{children}</BellAudio.Provider></ContactAudio.Provider>;
 }

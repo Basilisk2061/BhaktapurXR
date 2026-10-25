@@ -8,6 +8,8 @@ const npcVoicePaths={...oldManVoiceConfig.paths,...reactiveVoicePaths};
 /** One owner per mounted game. Buffers are cached; only actual impacts allocate one-shot voices. */
 export class GameAudioEngine {
  private context:AudioContext|null=null;
+ private bellLoading:Promise<void>|null=null;
+ private bellVoices=new Set<{source:AudioBufferSourceNode;gain:GainNode;panner:PannerNode}>();
  private disposed=false;
  private loading:Promise<void>|null=null;
  private abort=new AbortController();
@@ -27,6 +29,7 @@ export class GameAudioEngine {
   const context=this.context??=this.makeContext();
   // Must be called synchronously from the trusted gesture before any fetch/decode awaits.
   const resumed=context.resume();
+  this.bellLoading??=this.loadBell(context);
   this.loading??=this.load(context).catch(error=>{this.loading=null;throw error;});
   try{await Promise.all([resumed,this.loading]);if(!this.disposed&&context.state==='running'&&!this.ambience){
    const source=context.createBufferSource(),gain=context.createGain();source.buffer=this.buffers.get(manifest.ambience.path)!;source.loop=true;gain.gain.value=audioConfig.ambienceGain;source.connect(gain).connect(context.destination);this.ambience=source;source.start();
@@ -43,6 +46,22 @@ export class GameAudioEngine {
   const samples=manifest.footsteps[surface],index=chooseVariation(samples.length,this.last[surface]),buffer=this.buffers.get(samples[index].path);if(!buffer)return;
   this.last[surface]=index;const source=context.createBufferSource(),gain=context.createGain();source.buffer=buffer;source.playbackRate.value=.98+Math.random()*.04;gain.gain.value=(audioConfig.footstepGain*(landing?audioConfig.landingMultiplier:running?audioConfig.runFootstepMultiplier:1))*(.94+Math.random()*.12);source.connect(gain).connect(context.destination);
   const voice={source,gain,landing};this.voices.add(voice);source.onended=()=>{source.disconnect();gain.disconnect();this.voices.delete(voice);};source.start();
+ }
+ private async loadBell(context:AudioContext){
+  // Optional owner-supplied/licensed asset. A missing file never blocks game audio.
+  try{const response=await fetch('/audio/environment/bell-large.ogg',{signal:this.abort.signal});if(!response.ok)return;
+   const buffer=await context.decodeAudioData(await response.arrayBuffer());if(!this.disposed)this.buffers.set('heritage-bell',buffer);
+  }catch{/* Missing/undecodable optional sound: interaction remains silent and functional. */}
+ }
+ bellStrike(position:{x:number;y:number;z:number},small=false){
+  const context=this.context,buffer=this.buffers.get('heritage-bell');
+  if(this.disposed||!context||context.state!=='running'||!buffer)return;
+  const source=context.createBufferSource(),gain=context.createGain(),panner=context.createPanner();
+  source.buffer=buffer;source.playbackRate.value=small?1.12:1;gain.gain.value=.35;
+  panner.panningModel='HRTF';panner.distanceModel='linear';panner.refDistance=4;panner.maxDistance=45;panner.rolloffFactor=1;
+  panner.positionX.value=position.x;panner.positionY.value=position.y;panner.positionZ.value=position.z;
+  source.connect(gain).connect(panner).connect(context.destination);const voice={source,gain,panner};this.bellVoices.add(voice);
+  source.onended=()=>{source.disconnect();gain.disconnect();panner.disconnect();this.bellVoices.delete(voice);};source.start();
  }
  private async loadNpcVoices(context:AudioContext){
   await Promise.all([...Object.values(npcVoicePaths),...Object.values(femaleVoicePaths)].map(async path=>{
@@ -75,5 +94,5 @@ export class GameAudioEngine {
  }
  landing(surface:FootstepSurface){this.footstep(surface,false,true);}
  stopSteps(){for(const voice of this.voices)if(!voice.landing){voice.gain.gain.setTargetAtTime(0,this.context!.currentTime,.005);voice.source.stop(this.context!.currentTime+.02);this.voices.delete(voice);}}
- dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();this.npcVoice?.source.stop();this.stopSteps();for(const voice of this.voices)voice.source.stop();this.voices.clear();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
+ dispose(){if(this.disposed)return;this.disposed=true;this.abort.abort();for(const voice of this.bellVoices){voice.source.stop();voice.source.disconnect();voice.gain.disconnect();voice.panner.disconnect();}this.bellVoices.clear();this.npcVoice?.source.stop();this.stopSteps();for(const voice of this.voices)voice.source.stop();this.voices.clear();this.ambience?.stop();this.ambience?.disconnect();this.ambience=null;this.buffers.clear();void this.context?.close();}
 }

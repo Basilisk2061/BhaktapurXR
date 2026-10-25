@@ -1,4 +1,5 @@
 "use client";
+import {BellInteractions} from "./bells/bell-session";
 const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m.NpcPopulation})));
 import {GameAudio} from "./audio/game-audio";
 import {SquareCompletionBoundary} from "./world/square-completion-boundary";
@@ -88,6 +89,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
       <Suspense fallback={null}>
         <Physics gravity={worldConfig.gravity} lengthUnit={worldConfig.unitsPerMetre} timeStep={worldConfig.physicsTimeStep} updatePriority={-50} colliders={false} debug={developmentConfig.physicsDebug}>
           <GameAudio enabled={mode==="BHAKTAPUR"} runtime={runtime} input={input}>
+          <BellInteractions enabled={mode==="BHAKTAPUR"&&!editorSession} runtime={runtime} input={input}>
           {editorSession?<EditorScene session={editorSession} input={input} runtime={runtime} onPointerStatus={onPointerStatus} spawn={spawn}/>:<>
           <SquareCompletionBoundary review={review}/>
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
@@ -96,6 +98,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={initialReady} />
+          </BellInteractions>
           </GameAudio>
         </Physics>
       </Suspense>
