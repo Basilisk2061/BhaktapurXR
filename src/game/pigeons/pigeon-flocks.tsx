@@ -32,8 +32,15 @@ export function PigeonFlocks({player}:{player:RefObject<PlayerRuntime>}){
   };
  },[world,rapier,player,view]);
  const simulation=useMemo(()=>new PigeonSimulation(probe),[probe]),resources=useMemo(()=>createPigeonResources(),[]);
- const visuals=useMemo(()=>simulation.birds.map(bird=>createPigeonVisual(resources,bird.variant)),[simulation,resources]);
- const flock=useMemo(()=>{const group=new Group();group.name='ambient-pigeon-flocks';visuals.forEach((visual,i)=>{visual.root.name='pigeon:'+i;group.add(visual.root);});return group;},[visuals]);
+ // Construct the whole owned graph atomically. Strict Mode replays memo factories:
+ // reusing roots from a separate memo would move them into the discarded group,
+ // leaving the retained/rendered flock empty (Object3D.add reparents children).
+ const {flock,visuals}=useMemo(()=>{
+  const flock=new Group();flock.name='ambient-pigeon-flocks';
+  const visuals=simulation.birds.map(bird=>createPigeonVisual(resources,bird.variant));
+  visuals.forEach((visual,i)=>{visual.root.name='pigeon:'+i;flock.add(visual.root);});
+  return {flock,visuals};
+ },[simulation,resources]);
  const elapsed=useRef(0),point=useMemo(()=>new Vector3(),[]);
  useEffect(()=>()=>resources.dispose(),[resources]);
  useFrame((_,delta)=>{
