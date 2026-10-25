@@ -1,3 +1,4 @@
+import type {BirdFoodSystem} from '../food/bird-food-system';
 import {useEffect,useMemo,useRef,type RefObject} from 'react';
 import {useFrame,useThree} from '@react-three/fiber';
 import {useRapier} from '@react-three/rapier';
@@ -10,7 +11,7 @@ import {pigeonCounts,pigeonZones} from './pigeon-config';
 import {createPigeonResources,createPigeonVisual} from './pigeon-model';
 
 /** One ambient-life owner; no bird physics bodies, input handlers or React frame state. */
-export function PigeonFlocks({player}:{player:RefObject<PlayerRuntime>}){
+export function PigeonFlocks({player,food}:{player:RefObject<PlayerRuntime>;food?:BirdFoodSystem}){
  const quality=useGraphicsQuality(),{world,rapier}=useRapier(),camera=useThree(state=>state.camera);
  const view=useMemo(()=>({frustum:new Frustum(),matrix:new Matrix4(),elapsed:1}),[]);
  const probe=useMemo<BirdProbe>(()=>{
@@ -31,7 +32,7 @@ export function PigeonFlocks({player}:{player:RefObject<PlayerRuntime>}){
    appear(point){return Math.hypot(point.x-player.current.nextPosition.x,point.z-player.current.nextPosition.z)>7||!view.frustum.containsPoint(point);},
   };
  },[world,rapier,player,view]);
- const simulation=useMemo(()=>new PigeonSimulation(probe),[probe]),resources=useMemo(()=>createPigeonResources(),[]);
+ const simulation=useMemo(()=>new PigeonSimulation(probe,food),[probe,food]),resources=useMemo(()=>createPigeonResources(),[]);
  // Construct the whole owned graph atomically. Strict Mode replays memo factories:
  // reusing roots from a separate memo would move them into the discarded group,
  // leaving the retained/rendered flock empty (Object3D.add reparents children).
@@ -56,9 +57,9 @@ export function PigeonFlocks({player}:{player:RefObject<PlayerRuntime>}){
    const walking=bird.state==='GROUND_WALK',air=bird.state==='TAKEOFF'?Math.min(1,bird.age/.2):bird.state==='FLYING'?1:bird.state==='LANDING'?Math.min(1,(bird.flightDuration-bird.flightTime)/.22):0;
    const hop=walking?.018*Math.abs(Math.sin(simulation.time*12+bird.phase)):0;
    visual.root.position.copy(bird.position);visual.root.position.y+=hop+(air===0?.0015*Math.sin(simulation.time*2+bird.phase):0);visual.root.scale.setScalar(bird.size);visual.root.rotation.set(bird.pitch,bird.yaw,bird.bank);
-   const peck=bird.state==='GROUND_PECK'?Math.max(0,Math.sin(bird.age*Math.PI/.325)):0;
-   visual.head.position.set(0,.17-.145*peck+(bird.state==='ALERT'?.025:0),-.075-.03*peck+(walking?.012*Math.sin(simulation.time*12+bird.phase):0));
-   visual.head.rotation.set(-.9*peck,.08*Math.sin(simulation.time*1.7+bird.phase),0);
+   const peck=(bird.state==='GROUND_PECK'||bird.state==='FEEDING')?Math.max(0,Math.sin(bird.age*Math.PI/.325)):0;
+   visual.head.position.set(0,.12,-.04);
+   visual.head.rotation.set(-1.38*peck+(walking?.045*Math.sin(simulation.time*12+bird.phase):0)+(bird.state==='ALERT'?.08:0),.08*Math.sin(simulation.time*1.7+bird.phase),0);
    const frequency=bird.state==='TAKEOFF'?45:bird.state==='LANDING'?38:31,flap=Math.sin(simulation.time*frequency+bird.phase);
    for(const wing of visual.wings){wing.hinge.rotation.y=MathUtils.lerp(-1.35,0,air);wing.hinge.rotation.z=MathUtils.lerp(-.18,flap*(bird.state==='TAKEOFF'?1.05:.8),air);}
    const index=Math.min(7,Math.max(0,Math.floor(bird.fade*8)));

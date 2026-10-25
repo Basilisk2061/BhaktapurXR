@@ -2,10 +2,12 @@
 
 import type {TransformOverrides} from "../features/world-editor/transforms";
 import dynamic from "next/dynamic";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {EnvironmentAdmin} from "./environment-admin";
 import {MobileControls,useTouchDevice} from "./mobile-controls";
 import {HeritageInteraction} from "./heritage/heritage-interaction";
+import {InventoryHud} from '../game/inventory/inventory-hud';
+import {createItemSession} from '../game/inventory/inventory-store';
 import {GameHud} from "./game-hud";
 import { ExperienceLoading } from "./experience-loading";
 import { ExperienceErrorBoundary, ExperienceFailure } from "./experience-error-boundary";
@@ -31,6 +33,7 @@ function createExperienceInput(mode:WorldMode,review:string|null) {
 
 function ExperienceContent({ mode, review, architecturalDebug, silhouette, manualOverrides,developmentUI }: { mode: WorldMode; review:string|null; architecturalDebug:boolean;silhouette:boolean;manualOverrides?:TransformOverrides;developmentUI:boolean }) {
   const touch=useTouchDevice();
+  const items=useMemo(()=>createItemSession(),[]);
   const [heritageOpen,setHeritageOpen]=useState(false);
   const [ready, setReady] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
@@ -45,8 +48,9 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
 
   return (
     <>
-      <ExperienceCanvas touchControls={touch} manualOverrides={manualOverrides} review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
+      <ExperienceCanvas items={items} touchControls={touch} manualOverrides={manualOverrides} review={review} mode={mode} spawn={khaumaAxisExperienceSpawn(mode,review)} reviewCamera={review!==null} architecturalDebug={architecturalDebug} silhouette={silhouette} onReady={onReady} onUnavailable={onUnavailable} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
       <ExperienceLoading ready={ready} />
+      {ready&&mode==="BHAKTAPUR"&&!heritageOpen&&<InventoryHud session={items} input={input} runtime={runtime} touch={touch} pointerStatus={pointerStatus}/>}
       {process.env.NODE_ENV==="development"&&ready&&mode==="BHAKTAPUR"&&<EnvironmentAdmin input={input}/>}
       {touch&&ready&&<MobileControls input={input} runtime={runtime} disabled={heritageOpen}/>}
       {ready&&mode==="BHAKTAPUR"&&<HeritageInteraction input={input} runtime={runtime} overrides={manualOverrides} touch={touch} onOpenChange={setHeritageOpen}/>}

@@ -1,26 +1,28 @@
+import type {BirdFoodSystem} from '../food/bird-food-system';
 import {MathUtils,Vector3} from 'three';
 import {seededRandom} from '../npcs/definitions';
 import {playerConfig} from '../player/player-config';
 import {dampAngle} from '../player/movement';
 import {pigeonLimit,pigeonZones} from './pigeon-config';
 
-export type PigeonState='GROUND_IDLE'|'GROUND_WALK'|'GROUND_PECK'|'ALERT'|'TAKEOFF'|'FLYING'|'LANDING';
+export type PigeonState='GROUND_IDLE'|'GROUND_WALK'|'GROUND_PECK'|'ALERT'|'TAKEOFF'|'FLYING'|'LANDING'|'FOOD_INTEREST'|'FEEDING'|'FOOD_DEPART';
 export interface BirdProbe {ground:(x:number,z:number)=>number|null;clear:(from:Vector3,to:Vector3)=>boolean;appear:(point:Vector3)=>boolean}
 export interface Pigeon {
+ foodId:number|null;foodGoal:Vector3;nextFoodAt:number;nextFlightAt:number;flightReason:'ambient'|'fear'|'food'|'depart';
  id:number;zone:number;random:()=>number;state:PigeonState;age:number;until:number;phase:number;size:number;variant:number;speed:number;
  position:Vector3;goal:Vector3;start:Vector3;c1:Vector3;c2:Vector3;landing:Vector3;previous:Vector3;
  initialized:boolean;fade:number;threshold:number;yaw:number;pitch:number;bank:number;ground:number;
  alert:number;scare:number;startleAt:number;flightTime:number;flightDuration:number;turn:number;retry:number;
 }
-const groundState=(bird:Pigeon)=>bird.state.startsWith('GROUND_')||bird.state==='ALERT';
+const groundState=(bird:Pigeon)=>bird.state.startsWith('GROUND_')||bird.state==='ALERT'||bird.state==='FOOD_INTEREST'||bird.state==='FEEDING'||bird.state==='FOOD_DEPART';
 const smooth=(value:number)=>{value=Math.max(0,Math.min(1,value));return value*value*(3-2*value);};
 export class PigeonSimulation {
  birds:Pigeon[];time=0;
  private curvePoint=new Vector3();private curvePrevious=new Vector3();private backup=Array.from({length:4},()=>new Vector3());
- constructor(readonly probe:BirdProbe){
+ constructor(readonly probe:BirdProbe,readonly food?:BirdFoodSystem){
   this.birds=Array.from({length:pigeonLimit},(_,id)=>{
    const random=seededRandom(83071+id*917),phase=random()*Math.PI*2;
-   return {id,zone:id%pigeonZones.length,random,state:'GROUND_IDLE',age:0,until:1+random()*3,phase,size:.9+random()*.17,variant:id%3,speed:.22+random()*.16,
+   return {foodId:null,foodGoal:new Vector3(),nextFoodAt:0,nextFlightAt:0,flightReason:'ambient',id,zone:id%pigeonZones.length,random,state:'GROUND_IDLE',age:0,until:1+random()*3,phase,size:.9+random()*.17,variant:id%3,speed:.22+random()*.16,
     position:new Vector3(),goal:new Vector3(),start:new Vector3(),c1:new Vector3(),c2:new Vector3(),landing:new Vector3(),previous:new Vector3(),
     initialized:false,fade:0,threshold:.06+random()*.62,yaw:random()*Math.PI*2,pitch:0,bank:0,ground:0,alert:3.8+random()*.9,scare:1.7+random()*.55,startleAt:Infinity,flightTime:0,flightDuration:4,turn:random()>.5?1:-1,retry:0};
   });
@@ -47,32 +49,34 @@ export class PigeonSimulation {
   if(t>.75){const u=(t-.75)/.25;t=.75+.25*(u+u*u-u*u*u);}
   const s=1-t;return out.copy(bird.start).multiplyScalar(s*s*s).addScaledVector(bird.c1,3*s*s*t).addScaledVector(bird.c2,3*s*t*t).addScaledVector(bird.landing,t*t*t);
  }
- private planFlight(bird:Pigeon,player:Vector3){
+ private planFlight(bird:Pigeon,player:Vector3,destination?:Vector3){
   const points=[bird.start,bird.c1,bird.c2,bird.landing],oldTime=bird.flightTime,oldDuration=bird.flightDuration;
   points.forEach((point,i)=>this.backup[i].copy(point));
   const restore=()=>{points.forEach((point,i)=>point.copy(this.backup[i]));bird.flightTime=oldTime;bird.flightDuration=oldDuration;};
   // If the player occupies the entire patch, allow an aerial endpoint there but
   // defer landing until another safe point is available. Birds never chase them.
-  if(!this.sample(bird,player,bird.landing,2.8)&&!this.sample(bird,player,bird.landing,0)){restore();return false;}
+  if(destination)bird.landing.copy(destination);
+  else if(!this.sample(bird,player,bird.landing,2.8)&&!this.sample(bird,player,bird.landing,0)){restore();return false;}
   const dx=bird.position.x-player.x,dz=bird.position.z-player.z,length=Math.hypot(dx,dz)||1;
   for(let attempt=0;attempt<5;attempt++){
    bird.start.copy(bird.position);
    const climb=2.3+bird.random()*1.1;
-   bird.c1.copy(bird.start);bird.c1.x+=dx/length*1.5-dz/length*bird.turn*.7;bird.c1.z+=dz/length*1.5+dx/length*bird.turn*.7;this.constrain(bird,bird.c1);
+   bird.c1.copy(bird.start);bird.c1.x+=dx/length*1.5-dz/length*bird.turn*.7;bird.c1.z+=dz/length*1.5+dx/length*bird.turn*.7;if(!destination)this.constrain(bird,bird.c1);
    bird.c1.y=Math.max(bird.start.y,bird.ground+climb);
-   bird.c2.copy(bird.landing);bird.c2.x+=bird.turn*1.5;bird.c2.z+=bird.turn*(bird.random()-.5)*2;this.constrain(bird,bird.c2);bird.c2.y=bird.ground+climb;
+   bird.c2.copy(bird.landing);bird.c2.x+=bird.turn*1.5;bird.c2.z+=bird.turn*(bird.random()-.5)*2;if(!destination)this.constrain(bird,bird.c2);bird.c2.y=bird.ground+climb;
    let clear=true;bird.previous.copy(bird.start);
    for(let step=1;step<=10;step++){
     this.curve(bird,step/10,this.curvePoint);
     if(!this.probe.clear(bird.previous,this.curvePoint)){clear=false;break;}bird.previous.copy(this.curvePoint);
    }
-   if(clear){bird.flightTime=0;bird.flightDuration=4.2+bird.random()*2.1;bird.retry=this.time;return true;}
-   if(!this.sample(bird,player,bird.landing,0))break;
+   if(clear){bird.flightTime=0;bird.flightDuration=destination?2.6+bird.random()*1.2:4.2+bird.random()*2.1;bird.retry=this.time;return true;}
+   if(destination||!this.sample(bird,player,bird.landing,0))break;
   }restore();return false;
  }
+ private releaseFood(bird:Pigeon){this.food?.release(bird.id);bird.foodId=null;bird.nextFoodAt=this.time+2+bird.random()*2;}
  private startled(bird:Pigeon){
   for(const other of this.birds)if(other.initialized&&other.zone===bird.zone&&groundState(other)&&other.position.distanceToSquared(bird.position)<3.5*3.5){
-   other.startleAt=Math.min(other.startleAt,this.time+.025+other.random()*.375);this.state(other,'ALERT',1);
+   this.releaseFood(other);other.flightReason='fear';other.startleAt=Math.min(other.startleAt,this.time+.025+other.random()*.375);this.state(other,'ALERT',1);
   }
  }
  update(delta:number,player:Vector3,running:boolean,day:number,count:number){
@@ -81,31 +85,59 @@ export class PigeonSimulation {
    const desired=bird.id<count?smooth((day-bird.threshold)/.25):0;
    if(desired>0&&!bird.initialized&&this.time>=bird.retry&&spawned<2){
     bird.retry=this.time+.7+bird.random();
-    if(this.sample(bird,player,bird.position,3,true)){bird.initialized=true;bird.ground=bird.position.y;bird.startleAt=Infinity;bird.pitch=0;bird.bank=0;this.state(bird,'GROUND_IDLE',1+bird.random()*4);spawned++;}
+    if(this.sample(bird,player,bird.position,3,true)){bird.initialized=true;bird.nextFlightAt=this.time+20+bird.random()*35;bird.ground=bird.position.y;bird.startleAt=Infinity;bird.pitch=0;bird.bank=0;this.state(bird,'GROUND_IDLE',1+bird.random()*4);spawned++;}
    }
    bird.fade=MathUtils.damp(bird.fade,bird.initialized?desired:0,3,delta);
-   if(bird.fade<.012){if(desired===0)bird.initialized=false;continue;}
+   if(bird.fade<.012){if(desired===0){bird.initialized=false;if(bird.foodId!==null)this.releaseFood(bird);}continue;}
    bird.age+=delta;
    if(groundState(bird)){
     const distance=Math.hypot(player.x-bird.position.x,player.z-bird.position.z),sameLevel=Math.abs(player.y-playerConfig.height/2-bird.ground)<2;
-    if(sameLevel&&distance<bird.scare+(running?.65:0)&&bird.startleAt===Infinity)this.startled(bird);
+    if(sameLevel&&distance<bird.scare+(running?.65:0)&&(bird.startleAt===Infinity||bird.flightReason!=='fear'))this.startled(bird);
     if(bird.startleAt<=this.time){
      if(this.planFlight(bird,player)){bird.startleAt=Infinity;this.state(bird,'TAKEOFF',.65);}
      else bird.startleAt=this.time+.3+bird.random()*.3;
     }
     if(!groundState(bird))continue;
-    if(sameLevel&&distance<bird.alert&&bird.startleAt===Infinity&&bird.state!=='ALERT')this.state(bird,'ALERT',.4+bird.random());
+    if(desired===0&&bird.foodId!==null){this.releaseFood(bird);this.state(bird,'GROUND_IDLE',1);}
+    if(bird.foodId!==null&&!this.food?.get(bird.foodId)){
+     this.releaseFood(bird);bird.flightReason='depart';bird.startleAt=this.time+.2+bird.random()*1.1;this.state(bird,'FOOD_DEPART',2);
+    }
+    if(desired>0&&bird.foodId===null&&(bird.startleAt===Infinity||bird.flightReason==='ambient')&&distance>bird.scare+.5&&this.time>=bird.nextFoodAt){
+     bird.nextFoodAt=this.time+.5+bird.random()*.5;
+     const offered=this.food?.offer(bird.id,bird.position,player,this.probe.ground);
+     if(offered){bird.startleAt=Infinity;bird.foodId=offered.patch.id;bird.foodGoal.copy(offered.point);this.state(bird,'FOOD_INTEREST',.15+bird.random()*.45);}
+    }
+    if(bird.foodId!==null){
+     if(bird.state==='FOOD_INTEREST'&&bird.age>=bird.until){
+      bird.goal.copy(bird.foodGoal);
+      if(bird.position.distanceTo(bird.goal)<4.5&&this.probe.clear(bird.position,bird.goal))this.state(bird,'GROUND_WALK',8);
+      else if(this.planFlight(bird,player,bird.foodGoal)){bird.flightReason='food';this.state(bird,'TAKEOFF',.65);}
+      else{this.releaseFood(bird);this.state(bird,'GROUND_IDLE',1);}
+     }else if(bird.state==='FEEDING'&&bird.age>=bird.until){
+      const angle=bird.random()*Math.PI*2;bird.goal.copy(bird.foodGoal);bird.goal.x+=Math.cos(angle)*.12;bird.goal.z+=Math.sin(angle)*.12;
+      const y=this.probe.ground(bird.goal.x,bird.goal.z),free=!this.birds.some(o=>o!==bird&&o.initialized&&groundState(o)&&o.position.distanceToSquared(bird.goal)<.3*.3);
+      if(y!==null&&free&&this.probe.clear(bird.position,bird.goal)){bird.goal.y=y+.012;this.state(bird,'GROUND_WALK',1);}
+      else this.state(bird,'FEEDING',.65*(1+Math.floor(bird.random()*3)));
+     }
+     if(bird.state!=='GROUND_WALK')continue;
+    }else if(desired>0&&bird.startleAt===Infinity&&distance>bird.alert&&this.time>=bird.nextFlightAt&&this.birds.filter(o=>o.initialized&&(!groundState(o)||o.startleAt!==Infinity)&&o.flightReason==='ambient').length<Math.min(2,Math.max(1,Math.floor(count/2)))){
+     bird.flightReason='ambient';bird.startleAt=this.time+.3+bird.random()*.4;this.state(bird,'ALERT',1);
+    }
+    if(bird.foodId===null&&sameLevel&&distance<bird.alert&&bird.startleAt===Infinity&&bird.state!=='ALERT')this.state(bird,'ALERT',.4+bird.random());
     if(bird.state==='ALERT'){
      bird.yaw=dampAngle(bird.yaw,Math.atan2(player.x-bird.position.x,player.z-bird.position.z),3,delta);
      if(distance>bird.alert+.5&&bird.startleAt===Infinity)this.state(bird,'GROUND_IDLE',.8+bird.random()*2);
     }else if(bird.state==='GROUND_WALK'){
      const dx=bird.goal.x-bird.position.x,dz=bird.goal.z-bird.position.z,d=Math.hypot(dx,dz);
-     if(d<.025||bird.age>bird.until)this.state(bird,'GROUND_IDLE',1+bird.random()*2);
+     if(d<.025)this.state(bird,bird.foodId!==null?'FEEDING':'GROUND_IDLE',bird.foodId!==null?.65*(1+Math.floor(bird.random()*3)):1+bird.random()*2);
+     else if(bird.age>bird.until){this.releaseFood(bird);this.state(bird,'GROUND_IDLE',1+bird.random());}
      else{
-      const step=Math.min(d,bird.speed*delta*(.12+1.35*Math.max(0,Math.sin(this.time*12+bird.phase))));
+      const step=Math.min(d,(bird.foodId!==null?.9:bird.speed)*delta*(.12+1.35*Math.max(0,Math.sin(this.time*12+bird.phase))));
+      const nextX=bird.position.x+dx/d*step,nextZ=bird.position.z+dz/d*step;
+      if(bird.foodId!==null&&this.birds.some(o=>o!==bird&&o.initialized&&groundState(o)&&Math.hypot(o.position.x-nextX,o.position.z-nextZ)<.3))continue;
       bird.position.x+=dx/d*step;bird.position.z+=dz/d*step;bird.position.y=MathUtils.lerp(bird.position.y,bird.goal.y,Math.min(1,step/d));bird.ground=bird.position.y;bird.yaw=dampAngle(bird.yaw,Math.atan2(-dx,-dz),6,delta);
      }
-    }else if(bird.age>=bird.until){
+    }else if(bird.state!=='FOOD_DEPART'&&bird.age>=bird.until){
      const action=bird.random();
      if(action<.38){this.state(bird,'GROUND_PECK',.65*(1+Math.floor(bird.random()*3)));}
      else if(action<.79){
@@ -121,8 +153,9 @@ export class PigeonSimulation {
     const remaining=bird.flightDuration-bird.flightTime;
     if(remaining<1.1&&(this.time>=bird.retry||remaining<delta*2)){
      bird.retry=this.time+.2;
-     const occupied=Math.hypot(player.x-bird.landing.x,player.z-bird.landing.z)<2.8||this.birds.some(other=>other!==bird&&other.initialized&&groundState(other)&&other.position.distanceToSquared(bird.landing)<.45*.45)||this.probe.ground(bird.landing.x,bird.landing.z)===null;
+     const occupied=Math.hypot(player.x-bird.landing.x,player.z-bird.landing.z)<(bird.foodId!==null?2.3:2.8)||this.birds.some(other=>other!==bird&&other.initialized&&groundState(other)&&other.position.distanceToSquared(bird.landing)<.45*.45)||this.probe.ground(bird.landing.x,bird.landing.z)===null;
      if(occupied){
+      this.releaseFood(bird);
       if(!this.planFlight(bird,player)){bird.flightTime=Math.max(0,bird.flightTime-delta);continue;}
       this.state(bird,'FLYING',bird.flightDuration);
      }
@@ -132,7 +165,7 @@ export class PigeonSimulation {
     if(Math.hypot(dx,dz)>.0001)bird.yaw=dampAngle(bird.yaw,Math.atan2(-dx,-dz),7,delta);
     bird.pitch=bird.state==='TAKEOFF'?.22*Math.min(1,bird.flightTime/.2):bird.state==='LANDING'?.12*Math.min(1,(bird.flightDuration-bird.flightTime)/.22):MathUtils.clamp((bird.position.y-this.curvePrevious.y)*5,-.2,.22);
     bird.bank=bird.turn*.12*Math.sin(t*Math.PI);
-    if(t===1){bird.position.copy(bird.landing);bird.ground=bird.position.y;bird.pitch=0;bird.bank=0;this.state(bird,'GROUND_IDLE',1.5+bird.random()*3);}
+    if(t===1){bird.position.copy(bird.landing);bird.ground=bird.position.y;bird.pitch=0;bird.bank=0;bird.nextFlightAt=this.time+25+bird.random()*40;this.state(bird,bird.foodId!==null&&this.food?.get(bird.foodId)?'FEEDING':'GROUND_IDLE',1.5+bird.random()*1.5);}
     else if(bird.flightDuration-bird.flightTime<.9){if(bird.state!=='LANDING')this.state(bird,'LANDING',.9);}
     else if(bird.flightTime>.65&&bird.state==='TAKEOFF')this.state(bird,'FLYING',bird.flightDuration);
    }

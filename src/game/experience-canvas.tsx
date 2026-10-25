@@ -1,4 +1,6 @@
 "use client";
+import type {ItemSession} from "./inventory/inventory-store";
+import {BirdFood} from "./food/bird-food";
 import {BellInteractions} from "./bells/bell-session";
 const PigeonFlocks=lazy(()=>import("./pigeons/pigeon-flocks").then(m=>({default:m.PigeonFlocks})));
 const NpcPopulation=lazy(()=>import("./npcs/npc-population").then(m=>({default:m.NpcPopulation})));
@@ -32,6 +34,7 @@ import { type WorldMode } from "./world/world-mode";
 import type { SpawnPoint } from "@/types/world";
 
 interface ExperienceCanvasProps {
+  items?:ItemSession;
   touchControls?:boolean;
   editorSession?:EditorSession;
   manualOverrides?:TransformOverrides;
@@ -67,7 +70,7 @@ function ContextGuard({ onUnavailable }: Pick<ExperienceCanvasProps, "onUnavaila
   return null;
 }
 
-export default function ExperienceCanvas({ onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,touchControls=false }: ExperienceCanvasProps) {
+export default function ExperienceCanvas({ items, onReady, onUnavailable, input, runtime, onPointerStatus, mode, spawn, architecturalDebug, silhouette, reviewCamera, review, editorSession, manualOverrides,touchControls=false }: ExperienceCanvasProps) {
   const camera = playerConfig.camera;
   const quality=useGraphicsQuality(),budget=graphicsPresets[quality];
   const dpr:[number,number]=[quality==='VERY LOW'&&touchControls?.5:budget.dpr[0],touchControls?budget.mobileDpr:budget.dpr[1]];
@@ -96,7 +99,7 @@ export default function ExperienceCanvas({ onReady, onUnavailable, input, runtim
           <World manualOverrides={manualOverrides} mode={mode} architecturalDebug={architecturalDebug} silhouette={silhouette} />
           <Player sittingEnabled={mode==="BHAKTAPUR"} seatingTransforms={manualOverrides} reviewCamera={reviewCamera} spawn={spawn} input={input} runtime={runtime} onPointerStatus={onPointerStatus} />
           {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><NpcPopulation transforms={manualOverrides} player={runtime}/></Suspense>}
-          {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><PigeonFlocks player={runtime}/></Suspense>}
+          {started&&mode==="BHAKTAPUR"&&<Suspense fallback={null}><>{items&&<BirdFood session={items} input={input} player={runtime}/>}<PigeonFlocks player={runtime} food={items?.food}/></></Suspense>}
           <KhaumaPhotoCamera review={review} input={input} />
           </>}
           <SceneReady onReady={initialReady} />

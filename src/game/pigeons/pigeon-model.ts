@@ -18,13 +18,13 @@ export function createPigeonResources(){
   box(0,.12,.135,.082,.018,.085,'#444953'),
   ...[-1,1].flatMap(side=>[box(side*.03,.046,.015,.009,.07,.009,'#805e62'),box(side*.03,.005,-.005,.025,.01,.053,'#805e62')]),
  ]);
- // Head geometry is relative to the neck pivot, so pecking/bobbing never detaches it.
+ // Move the pivot into the chest; inverse geometry offset preserves the resting silhouette.
  const head=merge([
   ellipsoid(0,.012,0,.044,.062,.045,'#4c605c'),
   ellipsoid(0,.083,-.023,.053,.052,.055,'#505660'),
   colored(new ConeGeometry(.014,.044,6).rotateX(-Math.PI/2).translate(0,.076,-.089),'#34343b'),
   ...[-1,1].map(side=>ellipsoid(side*.047,.094,-.04,.006,.006,.007,'#201e20')),
- ]);
+ ]).translate(0,.05,-.035);
  const wing=new BufferGeometry();
  const vertices=[0,0,-.03,.23,-.005,.075,.17,.005,-.095,.025,.005,.085];
  wing.setAttribute('position',new Float32BufferAttribute(vertices,3));wing.setIndex([0,1,2,0,3,1]);wing.computeVertexNormals();colored(wing,'#515965');
@@ -34,7 +34,7 @@ export function createPigeonResources(){
 export type PigeonResources=ReturnType<typeof createPigeonResources>;
 export function createPigeonVisual(resources:PigeonResources,variant:number){
  const root=new Group(),body=new Mesh(resources.body,resources.palettes[variant][7]),head=new Group();
- head.position.set(0,.17,-.075);const face=new Mesh(resources.head,body.material);head.add(face);
+ head.name="neck-pivot";head.position.set(0,.12,-.04);const face=new Mesh(resources.head,body.material);head.add(face);
  const wings=[-1,1].map(side=>{const pivot=new Group(),hinge=new Group(),mesh=new Mesh(resources.wing,body.material);pivot.position.set(side*.065,.18,.005);pivot.scale.x=side;hinge.add(mesh);pivot.add(hinge);root.add(pivot);return {hinge,mesh};});
  root.add(body,head);root.visible=false;
  return {root,head,wings,meshes:[body,face,...wings.map(w=>w.mesh)],material:-1};
