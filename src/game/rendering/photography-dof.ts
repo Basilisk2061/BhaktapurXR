@@ -49,7 +49,7 @@ class PhotographyDofPass extends Pass {
   this.horizontal=new ShaderMaterial({uniforms:this.uniforms,defines:{TAPS:taps,FINAL_PASS:0},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});
   this.composite=new ShaderMaterial({uniforms:this.uniforms,defines:{TAPS:taps,FINAL_PASS:1},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});
  }
- setSize(width:number,height:number){this.uniforms.resolution.value.set(width,height);const w=Math.max(1,Math.ceil(width/2)),h=Math.max(1,Math.ceil(height/2));this.target.setSize(w,h);this.uniforms.workingSize.value.set(w,h);}
+ setSize(width:number,height:number){if(this.uniforms.resolution.value.x===width&&this.uniforms.resolution.value.y===height)return;this.uniforms.resolution.value.set(width,height);const w=Math.max(1,Math.ceil(width/2)),h=Math.max(1,Math.ceil(height/2));this.target.setSize(w,h);this.uniforms.workingSize.value.set(w,h);}
  render(renderer:WebGLRenderer,write:WebGLRenderTarget,read:WebGLRenderTarget){this.uniforms.tSharp.value=read.texture;this.uniforms.tDepth.value=read.depthTexture;this.uniforms.tBlur.value=this.target.texture;this.quad.material=this.horizontal;renderer.setRenderTarget(this.target);this.quad.render(renderer);this.quad.material=this.composite;renderer.setRenderTarget(this.renderToScreen?null:write);this.quad.render(renderer);}
  dispose(){this.target.dispose();this.horizontal.dispose();this.composite.dispose();this.quad.dispose();}
 }

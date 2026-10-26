@@ -13,6 +13,7 @@ import {createPhotographyDof} from './photography-dof';
 /** Existing HIGH composer, also mounted only while photographing on LOW/MEDIUM. */
 export default function HighQualityEffects({runtime,quality}:{runtime:RefObject<PlayerRuntime>;quality:QualityPreset}){
  const {gl,scene,camera,size,viewport}=useThree();
+ const lastSize=useRef({composer:null as EffectComposer|null,width:0,height:0,dpr:0});
  const pipeline=useRef<{composer:EffectComposer;fxaa:ShaderPass;dof:ReturnType<typeof createPhotographyDof>}|null>(null);
  useEffect(()=>{
   const target=new WebGLRenderTarget(1,1,{type:HalfFloatType});target.depthTexture=new DepthTexture(1,1,UnsignedIntType);
@@ -22,10 +23,12 @@ export default function HighQualityEffects({runtime,quality}:{runtime:RefObject<
   return()=>{pipeline.current=null;render.dispose();dof.dispose();output.dispose();fxaa.dispose();composer.dispose();};
  },[gl,scene,camera,quality]);
  useEffect(()=>{
-  const p=pipeline.current;if(!p)return;const dpr=gl.getPixelRatio();
+  const p=pipeline.current;if(!p)return;const dpr=gl.getPixelRatio(),last=lastSize.current;
+  if(last.composer===p.composer&&last.width===size.width&&last.height===size.height&&last.dpr===dpr)return;
+  last.composer=p.composer;last.width=size.width;last.height=size.height;last.dpr=dpr;
   p.composer.setPixelRatio(dpr);p.composer.setSize(size.width,size.height);
   p.fxaa.uniforms.resolution.value.set(1/(size.width*dpr),1/(size.height*dpr));
- },[gl,size.width,size.height,viewport.dpr,quality]);
+ },[gl,scene,camera,size.width,size.height,viewport.dpr,quality]);
  useFrame((_,delta)=>{
   const p=pipeline.current;if(!p){gl.render(scene,camera);return;}
   const motion=runtime.current,s=motion.photography?.getState(),view=motion.handheldCamera?.view??0,c=camera as PerspectiveCamera;
