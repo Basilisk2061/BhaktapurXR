@@ -1,30 +1,56 @@
-import {ShaderPass} from 'three/addons/postprocessing/ShaderPass.js';
-/** Bounded screen-space photographic CoC. Reuses main render depth, no depth rerender. */
-export function createPhotographyDof(samples:number){
- const pass=new ShaderPass({name:'PhotographyDOF',defines:{TAPS:samples},uniforms:{tDiffuse:{value:null},tDepth:{value:null},nearClip:{value:.1},farClip:{value:500},focus:{value:10},focal:{value:35},fstop:{value:4},aspect:{value:1},strength:{value:1},maxRadius:{value:.003}},vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,fragmentShader:`
- #include <packing>
- varying vec2 vUv;uniform sampler2D tDiffuse;uniform sampler2D tDepth;
- uniform float nearClip,farClip,focus,focal,fstop,aspect,strength,maxRadius;
- float distanceAt(vec2 uv){return -perspectiveDepthToViewZ(texture2D(tDepth,uv).x,nearClip,farClip);}
- void main(){float z=max(.05,distanceAt(vUv));
-  float coc=focal*focal/(max(1.,fstop)*36000.)*abs(1./z-1./max(.3,focus));
-  float radius=min(maxRadius,coc*.65)*strength;
-  vec4 color=texture2D(tDiffuse,vUv)*.18;float weight=.18;
-  for(int i=0;i<TAPS;i++){
-   // Stratified disk, not a sparse ring of repeated edge ghosts.
-   float r=sqrt((float(i)+.5)/float(TAPS)),angle=float(i)*2.39996323;
-   vec2 uv=clamp(vUv+vec2(cos(angle),sin(angle)*aspect)*radius*r,vec2(.001),vec2(.999));
-   float depth=max(.05,distanceAt(uv));
-   // Symmetric bilateral rejection: neither nearer nor farther surfaces may bleed
-   // over a silhouette. Linearized distances also distinguish architecture from sky.
-   float gap=abs(depth-z)/max(.1,min(depth,z)*.04);
-   float edgeWeight=gap<3.?exp(-gap*gap):0.;
-   float w=edgeWeight*exp(-.5*r*r)*(.82/float(TAPS));
-   color+=texture2D(tDiffuse,uv)*w;weight+=w;
-  }
-  gl_FragColor=color/weight;
- }`});
- pass.material.toneMapped=false;
- const render=pass.render.bind(pass);pass.render=(renderer,write,read,dt,mask)=>{pass.uniforms.tDepth.value=read.depthTexture;render(renderer,write,read,dt,mask);};
- return pass;
+import {HalfFloatType,NearestFilter,ShaderMaterial,Vector2,WebGLRenderTarget,type WebGLRenderer} from 'three';
+import {Pass,FullScreenQuad} from 'three/addons/postprocessing/Pass.js';
+import {opticsGlsl} from '../inventory/photography-optics';
+/** Sharp + half-resolution horizontal DOF + full-resolution vertical/edge-aware composite.
+ * Near/far classes never exchange color. One scene render; depth comes from RenderPass.
+ */
+class PhotographyDofPass extends Pass {
+ uniforms={tSharp:{value:null as unknown},tDepth:{value:null as unknown},tBlur:{value:null as unknown},nearClip:{value:.08},farClip:{value:260},focus:{value:10},focal:{value:35},fstop:{value:4},strength:{value:1},maxPixels:{value:18},resolution:{value:new Vector2(1,1)},workingSize:{value:new Vector2(1,1)}};
+ private target=new WebGLRenderTarget(1,1,{type:HalfFloatType,depthBuffer:false,minFilter:NearestFilter,magFilter:NearestFilter});
+ private horizontal:ShaderMaterial;private composite:ShaderMaterial;private quad=new FullScreenQuad();
+ constructor(taps:number){super();
+  const vertexShader='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}';
+  const fragmentShader=`
+   #include <packing>
+   varying vec2 vUv;uniform sampler2D tSharp,tDepth,tBlur;uniform vec2 resolution,workingSize;
+   uniform float nearClip,farClip,focus,focal,fstop,strength,maxPixels;
+   float depthAt(vec2 uv){return max(.05,-perspectiveDepthToViewZ(texture2D(tDepth,uv).x,nearClip,farClip));}
+   ${opticsGlsl}
+   void main(){float z=depthAt(vUv),coc=signedCircleMm(z),radius=radiusPixels(z);
+    vec4 sharp=texture2D(tSharp,vUv);if(radius<.35){gl_FragColor=sharp;return;}
+    vec4 sum=vec4(0.);float weights=0.;
+    for(int i=0;i<TAPS;i++){
+     float x=(float(i)-float(TAPS-1)*.5)/(float(TAPS-1)*.5);
+     #if FINAL_PASS == 1
+      vec2 uv=vUv+vec2(0.,x*radius/resolution.y);
+      // Sample exact working texel centers; never bilinearly mix depth silhouettes.
+      uv=(floor(clamp(uv,vec2(0.),vec2(.99999))*workingSize)+.5)/workingSize;
+     #else
+      vec2 uv=clamp(vUv+vec2(x*radius/resolution.x,0.),vec2(.00001),vec2(.99999));
+     #endif
+     float sampleZ=depthAt(uv),sampleCoc=signedCircleMm(sampleZ);
+     float gap=abs(sampleZ-z)/max(.12,min(z,sampleZ)*.04);
+     float sameClass=step(0.,coc*sampleCoc);
+     float w=exp(-2.*x*x)*sameClass*(gap<3.?exp(-gap*gap):0.);
+     #if FINAL_PASS == 1
+      sum+=texture2D(tBlur,uv)*w;
+     #else
+      sum+=texture2D(tSharp,uv)*w;
+     #endif
+     weights+=w;
+    }
+    vec4 blurred=weights>.0001?sum/weights:sharp;
+    #if FINAL_PASS == 1
+     gl_FragColor=mix(sharp,blurred,smoothstep(.35,1.25,radius));
+    #else
+     gl_FragColor=blurred;
+    #endif
+   }`;
+  this.horizontal=new ShaderMaterial({uniforms:this.uniforms,defines:{TAPS:taps,FINAL_PASS:0},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});
+  this.composite=new ShaderMaterial({uniforms:this.uniforms,defines:{TAPS:taps,FINAL_PASS:1},vertexShader,fragmentShader,depthTest:false,depthWrite:false,toneMapped:false});
+ }
+ setSize(width:number,height:number){this.uniforms.resolution.value.set(width,height);const w=Math.max(1,Math.ceil(width/2)),h=Math.max(1,Math.ceil(height/2));this.target.setSize(w,h);this.uniforms.workingSize.value.set(w,h);}
+ render(renderer:WebGLRenderer,write:WebGLRenderTarget,read:WebGLRenderTarget){this.uniforms.tSharp.value=read.texture;this.uniforms.tDepth.value=read.depthTexture;this.uniforms.tBlur.value=this.target.texture;this.quad.material=this.horizontal;renderer.setRenderTarget(this.target);this.quad.render(renderer);this.quad.material=this.composite;renderer.setRenderTarget(this.renderToScreen?null:write);this.quad.render(renderer);}
+ dispose(){this.target.dispose();this.horizontal.dispose();this.composite.dispose();this.quad.dispose();}
 }
+export const createPhotographyDof=(taps:number)=>new PhotographyDofPass(taps);

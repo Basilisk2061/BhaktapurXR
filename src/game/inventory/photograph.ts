@@ -1,7 +1,7 @@
 import type {PhotographySettings} from './photography-settings';
 /** Device-only capture result, reusable by a future local gallery/scoring layer. */
 export interface PhotographMetadata {
- timestamp:string;focalLength:number;requestedFocalLength:number;fov:number;aperture:number;shutterSeconds:number;iso:number;ev:number;focusDistance:number;manualFocus:boolean;
+ timestamp:string;focalLength:number;requestedFocalLength:number;fov:number;aperture:number;shutterSeconds:number;iso:number;ev:number;focusDistance:number;targetFocusDistance:number;exposureMode:"AUTO"|"A"|"M";manualFocus:boolean;
  cameraPosition:[number,number,number];cameraQuaternion:[number,number,number,number];cameraDirection:[number,number,number];
  gameHour:number;timeMode:string;rendererExposure:number;width:number;height:number;sequence:number;
 }
