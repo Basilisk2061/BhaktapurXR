@@ -1,6 +1,6 @@
 /** Development diagnostics only. Every hot-path call site is compile-time guarded. */
-export type PerfKey = 'AF'|'AF static query'|'AF dynamic query'|'Metering'|'Shade query'|'Scene index update'|'Index job'|'BVH build'|'BVH refit/update'|'Skinned bounds'|'NPC exact test'|'Optics controller'|'HUD publish'|'DOF CPU/setup'|'DOF passes (CPU)'|'Render-target resize'|'Capture';
-export const perfKeys:PerfKey[]=['AF','AF static query','AF dynamic query','Metering','Shade query','Scene index update','Index job','BVH build','BVH refit/update','Skinned bounds','NPC exact test','Optics controller','HUD publish','DOF CPU/setup','DOF passes (CPU)','Render-target resize','Capture'];
+export type PerfKey = 'AF'|'AF static query'|'AF dynamic query'|'Metering'|'Shade query'|'Scene index update'|'Index job'|'BVH build'|'BVH refit/update'|'Skinned bounds'|'NPC exact test'|'NPC proxy query'|'Pigeon proxy query'|'Dynamic proxy update'|'Optics controller'|'HUD publish'|'DOF CPU/setup'|'DOF passes (CPU)'|'Render-target resize'|'Capture';
+export const perfKeys:PerfKey[]=['AF','AF static query','AF dynamic query','Metering','Shade query','Scene index update','Index job','BVH build','BVH refit/update','Skinned bounds','NPC exact test','NPC proxy query','Pigeon proxy query','Dynamic proxy update','Optics controller','HUD publish','DOF CPU/setup','DOF passes (CPU)','Render-target resize','Capture'];
 export type Switch = 'dof'|'af'|'dynamic'|'meter'|'hud';
 type Stat={calls:number;total:number;max:number};
 const empty=()=>Object.fromEntries(perfKeys.map(k=>[k,{calls:0,total:0,max:0}])) as Record<PerfKey,Stat>;

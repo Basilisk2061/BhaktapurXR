@@ -1,9 +1,10 @@
+import {PhotographyFocusProxies} from './photography-focus-proxies';
 import {cameraPerf} from './camera-performance';
-import {Box3,BufferGeometry,InstancedMesh,Light,Matrix4,Mesh,Ray,Raycaster,Scene,SkinnedMesh,Sphere,Vector3,type Intersection,type Object3D} from 'three';
+import {Box3,BufferGeometry,InstancedMesh,Light,Matrix4,Mesh,Ray,Raycaster,Scene,SkinnedMesh,Vector3,type Intersection,type Object3D} from 'three';
 import {MeshBVH} from 'three-mesh-bvh';
 interface Node {box:Box3;left?:Node;right?:Node;ids?:number[]}
 interface Entry {mesh:Mesh;npc:Object3D|null;geometry:BufferGeometry;dynamic:boolean;tree?:MeshBVH;instances?:Node;version:number;count:number;queued:boolean;bounds:Box3;matrix:Matrix4}
-export interface FocusHit {object:Mesh;npc:Object3D|null;distance:number;point:Vector3}
+export interface FocusHit {object:Mesh;npc:Object3D|null;distance:number;point:Vector3;focusPriority?:number}
 const indices=new WeakMap<Scene,PhotographySceneIndex>();
 /** Event-maintained target registry. The BVH package is already locked via Drei.
  * Trees are private/indirect: no geometry indices, global raycasts or scene content are changed.
@@ -11,17 +12,18 @@ const indices=new WeakMap<Scene,PhotographySceneIndex>();
 export class PhotographySceneIndex {
  private entries=new Map<Mesh,Entry>();readonly lights=new Set<Light>();private watched=new Set<Object3D>();private queue:Entry[]=[];
  private trees=new WeakMap<BufferGeometry,MeshBVH>();private users=0;private timer:ReturnType<typeof setTimeout>|null=null;
- private idle:number|null=null;private instanceRay=new Ray();private skinBounds=new Sphere();private skinBox=new Box3();private skinSize=new Vector3();
- private inverse=new Matrix4();private matrix=new Matrix4();private instance=new Matrix4();private localRay=new Ray();private point=new Vector3();private candidate=new Vector3();private sphere=new Sphere();private skinHits:Intersection[]=[];
+ private idle:number|null=null;private instanceRay=new Ray();private proxies=new PhotographyFocusProxies();
+ private inverse=new Matrix4();private matrix=new Matrix4();private instance=new Matrix4();private localRay=new Ray();private point=new Vector3();private candidate=new Vector3();
  private add=(event:{child:Object3D})=>this.watch(event.child);private remove=(event:{child:Object3D})=>this.unwatch(event.child);
  constructor(private scene:Scene){this.watch(scene);}
  retain(){this.users++;return this;}
- release(){if(--this.users>0)return;if(this.timer!==null)clearTimeout(this.timer);if(this.idle!==null)cancelIdleCallback(this.idle);for(const o of this.watched){o.removeEventListener('childadded',this.add);o.removeEventListener('childremoved',this.remove);}this.watched.clear();this.entries.clear();this.lights.clear();this.queue.length=0;indices.delete(this.scene);}
+ release(){if(--this.users>0)return;if(this.timer!==null)clearTimeout(this.timer);if(this.idle!==null)cancelIdleCallback(this.idle);for(const o of this.watched){o.removeEventListener('childadded',this.add);o.removeEventListener('childremoved',this.remove);}this.watched.clear();this.entries.clear();this.proxies.clear();this.lights.clear();this.queue.length=0;indices.delete(this.scene);}
  private watch(root:Object3D){const updateStart=process.env.NODE_ENV==='development'?performance.now():0;root.traverse(o=>{if(this.watched.has(o))return;this.watched.add(o);o.addEventListener('childadded',this.add);o.addEventListener('childremoved',this.remove);if(o instanceof Light)this.lights.add(o);if(!(o instanceof Mesh))return;
-  let dynamic=false;let npc:Object3D|null=null;for(let p:Object3D|null=o;p;p=p.parent){if(p.name==='player-character'||p.userData.photographyFocus===false||/helper|debug|collision|sky|stars/i.test(p.name))return;if(p.userData.npcId)npc=p;if(process.env.NODE_ENV==='development'&&(p.userData.npcId||p.name.startsWith('pigeon:')||p.name==='ambient-pigeon-flocks'||p.userData.photographyDynamic===true))dynamic=true;}
+  let dynamic=false;let pigeon:Object3D|null=null;let npc:Object3D|null=null;for(let p:Object3D|null=o;p;p=p.parent){if(p.name==='player-character'||p.userData.photographyFocus===false||/helper|debug|collision|sky|stars/i.test(p.name))return;if(p.userData.npcId)npc=p;if(p.name.startsWith('pigeon:'))pigeon=p;if(process.env.NODE_ENV==='development'&&(p.userData.npcId||p.name.startsWith('pigeon:')||p.name==='ambient-pigeon-flocks'||p.userData.photographyDynamic===true))dynamic=true;}
+  if(npc||pigeon){this.proxies.add((npc??pigeon)!,o,!!npc);return;}if(o instanceof SkinnedMesh)return;
   const e:Entry={mesh:o,npc,dynamic,geometry:o.geometry,version:-1,count:0,queued:false,bounds:new Box3(),matrix:new Matrix4()};this.entries.set(o,e);if(!(o instanceof SkinnedMesh))this.prepare(e);
  });if(process.env.NODE_ENV==='development')cameraPerf?.end('Scene index update',updateStart);}
- private unwatch(root:Object3D){const updateStart=process.env.NODE_ENV==='development'?performance.now():0;root.traverse(o=>{o.removeEventListener('childadded',this.add);o.removeEventListener('childremoved',this.remove);this.watched.delete(o);if(o instanceof Mesh)this.entries.delete(o);if(o instanceof Light)this.lights.delete(o);});if(process.env.NODE_ENV==='development')cameraPerf?.end('Scene index update',updateStart);}
+ private unwatch(root:Object3D){const updateStart=process.env.NODE_ENV==='development'?performance.now():0;root.traverse(o=>{o.removeEventListener('childadded',this.add);o.removeEventListener('childremoved',this.remove);this.watched.delete(o);this.proxies.remove(o);if(o instanceof Mesh)this.entries.delete(o);if(o instanceof Light)this.lights.delete(o);});if(process.env.NODE_ENV==='development')cameraPerf?.end('Scene index update',updateStart);}
  private prepare(e:Entry){if(e.queued)return;e.queued=true;this.queue.push(e);if(process.env.NODE_ENV==='development'&&cameraPerf)cameraPerf.queue=this.queue.length;this.schedule();}
  private schedule(){if(this.timer!==null||this.idle!==null)return;if(typeof requestIdleCallback==='function')this.idle=requestIdleCallback(()=>{this.idle=null;this.drain();});else this.timer=setTimeout(this.drain,16);}
  /** Bounded jobs during normal scene mounting, never constructed from an AF evaluation. */
@@ -35,19 +37,14 @@ export class PhotographySceneIndex {
  };
  private build(boxes:Box3[],ids:number[]):Node {const box=new Box3();for(const id of ids)box.union(boxes[id]);if(ids.length<=8)return {box,ids};const size=box.getSize(this.point),axis=size.x>=size.y&&size.x>=size.z?'x':size.y>=size.z?'y':'z';ids.sort((a,b)=>(boxes[a].min[axis]+boxes[a].max[axis])-(boxes[b].min[axis]+boxes[b].max[axis]));const half=ids.length>>1;return {box,left:this.build(boxes,ids.slice(0,half)),right:this.build(boxes,ids.slice(half))};}
  private visible(o:Object3D){for(let p:Object3D|null=o;p;p=p.parent)if(!p.visible||p.userData.photographyFocus===false)return false;return true;}
- /** First-hit BVH queries, instance hierarchy pruning, and only candidate NPC triangle tests. */
+ /** Static first-hit BVH path, followed by analytical dynamic subjects limited by static occlusion. */
+ updateDynamicTargets(){if(process.env.NODE_ENV!=='development'||cameraPerf?.switches.dynamic!==false)this.proxies.update();}
  nearest(raycaster:Raycaster,shadeOnly=false):FocusHit|null {
   let staticMs=0,dynamicMs=0;let best:FocusHit|null=null,bestDistance=raycaster.far;const origin=raycaster.ray.origin;
   for(const e of this.entries.values()){
    if(process.env.NODE_ENV==='development'&&!shadeOnly&&cameraPerf?.switches.dynamic===false&&(e.dynamic||e.mesh instanceof SkinnedMesh))continue;
    const queryStart=process.env.NODE_ENV==='development'?performance.now():0;try{
    const mesh=e.mesh;if(!this.visible(mesh)||!mesh.layers.test(raycaster.layers)||shadeOnly&&(!mesh.castShadow||e.npc))continue;
-   if(mesh instanceof SkinnedMesh){if(!e.npc)continue;e.npc.getWorldPosition(this.sphere.center);this.sphere.radius=1.75;if(!raycaster.ray.intersectsSphere(this.sphere))continue;
-    // Conservative bone-free broad bound: no all-vertex skinning scan every 125ms.
-    const boundsStart=process.env.NODE_ENV==='development'?performance.now():0;const oldSphere=mesh.boundingSphere,oldBox=mesh.boundingBox;this.inverse.copy(mesh.matrixWorld).invert();mesh.boundingSphere=this.skinBounds.copy(this.sphere).applyMatrix4(this.inverse);mesh.boundingBox=this.skinBox.setFromCenterAndSize(this.skinBounds.center,this.skinSize.setScalar(this.skinBounds.radius*2));this.skinHits.length=0;if(process.env.NODE_ENV==='development')cameraPerf?.end('Skinned bounds',boundsStart);
-    const exactStart=process.env.NODE_ENV==='development'?performance.now():0;try{mesh.raycast(raycaster,this.skinHits);}finally{mesh.boundingSphere=oldSphere;mesh.boundingBox=oldBox;if(process.env.NODE_ENV==='development')cameraPerf?.end('NPC exact test',exactStart,mesh.name||e.npc.userData.npcId||mesh.uuid);}
-    for(const hit of this.skinHits)if(hit.distance<bestDistance&&this.materialVisible(mesh,hit)){bestDistance=hit.distance;best={object:mesh,npc:e.npc,distance:hit.distance,point:hit.point.clone()};}continue;
-   }
    if(mesh.geometry!==e.geometry||mesh instanceof InstancedMesh&&(mesh.instanceMatrix.version!==e.version||mesh.count!==e.count)){this.prepare(e);continue;}
    if(!e.tree||e.queued)continue;
    if(!e.matrix.equals(mesh.matrixWorld)){e.matrix.copy(mesh.matrixWorld);e.bounds.copy(mesh instanceof InstancedMesh?e.instances!.box:e.geometry.boundingBox!).applyMatrix4(mesh.matrixWorld);}
@@ -56,6 +53,7 @@ export class PhotographySceneIndex {
    if(mesh instanceof InstancedMesh&&e.instances){this.inverse.copy(mesh.matrixWorld).invert();const instanceRay=this.instanceRay.copy(raycaster.ray).applyMatrix4(this.inverse);const visit=(node:Node)=>{if(!instanceRay.intersectsBox(node.box))return;if(node.ids){for(const id of node.ids){mesh.getMatrixAt(id,this.instance);this.matrix.multiplyMatrices(mesh.matrixWorld,this.instance);test(this.matrix);}}else{visit(node.left!);visit(node.right!);}};visit(e.instances);}else test(mesh.matrixWorld);
    }finally{if(process.env.NODE_ENV==='development'&&!shadeOnly){const ms=performance.now()-queryStart;if(e.dynamic||e.mesh instanceof SkinnedMesh)dynamicMs+=ms;else staticMs+=ms;}}
   }
+  if(!shadeOnly&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.dynamic!==false)){const start=process.env.NODE_ENV==='development'?performance.now():0;const hit=this.proxies.nearest(raycaster,bestDistance);if(hit)best=hit;if(process.env.NODE_ENV==='development')dynamicMs+=performance.now()-start;}
   if(process.env.NODE_ENV==='development'&&!shadeOnly){cameraPerf?.record('AF static query',staticMs);cameraPerf?.record('AF dynamic query',dynamicMs);}
   return best;
  }
