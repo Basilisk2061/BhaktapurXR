@@ -31,6 +31,7 @@ export const playerConfig = {
   },
   camera: {
     distance: 4,
+    crouchLowering:.33,
     targetHeight: 1.45, // metres above feet
     initialPitch: 0.22,
     minPitch: -0.3,

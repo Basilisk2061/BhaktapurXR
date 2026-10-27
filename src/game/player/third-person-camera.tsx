@@ -1,4 +1,3 @@
-import {crouchAnimation} from './crouch-animation-config';
 import {photographyExposure,photographyLookScale} from '../inventory/photography-settings';
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
@@ -51,7 +50,7 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
     const config = playerConfig.camera;
     const delta = safeDelta(frameDelta, playerConfig.maxDelta);
     visual.getWorldPosition(state.actualTarget);
-    state.actualTarget.setY(state.actualTarget.y + (reviewCamera ? 2.5 : config.targetHeight-crouchAnimation.cameraDrop*motion.crouchWeight) - playerConfig.height / 2);
+    state.actualTarget.setY(state.actualTarget.y + (reviewCamera ? 2.5 : config.targetHeight-playerConfig.camera.crouchLowering*motion.crouchWeight) - playerConfig.height / 2);
     const reset = !initialized.current || lastReset.current !== motion.resetSequence;
     if (reset) state.focus.copy(state.actualTarget);
     else state.focus.lerp(state.actualTarget, 1 - Math.exp(-config.targetResponsiveness * delta));
@@ -97,7 +96,7 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
       if(held.view>0){
         const blend=held.view*held.view*(3-2*held.view);
         const eye=state.ideal;
-        visual.getWorldPosition(eye);eye.y+=playerConfig.height/2-.12-crouchAnimation.cameraDrop*motion.crouchWeight;
+        visual.getWorldPosition(eye);eye.y+=playerConfig.height/2-.12-playerConfig.camera.crouchLowering*motion.crouchWeight;
         state.direction.set(-Math.sin(controls.yaw)*Math.cos(controls.pitch),-Math.sin(controls.pitch),-Math.cos(controls.yaw)*Math.cos(controls.pitch));
         eye.addScaledVector(state.direction,.08);
         camera.position.copy(state.candidate).lerp(eye,blend);
