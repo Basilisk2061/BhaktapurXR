@@ -1,12 +1,13 @@
 import {Quaternion,Vector3,type Object3D} from 'three';
 /** Visual stance is independent of the 1.25 m gameplay capsule; never move the model root. */
-export const crouchVisual={hipDrop:.27,cameraDrop:.33,strideReduction:.15} as const;
+export const crouchVisual={hipDrop:.18,cameraDrop:.33,strideReduction:.15} as const;
 /** Restrained model-frame additive pose. Idle/Walk supply all breathing and foot motion. */
 export function createCrouchPose(model:Object3D){
  const hips=model.getObjectByName('mixamorigHips');
- // Both limbs use the same anatomical/model-space pitch despite different bind frames.
- const definitions=[['Spine',6],['Spine1',4],['Neck',-7],['Head',-3],['LeftUpLeg',-24],['RightUpLeg',-24],['LeftLeg',35],['RightLeg',35],['LeftFoot',-11],['RightFoot',-11]] as const;
- const entries=definitions.flatMap(([name,degrees])=>{const bone=model.getObjectByName('mixamorig'+name);return bone?.parent?[{bone,angle:degrees*Math.PI/180,leg:/Leg|Foot/.test(name),base:bone.quaternion.clone(),neutral:bone.quaternion.clone()}]:[];});
+ // Both limbs use the same restrained model-space pitch. Feet are deliberately absent:
+ // ankle rotations/translations remain entirely owned by the original animation.
+ const definitions=[['Spine',6],['Spine1',4],['Neck',-7],['Head',-3],['LeftUpLeg',-12],['RightUpLeg',-12],['LeftLeg',18],['RightLeg',18]] as const;
+ const entries=definitions.flatMap(([name,degrees])=>{const bone=model.getObjectByName('mixamorig'+name);return bone?.parent?[{bone,angle:degrees*Math.PI/180,leg:/Leg/.test(name),base:bone.quaternion.clone(),neutral:bone.quaternion.clone()}]:[];});
  const hipPosition=new Vector3(),hipWorld=new Vector3(),right=new Vector3(),forward=new Vector3(),axis=new Vector3(),temp=new Vector3();
  const orientation=new Quaternion(),parent=new Quaternion(),offset=new Quaternion();let applied=false;
  return {supported:!!hips&&entries.length===definitions.length,
