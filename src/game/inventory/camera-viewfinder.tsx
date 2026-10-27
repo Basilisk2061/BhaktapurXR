@@ -1,4 +1,6 @@
 'use client';
+import {cameraPerf} from '../rendering/camera-performance';
+import {CameraPerformancePanel} from './camera-performance-panel';
 import {useEffect,useRef,useState,type RefObject} from 'react';
 import {useStore} from 'zustand';
 import type {PlayerRuntime} from '../player/player-runtime';
@@ -27,7 +29,7 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
    if(e.code==='KeyG')session.photography.setState({grid:!s.grid});
    if(e.code==='KeyC')session.photography.setState({panel:!s.panel});
    if(e.code==='KeyM')session.photography.setState({exposureMode:nextExposureMode(s.exposureMode),modeUntil:Date.now()+1000});
-   if(e.code==='KeyF')session.photography.setState({focusRequested:true,focusMode:'AF',row:Math.min(s.row,5)});
+   if(e.code==='KeyF'&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.af!==false))session.photography.setState({focusRequested:true,focusMode:'AF',row:Math.min(s.row,5)});
    if(e.code==='ArrowUp'||e.code==='ArrowDown')session.photography.setState({row:(s.row+(e.code==='ArrowDown'?1:(s.focusMode==='MF'?6:5)))%(s.focusMode==='MF'?7:6)});
    if(e.code==='ArrowLeft'||e.code==='ArrowRight'){
     const d=e.code==='ArrowRight'?1:-1,clamp=(n:number,min:number,max:number)=>Math.max(min,Math.min(max,n));
@@ -53,6 +55,7 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
  const rows=[{label:'Exposure Mode',value:settings.exposureMode,key:0},{label:'Focal Length',value:`${Math.round(settings.focal)}mm`,key:-1},{label:'Aperture',value:`F${f.toFixed(1)}`,key:1},{label:'Shutter',value:`1/${t}`,key:2},{label:'ISO',value:String(iso),key:3},{label:'EV',value:settings.ev.toFixed(1),key:4},{label:'Focus Mode',value:settings.focusMode,key:5},...(settings.focusMode==='MF'?[{label:'Focus Distance',value:`${settings.targetFocusDistance.toFixed(1)}m`,key:6}]:[]),{label:'Grid',value:settings.grid?'Thirds':'Off',key:-1}];
  if(settings.preview)return <PhotoPreview photo={settings.preview} session={session} input={input} runtime={runtime} touch={touch}/>;
  return <div hidden={!active} className="camera-viewfinder" aria-label="Photography viewfinder">
+  {process.env.NODE_ENV==='development'&&<CameraPerformancePanel active={active}/>}
   <span className="camera-mode-label"><b>{settings.exposureMode}</b><small>{Math.round(settings.focal)}mm</small></span>
   <i className={`camera-focus${settings.focusUntil>Date.now()?(settings.focusFailed?' is-focus-failed':' is-focused'):(settings.focusMode==='AF'&&settings.afState!=='SEARCHING'?' is-focused':'')}`}><b/><b/><b/><b/></i>
   {settings.focusMode==='MF'&&<div className="camera-mf-scale" aria-label="Manual focus distance scale">{[.3,.5,1,2,5,10,50].map(distance=><span key={distance} style={{left:`${Math.log(distance/.3)/Math.log(50/.3)*100}%`}}>{distance===50?'∞':distance}</span>)}<i style={{left:`${Math.log(Math.min(50,settings.actualFocusDistance)/.3)/Math.log(50/.3)*100}%`}}/></div>}

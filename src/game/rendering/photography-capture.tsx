@@ -1,3 +1,4 @@
+import {cameraPerf} from './camera-performance';
 import {usePhotographyOptics} from './photography-optics-controller';
 import {createPhotographyAutofocus} from './photography-autofocus';
 import {useEffect,type RefObject} from 'react';
@@ -12,13 +13,19 @@ export function PhotographyCapture({runtime}:{runtime:RefObject<PlayerRuntime>})
  usePhotographyOptics(runtime);
  const {gl,camera,scene}=useThree();
  useEffect(()=>{const direction=new Vector3(),autofocus=createPhotographyAutofocus(scene);let nextAf=0;const unsubscribe=addAfterEffect(()=>{
+  if(process.env.NODE_ENV==='development')cameraPerf?.frame(gl.info);
   const motion=runtime.current,settings=motion.photography,s=settings?.getState();if(!settings||!s||s.preview)return;
   const now=performance.now(),explicit=s.focusRequested,active=(motion.handheldCamera?.view??0)>=.95;
-  if(active&&s.focusMode==='AF'&&(explicit||!s.shutterRequested&&now>=nextAf)){
-   nextAf=now+125;const hit=autofocus(camera,gl.domElement.clientWidth,gl.domElement.clientHeight,explicit);
+  if(active&&s.focusMode==='AF'&&(explicit||!s.shutterRequested&&now>=nextAf&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.af!==false))){
+   nextAf=now+125;const perfStart=process.env.NODE_ENV==='development'?performance.now():0;const hit=autofocus(camera,gl.domElement.clientWidth,gl.domElement.clientHeight,explicit);
+   if(process.env.NODE_ENV==='development')cameraPerf?.end('AF',perfStart);
    const changed=hit&&Math.abs(hit.distance-s.targetFocusDistance)>Math.max(.025,hit.distance*.015);
    const steady=hit&&Math.abs(1/s.lens.actualFocusDistance-1/hit.distance)<.015;
-   settings.setState({focusRequested:false,afState:hit?(steady?'STEADY':'ACQUIRED'):'SEARCHING',...(changed?{targetFocusDistance:hit.distance}:{}),...(explicit?{focusFailed:!hit,focusUntil:Date.now()+850}:{})});
+   const publish=process.env.NODE_ENV!=='development'||cameraPerf?.switches.hud!==false;
+   const hudStart=process.env.NODE_ENV==='development'?performance.now():0;
+   if(publish)settings.setState({focusRequested:false,afState:hit?(steady?'STEADY':'ACQUIRED'):'SEARCHING',...(changed?{targetFocusDistance:hit.distance}:{}),...(explicit?{focusFailed:!hit,focusUntil:Date.now()+850}:{})});
+   else {if(changed)settings.getState().targetFocusDistance=hit.distance;if(explicit)settings.getState().focusRequested=false;}
+   if(process.env.NODE_ENV==='development'&&publish)cameraPerf?.end('HUD publish',hudStart);
   }
   if(!s.shutterRequested)return;
   settings.setState({shutterRequested:false});
@@ -28,7 +35,10 @@ export function PhotographyCapture({runtime}:{runtime:RefObject<PlayerRuntime>})
   const effective=effectivePhotography(s);
   const metadata:PhotographMetadata={timestamp,sequence:s.photoSequence,focalLength:36/(2*c.aspect*Math.tan(c.fov*Math.PI/360)),requestedFocalLength:s.focal,fov:c.fov,aperture:effective.aperture,shutterSeconds:1/effective.shutter,iso:effective.iso,ev:s.ev,focusDistance:s.lens.actualFocusDistance,targetFocusDistance:s.targetFocusDistance,exposureMode:s.exposureMode,manualFocus:s.focusMode==='MF',cameraPosition:[c.position.x,c.position.y,c.position.z],cameraQuaternion:[c.quaternion.x,c.quaternion.y,c.quaternion.z,c.quaternion.w],cameraDirection:[direction.x,direction.y,direction.z],gameHour:clock.hour,timeMode:clock.mode,rendererExposure:gl.toneMappingExposure,width:gl.domElement.width,height:gl.domElement.height};
   // toBlob snapshots the current canvas here; its asynchronous result needs no world freeze.
-  void capturePhotograph(gl.domElement,metadata).then(photo=>{settings.setState({shutterBusy:false,preview:photo});}).catch(fail);
+  const captureStart=process.env.NODE_ENV==='development'?performance.now():0;
+  const capture=capturePhotograph(gl.domElement,metadata);
+  if(process.env.NODE_ENV==='development')cameraPerf?.end('Capture',captureStart);
+  void capture.then(photo=>{settings.setState({shutterBusy:false,preview:photo});}).catch(fail);
  });return()=>{unsubscribe();autofocus.dispose();};},[gl,camera,scene,runtime]);
  return null;
 }
