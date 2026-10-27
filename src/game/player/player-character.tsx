@@ -1,4 +1,4 @@
-import {createCrouchPose} from './crouch-pose';
+import {createCrouchPose,crouchVisual} from './crouch-pose';
 import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
 import {createBellPose} from "./bell-pose";
@@ -55,9 +55,9 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
     itemPose.restore();
     bellPose.restore();
     crouchPose.restore();
-    action.setEffectiveTimeScale(name==='Walk'&&motion.crouchWeight>0?Math.max(.35,Math.min(1.3,motion.horizontalSpeed/playerConfig.walkSpeed/(1-.3*motion.crouchWeight))):1);
+    action.setEffectiveTimeScale(name==='Walk'&&motion.crouchWeight>0?Math.max(.35,Math.min(1.3,motion.horizontalSpeed/playerConfig.walkSpeed/(1-crouchVisual.strideReduction*motion.crouchWeight))):1);
     mixer.update(Math.min(delta,.05));
-    crouchPose.apply(motion.seat||motion.bellAction?0:motion.crouchWeight);
+    crouchPose.apply(motion.seat||motion.bellAction?0:motion.crouchWeight,name==='Walk');
     bellPose.apply(motion.bellAction?.elapsed);
     if(!motion.bellAction&&!motion.seat&&motion.grounded&&!motion.flying)itemPose.apply(motion.itemAction);
     const held=motion.handheldCamera;
