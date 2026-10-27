@@ -1,5 +1,5 @@
 'use client';
-import {requestPhotograph} from './photograph';
+import {beginShutterPress,releaseShutterPress,cancelShutterPress} from './photograph';
 import {CameraViewfinder} from './camera-viewfinder';
 import {useEffect,useId,useRef,type RefObject} from 'react';
 import {useStore} from 'zustand';
@@ -19,8 +19,8 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    input.current.inventoryOpen=false;session.inventory.getState().close(commit);
    input.current.active=resume&&!input.current.inputBlocked&&!modal()&&!document.hidden&&(document.pointerLockElement===canvas||pointerStatus==='fallback');
   };
-  const lowerCamera=()=>{if(session.photography.getState().preview)return;if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
-  const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99){if(held.using&&held.view>=.999)requestPhotograph(session.photography);else held.using=true;}}else if(item==='birdFood')session.food.request();};
+  const lowerCamera=()=>{if(session.photography.getState().preview)return;cancelShutterPress(session.photography);if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
+  const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99){if(!held.using)held.using=true;}}else if(item==='birdFood')session.food.request();};
   let pendingWheel=0;
   const openWheel=()=>{cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();};
   const waitForLower=()=>{if(input.current.inputBlocked||document.hidden){pendingWheel=0;return;}if(input.current.cameraView)pendingWheel=requestAnimationFrame(waitForLower);else{pendingWheel=0;openWheel();}};
@@ -43,26 +43,27 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    else{cursor.current.x=event.clientX-window.innerWidth/2;cursor.current.y=event.clientY-window.innerHeight/2;}
    if(Math.hypot(cursor.current.x,cursor.current.y)>24){const angle=(Math.atan2(cursor.current.y,cursor.current.x)+Math.PI/2+Math.PI*2)%(Math.PI*2);session.inventory.getState().highlight(Math.round(angle/(Math.PI*2/5))%5);}else session.inventory.getState().highlight(-1);
   };
-  let pending:{x:number;y:number;eligible:boolean;locked:boolean}|null=null;
+  let shutterPress=false;let pending:{x:number;y:number;eligible:boolean;locked:boolean}|null=null;
   const down=(event:PointerEvent)=>{
    if(event.button===2&&input.current.cameraView){event.preventDefault();event.stopImmediatePropagation();lowerCamera();return;}
    if(event.button!==0||event.pointerType==='touch')return;
    const locked=document.pointerLockElement===canvas;
+   if(playable()&&(locked||pointerStatus==='fallback')&&(runtime.current.handheldCamera?.view??0)>=.999){shutterPress=beginShutterPress(session.photography);pending=null;return;}
    pending={x:event.clientX,y:event.clientY,eligible:playable()&&(locked||pointerStatus==='fallback'),locked};
    if(pending.eligible&&locked){useItem();pending=null;}
   };
-  const up=(event:PointerEvent)=>{if(pending?.eligible&&!pending.locked&&Math.hypot(event.clientX-pending.x,event.clientY-pending.y)<5)useItem();pending=null;};
-  const reset=()=>{cancelAnimationFrame(pendingWheel);pendingWheel=0;pending=null;lowerCamera();close(false,false);};
+  const up=(event:PointerEvent)=>{if(event.button===0&&shutterPress){shutterPress=false;if(playable()&&(runtime.current.handheldCamera?.view??0)>=.999)releaseShutterPress(session.photography);else cancelShutterPress(session.photography);return;}if(pending?.eligible&&!pending.locked&&Math.hypot(event.clientX-pending.x,event.clientY-pending.y)<5)useItem();pending=null;};
+  const reset=()=>{cancelAnimationFrame(pendingWheel);pendingWheel=0;pending=null;shutterPress=false;lowerCamera();close(false,false);};
   const visibility=()=>{if(document.hidden)reset();};
   const lock=()=>{if(session.inventory.getState().expanded&&document.pointerLockElement!==canvas)reset();};
   const unsubscribe=session.inventory.subscribe((next,previous)=>{if(next.selected!==previous.selected){const motion=runtime.current,item=inventorySlots[next.selected];motion.itemAction=null;
     const held=motion.handheldCamera??={wanted:false,using:false,hold:0,view:0,elapsed:0,pendingFood:false};
-    held.using=false;held.wanted=item==='camera';if(held.wanted)held.elapsed=0;
+    cancelShutterPress(session.photography);held.using=false;held.wanted=item==='camera';if(held.wanted)held.elapsed=0;
     held.pendingFood=item==='birdFood'&&held.hold>0;motion.itemEquipRequested=item==='birdFood'&&!held.pendingFood;}});
   const context=(event:MouseEvent)=>{if(input.current.cameraView)event.preventDefault();};
   canvas.addEventListener('contextmenu',context);
-  document.addEventListener('keydown',keyDown);document.addEventListener('keyup',keyUp);document.addEventListener('mousemove',move);canvas.addEventListener('pointerdown',down,true);document.addEventListener('pointerup',up);window.addEventListener('blur',reset);document.addEventListener('visibilitychange',visibility);document.addEventListener('pointerlockchange',lock);
-  return()=>{canvas.removeEventListener('contextmenu',context);document.removeEventListener('keydown',keyDown);document.removeEventListener('keyup',keyUp);document.removeEventListener('mousemove',move);canvas.removeEventListener('pointerdown',down,true);document.removeEventListener('pointerup',up);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('pointerlockchange',lock);unsubscribe();pending=null;cancelAnimationFrame(pendingWheel);close(false,false);input.current.inventoryOpen=false;};
+  document.addEventListener('keydown',keyDown);document.addEventListener('keyup',keyUp);document.addEventListener('mousemove',move);canvas.addEventListener('pointerdown',down,true);document.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',reset);window.addEventListener('blur',reset);document.addEventListener('visibilitychange',visibility);document.addEventListener('pointerlockchange',lock);
+  return()=>{canvas.removeEventListener('contextmenu',context);document.removeEventListener('keydown',keyDown);document.removeEventListener('keyup',keyUp);document.removeEventListener('mousemove',move);canvas.removeEventListener('pointerdown',down,true);document.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',reset);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',visibility);document.removeEventListener('pointerlockchange',lock);unsubscribe();pending=null;cancelAnimationFrame(pendingWheel);close(false,false);input.current.inventoryOpen=false;};
  },[session,input,runtime,pointerStatus,touch]);
  const item=inventorySlots[state.selected],selectedItem=item?inventoryItems[item]:null,highlighted=inventorySlots[state.highlighted],details=highlighted?inventoryItems[highlighted]:null;
  return <>

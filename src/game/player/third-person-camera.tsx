@@ -2,7 +2,7 @@ import {photographyExposure,photographyLookScale} from '../inventory/photography
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { useRapier, type RapierRigidBody } from "@react-three/rapier";
-import { Vector3, type PerspectiveCamera, type Group } from "three";
+import { Euler,Quaternion,Vector3, type PerspectiveCamera, type Group } from "three";
 import type { PlayerInput } from "@/game/input/player-input";
 import { playerConfig } from "./player-config";
 import { safeDelta } from "./movement";
@@ -16,7 +16,7 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
 }) {
   const { world, rapier } = useRapier();
   const state = useMemo(() => ({
-    actualTarget: new Vector3(), focus: new Vector3(), ideal: new Vector3(),
+    handheldEuler:new Euler(0,0,0,"YXZ"),handheldRotation:new Quaternion(),handheldTime:0,actualTarget: new Vector3(), focus: new Vector3(), ideal: new Vector3(),
     candidate: new Vector3(), direction: new Vector3(), desiredBoom: new Vector3(),
     freeOrbit: new Vector3(), lookTarget: new Vector3(), renderedDistance: 0, sphere: new rapier.Ball(playerConfig.camera.collisionRadius),
   }), [rapier]);
@@ -102,6 +102,14 @@ export function ThirdPersonCamera({ bodyRef, visualRef, input: inputRef, runtime
         camera.position.copy(state.candidate).lerp(eye,blend);
         state.lookTarget.copy(state.focus).lerp(state.candidate.copy(eye).add(state.direction),blend);
         camera.lookAt(state.lookTarget);
+        const photo=motion.photography?.getState();
+        if(photo&&!photo.preview){
+          state.handheldTime+=delta;const t=state.handheldTime;
+          const moving=motion.movement==='WALK'||motion.movement==='RUN';
+          const strength=(.65+photo.focal/135*.6)*(moving?1.5:1)*(photo.physical.held ? .55 : 1)*blend;
+          state.handheldEuler.set((Math.sin(t*1.3)*.00015+Math.sin(t*3.7)*.000045)*strength,(Math.sin(t*.93)*.00017+Math.sin(t*4.1)*.00004)*strength,Math.sin(t*.7)*.000035*strength,'YXZ');
+          camera.quaternion.multiply(state.handheldRotation.setFromEuler(state.handheldEuler));
+        }
         initialized.current=true;lastReset.current=motion.resetSequence;return;
       }
     }
