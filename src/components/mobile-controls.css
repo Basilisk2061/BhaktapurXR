@@ -41,3 +41,5 @@
 .touch-pause-actions{display:flex;gap:10px}
 .touch-pause-actions>button{flex:1;min-width:0}
 .touch-pause-content>button:hover,.touch-pause-content>a:hover,.touch-pause-actions>button:hover{background:#392a22;border-color:#ad8965}
+
+.touch-actions .touch-crouch{width:54px;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}.touch-crouch small{font-size:8px}.touch-crouch[aria-pressed="true"]{background:#73404e;border-color:#d3a5ad}

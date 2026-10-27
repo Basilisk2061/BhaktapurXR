@@ -27,6 +27,6 @@ export function GameHud({ready,pointerStatus,input}:{ready:boolean;pointerStatus
    <div className="pause-settings-scroll"><GameSettings/></div>
    <Link href="/" onClick={()=>{clear();input.current.inputBlocked=false;}}>Return to Main Menu</Link>
   </dialog>
-  {hintVisible&&<p className="game-control-hint" role="status">{pointerStatus==='fallback'?'Drag to look':'Click to look'}<span>WASD &middot; Move &nbsp; Shift &middot; Run &nbsp; Space &middot; Jump &nbsp; Esc &middot; Release</span></p>}
+  {hintVisible&&<p className="game-control-hint" role="status">{pointerStatus==='fallback'?'Drag to look':'Click to look'}<span>WASD &middot; Move &nbsp; Shift &middot; Run &nbsp; Space &middot; Jump &nbsp; C &middot; Crouch &nbsp; Esc &middot; Release</span></p>}
  </div>;
 }

@@ -24,10 +24,10 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
   const key=(e:KeyboardEvent)=>{
    if(!ready()||isEditableTarget(e.target)||e.ctrlKey||e.metaKey||e.altKey)return;
    if(e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();return;}
-   const s=session.photography.getState();if(!['KeyG','KeyF','KeyM','KeyC','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))return;
+   const s=session.photography.getState();if(!['KeyG','KeyF','KeyM','KeyV','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))return;
    if(e.code.startsWith('Arrow')&&!s.panel)return;e.preventDefault();e.stopImmediatePropagation();if(e.repeat&&!e.code.startsWith('Arrow'))return;
    if(e.code==='KeyG')session.photography.setState({grid:!s.grid});
-   if(e.code==='KeyC')session.photography.setState({panel:!s.panel});
+   if(e.code==='KeyV')session.photography.setState({panel:!s.panel});
    if(e.code==='KeyM')session.photography.setState({exposureMode:nextExposureMode(s.exposureMode),modeUntil:Date.now()+1000});
    if(e.code==='KeyF'&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.af!==false))session.photography.setState({focusRequested:true,focusMode:'AF',row:Math.min(s.row,5)});
    if(e.code==='ArrowUp'||e.code==='ArrowDown')session.photography.setState({row:(s.row+(e.code==='ArrowDown'?1:(s.focusMode==='MF'?6:5)))%(s.focusMode==='MF'?7:6)});
@@ -61,9 +61,9 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
   {settings.focusMode==='MF'&&<div className="camera-mf-scale" aria-label="Manual focus distance scale">{[.3,.5,1,2,5,10,50].map(distance=><span key={distance} style={{left:`${Math.log(distance/.3)/Math.log(50/.3)*100}%`}}>{distance===50?'∞':distance}</span>)}<i style={{left:`${Math.log(Math.min(50,settings.actualFocusDistance)/.3)/Math.log(50/.3)*100}%`}}/></div>}
   {settings.grid&&<div className="camera-thirds" aria-label="Rule of thirds grid"><i/><i/><i/><i/></div>}
   <div className="camera-exposure-strip"><span>1/{t}</span><span>F{f.toFixed(1)}</span><span>ISO {iso}</span><span>EV {settings.ev>=0?'+':''}{settings.ev.toFixed(1)}</span><span>{focus}</span>{settings.exposureMode==='M'&&<span>Meter {settings.physical.meterDeviation>=0?'+':''}{settings.physical.meterDeviation.toFixed(1)}</span>}</div>
-  <div className="camera-status-area"><span className="camera-battery" aria-label="Decorative battery indicator" title="Decorative status only"><i/><i/><i/></span><button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>C Settings</button></div>
+  <div className="camera-status-area"><span className="camera-battery" aria-label="Decorative battery indicator" title="Decorative status only"><i/><i/><i/></span><button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>V Settings</button></div>
   {settings.panel&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera settings"><strong>CAMERA SETTINGS</strong><ul>{rows.map(row=><li key={row.label} className={row.key===settings.row?'is-current':''}><span>{row.label}</span><span>{row.value}</span></li>)}</ul><small>Up/Down Select | Left/Right Adjust</small>{touch&&<div><button onClick={()=>session.photography.setState({grid:!settings.grid})}>Grid</button><button onClick={()=>session.photography.setState({focusRequested:true,focusMode:'AF',row:Math.min(settings.row,5)})}>Focus</button></div>}</section>}
-  {(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Autofocus</b></span><span>M <b>Exposure AUTO / A / M</b></span><span>G <b>Grid</b></span><span>C <b>Settings</b></span><span>LMB <b>Hold focus / Release shutter</b></span><span>RMB <b>Lower Camera</b></span></div>}
+  {(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Autofocus</b></span><span>M <b>Exposure AUTO / A / M</b></span><span>G <b>Grid</b></span><span>V <b>Settings</b></span><span>LMB <b>Hold focus / Release shutter</b></span><span>RMB <b>Lower Camera</b></span></div>}
   {settings.modeUntil>Date.now()&&<span className="camera-mode-feedback" role="status">{settings.exposureMode}</span>}
   {settings.focusUntil>Date.now()&&<span className="camera-af-feedback" role="status">{settings.focusFailed?'AF FAILED':`AF ${settings.targetFocusDistance.toFixed(1)}m`}</span>}
   {settings.shutterUntil>Date.now()&&<div className="camera-shutter-feedback" aria-hidden="true"/>}

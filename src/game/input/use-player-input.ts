@@ -14,7 +14,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
     let disposed = false, lockFailed = false, dragging = false, requesting = false;
     const previousTabIndex = canvas.tabIndex;
     canvas.setAttribute("tabindex", "0");
-    const clear = () => { input.keys.clear(); input.interactRequested = false; input.jumpRequested = false; input.lastSpacePress = null; input.active = false; if(input.touchMovement){input.touchMovement.forward=0;input.touchMovement.right=0;input.touchMovement.running=false;} dragging = false; };
+    const clear = () => { input.keys.clear(); input.interactRequested = false; input.jumpRequested = false; input.crouchRequested=false; input.lastSpacePress = null; input.active = false; if(input.touchMovement){input.touchMovement.forward=0;input.touchMovement.right=0;input.touchMovement.running=false;} dragging = false; };
     const resetFocus = () => {
       clear(); onStatus("inactive");
       if (document.pointerLockElement === canvas) document.exitPointerLock();
@@ -64,7 +64,7 @@ export function usePlayerInput(inputRef: RefObject<PlayerInput>, onStatus: (stat
         resetFocus();
         return;
       }
-      if ((event.ctrlKey && !input.flying) || event.metaKey || event.altKey) { input.keys.clear(); input.interactRequested = false; input.jumpRequested = false; input.lastSpacePress = null; return; }
+      if ((event.ctrlKey && !input.flying) || event.metaKey || event.altKey) { input.keys.clear(); input.interactRequested = false; input.jumpRequested = false; input.crouchRequested=false; input.lastSpacePress = null; return; }
       if (!input.active || isEditableTarget(event.target) || (!input.locked && document.activeElement !== canvas)) return;
       if (gameplayCodes.has(event.code)) { event.preventDefault(); pressGameplayKey(input, event.code, event.repeat); }
     };

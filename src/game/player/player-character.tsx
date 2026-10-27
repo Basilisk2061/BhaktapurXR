@@ -1,3 +1,4 @@
+import {createCrouchPose} from './crouch-pose';
 import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
 import {createBellPose} from "./bell-pose";
@@ -23,6 +24,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const quality=useGraphicsQuality();
   const {scene,animations}=useGLTF(characterAsset("/assets/characters/player/player.glb",quality),false,false);
   const model=useMemo(()=>{const model=clone(scene);model.traverse(object=>{object.castShadow=true;object.receiveShadow=true;});return model;},[scene]);
+  const crouchPose=useMemo(()=>createCrouchPose(model),[model]);
   const cameraProp=useMemo(()=>createHandheldCamera(),[]);
   const cameraPose=useMemo(()=>createCameraPose(model,cameraProp.group),[model,cameraProp]);
   useEffect(()=>{model.add(cameraProp.group);return()=>{model.remove(cameraProp.group);};},[model,cameraProp]);
@@ -42,7 +44,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   useFrame((_,delta)=>{
     const motion=runtime.current;
     const airborne=!motion.flying&&!motion.grounded;
-    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15?"Run":"Walk";
+    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.crouchWeight===0&&(motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15)?"Run":"Walk";
     if(name!==previous.current||reset.current!==motion.resetSequence){
       actions[previous.current]?.fadeOut(.18);
       actions[name].reset().fadeIn(.18).play();
@@ -52,7 +54,10 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
     cameraPose.restore();
     itemPose.restore();
     bellPose.restore();
+    crouchPose.restore();
+    action.setEffectiveTimeScale(name==='Walk'&&motion.crouchWeight>0?Math.max(.35,Math.min(1.3,motion.horizontalSpeed/playerConfig.walkSpeed/(1-.3*motion.crouchWeight))):1);
     mixer.update(Math.min(delta,.05));
+    crouchPose.apply(motion.seat||motion.bellAction?0:motion.crouchWeight);
     bellPose.apply(motion.bellAction?.elapsed);
     if(!motion.bellAction&&!motion.seat&&motion.grounded&&!motion.flying)itemPose.apply(motion.itemAction);
     const held=motion.handheldCamera;

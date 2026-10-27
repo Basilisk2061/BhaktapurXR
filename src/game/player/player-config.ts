@@ -6,6 +6,9 @@ const radius = 0.3;
 export const playerConfig = {
   height,
   radius,
+  crouchHeight:1.25,
+  crouchSpeed:1.35,
+  crouchDuration:.28,
   capsuleHalfSegment: height / 2 - radius,
   jumpHeight: 1, // metres; takeoff speed derives from gravity
   walkSpeed: 2.3, // metres / second

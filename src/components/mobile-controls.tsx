@@ -20,13 +20,13 @@ export function useTouchDevice(){
 export function MobileControls({input,runtime,disabled=false}:{input:RefObject<PlayerInput>;runtime:RefObject<PlayerRuntime>;disabled?:boolean}){
  const router=useRouter();
  const joystick=useRef<{id:number;x:number;y:number;radius:number}|null>(null),look=useRef<{id:number;x:number;y:number}|null>(null),thumb=useRef<HTMLSpanElement>(null),dialog=useRef<HTMLDialogElement>(null);
- const [prompt,setPrompt]=useState<PlayerRuntime['sitPrompt']>(null),[menu,setMenu]=useState(false),[settings,setSettings]=useState(false),[fullscreen,setFullscreen]=useState(false);
- const reset=useCallback(()=>{joystick.current=null;look.current=null;input.current.touchMovement={forward:0,right:0,running:false};input.current.jumpRequested=false;input.current.interactRequested=false;input.current.keys.clear();input.current.active=false;if(thumb.current)thumb.current.style.transform='translate(0px,0px)';},[input]);
+ const [crouched,setCrouched]=useState(false),[prompt,setPrompt]=useState<PlayerRuntime['sitPrompt']>(null),[menu,setMenu]=useState(false),[settings,setSettings]=useState(false),[fullscreen,setFullscreen]=useState(false);
+ const reset=useCallback(()=>{joystick.current=null;look.current=null;input.current.touchMovement={forward:0,right:0,running:false};input.current.jumpRequested=false;input.current.crouchRequested=false;input.current.interactRequested=false;input.current.keys.clear();input.current.active=false;if(thumb.current)thumb.current.style.transform='translate(0px,0px)';},[input]);
  useEffect(()=>{if(disabled)reset();},[disabled,reset]);
  useEffect(()=>{
   input.current.touchMode=true;input.current.touchMovement={forward:0,right:0,running:false};
   setFullscreen(!!document.fullscreenEnabled&&typeof document.documentElement.requestFullscreen==='function');
-  const timer=setInterval(()=>setPrompt(runtime.current.sitPrompt),100);
+  const timer=setInterval(()=>{setPrompt(runtime.current.sitPrompt);setCrouched(runtime.current.crouchWeight>0||runtime.current.crouchWanted);},100);
   const hide=()=>{if(document.hidden)reset();};
   window.addEventListener('blur',reset);document.addEventListener('visibilitychange',hide);
   return()=>{clearInterval(timer);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hide);reset();input.current.touchMode=false;input.current.inputBlocked=false;};
@@ -53,8 +53,9 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
   <button type="button" className="exploration-menu-trigger carved-window-control" aria-label="Open game menu" aria-haspopup="dialog" onClick={openMenu}><MenuWindowFrame compact/><span className="menu-window-label"><span aria-hidden="true">&#9776;</span> Menu</span></button>
   <div className="touch-joystick" role="group" aria-label="Movement joystick. Push farther to run." onPointerDown={event=>{if(event.pointerType==='mouse'||joystick.current||!activate())return;event.preventDefault();const rect=event.currentTarget.getBoundingClientRect();joystick.current={id:event.pointerId,x:rect.left+rect.width/2,y:rect.top+rect.height/2,radius:rect.width*.32};event.currentTarget.setPointerCapture(event.pointerId);moveStick(event);}} onPointerMove={moveStick} onPointerUp={releaseStick} onPointerCancel={releaseStick} onLostPointerCapture={releaseStick}><span className="touch-joystick-thumb" ref={thumb}/></div>
   <div className="touch-actions">
+   <button type="button" className="touch-crouch" aria-label={crouched?'Stand from crouch':'Crouch'} aria-pressed={crouched} onPointerDown={event=>{event.preventDefault();if(activate()&&!input.current.sitting)input.current.crouchRequested=true;}} onClick={event=>{if(event.detail===0&&activate()&&!input.current.sitting)input.current.crouchRequested=true;}}><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><circle cx="14" cy="4" r="2" fill="currentColor"/><path d="M13 8L9 12L14 16L10 21M10 12L5 16L3 21M12 9L17 12L21 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/></svg><small>{crouched?'Stand':'Crouch'}</small></button>
    {prompt&&<button type="button" className="touch-action" onPointerDown={event=>{event.preventDefault();if(activate())input.current.interactRequested=true;}} onClick={event=>{if(event.detail===0&&activate())input.current.interactRequested=true;}}>{prompt==='sit'?'Sit':'Stand'}</button>}
-   <button type="button" className="touch-jump" aria-label="Jump" onPointerDown={event=>{event.preventDefault();if(activate()&&!input.current.sitting)input.current.jumpRequested=true;}} onClick={event=>{if(event.detail===0&&activate()&&!input.current.sitting)input.current.jumpRequested=true;}}>Jump</button>
+   <button type="button" className="touch-jump" aria-label="Jump" onPointerDown={event=>{event.preventDefault();if(activate()&&!input.current.sitting&&!input.current.crouched)input.current.jumpRequested=true;}} onClick={event=>{if(event.detail===0&&activate()&&!input.current.sitting&&!input.current.crouched)input.current.jumpRequested=true;}}>Jump</button>
   </div>
   <dialog ref={dialog} className={`touch-pause${settings?' heritage-settings-dialog':''}`} aria-labelledby="touch-menu-title" onClose={()=>{reset();input.current.inputBlocked=false;setMenu(false);}}>
    <header className="touch-pause-header"><h2 id="touch-menu-title">{settings?'Settings':'BhaktapurXR'}</h2><p className="touch-pause-subtitle">{settings?'Preferences':'Paused'}</p></header>

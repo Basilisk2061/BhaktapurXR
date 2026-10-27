@@ -56,7 +56,7 @@ function ExperienceContent({ mode, review, architecturalDebug, silhouette, manua
       {ready&&mode==="BHAKTAPUR"&&<HeritageInteraction input={input} runtime={runtime} overrides={manualOverrides} touch={touch} onOpenChange={setHeritageOpen}/>}
       {!touch&&!heritageOpen&&<GameHud input={input} ready={ready} pointerStatus={pointerStatus}/>}
       {!touch&&developmentUI&&ready && <p className="pointer-events-none absolute bottom-4 left-4 rounded-sm bg-stone-100/90 px-4 py-2 text-xs text-stone-600" aria-live="polite">
-        {pointerStatus === "locked" ? "WASD move · Shift run · Space jump · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump · Esc release" : "Click to control camera · WASD move · Shift run · Space jump · Esc release mouse"}
+        {pointerStatus === "locked" ? "WASD move · Shift run · Space jump / C crouch · Esc release mouse" : pointerStatus === "fallback" ? "Mouse capture unavailable · Drag to look · WASD move · Shift run · Space jump / C crouch · Esc release" : "Click to control camera · WASD move · Shift run · Space jump / C crouch · Esc release mouse"}
       </p>}
       {developmentUI&&developmentConfig.worldData && <WorldDataDiagnostics mode={mode} />}
       {developmentUI&&process.env.NODE_ENV === "development" && <FlyModeIndicator input={input} />}

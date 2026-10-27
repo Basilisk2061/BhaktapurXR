@@ -1,3 +1,4 @@
+import {createCrouchController} from './crouch-controller';
 import {arcadeSeatSpans,nearestArcadeSeat,sittingConfig} from "./arcade-sitting";
 import {ArcadeSittingPrompt} from "./arcade-sitting-prompt";
 import type {TransformOverrides} from "../../features/world-editor/transforms";
@@ -23,6 +24,8 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
   const visual = useRef<Group>(null);
   const controller = useRef<KinematicCharacterController>(null);
   const { world, rapier } = useRapier();
+  const crouch=useMemo(()=>createCrouchController(world,rapier),[world,rapier]);
+  const pendingSit=useRef(false);
   const spawnPosition = useMemo(() => bodySpawnPosition(spawn), [spawn]);
   const seats=useMemo(()=>sittingEnabled?arcadeSeatSpans(seatingTransforms):[],[sittingEnabled,seatingTransforms]);
   const direction = useMemo(() => ({ x: 0, z: 0 }), []);
@@ -48,12 +51,14 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       motion.velocity.x = 0; motion.velocity.y = 0; motion.velocity.z = 0;
       motion.grounded = false; motion.horizontalSpeed = 0; motion.movement = "FALL";
       motion.facingYaw = spawn.rotation[1]; motion.resetSequence++;
+      crouch.reset(collider,motion);controls.crouched=false;controls.crouchRequested=false;pendingSit.current=false;
       motion.seat=null; motion.sitPrompt=null; motion.bellAction=null;controls.sitting=false;
       controls.jumpRequested = false;
       controls.yaw = spawn.rotation[1]; controls.pitch = playerConfig.camera.initialPitch;
       return;
     }
-    if(controls.interactRequested&&motion.bellPrompt&&!motion.bellAction&&!motion.seat&&!controls.inputBlocked){
+    crouch.step(rigidBody,collider,motion,controls,worldConfig.physicsTimeStep);
+    if(controls.interactRequested&&motion.crouchWeight===0&&motion.bellPrompt&&!motion.bellAction&&!motion.seat&&!controls.inputBlocked){
       controls.interactRequested=false;motion.bellPrompt.start();
     }
     if(motion.bellAction){
@@ -68,6 +73,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     const position=rigidBody.translation();
     const candidate=!controls.flying&&!motion.seat?nearestArcadeSeat({x:position.x,y:position.y-playerConfig.height/2,z:position.z},seats):null;
     motion.sitPrompt=motion.bellPrompt?null:motion.seat?"stand":candidate?"sit":null;
+    if(pendingSit.current){if(motion.crouchWanted||!candidate||!controls.active||controls.inputBlocked)pendingSit.current=false;else if(motion.crouchWeight===0){motion.seat=candidate;motion.facingYaw=candidate.yaw;motion.sitPrompt='stand';pendingSit.current=false;}}
     if(controls.interactRequested){
       controls.interactRequested=false;
       if(controls.active&&motion.seat){
@@ -77,7 +83,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
           const blocked=world.intersectionWithShape(target,{x:0,y:0,z:0,w:1},new rapier.Capsule(playerConfig.capsuleHalfSegment,playerConfig.radius),rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,collider,rigidBody);
           if(!blocked){rigidBody.setTranslation(target,true);rigidBody.setNextKinematicTranslation(target);Object.assign(motion.nextPosition,target);motion.seat=null;motion.sitPrompt=null;motion.movement="IDLE";}
         }
-      }else if(controls.active&&candidate){motion.seat=candidate;motion.facingYaw=candidate.yaw;motion.sitPrompt="stand";}
+      }else if(controls.active&&candidate){if(motion.crouchWeight>0||motion.crouchWanted){if(crouch.clear(rigidBody,collider)){motion.crouchWanted=false;pendingSit.current=true;}}else{motion.seat=candidate;motion.facingYaw=candidate.yaw;motion.sitPrompt="stand";}}
       controls.keys.clear();controls.jumpRequested=false;controls.lastSpacePress=null;
     }
     controls.sitting=!!motion.seat;
@@ -98,8 +104,8 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
     const touch=controls.touchMode?controls.touchMovement:undefined;
     const forward = controls.active ? touch?.forward ?? (Number(keys.has("KeyW")) - Number(keys.has("KeyS"))) : 0;
     const right = controls.active ? touch?.right ?? (Number(keys.has("KeyD")) - Number(keys.has("KeyA"))) : 0;
-    const running = !controls.cameraView && controls.active && (touch?.running ?? (keys.has("ShiftLeft") || keys.has("ShiftRight")));
-    const speed = (running ? playerConfig.runSpeed : playerConfig.walkSpeed) * (touch ? Math.min(1,Math.hypot(forward,right)) : 1);
+    const running = !motion.crouchWanted&&motion.crouchWeight===0&&!controls.cameraView && controls.active && (touch?.running ?? (keys.has("ShiftLeft") || keys.has("ShiftRight")));
+    const speed = ((running ? playerConfig.runSpeed : playerConfig.walkSpeed)*(1-motion.crouchWeight)+playerConfig.crouchSpeed*motion.crouchWeight) * (touch ? Math.min(1,Math.hypot(forward,right)) : 1);
     cameraRelativeDirection(forward, right, controls.yaw, direction);
     const slowing = (forward === 0 && right === 0) || Math.hypot(motion.velocity.x, motion.velocity.z) > speed;
     approachVelocity(motion.velocity, direction, speed, slowing ? playerConfig.deceleration : playerConfig.acceleration, delta);
@@ -110,7 +116,7 @@ export function Player({ input: inputRef, runtime: runtimeRef, spawn, onPointerS
       motion.velocity.y += Math.sign(target - motion.velocity.y) * Math.min(Math.abs(target - motion.velocity.y), rate * delta);
       controls.jumpRequested = false;
     }
-    stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS, consumeJump(controls, motion.grounded));
+    stepCharacter(rigidBody, collider, character, motion, delta, playerConfig, worldConfig.gravity[1], rapier.QueryFilterFlags.EXCLUDE_SENSORS, consumeJump(controls, motion.grounded&&motion.crouchWeight===0&&!motion.crouchWanted));
     motion.movement = movementState(motion.grounded, motion.horizontalSpeed, running, playerConfig.movementThreshold);
     if(controls.cameraView)motion.facingYaw=controls.yaw;
     else if (motion.horizontalSpeed > playerConfig.movementThreshold) {
