@@ -27,11 +27,12 @@ export class NpcSimulation {
    agent.seat=seat;agent.path=route(this.graph,agent.node,approach.id);agent.approaching=true;return true;
   }return false;
  }
- tick(delta:number,player:Vector3,playerSeat:ArcadeSeat|null){
+ tick(delta:number,player:Vector3,playerSeat:ArcadeSeat|null,held?:ReadonlySet<string>){
   this.planned.clear();this.time+=delta;
   const override=process.env.NODE_ENV==='development'?environmentStore.getState().npcs:'AUTO';
   if(override!==this.override){
    for(const agent of this.agents){
+    if(held?.has(agent.id))continue;
     if(override==='WALK'){
      agent.sitUntil=this.time;
      if(agent.state!=='SITTING'&&agent.seat){agent.seat=null;agent.approaching=false;agent.path=[];agent.returning=true;agent.target=this.node(agent.node).point.clone();}
@@ -42,6 +43,7 @@ export class NpcSimulation {
    this.override=override;
   }
   for(const agent of this.agents){
+   if(held?.has(agent.id))continue;
    if(agent.state==='SITTING'){
     if(override==='SIT')agent.sitUntil=this.time+1;
     if(agent.seat&&Math.abs(player.y-agent.seat.point.y)<2&&flatDistance(player,agent.seat.point)<.8)agent.sitUntil=this.time;
@@ -76,6 +78,20 @@ export class NpcSimulation {
     else this.idle(agent);
    }
   }
+ }
+ /** Development placement boundary; untouched unless an admin explicitly holds an NPC. */
+ suspendForAdmin(agent:NpcAgent,stand:boolean){
+  this.release(agent);agent.target=null;agent.path=[];agent.nextNode=null;agent.approaching=false;agent.returning=false;agent.actualSpeed=0;agent.walked=0;
+  if(stand||agent.state!=='SITTING'){agent.state='IDLE';agent.seat=null;}
+ }
+ resumeFromAdmin(agent:NpcAgent){
+  if(agent.state==='SITTING')return;
+  const ground=this.probe.height(agent.position);if(ground===null||Math.abs(ground-agent.position.y)>.2){agent.state='IDLE';agent.waitUntil=Infinity;return false;}
+  // Rejoin a proven visible route from the current position; never teleport to it.
+  let best:WalkGraph['nodes'][number]|undefined,distance=Infinity;
+  for(const node of this.graph.nodes){const d=node.point.distanceToSquared(agent.position);if(d<distance&&this.probe.clear(agent.position,node.point)){best=node;distance=d;}}
+  if(!best){agent.state='IDLE';agent.waitUntil=Infinity;return false;}
+  agent.node=best.id;agent.target=best.point.clone();agent.returning=true;agent.state='WALKING';agent.blocked=0;agent.waitUntil=this.time+2;return true;
  }
  /** Stops/yields on the proven segment; never steer randomly outside the route corridor. */
  displacement(agent:NpcAgent,delta:number,player:Vector3){

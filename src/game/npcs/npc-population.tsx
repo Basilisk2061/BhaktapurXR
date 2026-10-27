@@ -1,3 +1,5 @@
+import {npcAdmin} from './admin-placement';
+import {NpcAdminPlacement} from './admin-placement-world';
 import {useGraphicsQuality} from '../../lib/graphics-quality';
 import {characterAsset} from '../rendering/character-asset';
 import {Suspense,useEffect,useMemo,useRef,useState,type RefObject} from 'react';
@@ -67,6 +69,23 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
  const {rapier}=useRapier(),bindings=useRef(new Map<string,ActorBinding>()),span=useMemo(()=>arcadeSeatSpans(transforms)[0],[transforms]);
  const [simulation]=useState(()=>new NpcSimulation(graph,span,probe,npcInstances));
  const simulationRef=useRef(simulation);
+ const held=useRef(new Set<string>()),stranded=useRef(new Set<string>()),original=useMemo(()=>new Map(simulation.agents.map(a=>[a.id,{position:a.position.clone(),yaw:a.yaw}])),[simulation]);
+ const {world}=useRapier();
+ useEffect(()=>{if(process.env.NODE_ENV!=='development'||!npcAdmin)return;
+  const capsule=new rapier.Capsule(.84-radius,radius),identity={x:0,y:0,z:0,w:1};
+  const fixed=(c:import('@dimforge/rapier3d-compat').Collider)=>!c.parent()||c.parent()!.isFixed();
+  const place=(id:string,p:import('./admin-placement').NpcPlacement)=>{
+   const agent=simulation.agents.find(a=>a.id===id),binding=bindings.current.get(id);if(!agent||!binding||!p.position.every(Number.isFinite)||!Number.isFinite(p.rotationY))return false;
+   const [x,y,z]=p.position,hit=world.castRayAndGetNormal(new rapier.Ray({x,y:y+.4,z},{x:0,y:-1,z:0}),2,true,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,fixed);
+   if(!hit||hit.normal.y<.7)return false;const ground=y+.4-hit.timeOfImpact,definition=npcDefinitions[agent.character];
+   if(world.intersectionWithShape({x,y:ground+definition.height/2+.03,z},identity,capsule,rapier.QueryFilterFlags.EXCLUDE_SENSORS,undefined,undefined,undefined,fixed))return false;
+   if(simulation.agents.some(a=>a!==agent&&Math.abs(a.position.y-ground)<1.5&&Math.hypot(a.position.x-x,a.position.z-z)<.65))return false;
+   stranded.current.delete(id);simulation.suspendForAdmin(agent,true);agent.position.set(x,ground,z);agent.yaw=p.rotationY;
+   const position={x,y:ground+definition.height/2+.015,z};binding.body.setTranslation(position,true);binding.body.setNextKinematicTranslation(position);return true;
+  };
+  const bridge={agents:simulation.agents,place,reset:(id:string)=>{const agent=simulation.agents.find(a=>a.id===id),binding=bindings.current.get(id),initial=original.get(id);if(!agent||!binding||!initial)return;simulation.suspendForAdmin(agent,true);agent.position.copy(initial.position);agent.yaw=initial.yaw;const p={x:agent.position.x,y:agent.position.y+npcDefinitions[agent.character].height/2+.015,z:agent.position.z};binding.body.setTranslation(p,true);binding.body.setNextKinematicTranslation(p);stranded.current.delete(id);if(!npcAdmin!.held(id)){if(simulation.resumeFromAdmin(agent)===false){held.current.add(id);stranded.current.add(id);}else held.current.delete(id);}}};
+  npcAdmin.bridge=bridge;npcAdmin.publish();return()=>{if(npcAdmin?.bridge===bridge){npcAdmin.bridge=null;npcAdmin.setPlacement(false);npcAdmin.store.setState({frozen:false});}};
+ },[world,rapier,simulation,original]);
  const register=useMemo(()=>(id:string,binding:ActorBinding|null)=>{if(binding)bindings.current.set(id,binding);else bindings.current.delete(id);},[]);
  useEffect(()=>()=>simulation.dispose(),[simulation]);
  const playerPoint=useMemo(()=>new Vector3(),[]);
@@ -74,8 +93,19 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
   const simulation=simulationRef.current;
   const delta=1/60,motion=player.current;playerPoint.set(motion.nextPosition.x,motion.nextPosition.y-.875,motion.nextPosition.z);
   for(const agent of simulation.agents){const binding=bindings.current.get(agent.id);if(!binding)continue;const position=binding.body.translation();agent.position.set(position.x,position.y-npcDefinitions[agent.character].height/2-.015,position.z);}
-  simulation.tick(delta,playerPoint,motion.seat);
+  if(process.env.NODE_ENV==='development'&&npcAdmin){
+   const admin=npcAdmin.store.getState();
+   for(const agent of simulation.agents){const editing=admin.placement&&admin.selected===agent.id,freeze=npcAdmin.held(agent.id);
+    if(freeze){stranded.current.delete(agent.id);if(!held.current.has(agent.id)||editing&&agent.state==='SITTING'){
+      const exit=editing?agent.seat?.exit.clone():undefined;simulation.suspendForAdmin(agent,editing);
+      if(exit&&!npcAdmin.bridge?.place(agent.id,{position:[exit.x,exit.y,exit.z],rotationY:agent.yaw})){npcAdmin.publish('Seated NPC needs a clear ground placement');}
+     }held.current.add(agent.id);
+    }else if(held.current.has(agent.id)&&!stranded.current.has(agent.id)){if(simulation.resumeFromAdmin(agent)===false){stranded.current.add(agent.id);npcAdmin.publish('No clear plaza route from placement; NPC held safely idle. Reposition nearer a lane.');}else held.current.delete(agent.id);}
+   }
+  }
+  simulation.tick(delta,playerPoint,motion.seat,process.env.NODE_ENV==='development'?held.current:undefined);
   for(const agent of simulation.agents){const binding=bindings.current.get(agent.id);if(!binding)continue;const {body,controller}=binding,definition=npcDefinitions[agent.character];
+   if(process.env.NODE_ENV==='development'&&held.current.has(agent.id)){body.setNextKinematicTranslation({x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z});agent.actualSpeed=0;continue;}
    if(agent.state==='SITTING'){body.setNextKinematicTranslation({x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z});agent.actualSpeed=0;continue;}
    // Standing from a seat is a checked placement onto the same clear plaza exit as the player.
    const position=body.translation();if(Math.abs(position.y-definition.height/2-.015-agent.position.y)>.3){const next={x:agent.position.x,y:agent.position.y+definition.height/2+.015,z:agent.position.z};body.setTranslation(next,true);body.setNextKinematicTranslation(next);}
@@ -88,7 +118,7 @@ function Population({graph,probe,transforms,player}:{graph:WalkGraph;probe:Navig
    if(current.y< -2){const safe=graph.nodes.find(n=>n.id===agent.node)!.point;body.setTranslation({x:safe.x,y:safe.y+definition.height/2+.015,z:safe.z},true);}
   }
  });
- return <group name="npc-population" userData={{nodeCount:graph.nodes.length,edgeCount:graph.edges.length,expectedCount:4,availableCount:simulation.agents.length}}>{simulation.agents.map(agent=><Suspense key={agent.id} fallback={null}><NpcActor agent={agent} register={register} player={player}/></Suspense>)}</group>;
+ return <group name="npc-population" userData={{nodeCount:graph.nodes.length,edgeCount:graph.edges.length,expectedCount:4,availableCount:simulation.agents.length}}>{process.env.NODE_ENV==='development'&&<NpcAdminPlacement player={player}/>}{simulation.agents.map(agent=><Suspense key={agent.id} fallback={null}><NpcActor agent={agent} register={register} player={player}/></Suspense>)}</group>;
 }
 export function NpcPopulation({transforms,player}:{transforms?:TransformOverrides;player:RefObject<PlayerRuntime>}){
  const {world,rapier}=useRapier(),[graph,setGraph]=useState<WalkGraph|null>(null),warmup=useRef(0),span=useMemo(()=>arcadeSeatSpans(transforms)[0],[transforms]);
