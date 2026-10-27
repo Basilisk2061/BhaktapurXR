@@ -1,4 +1,5 @@
-import {createCrouchPose,crouchVisual} from './crouch-pose';
+import {createCrouchAnimations} from './crouch-animations';
+import {crouchAnimation} from './crouch-animation-config';
 import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
 import {createBellPose} from "./bell-pose";
@@ -24,7 +25,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const quality=useGraphicsQuality();
   const {scene,animations}=useGLTF(characterAsset("/assets/characters/player/player.glb",quality),false,false);
   const model=useMemo(()=>{const model=clone(scene);model.traverse(object=>{object.castShadow=true;object.receiveShadow=true;});return model;},[scene]);
-  const crouchPose=useMemo(()=>createCrouchPose(model),[model]);
+  const clips=useMemo(()=>[...animations,...createCrouchAnimations(model,animations)],[model,animations]);
   const cameraProp=useMemo(()=>createHandheldCamera(),[]);
   const cameraPose=useMemo(()=>createCameraPose(model,cameraProp.group),[model,cameraProp]);
   useEffect(()=>{model.add(cameraProp.group);return()=>{model.remove(cameraProp.group);};},[model,cameraProp]);
@@ -36,7 +37,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const bellPose=useMemo(()=>createBellPose(model),[model]);
   useEffect(()=>{runtime.current.bellRigReady=bellPose.supported;return()=>{bellPose.restore();runtime.current.bellRigReady=false;runtime.current.bellAction=null;};},[bellPose,runtime]);
   const mixer=useMemo(()=>new AnimationMixer(model),[model]);
-  const actions=useMemo(()=>Object.fromEntries(animations.map(clip=>{const action=mixer.clipAction(clip);action.setLoop(clip.name==="Jump"?LoopOnce:LoopRepeat,clip.name==="Jump"?1:Infinity);action.clampWhenFinished=clip.name==="Jump";return [clip.name,action];})),[animations,mixer]);
+  const actions=useMemo(()=>Object.fromEntries(clips.map(clip=>{const action=mixer.clipAction(clip);action.setLoop(clip.name==="Jump"?LoopOnce:LoopRepeat,clip.name==="Jump"?1:Infinity);action.clampWhenFinished=clip.name==="Jump";return [clip.name,action];})),[clips,mixer]);
   const playContact=useFootContactAudio(),footPosition=useMemo(()=>new Vector3(),[]);
   const feet=useMemo(()=>[model.getObjectByName("mixamorigLeftFoot"),model.getObjectByName("mixamorigRightFoot")],[model]);
   const previous=useRef(""),reset=useRef(-1);
@@ -44,20 +45,20 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   useFrame((_,delta)=>{
     const motion=runtime.current;
     const airborne=!motion.flying&&!motion.grounded;
-    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.crouchWeight===0&&(motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15)?"Run":"Walk";
+    const crouching=motion.crouchWanted;
+    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":motion.horizontalSpeed<playerConfig.movementThreshold?(crouching?"Player_CrouchIdle":"Idle"):crouching?"Player_CrouchWalk":motion.crouchWeight===0&&(motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15)?"Run":"Walk";
     if(name!==previous.current||reset.current!==motion.resetSequence){
-      actions[previous.current]?.fadeOut(.18);
-      actions[name].reset().fadeIn(.18).play();
+      const blend=name.startsWith('Player_Crouch')||previous.current.startsWith('Player_Crouch')?crouchAnimation.blendSeconds:.18;
+      actions[previous.current]?.fadeOut(blend);
+      actions[name].reset().fadeIn(blend).play();
       previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
     const action=actions[name],before=action.time;
     cameraPose.restore();
     itemPose.restore();
     bellPose.restore();
-    crouchPose.restore();
-    action.setEffectiveTimeScale(name==='Walk'&&motion.crouchWeight>0?Math.max(.35,Math.min(1.3,motion.horizontalSpeed/playerConfig.walkSpeed/(1-crouchVisual.strideReduction*motion.crouchWeight))):1);
+    action.setEffectiveTimeScale(name==='Player_CrouchWalk'?Math.max(.2,Math.min(1.6,motion.horizontalSpeed/crouchAnimation.walkSpeed)):1);
     mixer.update(Math.min(delta,.05));
-    crouchPose.apply(motion.seat||motion.bellAction?0:motion.crouchWeight,name==='Walk');
     bellPose.apply(motion.bellAction?.elapsed);
     if(!motion.bellAction&&!motion.seat&&motion.grounded&&!motion.flying)itemPose.apply(motion.itemAction);
     const held=motion.handheldCamera;
@@ -68,6 +69,10 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
       if(!held.wanted&&held.hold===0&&held.pendingFood){held.pendingFood=false;motion.itemEquipRequested=true;}
     }
     if(hand){model.updateWorldMatrix(true,true);hand.getWorldPosition(handPosition);motion.itemHand??={x:0,y:0,z:0};Object.assign(motion.itemHand,handPosition);}
+    if(playContact&&name==='Player_CrouchWalk'){
+      const duration=action.getClip().duration,after=action.time+(action.time<before?duration:0);
+      for(let index=0;index<2;index++){const contact=index*duration/2;if((contact>before&&contact<=after)||(contact+duration>before&&contact+duration<=after)){const foot=feet[index];if(foot){foot.getWorldPosition(footPosition);playContact(footPosition,false);}}}
+    }
     if(playContact&&(name==="Walk"||name==="Run")){
       const duration=action.getClip().duration,after=action.time+(action.time<before?duration:0);
       for(const time of contactCrossings(name,before,after,duration)){
