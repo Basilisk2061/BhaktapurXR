@@ -1,4 +1,5 @@
 "use client";
+import {canStartTouchLook} from '../game/input/gameplay-ui-pointer';
 import {clearTouchEvent} from '../game/inventory/touch-camera-actions';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
@@ -34,7 +35,7 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
   // Input/runtime refs belong to this Explore session; the reset closure only uses refs.
  },[input,runtime,reset]);
  useEffect(()=>{if(menu&&!dialog.current?.open)dialog.current?.showModal();},[menu]);
- const activate=()=>{if(input.current.inputBlocked)return false;input.current.active=true;return true;};
+ const activate=()=>{if(input.current.inputBlocked||input.current.inventoryOpen||document.querySelector('dialog[open]'))return false;input.current.active=true;return true;};
  const moveStick=(event:ReactPointerEvent<HTMLDivElement>)=>{
   const stick=joystick.current;if(!stick||stick.id!==event.pointerId)return;
   event.preventDefault();const dx=event.clientX-stick.x,dy=event.clientY-stick.y,length=Math.hypot(dx,dy),fraction=Math.min(1,length/stick.radius),magnitude=fraction<.13?0:(fraction-.13)/.87;
@@ -45,8 +46,8 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
  const releaseLook=(event:ReactPointerEvent<HTMLDivElement>)=>{if(look.current?.id===event.pointerId)look.current=null;};
  const openMenu=()=>{reset();input.current.inputBlocked=true;setSettings(false);setMenu(true);};
  return <div className="touch-controls" data-touch-controls hidden={disabled} inert={disabled}>
-  <div className="touch-look" aria-hidden="true" onPointerDown={event=>{if(event.pointerType==='mouse'||look.current||!activate())return;event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);look.current={id:event.pointerId,x:event.clientX,y:event.clientY};}} onPointerMove={event=>{
-   const last=look.current;if(!last||last.id!==event.pointerId||input.current.inputBlocked)return;event.preventDefault();
+  <div className="touch-look" aria-hidden="true" onPointerDown={event=>{if(event.pointerType==='mouse'||look.current||!canStartTouchLook(event.target,input.current,!!document.querySelector('dialog[open]'))||!activate())return;event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);look.current={id:event.pointerId,x:event.clientX,y:event.clientY};}} onPointerMove={event=>{
+   const last=look.current;if(!last||last.id!==event.pointerId)return;if(input.current.inputBlocked||input.current.inventoryOpen){look.current=null;return;}event.preventDefault();
    const sensitivity=readMouseSensitivity()*4*(input.current.cameraView?input.current.cameraLookScale??1:1),camera=playerConfig.camera,dx=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientX-last.x)),dy=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientY-last.y));
    input.current.yaw=Math.atan2(Math.sin(input.current.yaw-dx*sensitivity),Math.cos(input.current.yaw-dx*sensitivity));input.current.pitch=Math.max(input.current.cameraView?-1.1:camera.minPitch,Math.min(input.current.cameraView?1.1:camera.maxPitch,input.current.pitch+dy*sensitivity));last.x=event.clientX;last.y=event.clientY;
   }} onPointerUp={releaseLook} onPointerCancel={releaseLook} onLostPointerCapture={releaseLook}/>

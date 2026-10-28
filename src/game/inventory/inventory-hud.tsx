@@ -1,4 +1,5 @@
 'use client';
+import {tracksInventoryMouse} from '../input/gameplay-ui-pointer';
 import {MobileItemControls} from './mobile-item-controls';
 import {useEquippedItem} from './touch-camera-actions';
 import {beginShutterPress,releaseShutterPress,cancelShutterPress} from './photograph';
@@ -39,7 +40,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
   };
   const keyUp=(event:KeyboardEvent)=>{if(event.code==='Tab'&&pendingWheel){cancelAnimationFrame(pendingWheel);pendingWheel=0;}if(event.code==='Tab'&&session.inventory.getState().expanded){event.preventDefault();close(true);}};
   const move=(event:MouseEvent)=>{
-   if(!session.inventory.getState().expanded)return;
+   if(!tracksInventoryMouse(touch,session.inventory.getState().expanded))return;
    if(input.current.inputBlocked||modal()){close(false,false);return;}
    if(document.pointerLockElement===canvas){cursor.current.x+=event.movementX;cursor.current.y+=event.movementY;const length=Math.hypot(cursor.current.x,cursor.current.y);if(length>140){cursor.current.x*=140/length;cursor.current.y*=140/length;}}
    else{cursor.current.x=event.clientX-window.innerWidth/2;cursor.current.y=event.clientY-window.innerHeight/2;}
@@ -57,7 +58,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
   const up=(event:PointerEvent)=>{if(event.button===0&&shutterPress){shutterPress=false;if(playable()&&(runtime.current.handheldCamera?.view??0)>=.999)releaseShutterPress(session.photography);else cancelShutterPress(session.photography);return;}if(pending?.eligible&&!pending.locked&&Math.hypot(event.clientX-pending.x,event.clientY-pending.y)<5)useItem();pending=null;};
   const reset=()=>{cancelAnimationFrame(pendingWheel);pendingWheel=0;pending=null;shutterPress=false;lowerCamera();close(false,false);};
   const visibility=()=>{if(document.hidden)reset();};
-  const lock=()=>{if(session.inventory.getState().expanded&&document.pointerLockElement!==canvas)reset();};
+  const lock=()=>{if(!touch&&session.inventory.getState().expanded&&document.pointerLockElement!==canvas)reset();};
   const unsubscribe=session.inventory.subscribe((next,previous)=>{if(next.selected!==previous.selected){const motion=runtime.current,item=inventorySlots[next.selected];motion.itemAction=null;
     const held=motion.handheldCamera??={wanted:false,using:false,hold:0,view:0,elapsed:0,pendingFood:false};
     cancelShutterPress(session.photography);held.using=false;held.wanted=item==='camera';if(held.wanted)held.elapsed=0;

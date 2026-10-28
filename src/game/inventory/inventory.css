@@ -104,3 +104,7 @@ html[data-camera-viewfinder] .touch-controls :is(.touch-orientation,.exploration
 @media(orientation:portrait){.camera-viewfinder.is-touch .camera-exposure-strip{top:calc(72px + env(safe-area-inset-top));bottom:auto;max-width:calc(100vw - 32px)}.camera-touch-ui .camera-touch-shutter{bottom:calc(200px + env(safe-area-inset-bottom))}.camera-touch-af{bottom:calc(286px + env(safe-area-inset-bottom))}.camera-touch-zoom{bottom:calc(200px + env(safe-area-inset-bottom))}.camera-touch-hint{bottom:calc(160px + env(safe-area-inset-bottom));width:70vw}.camera-viewfinder.is-touch .camera-mf-scale{bottom:calc(112px + env(safe-area-inset-bottom))}}
 @media(max-height:360px) and (orientation:landscape){.camera-touch-zoom{height:156px}.camera-touch-hint{font-size:10px;bottom:calc(66px + env(safe-area-inset-bottom))}.camera-photo-preview[open]{gap:6px}.camera-photo-preview{padding-top:max(8px,env(safe-area-inset-top));padding-bottom:max(8px,env(safe-area-inset-bottom))}.camera-photo-preview button{min-height:48px}}
 @media(orientation:portrait){.inventory-mobile .inventory-use{bottom:calc(206px + env(safe-area-inset-bottom))}}
+
+/* Native picker/controls own their hit targets; no z-index escalation is needed. */
+.inventory-touch-picker,.inventory-touch-picker :is(button,select,input),.camera-touch-panel :is(button,select,input){pointer-events:auto}
+:is(.inventory-touch-picker,.inventory-mobile,.camera-touch-ui,.camera-photo-preview) button[data-gameplay-ui]{touch-action:none;user-select:none;-webkit-user-select:none}

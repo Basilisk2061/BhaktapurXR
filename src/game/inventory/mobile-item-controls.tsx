@@ -1,4 +1,5 @@
 'use client';
+import {PointerActionButton} from '../input/pointer-action-button';
 import {useEffect,useRef,useState,type RefObject} from 'react';
 import {useStore} from 'zustand';
 import {inventoryItems,inventorySlots,type ItemSession} from './inventory-store';
@@ -16,12 +17,12 @@ export function MobileItemControls({session,input,runtime}:{session:ItemSession;
  const use=()=>{if(document.querySelector('dialog[open]'))return;input.current.active=!input.current.inputBlocked;useEquippedItem(item,session,input.current,runtime.current);};
  return <>
   <aside className="inventory-hud inventory-mobile" data-gameplay-ui aria-label="Mobile inventory actions" onPointerDown={e=>e.stopPropagation()} onPointerUp={e=>e.stopPropagation()}>
-   <button type="button" className="inventory-open" onClick={open}>Inventory</button>
-   {label&&item&&<button type="button" disabled={item==='camera'&&!cameraReady} className="inventory-use" aria-label={item==='camera'?(cameraReady?'Enter Camera Mode':'Preparing camera'):'Use Bird Food'} onPointerDown={e=>{e.preventDefault();e.stopPropagation();use();}} onClick={e=>{if(e.detail===0)use();}}><InventoryItemIcon icon={inventoryItems[item].icon}/><strong>{item==='camera'&&!cameraReady?'Preparing':label}</strong></button>}
+   <PointerActionButton className="inventory-open" action={open}>Inventory</PointerActionButton>
+   {label&&item&&<PointerActionButton disabled={item==='camera'&&!cameraReady} className="inventory-use" aria-label={item==='camera'?(cameraReady?'Enter Camera Mode':'Preparing camera'):'Use Bird Food'} action={use}><InventoryItemIcon icon={inventoryItems[item].icon}/><strong>{item==='camera'&&!cameraReady?'Preparing':label}</strong></PointerActionButton>}
   </aside>
   <dialog ref={dialog} className="inventory-touch-picker" data-gameplay-ui aria-labelledby="touch-inventory-title" onPointerDown={e=>e.stopPropagation()} onPointerUp={e=>e.stopPropagation()} onCancel={e=>{e.preventDefault();close();}} onClose={()=>{if(session.inventory.getState().expanded)close();}}>
-   <header><h2 id="touch-inventory-title">Inventory</h2><button type="button" onClick={close} aria-label="Close inventory">Close</button></header>
-   <div className="inventory-touch-slots">{inventorySlots.map((item,index)=><button key={index} type="button" aria-pressed={state.selected===index} onClick={()=>{session.inventory.getState().select(index);close();}}>{item&&<InventoryItemIcon icon={inventoryItems[item].icon}/>}<span>{item?inventoryItems[item].label:'Empty'}</span></button>)}</div>
+   <header><h2 id="touch-inventory-title">Inventory</h2><PointerActionButton action={close} aria-label="Close inventory">Close</PointerActionButton></header>
+   <div className="inventory-touch-slots">{inventorySlots.map((item,index)=><PointerActionButton key={index} aria-pressed={state.selected===index} action={()=>{session.inventory.getState().select(index);close();}}>{item&&<InventoryItemIcon icon={inventoryItems[item].icon}/>}<span>{item?inventoryItems[item].label:'Empty'}</span></PointerActionButton>)}</div>
    <p>Select an item to equip it. Use the action button to activate it.</p>
   </dialog>
  </>;

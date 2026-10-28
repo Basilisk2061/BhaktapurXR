@@ -1,4 +1,5 @@
 'use client';
+import {PointerActionButton} from '../input/pointer-action-button';
 import {clearTouchInput} from './touch-camera-actions';
 import {useCallback,useEffect,useRef,useState,type RefObject} from 'react';
 import type {PlayerInput} from '../input/player-input';
@@ -28,7 +29,7 @@ export function PhotoPreview({photo,session,input,runtime,touch}:{photo:Captured
  return <dialog ref={dialog} className="camera-photo-preview" data-gameplay-ui aria-label="Photo preview" onPointerDown={e=>e.stopPropagation()} onPointerUp={e=>e.stopPropagation()} onCancel={event=>{event.preventDefault();finish(false);}}>
   <header>PHOTO PREVIEW</header><div className="camera-preview-image">{url&&<img src={url} alt="Captured Bhaktapur photograph"/>}</div>
   <p>{Math.round(m.focalLength)}mm | F{m.aperture.toFixed(1)} | 1/{Math.round(1/m.shutterSeconds)} | ISO {m.iso}</p>
-  <footer><button type="button" onClick={()=>finish(true)}>SAVE</button><button type="button" onClick={()=>finish(false)}>RETAKE</button></footer>
+  <footer><PointerActionButton action={()=>finish(true)}>SAVE</PointerActionButton><PointerActionButton action={()=>finish(false)}>RETAKE</PointerActionButton></footer>
   {session.photography.getState().photoMessage==='PHOTO SAVE FAILED'&&<p role="alert">PHOTO SAVE FAILED</p>}
  </dialog>;
 }

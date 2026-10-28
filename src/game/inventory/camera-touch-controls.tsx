@@ -1,4 +1,5 @@
 'use client';
+import {PointerActionButton} from '../input/pointer-action-button';
 import {useEffect,useRef,useState,type RefObject} from 'react';
 import {useStore} from 'zustand';
 import type {ItemSession} from './inventory-store';
@@ -19,14 +20,14 @@ export function CameraTouchControls({session,input,runtime,active}:{session:Item
  useEffect(()=>{if(active&&s.panel){clearTouchInput(input.current);runtime.current.velocity.x=runtime.current.velocity.z=0;cancelShutterPress(session.photography);if(!dialog.current?.open)dialog.current?.showModal();}else dialog.current?.close();},[active,s.panel,input,runtime,session]);
  useEffect(()=>{if(!active){shutter.current=null;cancelShutterPress(session.photography);}},[active,session]);
  return <div className="camera-touch-ui" data-gameplay-ui onPointerDown={e=>{e.stopPropagation();setHint(false);}} onPointerUp={e=>e.stopPropagation()}>
-  <button type="button" className="camera-touch-exit" onClick={exit} aria-label="Exit Camera Mode">&#8592; Back</button>
-  <button type="button" className="camera-touch-settings" aria-label="Open camera settings" aria-haspopup="dialog" onClick={()=>session.photography.setState({panel:true})}>Settings</button>
+  <PointerActionButton className="camera-touch-exit" action={exit} aria-label="Exit Camera Mode">&#8592; Back</PointerActionButton>
+  <PointerActionButton className="camera-touch-settings" aria-label="Open camera settings" aria-haspopup="dialog" action={()=>session.photography.setState({panel:true})}>Settings</PointerActionButton>
   <div className="camera-touch-zoom"><label htmlFor="camera-touch-focal">{Math.round(s.focal)}mm</label><input id="camera-touch-focal" aria-label="Zoom focal length, 24 to 135 millimetres" type="range" min="24" max="135" step="1" value={s.focal} onChange={e=>setCameraFocal(session.photography,Number(e.target.value))}/><span>24135mm</span></div>
-  <button type="button" className="camera-touch-af" aria-label="Autofocus without taking a photo" onClick={()=>{if(ready()&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.af!==false))requestCameraFocus(session.photography);}}>AF</button>
+  <PointerActionButton className="camera-touch-af" aria-label="Autofocus without taking a photo" action={()=>{if(ready()&&(process.env.NODE_ENV!=='development'||cameraPerf?.switches.af!==false))requestCameraFocus(session.photography);}}>AF</PointerActionButton>
   <button type="button" className="camera-touch-shutter" aria-label="Shutter: hold to focus, release to capture" disabled={s.shutterBusy} onPointerDown={e=>{e.preventDefault();e.stopPropagation();if(shutter.current!==null||!ready())return;if(beginShutterPress(session.photography)){shutter.current=e.pointerId;e.currentTarget.setPointerCapture(e.pointerId);}}} onPointerUp={e=>{e.preventDefault();e.stopPropagation();if(shutter.current!==e.pointerId)return;shutter.current=null;if(ready())releaseShutterPress(session.photography);else cancelShutterPress(session.photography);}} onPointerCancel={cancel} onLostPointerCapture={()=>{if(shutter.current!==null)cancel();}} onClick={e=>{if(e.detail===0&&ready()&&beginShutterPress(session.photography))releaseShutterPress(session.photography);}}><span aria-hidden="true"/></button>
   {hint&&active&&<p className="camera-touch-hint" role="note">Drag to aim · Hold shutter to focus · Release to capture</p>}
   <dialog ref={dialog} className="camera-touch-panel" aria-labelledby="camera-touch-settings-title" onCancel={e=>{e.preventDefault();closePanel();}} onClose={()=>{if(session.photography.getState().panel)closePanel();}} onKeyDown={e=>e.stopPropagation()}>
-   <header><h2 id="camera-touch-settings-title">Camera settings</h2><button type="button" onClick={closePanel}>Done</button></header>
+   <header><h2 id="camera-touch-settings-title">Camera settings</h2><PointerActionButton action={closePanel}>Done</PointerActionButton></header>
    <div className="camera-touch-fields">
     <label>Exposure mode<select value={s.exposureMode} onChange={e=>session.photography.setState({exposureMode:e.target.value as 'AUTO'|'A'|'M',modeUntil:Date.now()+1000})}><option>AUTO</option><option>A</option><option>M</option></select></label>
     {s.exposureMode!=='AUTO'&&<label>Aperture<select value={s.aperture} onChange={e=>session.photography.setState({aperture:Number(e.target.value)})}>{apertures.map((a,i)=><option value={i} key={a}>F{a.toFixed(1)}</option>)}</select></label>}
