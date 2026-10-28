@@ -137,3 +137,12 @@
  .menu-primary>.menu-settings{height:76px}
  .menu-content>.menu-primary,.menu-content>.menu-options{margin-top:2px}
 }
+
+/* A quiet timber-toned status panel in the existing footer slot. */
+.menu-status.menu-development{width:100%;max-width:580px;margin-top:24px;padding:10px 18px;border:1px solid #513d2e;background:#211b16;text-align:center;overflow-wrap:break-word}
+.menu-status.menu-development::before{display:none}
+.menu-development>strong{display:block;color:#d9c0a2;font:400 14px/1.35 Georgia,'Times New Roman',serif}
+.menu-status.menu-development>p{margin:5px 0 0;font-size:12px;line-height:1.5;letter-spacing:0;text-transform:none;color:#bdb1a4}
+@media(max-width:600px){.menu-status.menu-development{margin-top:0;padding:9px 12px}.menu-status.menu-development>p{font-size:12px;line-height:1.4}}
+@media(orientation:portrait) and (max-width:480px){.main-menu>.menu-status.menu-development{max-width:370px;margin:0}}
+@media(orientation:landscape) and (max-height:500px) and (max-width:1000px) and (pointer:coarse){.menu-status.menu-development{max-width:700px;margin:0;padding:6px 10px}.menu-development>strong{font-size:12px}.menu-status.menu-development>p{margin-top:3px;font-size:11px;line-height:1.3}}
