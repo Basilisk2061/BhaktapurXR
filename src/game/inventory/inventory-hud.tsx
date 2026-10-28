@@ -1,4 +1,6 @@
 'use client';
+import {MobileItemControls} from './mobile-item-controls';
+import {useEquippedItem} from './touch-camera-actions';
 import {beginShutterPress,releaseShutterPress,cancelShutterPress} from './photograph';
 import {CameraViewfinder} from './camera-viewfinder';
 import {useEffect,useId,useRef,type RefObject} from 'react';
@@ -20,7 +22,7 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    input.current.active=resume&&!input.current.inputBlocked&&!modal()&&!document.hidden&&(document.pointerLockElement===canvas||pointerStatus==='fallback');
   };
   const lowerCamera=()=>{if(session.photography.getState().preview)return;cancelShutterPress(session.photography);if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;};
-  const useItem=()=>{const item=inventorySlots[session.inventory.getState().selected];if(!playable()||runtime.current.seat||runtime.current.bellAction||input.current.flying)return;if(item==='camera'){const held=runtime.current.handheldCamera;if(held?.wanted&&held.hold>=.99){if(!held.using)held.using=true;}}else if(item==='birdFood')session.food.request();};
+  const useItem=()=>{if(playable())useEquippedItem(inventorySlots[session.inventory.getState().selected]??null,session,input.current,runtime.current);};
   let pendingWheel=0;
   const openWheel=()=>{cursor.current={x:0,y:0};input.current.inventoryOpen=true;input.current.active=false;input.current.keys.clear();input.current.jumpRequested=false;input.current.interactRequested=false;session.inventory.getState().open();};
   const waitForLower=()=>{if(input.current.inputBlocked||document.hidden){pendingWheel=0;return;}if(input.current.cameraView)pendingWheel=requestAnimationFrame(waitForLower);else{pendingWheel=0;openWheel();}};
@@ -75,8 +77,6 @@ export function InventoryHud({session,input,runtime,touch,pointerStatus}:{sessio
    {details&&<InventoryItemIcon icon={details.icon} className="inventory-detail-icon"/>}<strong>{details?.label??(state.highlighted<0?'Inventory':'Empty')}</strong><p>{details?.description??(state.highlighted<0?'Move the mouse to choose an item.':'No item assigned.')}</p>{state.highlighted>=0&&<small>Slot {state.highlighted+1}</small>}{details&&<span className="inventory-detail-action">{details.actionHint}</span>}
   </div></foreignObject></svg><p>Move mouse to choose · Release Tab to equip · 1–5 select</p></div>}
   {!state.expanded&&selectedItem&&<aside className={`inventory-selected${touch?' inventory-selected-touch':''}`} aria-label="Selected item"><InventoryItemIcon icon={selectedItem.icon}/><span>{selectedItem.label}</span></aside>}
-  {touch&&<aside className="inventory-hud" aria-label="Mobile inventory actions">
-   {touch&&<div className="inventory-touch-actions"><button type="button" onClick={()=>{if(!input.current.inputBlocked&&!document.querySelector('dialog[open]')){input.current.active=true;state.select((state.selected+1)%5);}}}>Item</button>{item&&<button type="button" onClick={()=>{if(!input.current.inputBlocked&&!runtime.current.bellAction&&!runtime.current.seat&&!input.current.flying&&!document.querySelector('dialog[open]')){input.current.active=true;if(item==='camera'){const held=runtime.current.handheldCamera;if(held&&held.hold>=.99)held.using=!held.using;}else session.food.request();}}}>{item==='camera'?'Use / Lower Camera':'Throw grain'}</button>}</div>}
-  </aside>}
+  {touch&&<MobileItemControls session={session} input={input} runtime={runtime}/>}
  </>;
 }

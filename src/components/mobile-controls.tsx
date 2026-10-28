@@ -1,4 +1,5 @@
 "use client";
+import {clearTouchEvent} from '../game/inventory/touch-camera-actions';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {enterMobilePresentation,leaveMobilePresentation} from '../lib/mobile-presentation';
@@ -28,8 +29,8 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
   setFullscreen(!!document.fullscreenEnabled&&typeof document.documentElement.requestFullscreen==='function');
   const timer=setInterval(()=>{setPrompt(runtime.current.sitPrompt);setCrouched(runtime.current.crouchWeight>0||runtime.current.crouchWanted);},100);
   const hide=()=>{if(document.hidden)reset();};
-  window.addEventListener('blur',reset);document.addEventListener('visibilitychange',hide);
-  return()=>{clearInterval(timer);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hide);reset();input.current.touchMode=false;input.current.inputBlocked=false;};
+  window.addEventListener(clearTouchEvent,reset);window.addEventListener('blur',reset);document.addEventListener('visibilitychange',hide);
+  return()=>{clearInterval(timer);window.removeEventListener(clearTouchEvent,reset);window.removeEventListener('blur',reset);document.removeEventListener('visibilitychange',hide);reset();input.current.touchMode=false;input.current.inputBlocked=false;};
   // Input/runtime refs belong to this Explore session; the reset closure only uses refs.
  },[input,runtime,reset]);
  useEffect(()=>{if(menu&&!dialog.current?.open)dialog.current?.showModal();},[menu]);
@@ -46,8 +47,8 @@ export function MobileControls({input,runtime,disabled=false}:{input:RefObject<P
  return <div className="touch-controls" data-touch-controls hidden={disabled} inert={disabled}>
   <div className="touch-look" aria-hidden="true" onPointerDown={event=>{if(event.pointerType==='mouse'||look.current||!activate())return;event.preventDefault();event.currentTarget.setPointerCapture(event.pointerId);look.current={id:event.pointerId,x:event.clientX,y:event.clientY};}} onPointerMove={event=>{
    const last=look.current;if(!last||last.id!==event.pointerId||input.current.inputBlocked)return;event.preventDefault();
-   const sensitivity=readMouseSensitivity()*4,camera=playerConfig.camera,dx=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientX-last.x)),dy=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientY-last.y));
-   input.current.yaw=Math.atan2(Math.sin(input.current.yaw-dx*sensitivity),Math.cos(input.current.yaw-dx*sensitivity));input.current.pitch=Math.max(camera.minPitch,Math.min(camera.maxPitch,input.current.pitch+dy*sensitivity));last.x=event.clientX;last.y=event.clientY;
+   const sensitivity=readMouseSensitivity()*4*(input.current.cameraView?input.current.cameraLookScale??1:1),camera=playerConfig.camera,dx=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientX-last.x)),dy=Math.max(-camera.maxMouseDelta,Math.min(camera.maxMouseDelta,event.clientY-last.y));
+   input.current.yaw=Math.atan2(Math.sin(input.current.yaw-dx*sensitivity),Math.cos(input.current.yaw-dx*sensitivity));input.current.pitch=Math.max(input.current.cameraView?-1.1:camera.minPitch,Math.min(input.current.cameraView?1.1:camera.maxPitch,input.current.pitch+dy*sensitivity));last.x=event.clientX;last.y=event.clientY;
   }} onPointerUp={releaseLook} onPointerCancel={releaseLook} onLostPointerCapture={releaseLook}/>
   <div className="touch-orientation" role="status"><svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true"><rect x="22" y="12" width="22" height="40" rx="3" fill="none" stroke="currentColor" strokeWidth="2" transform="rotate(25 33 32)"/><path d="M11 28A23 23 0 0 1 35 8M29 3L36 8 30 14M53 36A23 23 0 0 1 29 56M35 61L28 56 34 50" fill="none" stroke="currentColor" strokeWidth="2"/></svg><h2>Rotate your device</h2><p>BhaktapurXR is best experienced in landscape.</p></div>
   <button type="button" className="exploration-menu-trigger carved-window-control" aria-label="Open game menu" aria-haspopup="dialog" onClick={openMenu}><MenuWindowFrame compact/><span className="menu-window-label"><span aria-hidden="true">&#9776;</span> Menu</span></button>

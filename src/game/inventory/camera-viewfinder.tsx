@@ -1,4 +1,5 @@
 'use client';
+import {CameraTouchControls} from './camera-touch-controls';
 import {cameraPerf} from '../rendering/camera-performance';
 import {CameraPerformancePanel} from './camera-performance-panel';
 import {useEffect,useRef,useState,type RefObject} from 'react';
@@ -8,7 +9,7 @@ import type {PlayerInput} from '../input/player-input';
 import {isEditableTarget} from '../input/player-input';
 import type {ItemSession} from './inventory-store';
 import {PhotoPreview} from './photo-preview';
-import {beginShutterPress,releaseShutterPress,cancelShutterPress} from './photograph';
+import {cancelShutterPress} from './photograph';
 import {apertures,shutters,sensitivities,effectivePhotography,nextExposureMode} from './photography-settings';
 export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObject<PlayerRuntime>;input:RefObject<PlayerInput>;session:ItemSession;touch:boolean}){
  const settings=useStore(session.photography),[active,setActive]=useState(false),[hint,setHint]=useState(false),last=useRef(false);
@@ -54,7 +55,7 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
  const focus=settings.physical.afLocked?'AF LOCK':settings.focusMode==='MF'?`MF ${settings.actualFocusDistance.toFixed(1)}m`:'AF';
  const rows=[{label:'Exposure Mode',value:settings.exposureMode,key:0},{label:'Focal Length',value:`${Math.round(settings.focal)}mm`,key:-1},{label:'Aperture',value:`F${f.toFixed(1)}`,key:1},{label:'Shutter',value:`1/${t}`,key:2},{label:'ISO',value:String(iso),key:3},{label:'EV',value:settings.ev.toFixed(1),key:4},{label:'Focus Mode',value:settings.focusMode,key:5},...(settings.focusMode==='MF'?[{label:'Focus Distance',value:`${settings.targetFocusDistance.toFixed(1)}m`,key:6}]:[]),{label:'Grid',value:settings.grid?'Thirds':'Off',key:-1}];
  if(settings.preview)return <PhotoPreview photo={settings.preview} session={session} input={input} runtime={runtime} touch={touch}/>;
- return <div hidden={!active} className="camera-viewfinder" aria-label="Photography viewfinder">
+ return <div hidden={!active} className={`camera-viewfinder${touch?' is-touch':''}`} aria-label="Photography viewfinder">
   {process.env.NODE_ENV==='development'&&<CameraPerformancePanel active={active}/>}
   <span className="camera-mode-label"><b>{settings.exposureMode}</b><small>{Math.round(settings.focal)}mm</small></span>
   <i className={`camera-focus${settings.focusUntil>Date.now()?(settings.focusFailed?' is-focus-failed':' is-focused'):(settings.focusMode==='AF'&&settings.afState!=='SEARCHING'?' is-focused':'')}`}><b/><b/><b/><b/></i>
@@ -62,13 +63,12 @@ export function CameraViewfinder({runtime,input,session,touch}:{runtime:RefObjec
   {settings.grid&&<div className="camera-thirds" aria-label="Rule of thirds grid"><i/><i/><i/><i/></div>}
   <div className="camera-exposure-strip"><span>1/{t}</span><span>F{f.toFixed(1)}</span><span>ISO {iso}</span><span>EV {settings.ev>=0?'+':''}{settings.ev.toFixed(1)}</span><span>{focus}</span>{settings.exposureMode==='M'&&<span>Meter {settings.physical.meterDeviation>=0?'+':''}{settings.physical.meterDeviation.toFixed(1)}</span>}</div>
   <div className="camera-status-area"><span className="camera-battery" aria-label="Decorative battery indicator" title="Decorative status only"><i/><i/><i/></span><button type="button" className="camera-help-toggle" onPointerDown={event=>event.preventDefault()} onClick={()=>session.photography.setState({panel:!settings.panel})}>V Settings</button></div>
-  {settings.panel&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera settings"><strong>CAMERA SETTINGS</strong><ul>{rows.map(row=><li key={row.label} className={row.key===settings.row?'is-current':''}><span>{row.label}</span><span>{row.value}</span></li>)}</ul><small>Up/Down Select | Left/Right Adjust</small>{touch&&<div><button onClick={()=>session.photography.setState({grid:!settings.grid})}>Grid</button><button onClick={()=>session.photography.setState({focusRequested:true,focusMode:'AF',row:Math.min(settings.row,5)})}>Focus</button></div>}</section>}
-  {(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Autofocus</b></span><span>M <b>Exposure AUTO / A / M</b></span><span>G <b>Grid</b></span><span>V <b>Settings</b></span><span>LMB <b>Hold focus / Release shutter</b></span><span>RMB <b>Lower Camera</b></span></div>}
+  {settings.panel&&!touch&&<section className="camera-control-panel" onPointerDown={event=>event.preventDefault()} aria-label="Camera settings"><strong>CAMERA SETTINGS</strong><ul>{rows.map(row=><li key={row.label} className={row.key===settings.row?'is-current':''}><span>{row.label}</span><span>{row.value}</span></li>)}</ul><small>Up/Down Select | Left/Right Adjust</small></section>}
+  {!touch&&(hint||settings.panel)&&<div className={`camera-discovery-hint${settings.panel?' is-pinned':''}`} role="note"><span>Wheel <b>Zoom</b></span><span>F <b>Autofocus</b></span><span>M <b>Exposure AUTO / A / M</b></span><span>G <b>Grid</b></span><span>V <b>Settings</b></span><span>LMB <b>Hold focus / Release shutter</b></span><span>RMB <b>Lower Camera</b></span></div>}
   {settings.modeUntil>Date.now()&&<span className="camera-mode-feedback" role="status">{settings.exposureMode}</span>}
   {settings.focusUntil>Date.now()&&<span className="camera-af-feedback" role="status">{settings.focusFailed?'AF FAILED':`AF ${settings.targetFocusDistance.toFixed(1)}m`}</span>}
   {settings.shutterUntil>Date.now()&&<div className="camera-shutter-feedback" aria-hidden="true"/>}
   {settings.photoUntil>Date.now()&&<span className="camera-photo-toast" role="status">{settings.photoMessage}</span>}
-  {touch&&<button type="button" className="camera-shutter-button" onPointerDown={event=>{event.preventDefault();if((runtime.current.handheldCamera?.view??0)>=.999&&!input.current.inputBlocked){event.currentTarget.setPointerCapture(event.pointerId);beginShutterPress(session.photography);}}} onPointerUp={event=>{event.preventDefault();if((runtime.current.handheldCamera?.view??0)>=.999&&!input.current.inputBlocked)releaseShutterPress(session.photography);else cancelShutterPress(session.photography);}} onPointerCancel={()=>cancelShutterPress(session.photography)} onLostPointerCapture={()=>{if(session.photography.getState().physical.held)cancelShutterPress(session.photography);}}>Shutter</button>}
-  {touch&&<button type="button" className="camera-lower" onPointerDown={event=>event.preventDefault()} onClick={()=>{cancelShutterPress(session.photography);if(runtime.current.handheldCamera)runtime.current.handheldCamera.using=false;}}>Lower Camera</button>}
+  {touch&&<CameraTouchControls session={session} input={input} runtime={runtime} active={active}/>}
  </div>;
 }
