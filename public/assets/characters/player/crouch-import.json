@@ -94,5 +94,225 @@
   "translationPolicy": "target limb rest translations; source ground-based world pelvis Y scaled to target units plus target bind origin; X/Z zero",
   "outputClip": "CrouchIdle",
   "outputTracks": 23,
-  "horizontalLocomotionRemoved": true
+  "horizontalLocomotionRemoved": true,
+  "CrouchWalk": {
+    "provider": "Meshy",
+    "source": "incoming/player-character/crouch_walk_forward_meshy_mixamo.fbx",
+    "referenceSource": "incoming/player-character/crouch_walk_meshy_character_reference.fbx",
+    "referenceMatches": true,
+    "sourceClip": "SmartRigArmature|SmartRigArmature|retarget_clip|BaseLayer",
+    "duration": 1.9666666984558105,
+    "sourceTracks": 201,
+    "sourceFPS": 30,
+    "sourceRoot": "SmartRigArmature",
+    "sourceHips": "smartrigHips",
+    "sourceBoneCount": 66,
+    "sourceSkeleton": "smartrig (Mixamo-template export)",
+    "targetRoot": "(unnamed FBX group)",
+    "targetHips": "mixamorigHips",
+    "compatibility": "CASE C",
+    "mappingMethod": "rest-relative world quaternion transfer",
+    "restBindSource": "animation skin inverse-bind matrices; normalized armature; cross-checked reference local bind transforms",
+    "reference": "average upper-leg + lower-leg bind chain in exported world units",
+    "sourceReference": 61.34691382021221,
+    "targetReference": 0.7740253722281365,
+    "scaleRatio": 0.012617185185493639,
+    "mappedBones": 22,
+    "boneMapping": {
+      "smartrigHips": "mixamorigHips",
+      "smartrigSpine": "mixamorigSpine",
+      "smartrigSpine1": "mixamorigSpine1",
+      "smartrigSpine2": "mixamorigSpine2",
+      "smartrigNeck": "mixamorigNeck",
+      "smartrigHead": "mixamorigHead",
+      "smartrigLeftShoulder": "mixamorigLeftShoulder",
+      "smartrigLeftArm": "mixamorigLeftArm",
+      "smartrigLeftForeArm": "mixamorigLeftForeArm",
+      "smartrigLeftHand": "mixamorigLeftHand",
+      "smartrigRightShoulder": "mixamorigRightShoulder",
+      "smartrigRightArm": "mixamorigRightArm",
+      "smartrigRightForeArm": "mixamorigRightForeArm",
+      "smartrigRightHand": "mixamorigRightHand",
+      "smartrigLeftUpLeg": "mixamorigLeftUpLeg",
+      "smartrigLeftLeg": "mixamorigLeftLeg",
+      "smartrigLeftFoot": "mixamorigLeftFoot",
+      "smartrigRightUpLeg": "mixamorigRightUpLeg",
+      "smartrigRightLeg": "mixamorigRightLeg",
+      "smartrigRightFoot": "mixamorigRightFoot",
+      "smartrigLeftToeBase": "mixamorigLeftToeBase",
+      "smartrigRightToeBase": "mixamorigRightToeBase"
+    },
+    "ignoredOptionalBones": [
+      "smartrigRightToe_End",
+      "smartrigLeftToe_End",
+      "smartrigHeadTop_End",
+      "headfront",
+      "smartrigRightHandPinky1",
+      "smartrigRightHandPinky2",
+      "smartrigRightHandPinky3",
+      "smartrigRightHandPinky4",
+      "smartrigRightHandIndex1",
+      "smartrigRightHandIndex2",
+      "smartrigRightHandIndex3",
+      "smartrigRightHandIndex4",
+      "smartrigRightHandThumb1",
+      "smartrigRightHandThumb2",
+      "smartrigRightHandThumb3",
+      "smartrigRightHandThumb4",
+      "smartrigRightHandMiddle1",
+      "smartrigRightHandMiddle2",
+      "smartrigRightHandMiddle3",
+      "smartrigRightHandMiddle4",
+      "smartrigRightHandRing1",
+      "smartrigRightHandRing2",
+      "smartrigRightHandRing3",
+      "smartrigRightHandRing4",
+      "smartrigLeftHandRing1",
+      "smartrigLeftHandRing2",
+      "smartrigLeftHandRing3",
+      "smartrigLeftHandRing4",
+      "smartrigLeftHandMiddle1",
+      "smartrigLeftHandMiddle2",
+      "smartrigLeftHandMiddle3",
+      "smartrigLeftHandMiddle4",
+      "smartrigLeftHandIndex1",
+      "smartrigLeftHandIndex2",
+      "smartrigLeftHandIndex3",
+      "smartrigLeftHandIndex4",
+      "smartrigLeftHandThumb1",
+      "smartrigLeftHandThumb2",
+      "smartrigLeftHandThumb3",
+      "smartrigLeftHandThumb4",
+      "smartrigLeftHandPinky1",
+      "smartrigLeftHandPinky2",
+      "smartrigLeftHandPinky3",
+      "smartrigLeftHandPinky4"
+    ],
+    "translationPolicy": "target limb rest translations; source world Y preserved/scaled; horizontal linear trend removed, cyclic residuals preserved",
+    "outputClip": "CrouchWalk",
+    "outputTracks": 23,
+    "horizontalLocomotionRemoved": true,
+    "rootMotion": {
+      "sourceWorldUnits": "exported centimetres",
+      "storedIn": "smartrigHips.position; armature stationary",
+      "strategy": "remove linear X/Z travel trend over selected coherent gait cycle; retain cyclic residuals and Y",
+      "sourceForwardAxis": "+Z with small +X drift",
+      "fullStart": [
+        0.9494942612946033,
+        57.46336554715283,
+        -3.2593684813774617
+      ],
+      "fullEnd": [
+        10.355231165885925,
+        56.91312043561536,
+        90.61920809217142
+      ],
+      "fullDistance": 94.34858253410103,
+      "fullTargetDistance": 1.1904135378215834,
+      "fullTargetSpeed": 0.6052950094473424,
+      "cycleStart": 0.16666666666666666,
+      "cycleEnd": 1.8333333333333333,
+      "cycleDuration": 1.6666666666666665,
+      "cycleStartPosition": [
+        0.33481654649714254,
+        55.625844229298174,
+        3.131483562769884
+      ],
+      "cycleEndPosition": [
+        10.739405503986578,
+        56.095665845555125,
+        84.82893133571945
+      ],
+      "cycleDistance": 82.35732173879947,
+      "cycleTargetDistance": 1.0391175797597139,
+      "cycleTargetSpeed": 0.6234705478558283,
+      "remainingHorizontalDisplacement": 0,
+      "loopNote": "Trim five leading and four trailing source frames; preserve all retained rotations. Small residual seam remains.",
+      "renderedCycleSpeed": 0.58517479529773
+    },
+    "outputDuration": 1.6666666269302368,
+    "grounding": {
+      "samples": 52,
+      "ranges": {
+        "left": [
+          0.09237778747985799,
+          0.23408940100350234
+        ],
+        "right": [
+          0.11120890591606816,
+          0.24051627064204906
+        ],
+        "support": [
+          0.09237778747985799,
+          0.1842186941627079
+        ],
+        "LeftFoot": [
+          0.2488124468977113,
+          0.36366623567186585
+        ],
+        "RightFoot": [
+          0.27656912940148254,
+          0.3537879428533561
+        ],
+        "LeftToeBase": [
+          0.12193746515802956,
+          0.2766913017747875
+        ],
+        "RightToeBase": [
+          0.1538755585813555,
+          0.2769951953718194
+        ]
+      },
+      "visualYOffset": -0.09237778747985799,
+      "supportSequence": [
+        {
+          "time": 0,
+          "foot": "Left"
+        },
+        {
+          "time": 0.13333334028720856,
+          "foot": "Left"
+        },
+        {
+          "time": 0.30000001192092896,
+          "foot": "Right"
+        },
+        {
+          "time": 0.46666666865348816,
+          "foot": "Right"
+        },
+        {
+          "time": 0.6333333253860474,
+          "foot": "Right"
+        },
+        {
+          "time": 0.7999999523162842,
+          "foot": "Right"
+        },
+        {
+          "time": 0.9666666388511658,
+          "foot": "Right"
+        },
+        {
+          "time": 1.1333333253860474,
+          "foot": "Left"
+        },
+        {
+          "time": 1.3000000715255737,
+          "foot": "Left"
+        },
+        {
+          "time": 1.4666666984558105,
+          "foot": "Left"
+        },
+        {
+          "time": 1.6333333253860474,
+          "foot": "Left"
+        }
+      ],
+      "method": "minimum supporting skinned sole over all output key times; preserve natural bobbing"
+    },
+    "playbackScale": 2.307002985856792,
+    "controllerSpeed": 1.35
+  }
 }

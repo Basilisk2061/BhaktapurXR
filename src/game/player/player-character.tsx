@@ -1,3 +1,4 @@
+import {crouchLocomotion,crouchFade,crouchWalkPlaybackScale} from "./crouch-locomotion";
 import {crouchVisualY} from "./crouch-visual-grounding";
 import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
@@ -44,21 +45,24 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   useFrame((_,delta)=>{
     const motion=runtime.current;
     const airborne=!motion.flying&&!motion.grounded;
-    const crouching=motion.crouchWanted;
-    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":crouching?"CrouchIdle":motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.crouchWeight===0&&(motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15)?"Run":"Walk";
+    const crouching=motion.crouchWanted&&motion.grounded&&!motion.flying;
+    const name=motion.bellAction?"Idle":motion.seat?"Sit":airborne&&(motion.velocity.y>0||previous.current==="Jump")?"Jump":crouching?crouchLocomotion(motion.horizontalSpeed,playerConfig.movementThreshold):motion.horizontalSpeed<playerConfig.movementThreshold?"Idle":motion.crouchWeight===0&&(motion.movement==="RUN"||motion.horizontalSpeed>playerConfig.walkSpeed+.15)?"Run":"Walk";
     if(name!==previous.current||reset.current!==motion.resetSequence){
-      const blend=name==='CrouchIdle'||previous.current==='CrouchIdle'?playerConfig.crouchDuration:.18;
+      const blend=crouchFade(previous.current,name,playerConfig.crouchDuration);
       actions[previous.current]?.fadeOut(blend);
       actions[name].reset().fadeIn(blend).play();
       previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
-    if(grounding.current)grounding.current.position.y=crouchVisualY(motion.crouchWeight,!motion.seat&&!motion.bellAction&&motion.grounded&&!motion.flying&&name!=="Jump");
     const action=actions[name],before=action.time;
     cameraPose.restore();
     itemPose.restore();
     bellPose.restore();
-    action.setEffectiveTimeScale(1);
+    action.setEffectiveTimeScale(name==="CrouchWalk"?crouchWalkPlaybackScale:1);
     mixer.update(Math.min(delta,.05));
+    const walkWeight=actions.CrouchWalk.isRunning()?actions.CrouchWalk.getEffectiveWeight():0;
+    const idleWeight=actions.CrouchIdle.isRunning()?actions.CrouchIdle.getEffectiveWeight():0;
+    const walkBlend=walkWeight+idleWeight>0?walkWeight/(walkWeight+idleWeight):name==="CrouchWalk"?1:0;
+    if(grounding.current)grounding.current.position.y=crouchVisualY(motion.crouchWeight,!motion.seat&&!motion.bellAction&&motion.grounded&&!motion.flying&&name!=="Jump",walkBlend);
     bellPose.apply(motion.bellAction?.elapsed);
     if(!motion.bellAction&&!motion.seat&&motion.grounded&&!motion.flying)itemPose.apply(motion.itemAction);
     const held=motion.handheldCamera;
