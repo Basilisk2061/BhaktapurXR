@@ -1,4 +1,4 @@
-import {retargetMotifectCrouch} from './motifect-retarget.mjs';
+import {retargetPlayerCrouch} from './player-animation-retarget.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {FBXLoader} from 'three/addons/loaders/FBXLoader.js';
@@ -21,8 +21,8 @@ for(const [name,file]of [['Idle','player_Idle.fbx'],['Walk','player_walk.fbx'],[
  for(const t of clip.tracks){const node=t.name.split('.')[0];if(!master.getObjectByName(node))throw Error('Missing animation bone '+node);if(t.name.endsWith('.position'))for(let i=0;i<t.values.length;i+=3){t.values[i]=0;t.values[i+2]=0;if(name==='Jump')t.values[i+1]=master.animations[0].tracks.find(t=>t.name==='mixamorigHips.position').values[1];}}
  clips.push(clip);
 }
-const motifect=retargetMotifectCrouch(await load('crouch_idle.fbx'),master);clips.push(motifect.clip);
-console.log('=== Motifect Crouch Idle ===\n'+JSON.stringify({...motifect.report,ignoredOptionalBones:motifect.report.ignoredOptionalBones.length+' facial/finger/end helpers (full list in crouch-import.json)'},null,2));
+const crouch=retargetPlayerCrouch(await load('crouch_idle_meshy_mixamo.fbx'),master,await load('meshy_mixamo_character_reference.fbx'));clips.push(crouch.clip);
+console.log('=== Meshy Crouch Idle ===\n'+JSON.stringify({...crouch.report,ignoredOptionalBones:crouch.report.ignoredOptionalBones.length+' facial/finger/end helpers (full list in crouch-import.json)'},null,2));
 const mixer=new AnimationMixer(master);mixer.clipAction(clips[0]).play();mixer.update(0);master.updateMatrixWorld(true);
 const bounds=new Box3().setFromObject(master,true),height=bounds.max.y-bounds.min.y,scale=1.74/height;
 const root=new Group();root.name='NepaliPlayer';root.scale.setScalar(scale);root.rotation.y=Math.PI;root.position.y=-bounds.min.y*scale;root.add(master);root.updateMatrixWorld(true);
@@ -42,5 +42,5 @@ const previousLow=JSON.parse(await fs.readFile(path.join(out,'player-very-low.gl
 const low=structuredClone(json);low.buffers=[{uri:'player.glb',byteLength:20+j.length+bin.length}];for(const view of low.bufferViews)view.byteOffset=(view.byteOffset??0)+28+j.length;
 low.images=previousLow.images;low.textures=previousLow.textures;low.materials=previousLow.materials;low.samplers=previousLow.samplers;
 await fs.writeFile(path.join(out,'player-very-low.gltf'),JSON.stringify(low));
-await fs.writeFile(path.join(out,'crouch-import.json'),JSON.stringify(motifect.report,null,2)+'\n');
+await fs.writeFile(path.join(out,'crouch-import.json'),JSON.stringify(crouch.report,null,2)+'\n');
 console.log(JSON.stringify({triangles:mesh.geometry.index.count/3,vertices:mesh.geometry.attributes.position.count,bones:mesh.skeleton.bones.length,uvMaxError:'<1e-6 (all 726276 components)',sourceIdleHeight:height,visualScale:scale,assetGroundOffset:root.position.y,physicsChildOffset:-.875,forwardCorrection:'PI',clips:clips.map(c=>({name:c.name,duration:c.duration})),files:await Promise.all((await fs.readdir(out)).map(async f=>({file:f,bytes:(await fs.stat(path.join(out,f))).size})))},null,2));
