@@ -1,3 +1,4 @@
+import {crouchVisualY} from "./crouch-visual-grounding";
 import {createHandheldCamera,createCameraPose} from "./handheld-camera";
 import {createItemPose} from "./item-pose";
 import {createBellPose} from "./bell-pose";
@@ -37,6 +38,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
   const actions=useMemo(()=>Object.fromEntries(animations.map(clip=>{const action=mixer.clipAction(clip);action.setLoop(clip.name==="Jump"?LoopOnce:LoopRepeat,clip.name==="Jump"?1:Infinity);action.clampWhenFinished=clip.name==="Jump";return [clip.name,action];})),[animations,mixer]);
   const playContact=useFootContactAudio(),footPosition=useMemo(()=>new Vector3(),[]);
   const feet=useMemo(()=>[model.getObjectByName("mixamorigLeftFoot"),model.getObjectByName("mixamorigRightFoot")],[model]);
+  const grounding=useRef<Group>(null);
   const previous=useRef(""),reset=useRef(-1);
   useEffect(()=>{previous.current="";reset.current=-1;return ()=>{mixer.stopAllAction();};},[mixer]);
   useFrame((_,delta)=>{
@@ -50,6 +52,7 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
       actions[name].reset().fadeIn(blend).play();
       previous.current=name;reset.current=motion.resetSequence;(mixer.getRoot() as Group).userData.animation=name;
     }
+    if(grounding.current)grounding.current.position.y=crouchVisualY(motion.crouchWeight,!motion.seat&&!motion.bellAction&&motion.grounded&&!motion.flying&&name!=="Jump");
     const action=actions[name],before=action.time;
     cameraPose.restore();
     itemPose.restore();
@@ -74,9 +77,10 @@ function AnimatedCharacter({runtime}:{runtime:RefObject<PlayerRuntime>}){
       }
     }
   });
-  return <primitive object={model} position={[0,-playerConfig.height/2,0]} dispose={null}/>;
+  return <group ref={grounding} name="player-crouch-grounding"><primitive object={model} position={[0,-playerConfig.height/2,0]} dispose={null}/></group>;
 }
 /** Camera and smooth facing retain their original group; only its visual child changes. */
 export function PlayerCharacter({visualRef,runtime}:{visualRef:RefObject<Group|null>;runtime:RefObject<PlayerRuntime>}){
   return <group ref={visualRef} name="player-character"><CharacterBoundary><Suspense fallback={null}><AnimatedCharacter runtime={runtime}/></Suspense></CharacterBoundary></group>;
 }
+
