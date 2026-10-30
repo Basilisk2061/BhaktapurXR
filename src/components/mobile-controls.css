@@ -43,3 +43,16 @@
 .touch-pause-content>button:hover,.touch-pause-content>a:hover,.touch-pause-actions>button:hover{background:#392a22;border-color:#ad8965}
 
 .touch-actions .touch-crouch{width:54px;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px}.touch-crouch small{font-size:8px}.touch-crouch[aria-pressed="true"]{background:#73404e;border-color:#d3a5ad}
+
+/* Compact mobile timber surfaces; pseudo-elements shrink paint, not the hit box. */
+.touch-controls .touch-hud-button{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;border:0;background:none;color:#e5d3ae;font:10px/1.15 Arial,sans-serif;box-shadow:none}
+.touch-controls .touch-hud-button::before{content:'';position:absolute;inset:5px;z-index:-1;pointer-events:none;border:1px solid #97794f;border-radius:50%;background:linear-gradient(115deg,#423022,#291e16 58%,#38281b);box-shadow:inset 0 0 0 2px #21180f,inset 0 1px 0 #b48c4533,0 2px 3px #0005}
+.touch-controls .touch-hud-button:active{background:none}.touch-controls .touch-hud-button:active::before{background:#59402a;border-color:#c5a26d}
+.touch-controls .touch-hud-button small{font:8px/1.15 Arial,sans-serif;letter-spacing:.02em}
+.touch-controls .touch-actions{right:calc(16px + env(safe-area-inset-right));bottom:calc(16px + env(safe-area-inset-bottom));gap:10px}
+.touch-controls .touch-actions .touch-jump{width:68px;height:68px;min-width:68px;min-height:68px}
+.touch-controls .touch-actions .touch-crouch{width:56px;height:56px;min-width:56px;min-height:56px}
+.touch-controls .touch-actions .touch-action{width:52px;height:52px;min-width:52px;min-height:52px;font-size:10px}
+.touch-controls .touch-crouch[aria-pressed=true]{background:none}.touch-controls .touch-crouch[aria-pressed=true]::before{border-color:#d0ad6e;background:#5a4027}
+.touch-controls .touch-joystick{background:none;border-color:#ae8b5b25}.touch-controls .touch-joystick::before{border-color:#b3915d35;background:#281e1426}
+.touch-controls .touch-joystick-thumb{position:relative;background:none;border-color:transparent}.touch-controls .touch-joystick-thumb::after{content:'';position:absolute;inset:5px;pointer-events:none;border:1px solid #ac8d5e9c;border-radius:50%;background:#483322b3;box-shadow:inset 0 1px 2px #c29a4f22}

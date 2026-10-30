@@ -108,3 +108,43 @@ html[data-camera-viewfinder] .touch-controls :is(.touch-orientation,.exploration
 /* Native picker/controls own their hit targets; no z-index escalation is needed. */
 .inventory-touch-picker,.inventory-touch-picker :is(button,select,input),.camera-touch-panel :is(button,select,input){pointer-events:auto}
 :is(.inventory-touch-picker,.inventory-mobile,.camera-touch-ui,.camera-photo-preview) button[data-gameplay-ui]{touch-action:none;user-select:none;-webkit-user-select:none}
+
+/* Mobile-only compact tray/HUD. Input markers, pointer events and hit routing stay intact. */
+.inventory-selected.inventory-selected-touch{top:calc(12px + env(safe-area-inset-top));right:calc(16px + env(safe-area-inset-right));box-sizing:border-box;height:38px;max-width:132px;padding:4px 8px 4px 5px;gap:6px;border:1px solid #735936;background:#2d2118;color:#e8d8b8;font:11px/1.2 Arial,sans-serif;box-shadow:inset 0 0 0 1px #1c140e,0 2px 3px #0004}
+.inventory-selected.inventory-selected-touch>svg{width:26px;height:26px;background:none;border:0}.inventory-selected-touch::before,.inventory-selected-touch::after{display:none}
+.inventory-mobile button{isolation:isolate;box-sizing:border-box;padding:0;background:none;border:0;box-shadow:none;color:#e9d6af;font:10px/1.2 Arial,sans-serif}
+.inventory-mobile button::before{content:'';position:absolute;inset:4px;z-index:-1;pointer-events:none;border:1px solid #94764b;border-radius:6px;background:linear-gradient(110deg,#463123,#291e16 65%,#38271b);box-shadow:inset 0 0 0 2px #1c140e,0 2px 3px #0005}
+.inventory-mobile button:active{background:none}.inventory-mobile button:active::before{background:#5a4029;border-color:#c6a674}
+.inventory-mobile .inventory-open{width:56px;height:56px;min-width:56px;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;bottom:calc(12px + env(safe-area-inset-bottom))}
+.inventory-open::before{inset:5px}.inventory-open small{font:8px/1.1 Arial,sans-serif}
+.inventory-mobile .inventory-use{right:calc(18px + env(safe-area-inset-right));bottom:calc(100px + env(safe-area-inset-bottom));width:64px;height:60px;min-width:64px;min-height:60px;flex-direction:column;gap:2px}
+.inventory-use svg{width:24px;height:24px}.inventory-use strong{font:9px/1.15 Arial,sans-serif;letter-spacing:.025em}
+.inventory-touch-picker{box-sizing:border-box;width:min(560px,65dvw);padding:10px 12px 9px;border:1px solid #735838;border-radius:5px;background:linear-gradient(100deg,#332419,#453022 48%,#302219);color:#eddfc4;box-shadow:inset 0 0 0 3px #20170f,inset 0 0 0 4px #685031,0 6px 20px #0005;font:12px/1.35 Arial,sans-serif}
+.inventory-touch-picker::backdrop{background:#09070666}
+.inventory-touch-picker header{gap:8px;min-height:44px}.inventory-touch-picker h2{font:400 19px/1.2 Georgia,serif;letter-spacing:.015em}
+.inventory-touch-picker button{padding:6px;border:1px solid #725636;background:linear-gradient(115deg,#211810,#302219);font:12px/1.2 Arial,sans-serif;box-shadow:inset 0 2px 4px #0005;border-radius:3px}
+.inventory-touch-picker .inventory-tray-close{position:relative;isolation:isolate;width:44px;height:44px;min-width:44px;min-height:44px;padding:0;border:0;background:none;box-shadow:none;color:#e6d2a8;font:24px/1 Arial,sans-serif}
+.inventory-tray-close::before{content:'';position:absolute;inset:6px;z-index:-1;pointer-events:none;border:1px solid #8e7047;border-radius:3px;background:#291d14;box-shadow:inset 0 0 0 2px #1b130e}
+.inventory-touch-slots{gap:6px;margin-top:5px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.inventory-touch-slots button{box-sizing:border-box;min-width:48px;min-height:76px;gap:4px;height:76px;padding:6px 3px}
+.inventory-touch-slots svg{width:28px;height:28px;flex:none}.inventory-touch-slots button>span{font:12px/1.2 Arial,sans-serif}
+.inventory-touch-slots button.is-empty{background:#251b14;border-color:#53402b;color:#9e8b6c;box-shadow:inset 0 2px 5px #120c08aa}.inventory-touch-slots button.is-empty>span{font-size:11px}
+.inventory-touch-slots button[aria-pressed=true]{background:linear-gradient(115deg,#49301b,#5b3f24);border-color:#c1a16c;box-shadow:inset 0 0 0 1px #8e6d3e,inset 0 2px 3px #0004;color:#fff0d0}
+.inventory-touch-picker p{margin:7px 0 0;text-align:center;color:#c3ad87;font:11px/1.3 Arial,sans-serif}
+@media(orientation:landscape) and (min-width:720px){.inventory-touch-slots{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(orientation:portrait){.inventory-touch-picker{width:min(360px,calc(100dvw - 28px))}.inventory-mobile .inventory-use{bottom:calc(236px + env(safe-area-inset-bottom))}}
+/* Camera keeps its photographic shutter; secondary controls use quieter timber surfaces. */
+.camera-touch-ui button:not(.camera-touch-shutter){isolation:isolate;background:none;border:0;min-height:48px;min-width:48px;padding:8px 10px;font:11px/1.2 Arial,sans-serif;color:#eadbc0}
+.camera-touch-ui button:not(.camera-touch-shutter)::before{content:'';position:absolute;inset:4px;z-index:-1;pointer-events:none;border:1px solid #8c744f;border-radius:4px;background:#2c221a;box-shadow:inset 0 0 0 1px #19130d,0 2px 3px #0004}
+.camera-touch-ui button:not(.camera-touch-shutter):active{background:none}.camera-touch-ui button:not(.camera-touch-shutter):active::before{background:#57402a}
+.camera-touch-zoom{box-sizing:border-box;width:50px;height:152px;padding:5px 0;border-color:#8b79535e;background:#211b16e6;font-size:11px}.camera-touch-zoom span{font-size:8px}.camera-touch-zoom input{width:48px;min-width:48px;min-height:92px}
+.camera-viewfinder.is-touch .camera-mode-label b,.camera-viewfinder.is-touch .camera-mode-label small{font-size:10px;padding:4px 6px;min-width:0}
+.camera-touch-panel{width:min(420px,70dvw);padding:10px 12px;background:#292019;border-color:#79603d;box-shadow:inset 0 0 0 2px #19140f,0 6px 24px #0006;font-size:12px}
+.camera-touch-panel[open]{gap:7px}.camera-touch-panel h2{font-size:16px}.camera-touch-panel header button{position:relative}
+.camera-touch-fields{gap:7px}.camera-touch-fields label{min-height:44px;gap:5px}.camera-touch-fields select{min-height:44px;padding:5px 8px;background:#211b16;border-color:#725c3e}.camera-touch-fields small{font-size:10px}
+@media(orientation:portrait){.camera-touch-panel{width:min(380px,calc(100dvw - 28px))}}
+@media(max-height:340px) and (orientation:landscape){.camera-touch-zoom{height:140px}.camera-touch-zoom input{min-height:80px}}
+@media(orientation:landscape) and (max-width:719px){.inventory-touch-picker{width:min(344px,65dvw)}}
+
+/* A hidden sitting prompt must not reserve a third action row in portrait Camera Mode. */
+html[data-camera-viewfinder] .touch-controls .touch-action{display:none}
